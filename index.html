@@ -267,7 +267,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 
 /* ── SIDEBAR COLLAPSE ── */
 .rail{transition:width .22s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.shell.sb-off .rail{width:0;min-width:0;border-right:none}
+.shell.sb-off .rail{width:0!important;min-width:0!important;flex:0 0 0!important;overflow:hidden;border-right:none}
 .sb-toggle{position:fixed;left:244px;top:50%;transform:translateY(-50%);
   width:18px;height:46px;background:var(--rail);border:1px solid var(--line);
   border-left:none;border-radius:0 8px 8px 0;cursor:pointer;z-index:50;
@@ -346,6 +346,60 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .pdf-footer{margin-top:32px;padding-top:14px;border-top:1px solid #E5E2D9;
   display:flex;justify-content:space-between;font-size:10px;color:#A0A09A}
 .pdf-note{font-size:10px;color:#A0A09A;margin-top:6px;font-style:italic}
+
+
+/* OK chip for completed production cells */
+.ok-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;
+  background:var(--green-soft);color:var(--green);border:1px solid #86EFAC;
+  border-radius:20px;font-size:11.5px;font-weight:700;cursor:pointer;
+  transition:background .1s;white-space:nowrap}
+.ok-chip:hover{background:#BBF7D0;border-color:#4ADE80}
+[data-theme="dark"] .ok-chip{background:#0E2018;border-color:#166534}
+[data-theme="dark"] .ok-chip:hover{background:#14532D}
+
+/* Expanded inline row */
+.exp-row td{padding:0!important;background:#FAFAF7!important;border-bottom:2px solid var(--accent)!important}
+.exp-row td.stk{background:#FAFAF7!important}
+[data-theme="dark"] .exp-row td{background:#1E1D1F!important}
+[data-theme="dark"] .exp-row td.stk{background:#1E1D1F!important}
+.exp-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;min-height:160px}
+.exp-panel{padding:14px 16px;border-right:1px solid var(--line)}
+.exp-panel:last-child{border-right:none}
+.exp-panel-title{font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.exp-mini-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:6px}
+.exp-mini-table td{padding:4px 6px;border-bottom:1px solid #F0EDE4;vertical-align:middle}
+.exp-mini-table td:last-child{text-align:right;font-family:var(--mono)}
+.exp-tna-row{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;border-bottom:1px solid #F0EDE4}
+.exp-tna-row:last-child{border:none}
+.exp-tna-lbl{width:110px;flex-shrink:0;color:var(--muted);font-size:11px}
+.exp-tna-plan{width:68px;font-family:var(--mono);font-size:11px;flex-shrink:0}
+.exp-tna-actual{flex:1}
+.exp-tna-inp{padding:2px 6px;border:1px solid var(--line);border-radius:5px;
+  background:#FCFBF7;font-size:11px;width:108px;color:var(--ink)}
+.exp-tna-inp:focus{outline:none;border-color:var(--accent)}
+.exp-add-form{display:none;padding:6px 0 2px}
+.exp-add-form.open{display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap}
+.exp-add-form input{padding:4px 7px;border:1px solid var(--line);border-radius:6px;
+  background:#FCFBF7;font-size:12px;color:var(--ink)}
+.exp-add-form input:focus{outline:none;border-color:var(--accent)}
+.exp-summary{display:flex;gap:12px;padding:6px 0;font-size:12px}
+.exp-summary .sv{font-weight:600;font-family:var(--mono)}
+.exp-summary .sv.bad{color:var(--red)}
+.exp-summary .sv.ok{color:var(--green)}
+.exp-apv-row{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;border-bottom:1px solid #F0EDE4}
+.exp-apv-row:last-child{border:none}
+.exp-apv-lbl{width:54px;flex-shrink:0;font-weight:600;font-size:11px;color:var(--muted)}
+.exp-apv-date{padding:2px 6px;border:1px solid var(--line);border-radius:5px;
+  background:#FCFBF7;font-size:11px;width:108px;color:var(--ink)}
+.exp-apv-date:focus{outline:none;border-color:var(--accent)}
+.exp-loading{padding:20px;text-align:center;color:var(--muted);font-size:12px}
+[data-theme="dark"] .exp-mini-table td{border-color:var(--line)}
+[data-theme="dark"] .exp-tna-inp,[data-theme="dark"] .exp-apv-date,[data-theme="dark"] .exp-add-form input{background:#2A2828;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .exp-tna-row,[data-theme="dark"] .exp-apv-row{border-color:var(--line)}
+
+/* Edit qty modal */
+.eq-step{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
 
 @media print{
   html,body{height:auto}
@@ -487,23 +541,49 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
   </div>
 </div>
 
-<!-- ═══ MODAL: PRINT ═══ -->
+<!-- ═══ MODAL: PRINT / DOWNLOAD ═══ -->
 <div class="ov" id="ov-print" onclick="if(event.target===this)closeModal('ov-print')">
-  <div class="modal wide">
+  <div class="modal slim">
     <div class="m-h">
-      <div><h3 id="pr-title">Print</h3><div class="msub" id="pr-sub"></div></div>
-      <button class="xbtn no-print" onclick="closeModal('ov-print')">✕</button>
+      <div><h3 id="pr-title">Export</h3><div class="msub" id="pr-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-print')">✕</button>
     </div>
     <div class="m-b">
-      <div class="f no-print" style="max-width:260px;margin-bottom:14px">
+      <div class="f" style="margin-bottom:18px">
         <label>Filter by buyer</label>
-        <select id="pr-buyer" onchange="renderPrint()"></select>
+        <select id="pr-buyer" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></select>
       </div>
-      <div id="pr-body"></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn pri" onclick="downloadPDF()" style="padding:11px;font-size:13.5px">
+          ↓ Download PDF
+        </button>
+        <button class="btn" onclick="exportExcel()" style="padding:11px;font-size:13.5px">
+          ↓ Download Excel
+        </button>
+      </div>
+      <div class="hint" style="margin-top:14px">PDF opens print dialog — choose "Save as PDF". Excel downloads instantly.</div>
     </div>
-    <div class="m-f no-print">
-      <button class="btn" onclick="closeModal('ov-print')">Cancel</button>
-      <button class="btn pri" onclick="window.print()">Print</button>
+    <div class="m-f">
+      <button class="btn ghost" onclick="closeModal('ov-print')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDIT COMPLETED QTY ═══ -->
+<div class="ov" id="ov-edit-qty" onclick="if(event.target===this)closeModal('ov-edit-qty')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Edit quantity</h3><div class="msub" id="eq-sub">Order complete — update if incorrect</div></div>
+      <button class="xbtn" onclick="closeModal('ov-edit-qty')">✕</button></div>
+    <div class="m-b">
+      <div class="eq-step" id="eq-step"></div>
+      <div class="f"><label>New quantity (pcs)</label>
+        <input id="eq-val" type="number" min="0" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:16px;font-family:var(--mono)">
+      </div>
+      <div class="hint" style="margin-top:6px">Order qty: <strong id="eq-max"></strong> pcs. Enter a lower value to revert to active tracking.</div>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-edit-qty')">Cancel</button>
+      <button class="btn pri" onclick="saveEditQty()">Update</button>
     </div>
   </div>
 </div>
@@ -682,6 +762,8 @@ const S = {
   channel: null,
   detail: { orderId: null, order: null, bookings: [], receipts: [], approvals: [], tab: 'details', division: 'sweater' },
   alerts: [],
+  expandedRow: null,
+  expandedData: null,
 };
 
 // Columns needed for dashboard (fast, lightweight)
@@ -1194,10 +1276,12 @@ async function renderBoard(uid) {
     </div></div>`; return;
   }
 
+    const NCOLS = 11 + VSTEPS.length + 3; // total columns for colspan
   const rows = os.map(o => {
     const ms = missedMiles(o), dl = daysTo(o.ship_date);
-    return `<tr class="${rowClass(o)}" style="cursor:pointer" onclick="if(!event.target.closest('button,input,a'))openOrderDetail('${o.id}','${division}')">
-      <td class="stk"><span class="flag ${ms.length?'on':''}"></span>
+    const isExp = S.expandedRow === o.id;
+    let mainRow = `<tr class="${rowClass(o)} ${isExp?'exp-open':''}" style="cursor:pointer" onclick="if(!event.target.closest('button,input,a'))toggleRowExpand('${o.id}','${division}')">
+      <td class="stk"><span class="flag ${ms.length?'on':''}">​</span>
         <span class="sty">${o.style}</span>
         <div class="sub2" style="margin-left:10px">${ms.length ? ms.length+'× late' : pctPacked(o)+'% packed'}</div></td>
       <td>${o.buyer}</td><td>${o.house}</td><td>${o.gauge||'—'}</td><td>${o.color||'—'}</td>
@@ -1209,12 +1293,14 @@ async function renderBoard(uid) {
       ${VSTEPS.map(s => {
         const v = o[s.k] || 0, full = v >= (o.qty||0) && (o.qty||0) > 0;
         const pct = o.qty ? Math.min(100, 100*v/o.qty) : 0;
+        if (full && canEdit) {
+          return `<td><div class="cell"><button class="ok-chip" onclick="event.stopPropagation();openEditQty('${o.id}','${s.k}',${v},${o.qty},'${s.n}')">✓ OK</button></div></td>`;
+        }
         return `<td><div class="cell">
-          ${full ? `<span class="done-lbl">DONE</span>`
-            : `<span class="bar"><i style="width:${pct}%"></i></span>`}
+          <span class="bar"><i style="width:${pct}%"></i></span>
           ${canEdit
             ? `<input class="qtyin" type="number" min="0" max="${o.qty}" value="${v}"
-                onchange="setProd('${o.id}','${s.k}',this.value)" ${full?'disabled':''}>`
+                onchange="setProd('${o.id}','${s.k}',this.value)">`
             : `<span style="font-family:var(--mono);font-size:12px">${fmt(v)}</span>`}
         </div></td>`;
       }).join('')}
@@ -1224,10 +1310,19 @@ async function renderBoard(uid) {
              placeholder="Add note…" onchange="setRemark('${o.id}',this.value)">`
         : `<span class="sub2">${o.remarks||'—'}</span>`}</td>
       <td style="white-space:nowrap">
-        <button class="btn sm" onclick="openTNA('${o.id}','${division}')">TNA${ms.length?` <span style="color:var(--red)">●</span>`:''}</button>
-        ${canEdit ? `<button class="btn sm" style="margin-left:4px" onclick="openShip('${o.id}')">Shipped</button>` : ''}
+        <button class="btn sm" onclick="event.stopPropagation();openTNA('${o.id}','${division}')">TNA${ms.length?` <span style="color:var(--red)">●</span>`:''}</button>
+        ${canEdit ? `<button class="btn sm" style="margin-left:4px" onclick="event.stopPropagation();openShip('${o.id}')">Shipped</button>` : ''}
       </td>
     </tr>`;
+    // Expandable inline row
+    if (isExp) {
+      mainRow += `<tr class="exp-row"><td class="stk"></td><td colspan="${NCOLS-1}">
+        <div id="exp-${o.id}" class="exp-inner">
+          <div class="exp-loading">Loading...</div>
+        </div>
+      </td></tr>`;
+    }
+    return mainRow;
   }).join('');
 
   $('content').innerHTML = notesHtml + `<div class="card"><div class="scroller"><table>
@@ -1529,6 +1624,289 @@ function showShipResult(o, qty, date, isLate, isShort, daysLate, shortQty, value
   openModal('ov-ship-result');
 }
 
+// ─── EXPANDABLE ROWS ───
+async function toggleRowExpand(ordId, division) {
+  if (S.expandedRow === ordId) {
+    S.expandedRow = null;
+    S.expandedData = null;
+    renderBoard(S.view);
+    return;
+  }
+  S.expandedRow = ordId;
+  S.expandedData = null;
+  renderBoard(S.view); // show skeleton first
+
+  // Load detail data
+  const [bk, rc, ap] = await Promise.all([
+    db.from('yarn_bookings').select('*').eq('order_id', ordId).order('booked_on'),
+    db.from('yarn_receipts').select('*').eq('order_id', ordId).order('received_on'),
+    db.from('approvals').select('*').eq('order_id', ordId).order('round'),
+  ]);
+  S.expandedData = { bookings: bk.data || [], receipts: rc.data || [], approvals: ap.data || [] };
+
+  const container = document.getElementById('exp-' + ordId);
+  if (!container) return;
+
+  const merch = S.users.find(u => u.id === S.view);
+  const div = division || (merch ? merch.division : 'sweater') || 'sweater';
+  const unit = div === 'knit' ? 'kgs' : 'lbs';
+  const matLabel = div === 'knit' ? 'Fabric' : 'Yarn';
+  const canEdit = S.user.role === 'management' || S.user.id === S.view;
+  const VMILES = getMiles(div);
+  const bkData = S.expandedData.bookings;
+  const rcData = S.expandedData.receipts;
+  const apData = S.expandedData.approvals;
+  const totalBk = bkData.reduce(function(s,x){return s+(x.qty||0);},0);
+  const totalRc = rcData.reduce(function(s,x){return s+(x.qty||0);},0);
+  const bal = totalBk - totalRc;
+
+  // Get the order from board cache
+  const o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;}) || {};
+  const today0 = new Date().toISOString().slice(0,10);
+
+  // Panel 1: Material
+  var bkRows = bkData.length ? bkData.map(function(b){
+    return '<tr><td>' + short(b.booked_on) + '</td><td>' + (b.supplier||'—') + '</td><td style="text-align:right;font-family:var(--mono)">' + fmt(b.qty) + '</td>'
+      + (canEdit ? '<td><button class="btn sm danger" style="padding:1px 6px" onclick="delBk(\''+b.id+'\',\''+ordId+'\',\''+division+'\')">×</button></td>' : '') + '</tr>';
+  }).join('') : '<tr><td colspan="4" style="color:var(--muted);font-size:11px">No bookings yet</td></tr>';
+
+  var rcRows = rcData.length ? rcData.map(function(r,i){
+    var run=rcData.slice(0,i+1).reduce(function(s,x){return s+(x.qty||0);},0);
+    return '<tr><td>' + short(r.received_on) + '</td><td style="text-align:right;font-family:var(--mono)">' + fmt(r.qty) + '</td><td style="text-align:right;font-family:var(--mono);color:var(--muted)">' + fmt(run) + '</td>'
+      + (canEdit ? '<td><button class="btn sm danger" style="padding:1px 6px" onclick="delRc(\''+r.id+'\',\''+ordId+'\',\''+division+'\')">×</button></td>' : '') + '</tr>';
+  }).join('') : '<tr><td colspan="4" style="color:var(--muted);font-size:11px">No receipts yet</td></tr>';
+
+  var matHTML = '<div class="exp-panel">'
+    + '<div class="exp-panel-title">' + matLabel + ' bookings (' + unit + ')'
+    + (canEdit ? ' <button class="btn sm pri" style="padding:2px 8px;font-size:11px" onclick="toggleExpForm(\'bk-form-'+ordId+'\')">+ Booking</button>' : '')
+    + '</div>'
+    + '<table class="exp-mini-table"><thead><tr><th>Date</th><th>Supplier</th><th style="text-align:right">Qty</th>' + (canEdit?'<th></th>':'') + '</tr></thead><tbody>' + bkRows + '</tbody></table>'
+    + (canEdit ? '<div id="bk-form-' + ordId + '" class="exp-add-form">'
+      + '<input type="date" id="bkd-'+ordId+'" value="'+today0+'" style="width:112px">'
+      + '<input type="text" id="bks-'+ordId+'" placeholder="Supplier" style="width:120px">'
+      + '<input type="number" id="bkq-'+ordId+'" placeholder="Qty" style="width:80px">'
+      + '<button class="btn sm pri" onclick="saveBk(\''+ordId+'\',\''+division+'\')">Save</button>'
+      + '<button class="btn sm ghost" onclick="toggleExpForm(\'bk-form-'+ordId+'\')">Cancel</button>'
+      + '</div>' : '')
+    + '<div style="font-size:11px;color:var(--muted);margin-top:8px;border-top:1px solid var(--line);padding-top:6px">' + matLabel + ' received'
+    + (canEdit ? ' <button class="btn sm" style="padding:1px 6px;font-size:11px;margin-left:4px" onclick="toggleExpForm(\'rc-form-'+ordId+'\')">+ Receipt</button>' : '')
+    + '</div>'
+    + '<table class="exp-mini-table"><thead><tr><th>Date</th><th style="text-align:right">Qty</th><th style="text-align:right">Total</th>' + (canEdit?'<th></th>':'') + '</tr></thead><tbody>' + rcRows + '</tbody></table>'
+    + (canEdit ? '<div id="rc-form-' + ordId + '" class="exp-add-form">'
+      + '<input type="date" id="rcd-'+ordId+'" value="'+today0+'" style="width:112px">'
+      + '<input type="number" id="rcq-'+ordId+'" placeholder="Qty" style="width:100px">'
+      + '<button class="btn sm pri" onclick="saveRc(\''+ordId+'\',\''+division+'\')">Save</button>'
+      + '<button class="btn sm ghost" onclick="toggleExpForm(\'rc-form-'+ordId+'\')">Cancel</button>'
+      + '</div>' : '')
+    + (totalBk ? '<div class="exp-summary"><span>Booked: <span class="sv">' + fmt(totalBk) + '</span></span><span>Rcvd: <span class="sv ' + (totalRc>=totalBk?'ok':'') + '">' + fmt(totalRc) + '</span></span><span>Bal: <span class="sv ' + (bal>0?'bad':bal===0?'ok':'') + '">' + fmt(bal) + '</span></span></div>' : '')
+    + '</div>';
+
+  // Panel 2: Approvals
+  function apvSec(type, label) {
+    var rounds = apData.filter(function(a){return a.type===type;}).sort(function(a,b){return a.round-b.round;});
+    var nextR = rounds.length ? Math.max.apply(null,rounds.map(function(r){return r.round;}))+1 : 1;
+    var html = '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between">' + label
+      + (canEdit ? '<button class="btn sm" style="padding:1px 7px;font-size:10px" onclick="addApvRound(\''+ordId+'\',\''+type+'\',\''+division+'\')">+R'+nextR+'</button>' : '') + '</div>';
+    if (!rounds.length) { html += '<div style="font-size:11px;color:var(--muted)">None yet</div>'; }
+    rounds.forEach(function(r){
+      var st = r.approved_on ? '<span class="chip ok" style="font-size:10px;padding:1px 6px">Done</span>'
+        : r.submitted_on ? '<span class="chip warn" style="font-size:10px;padding:1px 6px">Pending</span>'
+        : '<span class="chip run" style="font-size:10px;padding:1px 6px">Open</span>';
+      html += '<div class="exp-apv-row"><span class="exp-apv-lbl">R'+r.round+'</span>'
+        + (canEdit ? '<input class="exp-apv-date" type="date" value="'+(r.submitted_on||'')+'" title="Submitted" onchange="updApv(\''+r.id+'\',\'submitted_on\',this.value,\''+ordId+'\',\''+division+'\')">'
+          + '<input class="exp-apv-date" type="date" value="'+(r.approved_on||'')+'" title="Approved" onchange="updApv(\''+r.id+'\',\'approved_on\',this.value,\''+ordId+'\',\''+division+'\')">'
+          : '<span style="font-size:11px;font-family:var(--mono)">' + short(r.submitted_on) + '</span><span style="font-size:11px;font-family:var(--mono);margin-left:6px">' + short(r.approved_on) + '</span>')
+        + st + '</div>';
+    });
+    return html + '</div>';
+  }
+
+  var apvHTML = '<div class="exp-panel">'
+    + '<div class="exp-panel-title">Approvals</div>'
+    + apvSec('labdip','Lab Dip')
+    + apvSec('fit','Fit')
+    + apvSec('pp','PP')
+    + '</div>';
+
+  // Panel 3: TNA
+  var tnaHTML = '<div class="exp-panel"><div class="exp-panel-title">TNA — Plan vs Actual</div>'
+    + VMILES.map(function(x){
+      var p = o['plan_'+x.k], a = o['act_'+x.k];
+      var delay = '', stCls = '';
+      if (p && a) { var dd=Math.round((toDate(a)-toDate(p))/86400000); delay=dd>0?'<span style="font-size:10px;color:var(--red)">+'+dd+'d</span>':'<span style="font-size:10px;color:var(--green)">✓</span>'; }
+      else if (p && !a) { var dd2=daysTo(p); if(dd2<0) delay='<span style="font-size:10px;color:var(--red)">+'+(-dd2)+'d</span>'; }
+      return '<div class="exp-tna-row"><div class="exp-tna-lbl">' + x.n + '</div>'
+        + '<div class="exp-tna-plan">' + short(p) + '</div>'
+        + '<div class="exp-tna-actual">' + (canEdit
+          ? '<input class="exp-tna-inp" type="date" value="'+(a||'')+'" onchange="setActExp(\''+o.id+'\',\''+x.k+'\',this.value,\''+div+'\')">'
+          : '<span style="font-family:var(--mono);font-size:11px">' + short(a) + '</span>')
+        + '</div>' + delay + '</div>';
+    }).join('')
+    + '</div>';
+
+  container.innerHTML = matHTML + apvHTML + tnaHTML;
+}
+
+function toggleExpForm(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+// Inline booking/receipt/approval helpers (reuse existing fns but refresh inline)
+async function saveBk(ordId, division) {
+  var dt=document.getElementById('bkd-'+ordId).value;
+  var sup=document.getElementById('bks-'+ordId).value.trim();
+  var qty=parseFloat(document.getElementById('bkq-'+ordId).value)||0;
+  if (!dt||!qty){toast('Date and quantity required','err');return;}
+  await db.from('yarn_bookings').insert({order_id:ordId,booked_on:dt,qty:qty,supplier:sup});
+  await toggleRowExpand(ordId, division);
+}
+async function delBk(id, ordId, division) {
+  if (!confirm('Remove?')) return;
+  await db.from('yarn_bookings').delete().eq('id',id);
+  await toggleRowExpand(ordId, division);
+}
+async function saveRc(ordId, division) {
+  var dt=document.getElementById('rcd-'+ordId).value;
+  var qty=parseFloat(document.getElementById('rcq-'+ordId).value)||0;
+  if (!dt||!qty){toast('Date and quantity required','err');return;}
+  await db.from('yarn_receipts').insert({order_id:ordId,received_on:dt,qty:qty});
+  await toggleRowExpand(ordId, division);
+}
+async function delRc(id, ordId, division) {
+  if (!confirm('Remove?')) return;
+  await db.from('yarn_receipts').delete().eq('id',id);
+  await toggleRowExpand(ordId, division);
+}
+async function addApvRound(ordId, type, division) {
+  var existing=(S.expandedData&&S.expandedData.approvals||[]).filter(function(a){return a.type===type;});
+  var nextR=existing.length?Math.max.apply(null,existing.map(function(r){return r.round;}))+1:1;
+  await db.from('approvals').insert({order_id:ordId,type:type,round:nextR});
+  await toggleRowExpand(ordId, division);
+}
+async function updApv(id, field, val, ordId, division) {
+  var obj={}; obj[field]=val||null;
+  await db.from('approvals').update(obj).eq('id',id);
+  S.expandedData = null; // force reload
+  await toggleRowExpand(ordId, division);
+}
+async function setActExp(ordId, mKey, val, div) {
+  await setAct(ordId, mKey, val, div);
+  // Refresh expanded row data
+  if (S.expandedRow === ordId) {
+    const o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;});
+    // Just refresh TNA panel without full reload
+    await toggleRowExpand(ordId, div);
+  }
+}
+
+// ─── EDIT COMPLETED QTY ───
+var _eqTarget = {ordId:null, key:null, orderQty:0};
+function openEditQty(ordId, key, currentVal, orderQty, stepName) {
+  _eqTarget = {ordId:ordId, key:key, orderQty:orderQty};
+  $('eq-step').textContent = stepName + ' — ' + fmt(currentVal) + ' pcs';
+  $('eq-max').textContent = fmt(orderQty);
+  $('eq-val').value = currentVal;
+  openModal('ov-edit-qty');
+}
+async function saveEditQty() {
+  const val = parseInt($('eq-val').value)||0;
+  await setProd(_eqTarget.ordId, _eqTarget.key, val);
+  closeModal('ov-edit-qty');
+}
+
+// ─── PDF DOWNLOAD ───
+function downloadPDF() {
+  const uid = S.printTarget;
+  const buyer = $('pr-buyer') ? $('pr-buyer').value : '';
+  const merch = S.users.find(function(u){return u.id===uid;});
+  const div = merch ? (merch.division||'sweater') : 'sweater';
+  const VSTEPS = getSteps(div);
+  const VMILES = getMiles(div);
+  const orders = (S.boardCache[uid]||S.orders.filter(function(o){return o.merchant_id===uid;}))
+    .filter(function(o){return !o.shipped&&(!buyer||o.buyer===buyer);})
+    .sort(function(a,b){return (daysTo(a.ship_date)||999)-(daysTo(b.ship_date)||999);});
+
+  const dateStr = today().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const buyerLabel = buyer || 'All buyers';
+
+  var tRows = orders.map(function(o){
+    const ms = missedMiles(o);
+    const dl = daysTo(o.ship_date);
+    const rc = ms.length?'background:#FBE9E7':dl!=null&&dl<=5?'background:#FBEAE0':dl!=null&&dl<=10?'background:#FDF6E3':'';
+    return '<tr style="' + rc + '">'
+      + '<td><strong>' + o.style + '</strong></td>'
+      + '<td>' + o.buyer + '</td>'
+      + '<td>' + (o.house||'') + '</td>'
+      + '<td>' + (o.gauge||'') + '</td>'
+      + '<td>' + (o.color||'') + '</td>'
+      + '<td>' + (o.comp||'') + '</td>'
+      + '<td style="text-align:right">' + fmt(o.qty) + '</td>'
+      + '<td style="text-align:right">' + (o.fob||0).toFixed(2) + '</td>'
+      + '<td style="text-align:right">' + money((o.qty||0)*(o.fob||0)) + '</td>'
+      + '<td>' + short(o.ship_date) + '</td>'
+      + '<td style="text-align:right;' + (dl!=null&&dl<=5?'color:#C05621;font-weight:700':'') + '">' + (dl!=null?dl:'') + '</td>'
+      + VSTEPS.map(function(s){const v=o[s.k]||0;return '<td style="text-align:right">' + (v>=(o.qty||0)&&(o.qty||0)>0?'<strong style="color:#2F7A4F">OK</strong>':fmt(v)) + '</td>';}).join('')
+      + '<td style="text-align:right;font-weight:600">' + fmt((o.qty||0)-(o.prod_packing||0)) + '</td>'
+      + '<td>' + (ms.length?'<span style="color:#C0392B;font-weight:600">'+ms.map(function(m){return m.n;}).join(', ')+'</span>':'On plan') + '</td>'
+      + '<td style="font-size:11px;color:#73706A">' + (o.remarks||'') + '</td>'
+      + '</tr>';
+  }).join('');
+
+  var thSteps = VSTEPS.map(function(s){return '<th>'+s.n+'</th>';}).join('');
+  var totQty = orders.reduce(function(s,o){return s+(o.qty||0);},0);
+  var totBal = orders.reduce(function(s,o){return s+(o.qty||0)-(o.prod_packing||0);},0);
+  var totVal = orders.reduce(function(s,o){return s+(o.qty||0)*(o.fob||0);},0);
+
+  var html = '<!DOCTYPE html><html><head><meta charset="utf-8">'
+    + '<title>Production Report — ' + (merch?merch.name:'') + '</title>'
+    + '<style>'
+    + 'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:11px;color:#191817;margin:0;padding:20px}'
+    + 'h1{font-family:Georgia,serif;font-size:22px;font-weight:600;margin:0 0 4px;letter-spacing:-.3px}'
+    + '.meta{font-size:11px;color:#73706A;margin-bottom:16px}'
+    + '.kpis{display:flex;gap:16px;margin-bottom:18px;flex-wrap:wrap}'
+    + '.kpi{background:#F7F5EF;border:1px solid #E5E2D9;border-radius:8px;padding:10px 14px}'
+    + '.kpi .k{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#73706A;font-weight:700}'
+    + '.kpi .v{font-size:20px;font-weight:600;margin-top:2px}'
+    + 'table{border-collapse:collapse;width:100%;font-size:10.5px}'
+    + 'th{background:#F7F5EF;padding:6px 7px;text-align:left;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;border-bottom:1px solid #E5E2D9}'
+    + 'td{padding:6px 7px;border-bottom:1px solid #F0EDE4;vertical-align:middle}'
+    + 'tfoot td{font-weight:700;border-top:2px solid #E5E2D9;background:#F7F5EF}'
+    + '.footer{margin-top:20px;font-size:10px;color:#A0A09A;border-top:1px solid #E5E2D9;padding-top:10px;display:flex;justify-content:space-between}'
+    + '@media print{body{padding:10px}@page{margin:1.5cm;size:A3 landscape}}'
+    + '</style></head><body>'
+    + '<h1>Production Status Report</h1>'
+    + '<div class="meta">Shahana Group &nbsp;·&nbsp; ' + (merch?merch.name:'') + ' &nbsp;·&nbsp; ' + buyerLabel + ' &nbsp;·&nbsp; ' + dateStr + '</div>'
+    + '<div class="kpis">'
+    + '<div class="kpi"><div class="k">Orders</div><div class="v">' + orders.length + '</div></div>'
+    + '<div class="kpi"><div class="k">Total qty</div><div class="v">' + fmt(totQty) + '</div></div>'
+    + '<div class="kpi"><div class="k">Balance</div><div class="v">' + fmt(totBal) + '</div></div>'
+    + '<div class="kpi"><div class="k">Value</div><div class="v">' + money(totVal) + '</div></div>'
+    + '</div>'
+    + '<table>'
+    + '<thead><tr><th>Style</th><th>Buyer</th><th>Buying House</th><th>Gauge</th><th>Colour</th><th>Composition</th>'
+    + '<th style="text-align:right">Order Qty</th><th style="text-align:right">FOB</th><th style="text-align:right">Value</th>'
+    + '<th>Ship Date</th><th style="text-align:right">Days</th>'
+    + thSteps
+    + '<th style="text-align:right">Balance</th><th>TNA Status</th><th>Remarks</th></tr></thead>'
+    + '<tbody>' + tRows + '</tbody>'
+    + '<tfoot><tr><td colspan="6">TOTAL</td><td style="text-align:right">' + fmt(totQty) + '</td><td></td><td style="text-align:right">' + money(totVal) + '</td><td colspan="2"></td>'
+    + VSTEPS.map(function(){return '<td></td>';}).join('')
+    + '<td style="text-align:right">' + fmt(totBal) + '</td><td colspan="2"></td></tr></tfoot>'
+    + '</table>'
+    + '<div class="footer"><span>Shahana Group Production Tracker</span><span>Confidential — Internal use only</span></div>'
+    + '</body></html>';
+
+  var win = window.open('', '_blank', 'width=1200,height=800');
+  if (!win) { toast('Pop-up blocked — allow pop-ups for PDF download', 'err'); return; }
+  win.document.write(html);
+  win.document.close();
+  setTimeout(function(){ win.focus(); win.print(); }, 600);
+  closeModal('ov-print');
+  toast('PDF window opened — save as PDF in print dialog');
+}
+
+
 // --- ORDER DETAIL ---
 async function openOrderDetail(ordId, division) {
   const o = (S.boardCache[S.view] || []).find(x => x.id === ordId);
@@ -1783,12 +2161,13 @@ async function exportExcel() {
 function openPrint(uid) {
   S.printTarget = uid;
   const m = S.users.find(u => u.id === uid);
-  $('pr-title').textContent = 'Print — ' + (m ? m.name : '');
+  $('pr-title').textContent = (m ? m.name : '') + ' — Export';
   $('pr-sub').textContent = today().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'});
-  const buyers = [...new Set(S.orders.filter(o => o.merchant_id === uid).map(o => o.buyer))];
-  $('pr-buyer').innerHTML = `<option value="">All buyers</option>` +
-    buyers.map(b => `<option>${b}</option>`).join('');
-  renderPrint();
+  // Use full board cache for buyers list
+  const orders = S.boardCache[uid] || S.orders.filter(o => o.merchant_id === uid);
+  const buyers = [...new Set(orders.filter(o=>!o.shipped).map(o => o.buyer))].sort();
+  $('pr-buyer').innerHTML = '<option value="">All buyers</option>' +
+    buyers.map(b => '<option>' + b + '</option>').join('');
   openModal('ov-print');
 }
 
