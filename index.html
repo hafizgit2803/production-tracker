@@ -98,11 +98,11 @@ a{color:var(--accent);text-decoration:none}
 
 /* ── TABLE ── */
 .scroller{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:12.5px}
-th{background:#F7F5EF;text-align:left;padding:7px 9px;font-size:10px;letter-spacing:.07em;
+table{border-collapse:collapse;width:100%;font-size:11.5px}
+th{background:#F7F5EF;text-align:left;padding:5px 7px;font-size:9.5px;letter-spacing:.06em;
   text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line);white-space:nowrap}
 th.grp{text-align:center;border-left:2px solid var(--line);color:#8a3f24;background:#F3EFE6}
-td{padding:6px 9px;border-bottom:1px solid #F0EDE4;white-space:nowrap;vertical-align:middle}
+td{padding:4px 7px;border-bottom:1px solid #F0EDE4;white-space:nowrap;vertical-align:middle}
 tbody tr:hover td{background:rgba(0,0,0,.015)}
 tbody tr.r10 td{background:var(--amber-soft)}
 tbody tr.r5  td{background:var(--orange-soft)}
@@ -401,6 +401,39 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 /* Edit qty modal */
 .eq-step{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
 
+
+/* Compact inline columns for Yarn and PP */
+.col-yarn,.col-pp{vertical-align:top!important;min-width:130px;max-width:160px}
+.col-yarn .lbl,.col-pp .lbl{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-bottom:3px}
+.col-yarn .row,.col-pp .row{display:flex;align-items:center;gap:4px;margin-bottom:2px;font-size:11px}
+.col-yarn .row .k{color:var(--muted);font-size:10px;width:28px;flex-shrink:0}
+.col-yarn .row .v{font-family:var(--mono);font-size:11px;font-weight:500}
+.col-yarn .v.ok{color:var(--green);font-weight:700}
+.col-yarn .v.bad{color:var(--red);font-weight:700}
+.mat-add-btn{border:1px dashed var(--line);background:none;color:var(--muted);
+  font-size:10px;padding:2px 7px;border-radius:5px;cursor:pointer;margin-top:3px;display:block;width:100%;text-align:center}
+.mat-add-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+/* PP inline date inputs */
+.pp-row{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.pp-lbl{font-size:9.5px;color:var(--muted);width:30px;flex-shrink:0}
+.pp-date{padding:2px 5px;border:1px solid var(--line);border-radius:5px;
+  background:#FCFBF7;font-size:10.5px;width:100px;color:var(--ink)}
+.pp-date:focus{outline:none;border-color:var(--accent);background:#fff}
+.pp-tna{font-size:9.5px;color:var(--muted);margin-bottom:4px}
+.pp-tna strong{color:var(--amber)}
+.pp-round-lbl{font-size:9.5px;color:var(--muted);margin-bottom:3px;
+  display:flex;justify-content:space-between;align-items:center}
+[data-theme="dark"] .pp-date{background:#2A2828;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .mat-add-btn{border-color:var(--line);color:var(--muted)}
+[data-theme="dark"] .mat-add-btn:hover{background:var(--accent-soft)}
+
+/* Material and PP approval focused modals */
+.foc-modal{max-width:520px}
+.foc-modal .m-b{padding:14px 18px}
+.apv-history-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.apv-history-row:last-child{border:none}
+
 @media print{
   html,body{height:auto}
   .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
@@ -613,6 +646,42 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
   </div>
 </div>
 
+<!-- ═══ MODAL: MATERIAL (Yarn/Fabric) ═══ -->
+<div class="ov" id="ov-material" onclick="if(event.target===this)closeModal('ov-material')">
+  <div class="modal foc-modal">
+    <div class="m-h"><div><h3 id="mat-title">Material</h3><div class="msub" id="mat-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-material')">✕</button></div>
+    <div class="m-b" id="mat-body"></div>
+    <div class="m-f"><button class="btn" onclick="closeModal('ov-material')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: PP APPROVAL HISTORY ═══ -->
+<div class="ov" id="ov-pp-hist" onclick="if(event.target===this)closeModal('ov-pp-hist')">
+  <div class="modal foc-modal">
+    <div class="m-h"><div><h3 id="pp-title">PP Approval</h3><div class="msub" id="pp-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-pp-hist')">✕</button></div>
+    <div class="m-b" id="pp-body"></div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-pp-hist')">Close</button>
+      <button class="btn pri" id="pp-add-btn" onclick="addPPRoundFromModal()">+ Add round</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: LAB DIP HISTORY ═══ -->
+<div class="ov" id="ov-labdip-hist" onclick="if(event.target===this)closeModal('ov-labdip-hist')">
+  <div class="modal foc-modal">
+    <div class="m-h"><div><h3 id="ld-title">Lab Dip Approval</h3><div class="msub" id="ld-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-labdip-hist')">✕</button></div>
+    <div class="m-b" id="ld-body"></div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-labdip-hist')">Close</button>
+      <button class="btn pri" id="ld-add-btn" onclick="addLDRoundFromModal()">+ Add round</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ MODAL: ADD NOTE ═══ -->
 <div class="ov" id="ov-note" onclick="if(event.target===this)closeModal('ov-note')">
   <div class="modal slim">
@@ -764,6 +833,7 @@ const S = {
   alerts: [],
   expandedRow: null,
   expandedData: null,
+  boardSummaries: {},
 };
 
 // Columns needed for dashboard (fast, lightweight)
@@ -928,13 +998,56 @@ async function loadAlerts() {
 }
 
 async function loadBoardOrders(merchantId) {
-  // Full column query for one merchant — cached after first load
   if (S.boardCache[merchantId]) return S.boardCache[merchantId];
   const { data } = await db.from('orders').select('*')
     .eq('merchant_id', merchantId).eq('shipped', false)
     .order('ship_date', { ascending: true });
   S.boardCache[merchantId] = data || [];
+  // Load summaries in parallel (yarn totals + approval status)
+  const ids = (data || []).map(o => o.id);
+  if (ids.length) {
+    const [bk, rc, ap] = await Promise.all([
+      db.from('yarn_bookings').select('order_id,qty').in('order_id', ids),
+      db.from('yarn_receipts').select('order_id,qty').in('order_id', ids),
+      db.from('approvals').select('*').in('order_id', ids).order('round'),
+    ]);
+    const sums = {};
+    ids.forEach(id => { sums[id] = { bk: 0, rc: 0, ap: {} }; });
+    (bk.data || []).forEach(b => { if (sums[b.order_id]) sums[b.order_id].bk += (b.qty||0); });
+    (rc.data || []).forEach(r => { if (sums[r.order_id]) sums[r.order_id].rc += (r.qty||0); });
+    (ap.data || []).forEach(a => {
+      if (sums[a.order_id]) {
+        if (!sums[a.order_id].ap[a.type]) sums[a.order_id].ap[a.type] = [];
+        sums[a.order_id].ap[a.type].push(a);
+      }
+    });
+    if (!S.boardSummaries) S.boardSummaries = {};
+    S.boardSummaries[merchantId] = sums;
+  }
   return S.boardCache[merchantId];
+}
+
+// Reload summaries only (after adding booking/approval without full board reload)
+async function reloadSummaries(merchantId) {
+  const ids = (S.boardCache[merchantId] || []).map(o => o.id);
+  if (!ids.length) return;
+  const [bk, rc, ap] = await Promise.all([
+    db.from('yarn_bookings').select('order_id,qty').in('order_id', ids),
+    db.from('yarn_receipts').select('order_id,qty').in('order_id', ids),
+    db.from('approvals').select('*').in('order_id', ids).order('round'),
+  ]);
+  const sums = {};
+  ids.forEach(id => { sums[id] = { bk: 0, rc: 0, ap: {} }; });
+  (bk.data || []).forEach(b => { if (sums[b.order_id]) sums[b.order_id].bk += (b.qty||0); });
+  (rc.data || []).forEach(r => { if (sums[r.order_id]) sums[r.order_id].rc += (r.qty||0); });
+  (ap.data || []).forEach(a => {
+    if (sums[a.order_id]) {
+      if (!sums[a.order_id].ap[a.type]) sums[a.order_id].ap[a.type] = [];
+      sums[a.order_id].ap[a.type].push(a);
+    }
+  });
+  if (!S.boardSummaries) S.boardSummaries = {};
+  S.boardSummaries[merchantId] = sums;
 }
 
 async function loadArchiveData() {
@@ -1276,69 +1389,105 @@ async function renderBoard(uid) {
     </div></div>`; return;
   }
 
-    const NCOLS = 11 + VSTEPS.length + 3; // total columns for colspan
+    const sums = (S.boardSummaries[uid] || {});
+  const unit = division === 'knit' ? 'kgs' : 'lbs';
+  const matLabel = division === 'knit' ? 'Fabric' : 'Yarn';
+
   const rows = os.map(o => {
     const ms = missedMiles(o), dl = daysTo(o.ship_date);
-    const isExp = S.expandedRow === o.id;
-    let mainRow = `<tr class="${rowClass(o)} ${isExp?'exp-open':''}" style="cursor:pointer" onclick="if(!event.target.closest('button,input,a'))toggleRowExpand('${o.id}','${division}')">
-      <td class="stk"><span class="flag ${ms.length?'on':''}">​</span>
+    const sum = sums[o.id] || {bk:0, rc:0, ap:{}};
+
+    // YARN column
+    const totalBk = sum.bk, totalRc = sum.rc, bal = totalBk - totalRc;
+    const yarnCell = `<td class="col-yarn">
+      ${totalBk > 0 ? `
+        <div class="row"><span class="k">Bkd</span><span class="v">${fmt(totalBk)}</span></div>
+        <div class="row"><span class="k">Rcvd</span><span class="v ${totalRc>=totalBk?'ok':''}">${fmt(totalRc)}</span></div>
+        <div class="row"><span class="k">Bal</span><span class="v ${bal>0?'bad':bal===0?'ok':''}">${fmt(bal)}</span></div>
+      ` : '<div style="color:var(--muted);font-size:10px">No booking</div>'}
+      ${canEdit ? `<button class="mat-add-btn" onclick="event.stopPropagation();openMaterialModal('${o.id}','${division}')">+ Add</button>` : ''}
+    </td>`;
+
+    // PP APPROVAL column
+    const ppRounds = (sum.ap['pp'] || []).sort(function(a,b){return a.round-b.round;});
+    const latestPP = ppRounds.length ? ppRounds[ppRounds.length-1] : null;
+    const ppApproved = latestPP && latestPP.approved_on;
+    const planPP = o.plan_pp;
+    let ppCell = '<td class="col-pp">';
+    if (planPP) ppCell += `<div class="pp-tna">TNA: <strong>${short(planPP)}</strong></div>`;
+    if (ppApproved) {
+      ppCell += `<button class="ok-chip" style="font-size:10.5px;padding:2px 9px" onclick="event.stopPropagation();openPPModal('${o.id}','${division}')">✓ OK · R${latestPP.round}</button>`;
+    } else if (latestPP) {
+      ppCell += `<div class="pp-round-lbl">Round ${latestPP.round}
+        ${canEdit?`<button class="btn sm" style="padding:1px 5px;font-size:9px" onclick="event.stopPropagation();openPPModal('${o.id}','${division}')">+R</button>`:''}
+      </div>
+      <div class="pp-row"><span class="pp-lbl">Sent</span>
+        ${canEdit?`<input class="pp-date" type="date" value="${latestPP.submitted_on||''}" onchange="event.stopPropagation();savePPDate('${latestPP.id}','submitted_on',this.value,'${o.id}','${division}')">`:`<span style="font-family:var(--mono);font-size:10.5px">${short(latestPP.submitted_on)}</span>`}
+      </div>
+      <div class="pp-row"><span class="pp-lbl">Appr</span>
+        ${canEdit?`<input class="pp-date" type="date" value="${latestPP.approved_on||''}" onchange="event.stopPropagation();savePPDate('${latestPP.id}','approved_on',this.value,'${o.id}','${division}')">`:`<span style="font-family:var(--mono);font-size:10.5px">${short(latestPP.approved_on)}</span>`}
+      </div>`;
+    } else {
+      ppCell += `<div style="color:var(--muted);font-size:10px">No round yet</div>
+        ${canEdit?`<button class="mat-add-btn" onclick="event.stopPropagation();openPPModal('${o.id}','${division}')">+ Add round 1</button>`:''}`;
+    }
+    ppCell += '</td>';
+
+    const mainRow = `<tr class="${rowClass(o)}" onclick="if(!event.target.closest('button,input,a'))toggleRowExpand('${o.id}','${division}')">
+      <td class="stk" style="cursor:pointer">
+        <span class="flag ${ms.length?'on':''}">​</span>
         <span class="sty">${o.style}</span>
-        <div class="sub2" style="margin-left:10px">${ms.length ? ms.length+'× late' : pctPacked(o)+'% packed'}</div></td>
-      <td>${o.buyer}</td><td>${o.house}</td><td>${o.gauge||'—'}</td><td>${o.color||'—'}</td>
-      <td class="sub2">${o.comp||'—'}</td>
-      <td class="num">${fmt(o.qty)}</td><td class="num">${(o.fob||0).toFixed(2)}</td>
+        <div class="sub2" style="margin-left:10px;font-size:10px">${ms.length ? ms.length+'× late' : pctPacked(o)+'% packed'}</div>
+      </td>
+      <td>${o.buyer}</td>
+      <td style="font-size:10.5px">${o.house||'—'}</td>
+      <td style="font-size:10.5px">${[o.gauge,o.color,o.comp].filter(Boolean).join(' · ')||'—'}</td>
+      <td class="num">${fmt(o.qty)}</td>
+      <td class="num">${(o.fob||0).toFixed(2)}</td>
       <td class="num">${money((o.qty||0)*(o.fob||0))}</td>
-      <td>${short(o.ship_date)}</td>
-      <td class="num">${dl==null?'—':dl<0?`<span class="chip bad">${dl}</span>`:dl<=5?`<span class="chip warn">${dl}</span>`:dl}</td>
+      <td style="font-size:10.5px">${short(o.ship_date)}</td>
+      <td class="num">${dl==null?'—':dl<0?`<span class="chip bad" style="font-size:10px">${dl}</span>`:dl<=5?`<span class="chip warn" style="font-size:10px">${dl}</span>`:dl}</td>
       ${VSTEPS.map(s => {
         const v = o[s.k] || 0, full = v >= (o.qty||0) && (o.qty||0) > 0;
         const pct = o.qty ? Math.min(100, 100*v/o.qty) : 0;
-        if (full && canEdit) {
-          return `<td><div class="cell"><button class="ok-chip" onclick="event.stopPropagation();openEditQty('${o.id}','${s.k}',${v},${o.qty},'${s.n}')">✓ OK</button></div></td>`;
-        }
+        if (full && canEdit) return `<td style="text-align:center"><button class="ok-chip" style="font-size:10px;padding:2px 8px" onclick="event.stopPropagation();openEditQty('${o.id}','${s.k}',${v},${o.qty},'${s.n}')">✓ OK</button></td>`;
         return `<td><div class="cell">
-          <span class="bar"><i style="width:${pct}%"></i></span>
-          ${canEdit
-            ? `<input class="qtyin" type="number" min="0" max="${o.qty}" value="${v}"
-                onchange="setProd('${o.id}','${s.k}',this.value)">`
-            : `<span style="font-family:var(--mono);font-size:12px">${fmt(v)}</span>`}
+          <span class="bar" style="width:38px"><i style="width:${pct}%"></i></span>
+          ${canEdit ? `<input class="qtyin" type="number" min="0" max="${o.qty}" value="${v}" style="width:58px" onchange="setProd('${o.id}','${s.k}',this.value)">` : `<span style="font-family:var(--mono);font-size:11px">${fmt(v)}</span>`}
         </div></td>`;
       }).join('')}
-      <td class="num">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
-      <td>${canEdit
-        ? `<input class="rem-in" value="${(o.remarks||'').replace(/"/g,'&quot;')}"
-             placeholder="Add note…" onchange="setRemark('${o.id}',this.value)">`
-        : `<span class="sub2">${o.remarks||'—'}</span>`}</td>
+      ${yarnCell}
+      ${ppCell}
+      <td class="num" style="font-weight:600">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
+      <td>${canEdit ? `<input class="rem-in" style="width:100px" value="${(o.remarks||'').replace(/"/g,'&quot;')}" placeholder="Note…" onchange="setRemark('${o.id}',this.value)">` : `<span class="sub2">${o.remarks||'—'}</span>`}</td>
       <td style="white-space:nowrap">
         <button class="btn sm" onclick="event.stopPropagation();openTNA('${o.id}','${division}')">TNA${ms.length?` <span style="color:var(--red)">●</span>`:''}</button>
-        ${canEdit ? `<button class="btn sm" style="margin-left:4px" onclick="event.stopPropagation();openShip('${o.id}')">Shipped</button>` : ''}
+        ${canEdit ? `<button class="btn sm" style="margin-left:3px" onclick="event.stopPropagation();openShip('${o.id}')">Ship</button>` : ''}
       </td>
     </tr>`;
-    // Expandable inline row
-    if (isExp) {
-      mainRow += `<tr class="exp-row"><td class="stk"></td><td colspan="${NCOLS-1}">
-        <div id="exp-${o.id}" class="exp-inner">
-          <div class="exp-loading">Loading...</div>
-        </div>
-      </td></tr>`;
-    }
     return mainRow;
   }).join('');
 
-  $('content').innerHTML = notesHtml + `<div class="card"><div class="scroller"><table>
+    $('content').innerHTML = notesHtml + `<div class="card"><div class="scroller"><table>
     <thead>
       <tr>
         <th class="stk" rowspan="2">Style</th>
-        <th rowspan="2">Buyer</th><th rowspan="2">Buying house</th>
-        <th rowspan="2">Gauge</th><th rowspan="2">Colour</th><th rowspan="2">Composition</th>
-        <th rowspan="2" class="num">Order qty</th>
-        <th rowspan="2" class="num">FOB</th><th rowspan="2" class="num">Value</th>
-        <th rowspan="2">Ship date</th><th rowspan="2" class="num">Days</th>
+        <th rowspan="2">Buyer</th>
+        <th rowspan="2">Buying<br>House</th>
+        <th rowspan="2">Gauge · Colour · Comp</th>
+        <th rowspan="2" class="num">Qty</th>
+        <th rowspan="2" class="num">FOB</th>
+        <th rowspan="2" class="num">Value</th>
+        <th rowspan="2">Ship</th>
+        <th rowspan="2" class="num">Days</th>
         <th class="grp" colspan="${VSTEPS.length}">Production — ${canEdit?'enter cumulative qty':'view only'}</th>
-        <th rowspan="2" class="num">Balance</th>
-        <th rowspan="2">Remarks</th><th rowspan="2"></th>
+        <th class="grp" rowspan="2">${matLabel}<br>(${unit})</th>
+        <th class="grp" rowspan="2">PP Approval</th>
+        <th rowspan="2" class="num">Bal</th>
+        <th rowspan="2">Remarks</th>
+        <th rowspan="2"></th>
       </tr>
-      <tr>${VSTEPS.map(s=>`<th class="grp">${s.n}</th>`).join('')}</tr>
+      <tr>${VSTEPS.map(s=>`<th class="grp" style="font-size:9px">${s.n}</th>`).join('')}</tr>
     </thead>
     <tbody>${rows}</tbody>
   </table></div></div>
@@ -1904,6 +2053,189 @@ function downloadPDF() {
   setTimeout(function(){ win.focus(); win.print(); }, 600);
   closeModal('ov-print');
   toast('PDF window opened — save as PDF in print dialog');
+}
+
+
+// ─── MATERIAL MODAL (Yarn / Fabric) ───
+var _matOrdId = null, _matDiv = null;
+
+async function openMaterialModal(ordId, division) {
+  _matOrdId = ordId; _matDiv = division;
+  const o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;}) || {};
+  const unit = division === 'knit' ? 'kgs' : 'lbs';
+  const label = division === 'knit' ? 'Fabric' : 'Yarn';
+  $('mat-title').textContent = label + ' — ' + o.style;
+  $('mat-sub').textContent = o.buyer + ' · ' + fmt(o.qty) + ' pcs';
+  $('mat-body').innerHTML = '<div class="exp-loading">Loading...</div>';
+  openModal('ov-material');
+
+  const [bk, rc] = await Promise.all([
+    db.from('yarn_bookings').select('*').eq('order_id', ordId).order('booked_on'),
+    db.from('yarn_receipts').select('*').eq('order_id', ordId).order('received_on'),
+  ]);
+  const bkData = bk.data || [], rcData = rc.data || [];
+  const totalBk = bkData.reduce(function(s,x){return s+(x.qty||0);},0);
+  const totalRc = rcData.reduce(function(s,x){return s+(x.qty||0);},0);
+  const bal = totalBk - totalRc;
+  const today0 = new Date().toISOString().slice(0,10);
+  const canEdit = S.user.role === 'management' || S.user.id === S.view;
+
+  var bkRows = bkData.map(function(b,i){
+    return '<div class="apv-history-row"><span style="font-family:var(--mono);font-size:11px;width:68px;flex-shrink:0">' + short(b.booked_on) + '</span>'
+      + '<span style="flex:1">' + (b.supplier||'—') + '</span>'
+      + '<span style="font-family:var(--mono);font-size:11px;font-weight:600">' + fmt(b.qty) + ' ' + unit + '</span>'
+      + (canEdit ? '<button class="btn sm danger" style="margin-left:8px;padding:1px 6px" onclick="delMat(\'bk\',\''+b.id+'\')">×</button>' : '')
+      + '</div>';
+  }).join('');
+
+  var rcRows = rcData.map(function(r,i){
+    var run = rcData.slice(0,i+1).reduce(function(s,x){return s+(x.qty||0);},0);
+    return '<div class="apv-history-row"><span style="font-family:var(--mono);font-size:11px;width:68px;flex-shrink:0">' + short(r.received_on) + '</span>'
+      + '<span style="flex:1;color:var(--muted);font-size:11px">Running: ' + fmt(run) + '</span>'
+      + '<span style="font-family:var(--mono);font-size:11px;font-weight:600">' + fmt(r.qty) + ' ' + unit + '</span>'
+      + (canEdit ? '<button class="btn sm danger" style="margin-left:8px;padding:1px 6px" onclick="delMat(\'rc\',\''+r.id+'\')">×</button>' : '')
+      + '</div>';
+  }).join('');
+
+  $('mat-body').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    + '<div><div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">Bookings</div>'
+    + (bkRows || '<div style="color:var(--muted);font-size:12px;padding:4px 0">None yet</div>')
+    + (canEdit ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">'
+      + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:2px">Date</div><input type="date" id="mat-bk-date" value="'+today0+'" style="padding:4px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:#FCFBF7;color:var(--ink)"></div>'
+      + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:2px">Supplier</div><input type="text" id="mat-bk-sup" placeholder="Name" style="padding:4px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;width:130px;background:#FCFBF7;color:var(--ink)"></div>'
+      + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:2px">Qty ('+unit+')</div><input type="number" id="mat-bk-qty" placeholder="0" style="padding:4px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;width:80px;background:#FCFBF7"></div>'
+      + '<button class="btn sm pri" onclick="addMat(\'bk\')">Add</button></div></div>' : '')
+    + '</div>'
+    + '<div><div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">Received</div>'
+    + (rcRows || '<div style="color:var(--muted);font-size:12px;padding:4px 0">None yet</div>')
+    + (canEdit ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">'
+      + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:2px">Date</div><input type="date" id="mat-rc-date" value="'+today0+'" style="padding:4px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:#FCFBF7;color:var(--ink)"></div>'
+      + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:2px">Qty ('+unit+')</div><input type="number" id="mat-rc-qty" placeholder="0" style="padding:4px 7px;border:1px solid var(--line);border-radius:6px;font-size:12px;width:100px;background:#FCFBF7"></div>'
+      + '<button class="btn sm pri" onclick="addMat(\'rc\')">Add</button></div></div>' : '')
+    + '</div>'
+    + '</div>'
+    + (totalBk ? '<div class="mat-summary" style="margin-top:14px">'
+      + '<div class="item"><div class="k">Booked</div><div class="v">'+fmt(totalBk)+' '+unit+'</div></div>'
+      + '<div class="item"><div class="k">Received</div><div class="v '+(totalRc>=totalBk?'ok':'')+'">'+fmt(totalRc)+' '+unit+'</div></div>'
+      + '<div class="item"><div class="k">Balance</div><div class="v '+(bal>0?'bad':bal===0?'ok':'')+'">' +fmt(bal)+' '+unit+'</div></div>'
+      + '</div>' : '');
+}
+
+async function addMat(type) {
+  if (type === 'bk') {
+    var dt=$('mat-bk-date').value, qty=parseFloat($('mat-bk-qty').value)||0, sup=$('mat-bk-sup').value.trim();
+    if (!dt||!qty){toast('Date and quantity required','err');return;}
+    await db.from('yarn_bookings').insert({order_id:_matOrdId,booked_on:dt,qty:qty,supplier:sup});
+  } else {
+    var dt2=$('mat-rc-date').value, qty2=parseFloat($('mat-rc-qty').value)||0;
+    if (!dt2||!qty2){toast('Date and quantity required','err');return;}
+    await db.from('yarn_receipts').insert({order_id:_matOrdId,received_on:dt2,qty:qty2});
+  }
+  toast('Saved','ok-t');
+  await reloadSummaries(S.view);
+  renderBoard(S.view); // refresh table
+  openMaterialModal(_matOrdId, _matDiv); // refresh modal
+}
+
+async function delMat(type, id) {
+  if (!confirm('Remove?')) return;
+  if (type === 'bk') await db.from('yarn_bookings').delete().eq('id',id);
+  else await db.from('yarn_receipts').delete().eq('id',id);
+  await reloadSummaries(S.view);
+  renderBoard(S.view);
+  openMaterialModal(_matOrdId, _matDiv);
+}
+
+// ─── PP APPROVAL MODAL ───
+var _ppOrdId = null, _ppDiv = null;
+
+async function openPPModal(ordId, division) {
+  _ppOrdId = ordId; _ppDiv = division;
+  await openApvModal(ordId, division, 'pp', 'PP Approval', 'ov-pp-hist', 'pp-title', 'pp-sub', 'pp-body', 'pp-add-btn');
+}
+
+async function addPPRoundFromModal() {
+  await addApvRoundModal(_ppOrdId, 'pp', _ppDiv, 'ov-pp-hist', 'pp-title', 'pp-sub', 'pp-body', 'pp-add-btn');
+}
+
+// ─── LAB DIP MODAL ───
+var _ldOrdId = null, _ldDiv = null;
+
+async function openLDModal(ordId, division) {
+  _ldOrdId = ordId; _ldDiv = division;
+  await openApvModal(ordId, division, 'labdip', 'Lab Dip Approval', 'ov-labdip-hist', 'ld-title', 'ld-sub', 'ld-body', 'ld-add-btn');
+}
+
+async function addLDRoundFromModal() {
+  await addApvRoundModal(_ldOrdId, 'labdip', _ldDiv, 'ov-labdip-hist', 'ld-title', 'ld-sub', 'ld-body', 'ld-add-btn');
+}
+
+// Generic approval modal
+async function openApvModal(ordId, division, type, label, modalId, titleId, subId, bodyId, addBtnId) {
+  const o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;}) || {};
+  const planKey = 'plan_' + (type === 'pp' ? 'pp' : type === 'labdip' ? 'yarn' : 'pp'); // approx
+  $(titleId).textContent = label + ' — ' + o.style;
+  $(subId).textContent = o.buyer + (o['plan_pp'] ? ' · TNA: ' + short(o['plan_pp']) : '');
+  $(bodyId).innerHTML = '<div class="exp-loading">Loading...</div>';
+  const addBtn = $(addBtnId);
+  if (addBtn) addBtn.style.display = (S.user.role === 'management' || S.user.id === S.view) ? 'block' : 'none';
+  openModal(modalId);
+
+  const { data } = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
+  const rounds = data || [];
+  const canEdit = S.user.role === 'management' || S.user.id === S.view;
+
+  if (!rounds.length) {
+    $(bodyId).innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">No rounds recorded yet. Click "+ Add round" to start.</div>';
+    return;
+  }
+
+  $(bodyId).innerHTML = rounds.map(function(r) {
+    const st = r.approved_on ? '<span class="chip ok">Approved</span>'
+      : r.submitted_on ? '<span class="chip warn">Awaiting approval</span>'
+      : '<span class="chip run">Not submitted</span>';
+    return '<div class="apv-history-row" style="flex-wrap:wrap;gap:8px">'
+      + '<span style="font-weight:600;width:56px;flex-shrink:0">Round ' + r.round + '</span>'
+      + '<span style="color:var(--muted);font-size:11px;width:52px;flex-shrink:0">Sent</span>'
+      + (canEdit
+        ? '<input class="apv-date-inp" type="date" value="'+(r.submitted_on||'')+'" onchange="saveApvFromModal(\''+r.id+'\',\'submitted_on\',this.value,\''+ordId+'\',\''+division+'\',\''+type+'\')">'
+        : '<span style="font-family:var(--mono);font-size:11px">' + short(r.submitted_on) + '</span>')
+      + '<span style="color:var(--muted);font-size:11px;margin-left:6px;width:52px;flex-shrink:0">Approved</span>'
+      + (canEdit
+        ? '<input class="apv-date-inp" type="date" value="'+(r.approved_on||'')+'" onchange="saveApvFromModal(\''+r.id+'\',\'approved_on\',this.value,\''+ordId+'\',\''+division+'\',\''+type+'\')">'
+        : '<span style="font-family:var(--mono);font-size:11px">' + short(r.approved_on) + '</span>')
+      + st
+      + '</div>';
+  }).join('');
+}
+
+async function addApvRoundModal(ordId, type, division, modalId, titleId, subId, bodyId, addBtnId) {
+  const sums = (S.boardSummaries[S.view]||{})[ordId]||{ap:{}};
+  const existing = (sums.ap[type]||[]);
+  const nextR = existing.length ? Math.max.apply(null, existing.map(function(r){return r.round;}))+1 : 1;
+  await db.from('approvals').insert({order_id:ordId,type:type,round:nextR});
+  await reloadSummaries(S.view);
+  renderBoard(S.view);
+  await openApvModal(ordId, division, type, type==='pp'?'PP Approval':'Lab Dip Approval', modalId, titleId, subId, bodyId, addBtnId);
+}
+
+async function saveApvFromModal(id, field, val, ordId, division, type) {
+  var obj = {}; obj[field] = val || null;
+  await db.from('approvals').update(obj).eq('id', id);
+  await reloadSummaries(S.view);
+  renderBoard(S.view);
+  if (type === 'pp') openPPModal(ordId, division);
+  else openLDModal(ordId, division);
+}
+
+async function savePPDate(id, field, val, ordId, division) {
+  var obj = {}; obj[field] = val || null;
+  await db.from('approvals').update(obj).eq('id', id);
+  await reloadSummaries(S.view);
+  renderBoard(S.view);
 }
 
 
