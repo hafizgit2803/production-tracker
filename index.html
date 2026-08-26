@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Production Tracker — M.T. Sweaters</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#FAF9F5;--panel:#FFFFFF;--rail:#F0EEE6;--ink:#191817;--muted:#73706A;
+  --line:#E5E2D9;--accent:#C96442;--accent-soft:#F6E9E4;
+  --red:#C0392B;--red-soft:#FBE9E7;--amber:#B7791F;--amber-soft:#FDF6E3;
+  --orange:#C05621;--orange-soft:#FBEAE0;--green:#2F7A4F;--green-soft:#E7F3EC;
+  --r:10px;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;
+  line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:var(--ink)}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+
+/* ── SHELL ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+.rail{width:244px;flex:0 0 244px;background:var(--rail);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;height:100vh}
+.brand{padding:18px 16px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
+.brand h1{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.2px}
+.brand span{font-size:11px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:2px;display:block}
+.rail-body{flex:1;overflow-y:auto;padding:10px 8px}
+.rail-sep{height:1px;background:var(--line);margin:8px 4px}
+.rail-label{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;padding:10px 8px 5px}
+.ni{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:0;
+  padding:6px 8px;border-radius:8px;color:var(--ink);margin-bottom:1px;transition:background .1s}
+.ni:hover{background:rgba(0,0,0,.04)}
+.ni.on{background:var(--accent-soft);color:#8a3f24;font-weight:600}
+.ni .av{width:22px;height:22px;border-radius:50%;background:#DDD9CD;color:#5b584f;
+  font-size:10px;font-weight:700;display:grid;place-items:center;flex:0 0 22px}
+.ni.on .av{background:var(--accent);color:#fff}
+.ni .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px}
+.ni .badge{font-size:10px;font-weight:700;color:#fff;background:var(--red);
+  border-radius:20px;padding:1px 6px;min-width:17px;text-align:center}
+.ni .ct{font-size:11px;color:var(--muted)}
+.rail-foot{padding:10px 8px;border-top:1px solid var(--line);flex:0 0 auto}
+.user-row{display:flex;align-items:center;gap:8px;padding:6px 4px}
+.user-row .av{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;
+  font-size:11px;font-weight:700;display:grid;place-items:center;flex:0 0 28px}
+.user-row .info{flex:1;min-width:0}
+.user-row .uname{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-row .urole{font-size:11px;color:var(--muted)}
+.lo-btn{border:0;background:none;color:var(--muted);font-size:12px;padding:2px 6px;border-radius:5px}
+.lo-btn:hover{background:rgba(0,0,0,.07);color:var(--ink)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.top{padding:20px 24px 0;flex:0 0 auto}
+.crumb{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:4px}
+.pagehead h2{font-family:var(--serif);font-size:32px;font-weight:600;letter-spacing:-.6px;margin-top:2px}
+.stamp .lab{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right}
+.stamp .val{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.3px;margin-top:1px;text-align:right}
+.stamp .val.stale{color:var(--red)}
+.stamp .sub{font-size:11px;color:var(--muted);text-align:right}
+.act-row{display:flex;gap:8px;margin:14px 0 0;flex-wrap:wrap}
+.content{flex:1;overflow-y:auto;padding:16px 24px 60px}
+
+/* ── BUTTONS ── */
+.btn{border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:8px;
+  font-weight:500;transition:background .1s}
+.btn:hover{background:#F4F2EB}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{background:#b4573a}
+.btn.sm{padding:3px 8px;font-size:12.5px;border-radius:6px}
+.btn.ghost{background:none;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{background:rgba(0,0,0,.05);color:var(--ink)}
+.btn.danger{background:#FEF2F2;border-color:#FECACA;color:var(--red)}
+.btn.danger:hover{background:#FEE2E2}
+
+/* ── CARDS ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.stat .k{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stat .v{font-family:var(--serif);font-size:28px;font-weight:600;letter-spacing:-.5px;margin-top:2px}
+.stat .n{font-size:11.5px;color:var(--muted)}
+.stat.alert{border-color:#EBC4BC;background:var(--red-soft)}
+.stat.alert .v{color:var(--red)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.card-h{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.card-h h3{font-family:var(--serif);font-size:16px;font-weight:600}
+.card-h .note{font-size:12px;color:var(--muted)}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.empty h4{font-family:var(--serif);font-size:18px;color:var(--ink);margin-bottom:5px;font-weight:600}
+
+/* ── TABLE ── */
+.scroller{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{background:#F7F5EF;text-align:left;padding:7px 9px;font-size:10px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line);white-space:nowrap}
+th.grp{text-align:center;border-left:2px solid var(--line);color:#8a3f24;background:#F3EFE6}
+td{padding:6px 9px;border-bottom:1px solid #F0EDE4;white-space:nowrap;vertical-align:middle}
+tbody tr:hover td{background:rgba(0,0,0,.015)}
+tbody tr.r10 td{background:var(--amber-soft)}
+tbody tr.r5  td{background:var(--orange-soft)}
+tbody tr.late td{background:var(--red-soft)}
+td.stk,th.stk{position:sticky;left:0;background:var(--panel);z-index:2;border-right:1px solid var(--line)}
+th.stk{background:#F7F5EF;z-index:3}
+tbody tr.r10 td.stk{background:var(--amber-soft)}
+tbody tr.r5 td.stk{background:var(--orange-soft)}
+tbody tr.late td.stk{background:var(--red-soft)}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:12px}
+.sty{font-weight:600}
+.sub2{font-size:11px;color:var(--muted)}
+.flag{display:inline-block;width:4px;height:22px;border-radius:3px;background:transparent;margin-right:6px;vertical-align:middle}
+.flag.on{background:var(--red)}
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.chip.ok{background:var(--green-soft);color:var(--green)}
+.chip.run{background:#EFEDE5;color:var(--muted)}
+.chip.bad{background:var(--red-soft);color:var(--red)}
+.chip.warn{background:var(--orange-soft);color:var(--orange)}
+.cell{display:flex;align-items:center;gap:5px;justify-content:flex-end}
+.qtyin{width:64px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;text-align:right;
+  font-family:var(--mono);font-size:12px;background:#FCFBF7}
+.qtyin:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent);background:#fff}
+.bar{height:3px;border-radius:3px;background:#E8E5DC;width:42px;overflow:hidden;flex:0 0 42px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.bar i.full{background:var(--green)}
+.done-lbl{font-size:10.5px;font-weight:700;color:var(--green);letter-spacing:.03em}
+.rem-in{width:120px;padding:3px 6px;border:1px solid transparent;border-radius:6px;background:transparent;font-size:12px}
+.rem-in:hover{border-color:var(--line);background:#FCFBF7}
+.rem-in:focus{outline:none;border-color:var(--accent);background:#fff}
+
+/* ── LOGIN ── */
+#login-wrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200}
+.login-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:36px 36px 28px;
+  width:100%;max-width:380px;box-shadow:0 12px 40px rgba(30,28,25,.12)}
+.login-card .logo{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.3px;margin-bottom:4px}
+.login-card .tagline{font-size:12px;color:var(--muted);margin-bottom:28px}
+.lf label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;display:block}
+.lf{margin-bottom:14px}
+.lf select,.lf input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#FCFBF7}
+.lf select:focus,.lf input:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
+.login-err{font-size:12px;color:var(--red);margin-bottom:10px;display:none}
+.login-card .btn.pri{width:100%;padding:9px;font-size:14px;margin-top:4px}
+.login-spin{display:none;text-align:center;padding:6px;color:var(--muted);font-size:12px}
+
+/* ── MODALS ── */
+.ov{position:fixed;inset:0;background:rgba(30,28,25,.4);backdrop-filter:blur(2px);
+  display:none;align-items:flex-start;justify-content:center;padding:30px 16px;z-index:100;overflow-y:auto}
+.ov.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:100%;max-width:800px;
+  box-shadow:0 18px 50px rgba(30,28,25,.18);animation:pop .15s ease-out}
+.modal.slim{max-width:440px}
+.modal.wide{max-width:980px}
+@keyframes pop{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.m-h{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.m-h h3{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.3px}
+.m-h .msub{font-size:12px;color:var(--muted);margin-top:2px}
+.xbtn{border:0;background:none;font-size:19px;line-height:1;color:var(--muted);padding:2px 5px;border-radius:6px}
+.xbtn:hover{background:#F0EDE4;color:var(--ink)}
+.m-b{padding:16px 18px}
+.m-f{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;
+  background:#FCFBF7;border-radius:0 0 14px 14px}
+.fset{border:0;padding:0;margin:0 0 16px}
+.fset legend{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);
+  font-weight:700;margin-bottom:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.f label{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px}
+.f input,.f select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7}
+.f input:focus,.f select:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
+.f input[readonly]{background:#F3F1EA;color:var(--muted);font-family:var(--mono)}
+.hint{font-size:11px;color:var(--muted);margin-top:6px}
+.form-err{font-size:12px;color:var(--red);margin-bottom:8px;display:none}
+
+/* TNA modal */
+.tna-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.tna-kpis>div{background:#FAF9F5;border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+.tna-kpis .k{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.tna-kpis .v{font-weight:600;margin-top:2px;font-size:15px}
+table.tna-t td{vertical-align:middle}
+table.tna-t td.late-c{color:var(--red);font-weight:700}
+table.tna-t td.early-c{color:var(--green);font-weight:600}
+
+/* Admin */
+.admin-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.admin-row:last-child{border-bottom:0}
+.admin-row .nm{flex:1;font-weight:500}
+.admin-row .tm{font-size:12px;color:var(--muted)}
+.admin-row input{width:140px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:#FCFBF7;font-size:12px}
+.admin-row input:focus{outline:none;border-color:var(--accent);background:#fff}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;background:#1F1F1F;color:#fff;padding:10px 16px;
+  border-radius:9px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);
+  transition:all .2s;z-index:999;max-width:300px;pointer-events:none}
+#toast.show{opacity:1;transform:none}
+#toast.err{background:var(--red)}
+#toast.ok-t{background:var(--green)}
+
+/* Loading */
+.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--line);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{display:flex;align-items:center;gap:10px;padding:40px;justify-content:center;color:var(--muted)}
+
+@media print{
+  .rail,.act-row,.top .crumb,.no-print,#toast{display:none!important}
+  .ov{position:static;background:none;padding:0;display:block;overflow:visible}
+  .modal{box-shadow:none;border:0;max-width:100%}
+  .m-f,.xbtn,.btn{display:none}
+  body{font-size:11px;background:#fff}
+  td,th{white-space:normal}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-wrap">
+  <div class="login-card">
+    <div class="logo">Production Tracker</div>
+    <div class="tagline">M.T. Sweaters — Internal use only</div>
+    <div class="lf">
+      <label>Your name</label>
+      <select id="l_name"><option value="">Loading…</option></select>
+    </div>
+    <div class="lf">
+      <label>Password</label>
+      <input id="l_pwd" type="password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-err" id="l_err">Incorrect password. Try again.</div>
+    <div class="login-spin" id="l_spin"><span class="spin"></span> Signing in…</div>
+    <button class="btn pri" onclick="doLogin()">Sign in</button>
+    <div class="hint" style="text-align:center;margin-top:12px">Forgot password? Contact management.</div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app" class="shell" style="display:none">
+  <aside class="rail">
+    <div class="brand">
+      <h1>Production Tracker</h1>
+      <span>M.T. Sweaters</span>
+    </div>
+    <div class="rail-body" id="rail-body"></div>
+    <div class="rail-foot">
+      <div class="user-row" id="user-row"></div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <div class="crumb" id="crumb">Overview</div>
+      <div class="pagehead">
+        <div><h2 id="page-title">Dashboard</h2><div class="sub2" id="page-sub"></div></div>
+        <div class="stamp" id="stamp"></div>
+      </div>
+      <div class="act-row" id="act-row"></div>
+    </div>
+    <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading…</div></div>
+  </main>
+</div>
+
+<!-- ═══ MODAL: NEW ORDER ═══ -->
+<div class="ov" id="ov-order" onclick="if(event.target===this)closeModal('ov-order')">
+  <div class="modal">
+    <div class="m-h">
+      <div><h3>New order</h3><div class="msub" id="ord-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-order')">✕</button>
+    </div>
+    <div class="m-b">
+      <div class="form-err" id="ord-err"></div>
+      <fieldset class="fset"><legend>Order details</legend>
+        <div class="grid3">
+          <div class="f"><label>Buying house</label><input id="o_house" list="dl_house" autocomplete="off" placeholder="e.g. Grand Sea"></div>
+          <div class="f"><label>Buyer</label><input id="o_buyer" list="dl_buyer" autocomplete="off" placeholder="e.g. Zeeman"></div>
+          <div class="f"><label>Style no.</label><input id="o_style" autocomplete="off" placeholder="e.g. 148856"></div>
+          <div class="f"><label>Gauge</label><input id="o_gauge" list="dl_gauge" autocomplete="off" placeholder="e.g. 12GG"></div>
+          <div class="f"><label>Colours</label><input id="o_color" list="dl_color" autocomplete="off" placeholder="e.g. Navy, Ecru"></div>
+          <div class="f"><label>Yarn composition</label><input id="o_comp" list="dl_comp" autocomplete="off" placeholder="e.g. 100% Acrylic"></div>
+          <div class="f"><label>Order qty (pcs)</label><input id="o_qty" type="number" min="0" oninput="calcTotal()"></div>
+          <div class="f"><label>FOB (USD/pc)</label><input id="o_fob" type="number" step="0.01" min="0" oninput="calcTotal()"></div>
+          <div class="f"><label>Total value (USD)</label><input id="o_total" readonly></div>
+        </div>
+      </fieldset>
+      <fieldset class="fset"><legend>TNA plan dates</legend>
+        <div class="grid3">
+          <div class="f"><label>Bulk yarn inhouse</label><input id="p_yarn" type="date"></div>
+          <div class="f"><label>PP approval</label><input id="p_pp" type="date"></div>
+          <div class="f"><label>Sewing / trims inhouse</label><input id="p_sew" type="date"></div>
+          <div class="f"><label>Packing items inhouse</label><input id="p_pack" type="date"></div>
+          <div class="f"><label>Knitting complete</label><input id="p_knit" type="date"></div>
+          <div class="f"><label>Final inspection</label><input id="p_insp" type="date"></div>
+          <div class="f"><label>Shipment date</label><input id="p_ship" type="date" oninput="syncShip()"></div>
+        </div>
+        <div class="hint">All fields save to memory and are suggested next time. Only Style no. and Order qty are required to save.</div>
+      </fieldset>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-order')">Cancel</button>
+      <button class="btn pri" id="save-order-btn" onclick="saveOrder()">Add order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: TNA ═══ -->
+<div class="ov" id="ov-tna" onclick="if(event.target===this)closeModal('ov-tna')">
+  <div class="modal wide">
+    <div class="m-h">
+      <div><h3 id="tna-title">TNA</h3><div class="msub" id="tna-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-tna')">✕</button>
+    </div>
+    <div class="m-b" id="tna-body"></div>
+    <div class="m-f"><button class="btn" onclick="closeModal('ov-tna')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: SHIP CONFIRM ═══ -->
+<div class="ov" id="ov-ship" onclick="if(event.target===this)closeModal('ov-ship')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Mark as shipped</h3><div class="msub" id="ship-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-ship')">✕</button></div>
+    <div class="m-b">
+      <p style="margin-bottom:14px;color:var(--muted);font-size:13px">This order will be moved to the archive. It will be kept for 2 years and then permanently deleted.</p>
+      <div class="f"><label>Actual shipment date</label><input id="ship_date_actual" type="date"></div>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-ship')">Cancel</button>
+      <button class="btn pri" id="confirm-ship-btn" onclick="confirmShip()">Confirm shipped</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: PRINT ═══ -->
+<div class="ov" id="ov-print" onclick="if(event.target===this)closeModal('ov-print')">
+  <div class="modal wide">
+    <div class="m-h">
+      <div><h3 id="pr-title">Print</h3><div class="msub" id="pr-sub"></div></div>
+      <button class="xbtn no-print" onclick="closeModal('ov-print')">✕</button>
+    </div>
+    <div class="m-b">
+      <div class="f no-print" style="max-width:260px;margin-bottom:14px">
+        <label>Filter by buyer</label>
+        <select id="pr-buyer" onchange="renderPrint()"></select>
+      </div>
+      <div id="pr-body"></div>
+    </div>
+    <div class="m-f no-print">
+      <button class="btn" onclick="closeModal('ov-print')">Cancel</button>
+      <button class="btn pri" onclick="window.print()">Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ADMIN ═══ -->
+<div class="ov" id="ov-admin" onclick="if(event.target===this)closeModal('ov-admin')">
+  <div class="modal">
+    <div class="m-h"><div><h3>Admin — Manage users</h3><div class="msub">Add merchandisers and reset passwords</div></div>
+      <button class="xbtn" onclick="closeModal('ov-admin')">✕</button></div>
+    <div class="m-b">
+      <div class="card-h" style="padding:0 0 12px;border:0"><h3 style="font-size:14px">Add new merchandiser</h3></div>
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="f"><label>Full name</label><input id="a_name" placeholder="e.g. Taher Ahmed"></div>
+        <div class="f"><label>Team / section</label><input id="a_team" placeholder="e.g. Knit"></div>
+        <div class="f"><label>Password</label><input id="a_pwd" type="text" placeholder="Set a password"></div>
+      </div>
+      <div class="form-err" id="admin-err"></div>
+      <button class="btn pri" style="margin-bottom:22px" onclick="addMerchant()">Add merchandiser</button>
+      <div class="card-h" style="padding:0 0 10px;border:0"><h3 style="font-size:14px">Reset password</h3></div>
+      <div id="admin-list"></div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Change management password</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="mgmt_pwd" type="text" placeholder="New password" style="max-width:200px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7">
+          <button class="btn sm pri" onclick="changeMgmtPwd()">Save</button>
+        </div>
+      </div>
+    </div>
+    <div class="m-f"><button class="btn" onclick="closeModal('ov-admin')">Close</button></div>
+  </div>
+</div>
+
+<!-- Autocomplete datalists -->
+<datalist id="dl_house"></datalist>
+<datalist id="dl_buyer"></datalist>
+<datalist id="dl_gauge"></datalist>
+<datalist id="dl_color"></datalist>
+<datalist id="dl_comp"></datalist>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+'use strict';
+const SB_URL = 'https://nmrhcrgyuuncnmcgxowr.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tcmhjcmd5dXVuY25tY2d4b3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MjkyMDMsImV4cCI6MjEwMzMwNTIwM30.szq4x-9orpOb9v6AMeZV0GAWXGWTc3wACXvGrQHcsQc';
+
+const { createClient } = supabase;
+const db = createClient(SB_URL, SB_KEY, { realtime: { params: { eventsPerSecond: 10 } } });
+
+// ─── Constants ───
+const STEPS = [
+  {k:'prod_knitting',n:'Knitting'},{k:'prod_linking',n:'Linking'},{k:'prod_mending',n:'Mending'},
+  {k:'prod_wash',n:'Wash'},{k:'prod_iron',n:'Iron'},{k:'prod_packing',n:'Packing'}
+];
+const MILES = [
+  {k:'yarn',n:'Bulk yarn inhouse'},{k:'pp',n:'PP approval'},
+  {k:'sew',n:'Sewing / trims inhouse'},{k:'pack',n:'Packing items inhouse'},
+  {k:'knit',n:'Knitting complete'},{k:'insp',n:'Final inspection'},{k:'ship',n:'Shipment'}
+];
+
+// ─── State ───
+const S = {
+  user: null,
+  users: [],
+  orders: [],
+  archive: [],
+  memo: {},
+  view: 'dashboard',
+  shipTarget: null,
+  printTarget: null,
+  channel: null,
+};
+
+// ─── Helpers ───
+const $ = id => document.getElementById(id);
+const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
+const money = n => '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const toDate = s => s ? new Date(s + 'T00:00:00') : null;
+const daysTo = s => s ? Math.round((toDate(s) - today()) / 86400000) : null;
+const short = s => !s ? '—' : toDate(s).toLocaleDateString('en-GB', {day:'2-digit',month:'short'});
+const initials = n => n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+const ago = dt => {
+  const m = Math.round((Date.now() - new Date(dt).getTime()) / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + ' min ago';
+  const h = Math.round(m / 60);
+  if (h < 24) return h + 'h ago';
+  return Math.round(h / 24) + 'd ago';
+};
+
+function rowClass(o) {
+  if (missedMiles(o).length) return 'late';
+  const dl = daysTo(o.ship_date);
+  if (dl != null && dl <= 5) return 'r5';
+  if (dl != null && dl <= 10) return 'r10';
+  return '';
+}
+function missedMiles(o) {
+  return MILES.filter(m => {
+    const p = o['plan_' + m.k];
+    if (!p) return false;
+    const a = o['act_' + m.k];
+    return a ? toDate(a) > toDate(p) : daysTo(p) < 0;
+  });
+}
+function pctPacked(o) {
+  return o.qty > 0 ? Math.round(100 * (o.prod_packing || 0) / o.qty) : 0;
+}
+
+// ─── Toast ───
+let toastTimer;
+function toast(msg, type = '') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 2800);
+}
+
+// ─── Modal ───
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) { $(id).classList.remove('open'); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.ov.open').forEach(o => o.classList.remove('open'));
+});
+
+// ─── AUTH ───
+async function init() {
+  // Load names for login dropdown before session check
+  try {
+    const { data } = await db.from('users').select('name,role').order('name');
+    if (data) {
+      $('l_name').innerHTML = '<option value="">— Select your name —</option>' +
+        data.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+    }
+  } catch(e) { /* offline, will show error on login attempt */ }
+
+  // Check saved session
+  const saved = localStorage.getItem('pt_uid');
+  if (saved) {
+    try {
+      const { data } = await db.from('users').select('*').eq('id', saved).single();
+      if (data) { S.user = data; await startApp(); return; }
+    } catch(e) {}
+  }
+  // Show login
+  $('login-wrap').style.display = 'flex';
+}
+
+async function doLogin() {
+  const name = $('l_name').value.trim();
+  const pwd = $('l_pwd').value;
+  $('l_err').style.display = 'none';
+  if (!name) { $('l_err').textContent = 'Please select your name.'; $('l_err').style.display = 'block'; return; }
+  if (!pwd) { $('l_err').textContent = 'Please enter your password.'; $('l_err').style.display = 'block'; return; }
+  $('l_spin').style.display = 'block';
+  try {
+    const { data, error } = await db.from('users').select('*').eq('name', name).eq('password', pwd).maybeSingle();
+    if (data) {
+      S.user = data;
+      localStorage.setItem('pt_uid', data.id);
+      await startApp();
+    } else {
+      $('l_err').style.display = 'block';
+    }
+  } catch(e) {
+    $('l_err').textContent = 'Connection error. Check your internet.';
+    $('l_err').style.display = 'block';
+  }
+  $('l_spin').style.display = 'none';
+}
+
+function doLogout() {
+  localStorage.removeItem('pt_uid');
+  if (S.channel) db.removeChannel(S.channel);
+  location.reload();
+}
+
+async function startApp() {
+  $('login-wrap').style.display = 'none';
+  $('app').style.display = 'flex';
+  await loadAll();
+  subscribeRealtime();
+  render();
+}
+
+// ─── DATA ───
+async function loadAll() {
+  await Promise.all([loadUsers(), loadOrders(), loadMemo()]);
+  await cleanOldArchive();
+}
+
+async function loadUsers() {
+  const { data } = await db.from('users').select('*').order('name');
+  S.users = data || [];
+}
+
+async function loadOrders() {
+  let q = db.from('orders').select('*').order('ship_date', { ascending: true });
+  if (S.user.role !== 'management') {
+    q = q.eq('merchant_id', S.user.id);
+  }
+  const { data } = await q;
+  const all = data || [];
+  S.orders = all.filter(o => !o.shipped);
+  S.archive = all.filter(o => o.shipped);
+}
+
+async function loadMemo() {
+  const { data } = await db.from('memo').select('field,value');
+  S.memo = {};
+  (data || []).forEach(r => {
+    if (!S.memo[r.field]) S.memo[r.field] = new Set();
+    S.memo[r.field].add(r.value);
+  });
+  ['house','buyer','gauge','color','comp'].forEach(k => {
+    const dl = $('dl_' + k);
+    if (dl) dl.innerHTML = [...(S.memo[k] || [])].map(v => `<option value="${v}">`).join('');
+  });
+}
+
+async function saveMemo(field, value) {
+  if (!value) return;
+  await db.from('memo').upsert({ field, value }, { onConflict: 'field,value' });
+  if (!S.memo[field]) S.memo[field] = new Set();
+  S.memo[field].add(value);
+  loadMemo();
+}
+
+async function cleanOldArchive() {
+  const cutoff = new Date();
+  cutoff.setFullYear(cutoff.getFullYear() - 2);
+  const cutStr = cutoff.toISOString().slice(0, 10);
+  await db.from('orders').delete().eq('shipped', true).lt('shipped_on', cutStr);
+}
+
+// ─── REALTIME ───
+function subscribeRealtime() {
+  S.channel = db.channel('tracker-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, async () => {
+      await loadOrders();
+      render();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, async () => {
+      await loadUsers();
+      renderRail();
+    })
+    .subscribe();
+}
+
+// ─── RENDER ───
+function render() {
+  renderRail();
+  if (S.view === 'dashboard') renderDashboard();
+  else if (S.view === 'archive') renderArchive();
+  else renderBoard(S.view);
+}
+
+function setView(v) { S.view = v; render(); }
+
+function renderRail() {
+  const u = S.user;
+  const merchants = S.users.filter(x => x.role === 'merchant');
+
+  let html = `
+    <button class="ni ${S.view==='dashboard'?'on':''}" onclick="setView('dashboard')">
+      <span class="av">▦</span><span class="nm">Dashboard</span>
+    </button>`;
+
+  if (u.role === 'management') {
+    html += `<div class="rail-sep"></div><div class="rail-label">Merchandisers</div>`;
+    html += merchants.map(m => {
+      const os = S.orders.filter(o => o.merchant_id === m.id);
+      const bad = os.filter(o => missedMiles(o).length).length;
+      const stale = m.updated_at && (Date.now() - new Date(m.updated_at).getTime()) > 86400000;
+      return `<button class="ni ${S.view===m.id?'on':''}" onclick="setView('${m.id}')">
+        <span class="av">${initials(m.name)}</span>
+        <span class="nm">${m.name}</span>
+        ${bad ? `<span class="badge">${bad}</span>` : `<span class="ct">${os.length}</span>`}
+      </button>`;
+    }).join('');
+  } else {
+    html += `<button class="ni ${S.view===u.id?'on':''}" onclick="setView('${u.id}')">
+      <span class="av">${initials(u.name)}</span>
+      <span class="nm">My board</span>
+    </button>`;
+  }
+
+  html += `<div class="rail-sep"></div>
+    <button class="ni ${S.view==='archive'?'on':''}" onclick="setView('archive')">
+      <span class="av">✓</span><span class="nm">Archive</span>
+      <span class="ct">${S.archive.length}</span>
+    </button>`;
+
+  if (u.role === 'management') {
+    html += `<button class="ni" onclick="openAdmin()">
+      <span class="av">⚙</span><span class="nm">Admin</span>
+    </button>`;
+  }
+
+  $('rail-body').innerHTML = html;
+
+  $('user-row').innerHTML = `
+    <div class="av">${initials(u.name)}</div>
+    <div class="info">
+      <div class="uname">${u.name}</div>
+      <div class="urole">${u.role === 'management' ? 'Management' : u.team || 'Merchandiser'}</div>
+    </div>
+    <button class="lo-btn" onclick="doLogout()" title="Sign out">↩</button>`;
+}
+
+// ─── DASHBOARD ───
+function renderDashboard() {
+  $('crumb').textContent = 'Overview';
+  $('page-title').textContent = 'Dashboard';
+  $('act-row').innerHTML = '';
+
+  const isM = S.user.role === 'management';
+  const live = S.orders;
+  const late = live.filter(o => missedMiles(o).length);
+  const totalQty = live.reduce((s, o) => s + (o.qty || 0), 0);
+  const totalBal = live.reduce((s, o) => s + ((o.qty || 0) - (o.prod_packing || 0)), 0);
+  const totalVal = live.reduce((s, o) => s + ((o.qty || 0) * (o.fob || 0)), 0);
+  const urgent = live.filter(o => { const d = daysTo(o.ship_date); return d != null && d <= 10; });
+  const stale = S.users.filter(u => u.role === 'merchant' &&
+    u.updated_at && (Date.now() - new Date(u.updated_at).getTime()) > 86400000);
+
+  $('page-sub').innerHTML = `${live.length} live orders · ${fmt(totalBal)} pcs balance`;
+  $('stamp').innerHTML = `<div class="lab">Today</div>
+    <div class="val">${today().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>`;
+
+  let html = `<div class="stats">
+    <div class="stat"><div class="k">Live orders</div><div class="v">${live.length}</div>
+      <div class="n">${fmt(totalQty)} pcs booked</div></div>
+    <div class="stat"><div class="k">Balance to ship</div><div class="v">${fmt(totalBal)}</div>
+      <div class="n">pcs not yet packed</div></div>
+    <div class="stat"><div class="k">Order value</div><div class="v">${(totalVal/1e6).toFixed(2)}M</div>
+      <div class="n">USD, live orders</div></div>
+    <div class="stat"><div class="k">Ship ≤ 10 days</div><div class="v">${urgent.length}</div>
+      <div class="n">orders need attention</div></div>
+    <div class="stat ${late.length ? 'alert' : ''}"><div class="k">TNA misses</div>
+      <div class="v">${late.length}</div><div class="n">orders behind plan</div></div>
+  </div>`;
+
+  // TNA miss table
+  html += `<div class="card">
+    <div class="card-h"><h3>TNA misses</h3><span class="note">Milestones past their plan date with no actual entered</span></div>
+    ${late.length ? `<div class="scroller"><table>
+      <thead><tr>
+        ${isM ? '<th>Merchandiser</th>' : ''}
+        <th>Buyer</th><th>Style</th><th class="num">Order qty</th>
+        <th>Shipment</th><th class="num">Days left</th>
+        <th>Missed milestones</th><th class="num">Worst delay</th><th></th>
+      </tr></thead>
+      <tbody>${late.map(o => {
+        const ms = missedMiles(o);
+        const worst = Math.max(...ms.map(x => {
+          const p = o['plan_' + x.k], a = o['act_' + x.k];
+          return a ? Math.round((toDate(a) - toDate(p)) / 86400000) : -daysTo(p);
+        }));
+        const merch = S.users.find(u => u.id === o.merchant_id);
+        return `<tr class="late">
+          ${isM ? `<td>${merch ? merch.name : '—'}</td>` : ''}
+          <td>${o.buyer}</td><td class="sty">${o.style}</td>
+          <td class="num">${fmt(o.qty)}</td><td>${short(o.ship_date)}</td>
+          <td class="num">${daysTo(o.ship_date)}</td>
+          <td>${ms.map(x => x.n).join(', ')}</td>
+          <td class="num" style="color:var(--red);font-weight:700">+${worst}d</td>
+          <td><button class="btn sm" onclick="openTNA('${o.id}')">TNA</button></td>
+        </tr>`;
+      }).join('')}</tbody></table></div>`
+    : `<div class="empty"><h4>All milestones on plan</h4><div>No TNA breaches at this time.</div></div>`}
+  </div>`;
+
+  // By-merchant table (management only)
+  if (isM) {
+    const merchants = S.users.filter(u => u.role === 'merchant');
+    html += `<div class="card">
+      <div class="card-h"><h3>By merchandiser</h3><span class="note">Click a row to open their board</span></div>
+      <div class="scroller"><table>
+        <thead><tr><th>Merchandiser</th><th class="num">Orders</th><th class="num">Booked</th>
+          <th class="num">Packed</th><th class="num">Balance</th>
+          <th class="num">Value (USD)</th><th>Next shipment</th><th>Late</th><th>Last update</th></tr></thead>
+        <tbody>${merchants.map(m => {
+          const os = S.orders.filter(o => o.merchant_id === m.id);
+          const q = os.reduce((s,o)=>s+(o.qty||0),0);
+          const p = os.reduce((s,o)=>s+(o.prod_packing||0),0);
+          const lt = os.filter(o=>missedMiles(o).length).length;
+          const near = os.length ? os.sort((a,b)=>daysTo(a.ship_date)-daysTo(b.ship_date))[0] : null;
+          const st = m.updated_at && (Date.now()-new Date(m.updated_at).getTime())>86400000;
+          return `<tr onclick="setView('${m.id}')" style="cursor:pointer">
+            <td class="sty">${m.name}<div class="sub2">${m.team||''}</div></td>
+            <td class="num">${os.length}</td><td class="num">${fmt(q)}</td>
+            <td class="num">${fmt(p)}</td><td class="num">${fmt(q-p)}</td>
+            <td class="num">${money(os.reduce((s,o)=>s+(o.qty||0)*(o.fob||0),0))}</td>
+            <td>${near?short(near.ship_date)+' · '+near.style:'—'}</td>
+            <td>${lt?`<span class="chip bad">${lt}</span>`:'<span class="sub2">—</span>'}</td>
+            <td>${st?`<span class="chip warn">${ago(m.updated_at)}</span>`:`<span class="sub2">${ago(m.updated_at)}</span>`}</td>
+          </tr>`;
+        }).join('')}</tbody></table></div></div>`;
+
+    if (stale.length) {
+      html += `<div class="card" style="border-color:#EBC4BC">
+        <div class="card-h"><h3 style="color:var(--red)">Not updated in 24+ hours</h3></div>
+        <div class="m-b">${stale.map(m=>`<span class="chip warn" style="margin-right:6px">${m.name} — ${ago(m.updated_at)}</span>`).join('')}</div>
+      </div>`;
+    }
+  }
+
+  $('content').innerHTML = html;
+}
+
+// ─── BOARD ───
+function renderBoard(uid) {
+  const merch = S.users.find(u => u.id === uid);
+  if (!merch) { setView('dashboard'); return; }
+
+  const os = S.orders.filter(o => o.merchant_id === uid)
+    .sort((a, b) => (daysTo(a.ship_date)||999) - (daysTo(b.ship_date)||999));
+
+  const stale = merch.updated_at && (Date.now() - new Date(merch.updated_at).getTime()) > 86400000;
+
+  $('crumb').textContent = 'Merchandiser';
+  $('page-title').textContent = merch.name;
+  $('page-sub').innerHTML = `${merch.team||''} · ${os.length} live orders · ${fmt(os.reduce((s,o)=>s+(o.qty||0)-(o.prod_packing||0),0))} pcs remaining`;
+  $('stamp').innerHTML = `<div class="lab">Last updated</div>
+    <div class="val ${stale?'stale':''}">${merch.updated_at ? ago(merch.updated_at) : 'Never'}</div>
+    <div class="sub">${merch.updated_at ? new Date(merch.updated_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : ''}</div>`;
+
+  const canEdit = S.user.role === 'management' || S.user.id === uid;
+  $('act-row').innerHTML = canEdit
+    ? `<button class="btn pri" onclick="openOrder('${uid}')">+ New order</button>
+       <button class="btn" onclick="openPrint('${uid}')">Print</button>`
+    : `<button class="btn" onclick="openPrint('${uid}')">Print</button>`;
+
+  if (!os.length) {
+    $('content').innerHTML = `<div class="card"><div class="empty">
+      <h4>No live orders</h4><div>Add the first order to start tracking against the TNA plan.</div>
+      ${canEdit ? `<div style="margin-top:14px"><button class="btn pri" onclick="openOrder('${uid}')">+ New order</button></div>` : ''}
+    </div></div>`; return;
+  }
+
+  const rows = os.map(o => {
+    const ms = missedMiles(o), dl = daysTo(o.ship_date);
+    const rc = rowClass(o);
+    return `<tr class="${rc}">
+      <td class="stk"><span class="flag ${ms.length?'on':''}"></span>
+        <span class="sty">${o.style}</span>
+        <div class="sub2" style="margin-left:10px">${ms.length ? ms.length+'× late' : pctPacked(o)+'% packed'}</div></td>
+      <td>${o.buyer}</td><td>${o.house}</td><td>${o.gauge||'—'}</td><td>${o.color||'—'}</td>
+      <td class="sub2">${o.comp||'—'}</td>
+      <td class="num">${fmt(o.qty)}</td><td class="num">${(o.fob||0).toFixed(2)}</td>
+      <td class="num">${money((o.qty||0)*(o.fob||0))}</td>
+      <td>${short(o.ship_date)}</td>
+      <td class="num">${dl==null?'—':dl<0?`<span class="chip bad">${dl}</span>`:dl<=5?`<span class="chip warn">${dl}</span>`:dl}</td>
+      ${STEPS.map(s => {
+        const v = o[s.k] || 0, full = v >= (o.qty||0) && (o.qty||0) > 0;
+        const pct = o.qty ? Math.min(100, 100*v/o.qty) : 0;
+        return `<td><div class="cell">
+          ${full ? `<span class="done-lbl">DONE</span>`
+            : `<span class="bar"><i style="width:${pct}%" class="${full?'full':''}"></i></span>`}
+          ${canEdit ? `<input class="qtyin" type="number" min="0" max="${o.qty}" value="${v}"
+            onchange="setProd('${o.id}','${s.k}',this.value)" ${full?'disabled':''}>`
+            : `<span style="font-family:var(--mono);font-size:12px">${fmt(v)}</span>`}
+        </div></td>`;
+      }).join('')}
+      <td class="num">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
+      <td>${canEdit
+        ? `<input class="rem-in" value="${(o.remarks||'').replace(/"/g,'&quot;')}"
+             placeholder="Add note…" onchange="setRemark('${o.id}',this.value)">`
+        : `<span class="sub2">${o.remarks||'—'}</span>`}</td>
+      <td style="white-space:nowrap">
+        <button class="btn sm" onclick="openTNA('${o.id}')">TNA${ms.length?` <span style="color:var(--red)">●</span>`:''}</button>
+        ${canEdit ? `<button class="btn sm" style="margin-left:4px" onclick="openShip('${o.id}')">Shipped</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+
+  $('content').innerHTML = `<div class="card"><div class="scroller"><table>
+    <thead>
+      <tr>
+        <th class="stk" rowspan="2">Style</th>
+        <th rowspan="2">Buyer</th><th rowspan="2">Buying house</th>
+        <th rowspan="2">Gauge</th><th rowspan="2">Colour</th><th rowspan="2">Composition</th>
+        <th rowspan="2" class="num">Order qty</th>
+        <th rowspan="2" class="num">FOB</th>
+        <th rowspan="2" class="num">Value</th>
+        <th rowspan="2">Ship date</th>
+        <th rowspan="2" class="num">Days</th>
+        <th class="grp" colspan="${STEPS.length}">Production — enter today's cumulative qty</th>
+        <th rowspan="2" class="num">Balance</th>
+        <th rowspan="2">Remarks</th>
+        <th rowspan="2"></th>
+      </tr>
+      <tr>${STEPS.map(s=>`<th class="grp">${s.n}</th>`).join('')}</tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table></div></div>
+  <div class="sub2" style="margin-top:-10px;padding-bottom:4px">
+    Rows: <span style="background:var(--amber-soft);padding:1px 5px;border-radius:4px">yellow</span> = 10 days to ship ·
+    <span style="background:var(--orange-soft);padding:1px 5px;border-radius:4px">orange</span> = 5 days ·
+    <span style="background:var(--red-soft);padding:1px 5px;border-radius:4px">red</span> = TNA broken
+  </div>`;
+}
+
+// ─── ARCHIVE ───
+function renderArchive() {
+  $('crumb').textContent = 'History';
+  $('page-title').textContent = 'Shipped orders';
+  $('page-sub').innerHTML = `${S.archive.length} orders · auto-deleted after 2 years`;
+  $('stamp').innerHTML = '';
+  $('act-row').innerHTML = '';
+
+  if (!S.archive.length) {
+    $('content').innerHTML = `<div class="card"><div class="empty">
+      <h4>No archived orders</h4><div>Shipped orders will appear here.</div>
+    </div></div>`; return;
+  }
+
+  const rows = S.archive.map(o => {
+    const merch = S.users.find(u => u.id === o.merchant_id);
+    const exp = new Date(o.shipped_on);
+    exp.setFullYear(exp.getFullYear() + 2);
+    return `<tr>
+      <td class="sty">${o.style}</td>
+      <td>${merch ? merch.name : '—'}</td>
+      <td>${o.buyer}</td><td>${o.house}</td>
+      <td class="num">${fmt(o.qty)}</td>
+      <td class="num">${money((o.qty||0)*(o.fob||0))}</td>
+      <td>${short(o.shipped_on)}</td>
+      <td class="sub2">Expires ${exp.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</td>
+      <td class="sub2">${o.remarks||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  $('content').innerHTML = `<div class="card"><div class="scroller"><table>
+    <thead><tr><th>Style</th><th>Merchandiser</th><th>Buyer</th><th>Buying house</th>
+      <th class="num">Qty</th><th class="num">Value</th><th>Shipped</th><th>Auto-expires</th><th>Remarks</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div></div>`;
+}
+
+// ─── ORDER ACTIONS ───
+let orderForMerchant = null;
+
+function openOrder(mid) {
+  orderForMerchant = mid;
+  const m = S.users.find(u => u.id === mid);
+  $('ord-sub').textContent = 'For ' + (m ? m.name : '');
+  $('ord-err').style.display = 'none';
+  ['o_house','o_buyer','o_style','o_gauge','o_color','o_comp','o_qty','o_fob',
+   'p_yarn','p_pp','p_sew','p_pack','p_knit','p_insp','p_ship'].forEach(id => $(id).value = '');
+  $('o_total').value = '';
+  openModal('ov-order');
+}
+
+function calcTotal() {
+  const q = Number($('o_qty').value) || 0;
+  const f = Number($('o_fob').value) || 0;
+  $('o_total').value = q && f ? money(q * f) : '';
+}
+
+function syncShip() {
+  const v = $('p_ship').value;
+  if (v && !$('p_yarn').value) { /* Could auto-fill TNA here */ }
+}
+
+async function saveOrder() {
+  const style = $('o_style').value.trim();
+  const qty = Number($('o_qty').value) || 0;
+  if (!style || !qty) {
+    $('ord-err').textContent = 'Style number and order quantity are required.';
+    $('ord-err').style.display = 'block'; return;
+  }
+  $('save-order-btn').disabled = true;
+  $('save-order-btn').textContent = 'Saving…';
+
+  const row = {
+    merchant_id: orderForMerchant,
+    house: $('o_house').value, buyer: $('o_buyer').value,
+    style, gauge: $('o_gauge').value, color: $('o_color').value,
+    comp: $('o_comp').value, qty, fob: Number($('o_fob').value)||0,
+    ship_date: $('p_ship').value || null,
+    plan_yarn: $('p_yarn').value||null, plan_pp: $('p_pp').value||null,
+    plan_sew: $('p_sew').value||null, plan_pack: $('p_pack').value||null,
+    plan_knit: $('p_knit').value||null, plan_insp: $('p_insp').value||null,
+    plan_ship: $('p_ship').value||null,
+    updated_by: S.user.name, updated_at: new Date().toISOString()
+  };
+
+  const { error } = await db.from('orders').insert(row);
+  if (!error) {
+    // Save memo
+    for (const [f, v] of [['house',row.house],['buyer',row.buyer],['gauge',row.gauge],['color',row.color],['comp',row.comp]]) {
+      if (v) saveMemo(f, v);
+    }
+    // Touch merchant updated_at
+    await db.from('users').update({ updated_at: new Date().toISOString() }).eq('id', orderForMerchant);
+    closeModal('ov-order');
+    toast('Order added', 'ok-t');
+    await loadAll();
+    render();
+  } else {
+    $('ord-err').textContent = 'Error saving. Please try again.';
+    $('ord-err').style.display = 'block';
+  }
+  $('save-order-btn').disabled = false;
+  $('save-order-btn').textContent = 'Add order';
+}
+
+async function setProd(ordId, key, val) {
+  const o = S.orders.find(x => x.id === ordId);
+  if (!o) return;
+  const clamped = Math.max(0, Math.min(o.qty || 0, Number(val) || 0));
+  const { error } = await db.from('orders').update({
+    [key]: clamped, updated_at: new Date().toISOString(), updated_by: S.user.name
+  }).eq('id', ordId);
+  if (!error) {
+    await db.from('users').update({ updated_at: new Date().toISOString() }).eq('id', S.user.id);
+    await loadOrders();
+    render();
+  } else { toast('Save failed', 'err'); }
+}
+
+async function setRemark(ordId, val) {
+  await db.from('orders').update({
+    remarks: val, updated_at: new Date().toISOString(), updated_by: S.user.name
+  }).eq('id', ordId);
+  await db.from('users').update({ updated_at: new Date().toISOString() }).eq('id', S.user.id);
+  toast('Note saved');
+}
+
+// ─── TNA MODAL ───
+function openTNA(ordId) {
+  const o = S.orders.find(x => x.id === ordId) || S.archive.find(x => x.id === ordId);
+  if (!o) return;
+  const ms = missedMiles(o);
+  const dl = daysTo(o.ship_date);
+  $('tna-title').textContent = 'TNA — ' + o.style;
+  $('tna-sub').textContent = `${o.buyer} · ${o.house} · ${fmt(o.qty)} pcs · ships ${short(o.ship_date)}`;
+
+  const canEdit = S.user.role === 'management' || S.user.id === o.merchant_id;
+
+  $('tna-body').innerHTML = `
+    <div class="tna-kpis">
+      <div><div class="k">Shipment</div><div class="v">${short(o.ship_date)}</div></div>
+      <div><div class="k">Days left</div><div class="v" style="${dl!=null&&dl<=5?'color:var(--red)':''}">${dl!=null?dl:'—'}</div></div>
+      <div><div class="k">Packed</div><div class="v">${pctPacked(o)}%</div></div>
+      <div><div class="k">Milestones late</div><div class="v" style="${ms.length?'color:var(--red)':''}">${ms.length}</div></div>
+    </div>
+    <table class="tna-t"><thead><tr>
+      <th>Milestone</th><th>Plan date</th><th>Actual date</th><th class="num">Delay</th><th>Status</th>
+    </tr></thead><tbody>
+    ${MILES.map(x => {
+      const p = o['plan_' + x.k], a = o['act_' + x.k];
+      let delay = '—', st = '<span class="chip run">No plan</span>', cls = '';
+      if (p) {
+        if (a) {
+          const dd = Math.round((toDate(a) - toDate(p)) / 86400000);
+          delay = dd > 0 ? `+${dd}d` : `${dd}d`;
+          st = dd > 0 ? '<span class="chip bad">Late</span>' : '<span class="chip ok">On time</span>';
+          cls = dd > 0 ? 'late-c' : 'early-c';
+        } else {
+          const dd = daysTo(p);
+          delay = dd < 0 ? `+${-dd}d overdue` : `${dd}d left`;
+          st = dd < 0 ? '<span class="chip bad">Overdue</span>'
+            : dd <= 3 ? '<span class="chip warn">Due soon</span>'
+            : '<span class="chip run">Pending</span>';
+          cls = dd < 0 ? 'late-c' : '';
+        }
+      }
+      return `<tr>
+        <td class="sty">${x.n}</td>
+        <td>${short(p)}</td>
+        <td>${canEdit
+          ? `<input type="date" value="${a||''}" style="padding:3px 7px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12.5px"
+               onchange="setAct('${o.id}','${x.k}',this.value)">`
+          : short(a)}</td>
+        <td class="num ${cls}">${delay}</td>
+        <td>${st}</td>
+      </tr>`;
+    }).join('')}
+    </tbody></table>
+    <div class="hint" style="margin-top:10px">Enter the actual date when a milestone is completed. The row on the board updates automatically.</div>`;
+
+  openModal('ov-tna');
+}
+
+async function setAct(ordId, mKey, val) {
+  const { error } = await db.from('orders').update({
+    ['act_' + mKey]: val || null,
+    updated_at: new Date().toISOString(),
+    updated_by: S.user.name
+  }).eq('id', ordId);
+  if (!error) {
+    await db.from('users').update({ updated_at: new Date().toISOString() }).eq('id', S.user.id);
+    await loadOrders();
+    openTNA(ordId); // refresh TNA modal
+    render();
+  } else { toast('Save failed', 'err'); }
+}
+
+// ─── SHIP ───
+function openShip(ordId) {
+  S.shipTarget = ordId;
+  const o = S.orders.find(x => x.id === ordId);
+  $('ship-sub').textContent = `${o.style} · ${o.buyer} · ${fmt(o.qty)} pcs`;
+  $('ship_date_actual').value = new Date().toISOString().slice(0, 10);
+  $('confirm-ship-btn').disabled = false;
+  $('confirm-ship-btn').textContent = 'Confirm shipped';
+  openModal('ov-ship');
+}
+
+async function confirmShip() {
+  const o = S.orders.find(x => x.id === S.shipTarget);
+  if (!o) return;
+  $('confirm-ship-btn').disabled = true;
+  $('confirm-ship-btn').textContent = 'Saving…';
+  const shippedOn = $('ship_date_actual').value || new Date().toISOString().slice(0, 10);
+  const { error } = await db.from('orders').update({
+    shipped: true, shipped_on: shippedOn,
+    updated_at: new Date().toISOString(), updated_by: S.user.name
+  }).eq('id', S.shipTarget);
+  if (!error) {
+    closeModal('ov-ship');
+    toast(`${o.style} moved to archive`, 'ok-t');
+    await loadOrders();
+    render();
+  } else { toast('Error. Try again.', 'err'); }
+  $('confirm-ship-btn').disabled = false;
+  $('confirm-ship-btn').textContent = 'Confirm shipped';
+}
+
+// ─── PRINT ───
+function openPrint(uid) {
+  S.printTarget = uid;
+  const m = S.users.find(u => u.id === uid);
+  $('pr-title').textContent = 'Print — ' + (m ? m.name : '');
+  $('pr-sub').textContent = today().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'});
+  const buyers = [...new Set(S.orders.filter(o => o.merchant_id === uid).map(o => o.buyer))];
+  $('pr-buyer').innerHTML = `<option value="">All buyers</option>` +
+    buyers.map(b => `<option>${b}</option>`).join('');
+  renderPrint();
+  openModal('ov-print');
+}
+
+function renderPrint() {
+  const buyer = $('pr-buyer').value;
+  const os = S.orders.filter(o => o.merchant_id === S.printTarget && (!buyer || o.buyer === buyer))
+    .sort((a, b) => (daysTo(a.ship_date)||999) - (daysTo(b.ship_date)||999));
+  const merch = S.users.find(u => u.id === S.printTarget);
+
+  $('pr-body').innerHTML = `
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">
+      ${merch ? merch.name : ''} · Printed ${new Date().toLocaleString('en-GB')} · ${os.length} orders
+    </div>
+    <table><thead><tr>
+      <th>Style</th><th>Buyer</th><th>Gauge</th><th class="num">Order qty</th><th>Ship date</th>
+      ${STEPS.map(s=>`<th class="num">${s.n}</th>`).join('')}
+      <th class="num">Balance</th><th>Status</th><th>Remarks</th>
+    </tr></thead><tbody>
+    ${os.map(o => `<tr class="${rowClass(o)}">
+      <td class="sty">${o.style}</td><td>${o.buyer}</td><td>${o.gauge||'—'}</td>
+      <td class="num">${fmt(o.qty)}</td><td>${short(o.ship_date)}</td>
+      ${STEPS.map(s=>`<td class="num">${fmt(o[s.k]||0)}</td>`).join('')}
+      <td class="num">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
+      <td>${missedMiles(o).length ? 'LATE: '+missedMiles(o).map(x=>x.n).join(', ') : 'On plan'}</td>
+      <td>${o.remarks||''}</td>
+    </tr>`).join('')}
+    </tbody></table>
+    <div class="hint" style="margin-top:8px">
+      Total: ${fmt(os.reduce((s,o)=>s+(o.qty||0),0))} pcs booked ·
+      ${fmt(os.reduce((s,o)=>s+(o.qty||0)-(o.prod_packing||0),0))} pcs balance
+    </div>`;
+}
+
+// ─── ADMIN ───
+function openAdmin() {
+  $('a_name').value = ''; $('a_team').value = ''; $('a_pwd').value = '';
+  $('admin-err').style.display = 'none';
+  $('mgmt_pwd').value = '';
+  renderAdminList();
+  openModal('ov-admin');
+}
+
+function renderAdminList() {
+  const merchants = S.users.filter(u => u.role === 'merchant');
+  $('admin-list').innerHTML = merchants.length
+    ? merchants.map(m => `<div class="admin-row">
+        <div>
+          <div class="nm">${m.name}</div>
+          <div class="tm">${m.team||''}</div>
+        </div>
+        <input type="text" id="pw_${m.id}" placeholder="New password">
+        <button class="btn sm" onclick="resetPwd('${m.id}')">Reset</button>
+        <button class="btn sm danger" onclick="deleteMerchant('${m.id}','${m.name}')">Remove</button>
+      </div>`).join('')
+    : `<div class="sub2">No merchandisers added yet.</div>`;
+}
+
+async function addMerchant() {
+  const name = $('a_name').value.trim();
+  const pwd = $('a_pwd').value.trim();
+  if (!name || !pwd) {
+    $('admin-err').textContent = 'Name and password are required.';
+    $('admin-err').style.display = 'block'; return;
+  }
+  $('admin-err').style.display = 'none';
+  const { error } = await db.from('users').insert({
+    name, role: 'merchant', password: pwd, team: $('a_team').value
+  });
+  if (!error) {
+    $('a_name').value = ''; $('a_team').value = ''; $('a_pwd').value = '';
+    toast(`${name} added`, 'ok-t');
+    await loadUsers();
+    renderAdminList();
+    renderRail();
+  } else if (error.code === '23505') {
+    $('admin-err').textContent = 'A user with that name already exists.';
+    $('admin-err').style.display = 'block';
+  } else {
+    $('admin-err').textContent = 'Error saving. Try again.';
+    $('admin-err').style.display = 'block';
+  }
+}
+
+async function resetPwd(uid) {
+  const inp = $('pw_' + uid);
+  const newPwd = inp ? inp.value.trim() : '';
+  if (!newPwd) { toast('Enter a new password first', 'err'); return; }
+  const { error } = await db.from('users').update({ password: newPwd }).eq('id', uid);
+  if (!error) { inp.value = ''; toast('Password reset', 'ok-t'); }
+  else { toast('Error. Try again.', 'err'); }
+}
+
+async function changeMgmtPwd() {
+  const newPwd = $('mgmt_pwd').value.trim();
+  if (!newPwd) { toast('Enter a new password', 'err'); return; }
+  const { error } = await db.from('users').update({ password: newPwd }).eq('id', S.user.id);
+  if (!error) { $('mgmt_pwd').value = ''; toast('Management password updated', 'ok-t'); }
+  else { toast('Error. Try again.', 'err'); }
+}
+
+async function deleteMerchant(uid, name) {
+  if (!confirm(`Remove ${name}? Their orders will also be deleted permanently.`)) return;
+  const { error } = await db.from('users').delete().eq('id', uid);
+  if (!error) {
+    toast(`${name} removed`);
+    await loadAll();
+    renderAdminList();
+    renderRail();
+    if (S.view === uid) setView('dashboard');
+  } else { toast('Error. Try again.', 'err'); }
+}
+
+// ─── START ───
+init();
+</script>
+</body>
+</html>
