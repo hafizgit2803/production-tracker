@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Production Tracker — Shahana Group</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --bg:#FAF9F5;--panel:#FFFFFF;--rail:#F0EEE6;--ink:#191817;--muted:#73706A;
@@ -207,6 +208,82 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading{display:flex;align-items:center;gap:10px;padding:40px;justify-content:center;color:var(--muted)}
 
+/* ── DARK MODE ── */
+[data-theme="dark"]{
+  --bg:#19181A;--panel:#222123;--rail:#1C1B1D;--ink:#EEEAE3;--muted:#8A8780;
+  --line:#35333A;--accent:#D97B5A;--accent-soft:#3B2218;
+  --red-soft:#2E1515;--amber-soft:#2A1F0A;--orange-soft:#2E1A0A;--green-soft:#0E2018;
+}
+[data-theme="dark"] body{background:var(--bg);color:var(--ink)}
+[data-theme="dark"] .ni{color:var(--ink)}
+[data-theme="dark"] .ni:hover{background:rgba(255,255,255,.06)}
+[data-theme="dark"] .ni.on{background:var(--accent-soft);color:#E8A882}
+[data-theme="dark"] .ni .av{background:#3A3838;color:#B0ADA8}
+[data-theme="dark"] .ni.on .av{background:var(--accent);color:#fff}
+[data-theme="dark"] th{background:#2A2828}
+[data-theme="dark"] tbody tr:hover td{background:rgba(255,255,255,.03)}
+[data-theme="dark"] td.stk,[data-theme="dark"] th.stk{background:var(--panel)}
+[data-theme="dark"] th.stk{background:#2A2828}
+[data-theme="dark"] th.grp{background:#2E2A24;color:#E8A882}
+[data-theme="dark"] tbody tr.r10 td{background:#2A2010}
+[data-theme="dark"] tbody tr.r5 td{background:#2E1E10}
+[data-theme="dark"] tbody tr.late td{background:#2E1515}
+[data-theme="dark"] tbody tr.r10 td.stk{background:#2A2010}
+[data-theme="dark"] tbody tr.r5 td.stk{background:#2E1E10}
+[data-theme="dark"] tbody tr.late td.stk{background:#2E1515}
+[data-theme="dark"] .btn{background:var(--panel);border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .btn:hover{background:#2E2C2A}
+[data-theme="dark"] .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+[data-theme="dark"] .btn.pri:hover{background:#BF6A4A}
+[data-theme="dark"] .btn.ghost{background:none;color:var(--muted)}
+[data-theme="dark"] .btn.ghost:hover{background:rgba(255,255,255,.06);color:var(--ink)}
+[data-theme="dark"] .btn.danger{background:#2E1515;border-color:#5C2020;color:#E88080}
+[data-theme="dark"] .stat{background:var(--panel)}
+[data-theme="dark"] .stat.alert{background:var(--red-soft)}
+[data-theme="dark"] .card{background:var(--panel)}
+[data-theme="dark"] .modal{background:var(--panel)}
+[data-theme="dark"] .m-f{background:#1E1D1F}
+[data-theme="dark"] .login-card{background:var(--panel)}
+[data-theme="dark"] #login-wrap{background:var(--bg)}
+[data-theme="dark"] .f input,[data-theme="dark"] .f select,
+[data-theme="dark"] .lf input,[data-theme="dark"] .lf select,
+[data-theme="dark"] textarea,[data-theme="dark"] .admin-row input{background:#2A2828;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .f input:focus,[data-theme="dark"] .f select:focus,
+[data-theme="dark"] .lf input:focus,[data-theme="dark"] .lf select:focus{background:#333133;border-color:var(--accent)}
+[data-theme="dark"] .f input[readonly]{background:#252325;color:var(--muted)}
+[data-theme="dark"] .qtyin{background:#2A2828;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .qtyin:focus{background:#333133}
+[data-theme="dark"] .rem-in:hover{background:#2A2828;border-color:var(--line)}
+[data-theme="dark"] .rem-in:focus{background:#333133;color:var(--ink)}
+[data-theme="dark"] .note-card{background:#2A2610;border-color:#4A4220}
+[data-theme="dark"] .note-card.closed{background:#252325}
+[data-theme="dark"] .tna-kpis>div{background:#252325}
+[data-theme="dark"] .xbtn:hover{background:#333133}
+[data-theme="dark"] .bar{background:#3A3838}
+[data-theme="dark"] code{background:#2A2828;color:#E8A882}
+[data-theme="dark"] .lo-btn:hover{background:rgba(255,255,255,.09);color:var(--ink)}
+[data-theme="dark"] .theme-btn:hover{background:rgba(255,255,255,.09)}
+[data-theme="dark"] .pdf-wrap{background:#fff;color:#191817} /* PDF always light */
+
+/* ── SIDEBAR COLLAPSE ── */
+.rail{transition:width .22s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.shell.sb-off .rail{width:0;min-width:0;border-right:none}
+.sb-toggle{position:fixed;left:244px;top:50%;transform:translateY(-50%);
+  width:18px;height:46px;background:var(--rail);border:1px solid var(--line);
+  border-left:none;border-radius:0 8px 8px 0;cursor:pointer;z-index:50;
+  display:flex;align-items:center;justify-content:center;font-size:10px;
+  color:var(--muted);transition:left .22s cubic-bezier(.4,0,.2,1),background .1s;
+  box-shadow:2px 0 8px rgba(0,0,0,.07)}
+.sb-toggle:hover{color:var(--ink);background:var(--accent-soft)}
+[data-theme="dark"] .sb-toggle{box-shadow:2px 0 8px rgba(0,0,0,.3)}
+.shell.sb-off .sb-toggle{left:0;border-left:1px solid var(--line);border-right:none;
+  border-radius:8px 0 0 8px}
+
+/* Theme toggle */
+.theme-btn{border:0;background:none;color:var(--muted);font-size:16px;
+  padding:4px 5px;border-radius:6px;line-height:1;cursor:pointer}
+.theme-btn:hover{background:rgba(0,0,0,.07);color:var(--ink)}
+
 /* ── NOTES BANNER ── */
 .notes-wrap{padding:0 0 14px}
 .note-card{display:flex;gap:12px;align-items:flex-start;background:#FFFBEB;
@@ -313,6 +390,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 
 <!-- ═══ APP ═══ -->
 <div id="app" class="shell" style="display:none">
+  <button class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</button>
   <aside class="rail">
     <div class="brand">
       <h1>Production Tracker</h1>
@@ -320,6 +398,9 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
     </div>
     <div class="rail-body" id="rail-body"></div>
     <div class="rail-foot">
+      <div style="display:flex;align-items:center;gap:4px;padding:2px 4px 8px">
+        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
+      </div>
       <div class="user-row" id="user-row"></div>
     </div>
   </aside>
@@ -427,6 +508,31 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
   </div>
 </div>
 
+<!-- ═══ MODAL: SHIPMENT RESULT ═══ -->
+<div class="ov" id="ov-ship-result" onclick="if(event.target===this)closeModal('ov-ship-result')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3 id="sr-title">Shipment</h3></div>
+      <button class="xbtn" onclick="closeModal('ov-ship-result')">✕</button></div>
+    <div class="m-b" id="sr-body"></div>
+    <div class="m-f"><button class="btn pri" onclick="closeModal('ov-ship-result')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ORDER DETAIL ═══ -->
+<div class="ov" id="ov-od" onclick="if(event.target===this)closeModal('ov-od')">
+  <div class="modal od-modal" style="display:flex;flex-direction:column;max-height:90vh">
+    <div class="m-h" style="flex-shrink:0">
+      <div><h3 id="od-title">Order</h3><div class="msub" id="od-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-od')">✕</button>
+    </div>
+    <div class="od-tabs" id="od-tabs" style="flex-shrink:0"></div>
+    <div class="od-body" id="od-body" style="flex:1;overflow-y:auto"></div>
+    <div class="m-f" style="flex-shrink:0">
+      <button class="btn" onclick="closeModal('ov-od')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ MODAL: ADD NOTE ═══ -->
 <div class="ov" id="ov-note" onclick="if(event.target===this)closeModal('ov-note')">
   <div class="modal slim">
@@ -468,21 +574,24 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 <!-- ═══ MODAL: ADMIN ═══ -->
 <div class="ov" id="ov-admin" onclick="if(event.target===this)closeModal('ov-admin')">
   <div class="modal">
-    <div class="m-h"><div><h3>Admin — Manage users</h3><div class="msub">Add merchandisers and reset passwords</div></div>
+    <div class="m-h"><div><h3>Admin — Manage users</h3><div class="msub">Add profiles and reset passwords</div></div>
       <button class="xbtn" onclick="closeModal('ov-admin')">✕</button></div>
     <div class="m-b">
-      <div class="card-h" style="padding:0 0 12px;border:0"><h3 style="font-size:14px">Add new user</h3></div>
+      <div class="card-h" style="padding:0 0 12px;border:0"><h3 style="font-size:14px">Add profile</h3></div>
       <div class="grid3" style="margin-bottom:10px">
         <div class="f"><label>Full name</label><input id="a_name" placeholder="e.g. Taher Ahmed"></div>
-        <div class="f"><label>Team / section</label><input id="a_team" placeholder="e.g. Knit"></div>
+        <div class="f"><label>Team / section</label><input id="a_team" placeholder="e.g. Knit Merchandising"></div>
         <div class="f"><label>Password</label><input id="a_pwd" type="text" placeholder="Set a password"></div>
       </div>
-      <div class="grid2" style="margin-bottom:14px;max-width:400px">
+      <div class="grid2" style="margin-bottom:14px;max-width:440px">
         <div class="f">
-          <label>Role</label>
-          <select id="a_role" onchange="toggleDivField()">
+          <label>Profile type</label>
+          <select id="a_type" onchange="handleProfileType()">
             <option value="merchant">Merchandiser</option>
-            <option value="mid_management">Mid-management (view only)</option>
+            <option value="hod">HOD</option>
+            <option value="manager">Manager</option>
+            <option value="audit">Audit</option>
+            <option value="other">Other</option>
           </select>
         </div>
         <div class="f" id="div-field">
@@ -494,7 +603,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
         </div>
       </div>
       <div class="form-err" id="admin-err"></div>
-      <button class="btn pri" style="margin-bottom:22px" onclick="addMerchant()">Add merchandiser</button>
+      <button class="btn pri" style="margin-bottom:22px" onclick="addMerchant()">Add profile</button>
       <div class="card-h" style="padding:0 0 10px;border:0"><h3 style="font-size:14px">Reset password</h3></div>
       <div id="admin-list"></div>
       <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
@@ -521,6 +630,8 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 
 <script>
 'use strict';
+// Apply saved theme immediately — prevents flash on reload
+(function(){ const t=localStorage.getItem('pt_theme'); if(t) document.documentElement.setAttribute('data-theme',t); })();
 const SB_URL = 'https://nmrhcrgyuuncnmcgxowr.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tcmhjcmd5dXVuY25tY2d4b3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MjkyMDMsImV4cCI6MjEwMzMwNTIwM30.szq4x-9orpOb9v6AMeZV0GAWXGWTc3wACXvGrQHcsQc';
 
@@ -558,16 +669,27 @@ function getMiles(division) {
 const S = {
   user: null,
   users: [],
-  orders: [],
+  orders: [],       // lightweight live orders (dashboard cols only)
   archive: [],
   notes: [],
   memo: {},
+  boardCache: {},   // { merchantId: fullOrders[] } — cached on first click
   view: 'dashboard',
+  archiveLoaded: false,
   shipTarget: null,
   printTarget: null,
   noteTarget: null,
   channel: null,
+  detail: { orderId: null, order: null, bookings: [], receipts: [], approvals: [], tab: 'details', division: 'sweater' },
+  alerts: [],
 };
+
+// Columns needed for dashboard (fast, lightweight)
+const DASH_COLS = [
+  'id','merchant_id','qty','fob','ship_date','prod_packing','buyer','style','shipped',
+  'plan_yarn','plan_pp','plan_sew','plan_pack','plan_knit','plan_insp','plan_ship',
+  'act_yarn','act_pp','act_sew','act_pack','act_knit','act_insp','act_ship'
+].join(',');
 
 // ─── Helpers ───
 const $ = id => document.getElementById(id);
@@ -578,6 +700,8 @@ const toDate = s => s ? new Date(s + 'T00:00:00') : null;
 const daysTo = s => s ? Math.round((toDate(s) - today()) / 86400000) : null;
 const short = s => !s ? '—' : toDate(s).toLocaleDateString('en-GB', {day:'2-digit',month:'short'});
 const initials = n => n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+const titleOf = u => u.title || (u.role === 'management' ? 'Management' : u.role === 'mid_management' ? 'HOD' : 'Merchandiser');
+
 const ago = dt => {
   const m = Math.round((Date.now() - new Date(dt).getTime()) / 60000);
   if (m < 1) return 'just now';
@@ -678,31 +802,61 @@ function doLogout() {
 async function startApp() {
   $('login-wrap').style.display = 'none';
   $('app').style.display = 'flex';
-  await loadAll();
+  applyPrefs();
+
+  // Stage 1 — users only (~100ms): show rail immediately
+  await loadUsers();
+  renderRail();
+  $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading dashboard…</div>';
+
+  // Stage 2 — dashboard data in background (~300ms)
+  await Promise.all([loadDashOrders(), loadNotes(), loadMemo()]);
+  cleanOldArchive(); // fire and forget
   subscribeRealtime();
   render();
 }
 
 // ─── DATA ───
-async function loadAll() {
-  await Promise.all([loadUsers(), loadOrders(), loadMemo(), loadNotes()]);
-  await cleanOldArchive();
-}
-
 async function loadUsers() {
   const { data } = await db.from('users').select('*').order('name');
   S.users = data || [];
 }
 
-async function loadOrders() {
-  let q = db.from('orders').select('*').order('ship_date', { ascending: true });
-  if (S.user.role !== 'management') {
-    q = q.eq('merchant_id', S.user.id);
-  }
+async function loadDashOrders() {
+  // Lightweight query — only columns needed for dashboard stats + TNA checking
+  let q = db.from('orders').select(DASH_COLS)
+    .eq('shipped', false).order('ship_date', { ascending: true });
+  if (S.user.role === 'merchant') q = q.eq('merchant_id', S.user.id);
   const { data } = await q;
-  const all = data || [];
-  S.orders = all.filter(o => !o.shipped);
-  S.archive = all.filter(o => o.shipped);
+  S.orders = data || [];
+  await loadAlerts();
+}
+
+async function loadAlerts() {
+  const canSee = S.user.role === 'management' || S.user.role === 'mid_management';
+  if (!canSee) { S.alerts = []; return; }
+  const { data: ad } = await db.from('shipment_alerts').select('*').eq('dismissed', false).order('created_at', { ascending: false });
+  S.alerts = ad || [];
+}
+
+async function loadBoardOrders(merchantId) {
+  // Full column query for one merchant — cached after first load
+  if (S.boardCache[merchantId]) return S.boardCache[merchantId];
+  const { data } = await db.from('orders').select('*')
+    .eq('merchant_id', merchantId).eq('shipped', false)
+    .order('ship_date', { ascending: true });
+  S.boardCache[merchantId] = data || [];
+  return S.boardCache[merchantId];
+}
+
+async function loadArchiveData() {
+  if (S.archiveLoaded) return;
+  let q = db.from('orders').select('*').eq('shipped', true)
+    .order('shipped_on', { ascending: false });
+  if (S.user.role === 'merchant') q = q.eq('merchant_id', S.user.id);
+  const { data } = await q;
+  S.archive = data || [];
+  S.archiveLoaded = true;
 }
 
 async function loadMemo() {
@@ -743,8 +897,15 @@ async function cleanOldArchive() {
 // ─── REALTIME ───
 function subscribeRealtime() {
   S.channel = db.channel('tracker-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, async () => {
-      await loadOrders(); render();
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, async payload => {
+      // Invalidate board cache for affected merchant only
+      const mid = payload.new?.merchant_id || payload.old?.merchant_id;
+      if (mid) delete S.boardCache[mid];
+      if (S.archiveLoaded) S.archiveLoaded = false; // stale if shipped
+      await loadDashOrders();
+      renderRail();
+      if (S.view === 'dashboard') renderDashboard();
+      else if (S.view === mid) renderBoard(mid); // re-render open board
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, async () => {
       await loadUsers(); renderRail();
@@ -759,11 +920,17 @@ function subscribeRealtime() {
 function render() {
   renderRail();
   if (S.view === 'dashboard') renderDashboard();
-  else if (S.view === 'archive') renderArchive();
+  else if (S.view === 'archive') renderArchivePage();
   else renderBoard(S.view);
 }
 
-function setView(v) { S.view = v; render(); }
+function setView(v) {
+  S.view = v;
+  renderRail();
+  if (v === 'dashboard') renderDashboard();
+  else if (v === 'archive') renderArchivePage();
+  else renderBoard(v);
+}
 
 function renderRail() {
   const u = S.user;
@@ -813,7 +980,7 @@ function renderRail() {
     <div class="av">${initials(u.name)}</div>
     <div class="info">
       <div class="uname">${u.name}</div>
-      <div class="urole">${isMgmt ? 'Management' : isMid ? 'Mid-management' : u.team || 'Merchandiser'}</div>
+      <div class="urole">${titleOf(u)}</div>
     </div>
     <button class="lo-btn" onclick="doLogout()" title="Sign out">↩</button>`;
 }
@@ -844,7 +1011,21 @@ function renderDashboard() {
     <div class="val">${today().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>`;
   $('act-row').innerHTML = `<button class="btn" onclick="openDashPdf()">Export PDF</button>`;
 
-  let html = `<div class="stats">
+  const isMA = S.user.role === 'management';
+  let alertHtml = '';
+  if ((isMA || S.user.role === 'mid_management') && S.alerts && S.alerts.length) {
+    alertHtml = '<div class="alert-cards"><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">Shipment alerts — ' + S.alerts.length + ' unresolved</div>' +
+      S.alerts.map(function(a) {
+        const icon = a.alert_type === 'late' ? '⏰' : '⚠️';
+        const merch2 = S.users.find(function(u){return u.id===a.merchant_id;});
+        let detail = '';
+        if (a.alert_type === 'short' || a.alert_type === 'both') detail += '<strong>' + fmt(a.short_qty) + ' pcs short</strong> — value lost: ' + money(a.value_lost) + ' ';
+        if (a.alert_type === 'late' || a.alert_type === 'both') detail += '<strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + ' late</strong>';
+        return '<div class="alert-card ' + a.alert_type + '"><div class="alert-icon">' + icon + '</div><div class="alert-body"><div class="alert-title">' + a.style + ' · ' + a.buyer + (merch2?' · '+merch2.name:'') + '</div><div class="alert-detail">Shipped ' + fmt(a.shipped_qty) + ' pcs · ' + detail + '</div></div>' + (isMA?'<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + a.id + '\')">Dismiss</button>':'') + '</div>';
+      }).join('') + '</div>';
+  }
+
+  let html = alertHtml + `<div class="stats">
     <div class="stat"><div class="k">Live orders</div><div class="v">${live.length}</div>
       <div class="n">${fmt(totalQty)} pcs booked</div></div>
     <div class="stat"><div class="k">Balance to ship</div><div class="v">${fmt(totalBal)}</div>
@@ -930,13 +1111,23 @@ function renderDashboard() {
 }
 
 // ─── BOARD ───
-function renderBoard(uid) {
+async function renderBoard(uid) {
   const merch = S.users.find(u => u.id === uid);
   if (!merch) { setView('dashboard'); return; }
 
+  // Show skeleton while data loads
+  $('crumb').textContent = 'Merchandiser';
+  $('page-title').textContent = merch.name;
+  $('page-sub').innerHTML = '';
+  $('stamp').innerHTML = '';
+  $('act-row').innerHTML = '';
+  if (!S.boardCache[uid]) {
+    $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading ' + merch.name + "\u2019s board…</div>';
+  }
+
   const division = merch.division || 'sweater';
   const VSTEPS = getSteps(division);
-  const os = S.orders.filter(o => o.merchant_id === uid)
+  const os = (await loadBoardOrders(uid))
     .sort((a, b) => (daysTo(a.ship_date)||999) - (daysTo(b.ship_date)||999));
 
   const stale = merch.updated_at && (Date.now() - new Date(merch.updated_at).getTime()) > 86400000;
@@ -999,7 +1190,7 @@ function renderBoard(uid) {
 
   const rows = os.map(o => {
     const ms = missedMiles(o), dl = daysTo(o.ship_date);
-    return `<tr class="${rowClass(o)}">
+    return `<tr class="${rowClass(o)}" style="cursor:pointer" onclick="if(!event.target.closest('button,input,a'))openOrderDetail('${o.id}','${division}')">
       <td class="stk"><span class="flag ${ms.length?'on':''}"></span>
         <span class="sty">${o.style}</span>
         <div class="sub2" style="margin-left:10px">${ms.length ? ms.length+'× late' : pctPacked(o)+'% packed'}</div></td>
@@ -1054,12 +1245,21 @@ function renderBoard(uid) {
 }
 
 // ─── ARCHIVE ───
-function renderArchive() {
+async function renderArchivePage() {
   $('crumb').textContent = 'History';
   $('page-title').textContent = 'Shipped orders';
-  $('page-sub').innerHTML = `${S.archive.length} orders · auto-deleted after 2 years`;
+  $('page-sub').innerHTML = 'Shipped orders · auto-deleted after 2 years';
   $('stamp').innerHTML = '';
   $('act-row').innerHTML = '';
+  if (!S.archiveLoaded) {
+    $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading archive…</div>';
+    await loadArchiveData();
+  }
+  renderArchive();
+}
+
+function renderArchive() {
+  $('page-sub').innerHTML = `${S.archive.length} orders · auto-deleted after 2 years`;
 
   if (!S.archive.length) {
     $('content').innerHTML = `<div class="card"><div class="empty">
@@ -1258,7 +1458,9 @@ async function setAct(ordId, mKey, val, division) {
 // ─── SHIP ───
 function openShip(ordId) {
   S.shipTarget = ordId;
-  const o = S.orders.find(x => x.id === ordId);
+  const o = (S.boardCache[S.view] || []).find(x => x.id === ordId) || S.orders.find(x => x.id === ordId);
+  if (!o) return;
+  $('ship_qty_actual').value = o.qty || '';
   $('ship-sub').textContent = `${o.style} · ${o.buyer} · ${fmt(o.qty)} pcs`;
   $('ship_date_actual').value = new Date().toISOString().slice(0, 10);
   $('confirm-ship-btn').disabled = false;
@@ -1267,24 +1469,309 @@ function openShip(ordId) {
 }
 
 async function confirmShip() {
-  const o = S.orders.find(x => x.id === S.shipTarget);
+  const boardO = S.boardCache[S.view] ? S.boardCache[S.view].find(x => x.id === S.shipTarget) : null;
+  const o = boardO || S.orders.find(x => x.id === S.shipTarget);
   if (!o) return;
   $('confirm-ship-btn').disabled = true;
-  $('confirm-ship-btn').textContent = 'Saving…';
-  const shippedOn = $('ship_date_actual').value || new Date().toISOString().slice(0, 10);
+  $('confirm-ship-btn').textContent = 'Saving...';
+  const shippedOn  = $('ship_date_actual').value || new Date().toISOString().slice(0, 10);
+  const shippedQty = parseInt($('ship_qty_actual').value) || o.qty || 0;
+  const planShip   = o.plan_ship || o.ship_date;
+  const isLate  = planShip && shippedOn > planShip;
+  const isShort = shippedQty < (o.qty || 0);
+  const shortQty  = isShort ? (o.qty || 0) - shippedQty : 0;
+  const daysLate  = isLate ? Math.round((new Date(shippedOn) - new Date(planShip)) / 86400000) : 0;
+  const valueLost = shortQty * (o.fob || 0);
   const { error } = await db.from('orders').update({
-    shipped: true, shipped_on: shippedOn,
+    shipped: true, shipped_on: shippedOn, shipped_qty: shippedQty,
     updated_at: new Date().toISOString(), updated_by: S.user.name
   }).eq('id', S.shipTarget);
   if (!error) {
+    if (isLate || isShort) {
+      await db.from('shipment_alerts').insert({
+        order_id: o.id, style: o.style, buyer: o.buyer, merchant_id: o.merchant_id,
+        alert_type: isLate && isShort ? 'both' : isLate ? 'late' : 'short',
+        shipped_qty: shippedQty, short_qty: shortQty, days_late: daysLate, value_lost: valueLost
+      });
+    }
+    if (o.merchant_id) delete S.boardCache[o.merchant_id];
+    S.archiveLoaded = false;
     closeModal('ov-ship');
-    toast(`${o.style} moved to archive`, 'ok-t');
-    await loadOrders();
+    await loadDashOrders();
     render();
+    showShipResult(o, shippedQty, shippedOn, isLate, isShort, daysLate, shortQty, valueLost);
   } else { toast('Error. Try again.', 'err'); }
   $('confirm-ship-btn').disabled = false;
   $('confirm-ship-btn').textContent = 'Confirm shipped';
 }
+
+function showShipResult(o, qty, date, isLate, isShort, daysLate, shortQty, valueLost) {
+  const hasIssue = isLate || isShort;
+  $('sr-title').textContent = hasIssue ? 'Shipment Recorded' : 'Shipment Complete';
+  const dateStr = new Date(date + 'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  let html = '<div class="ship-result">';
+  if (!hasIssue) {
+    html += '<div class="ico">&#x2705;</div><h3>Well done!</h3><div class="detail"><strong>' + o.style + '</strong> shipped successfully on ' + dateStr + '.<br>' + fmt(qty) + ' pcs &middot; ' + money((o.qty||0)*(o.fob||0)) + ' total value</div>';
+  } else {
+    html += '<div class="ico">&#x26a0;&#xfe0f;</div><h3>Shipment Recorded with Issues</h3><div class="detail"><strong>' + o.style + '</strong> &middot; ' + o.buyer + ' &middot; shipped ' + dateStr + '</div>';
+    if (isShort) html += '<div class="warn-box"><div class="wk">Short shipment</div><div class="wv">' + fmt(shortQty) + ' pcs short</div><div style="font-size:12px;color:var(--red);margin-top:4px">Shipped: ' + fmt(qty) + ' / ' + fmt(o.qty) + ' pcs<br>Value lost: <strong>' + money(valueLost) + '</strong> USD</div></div>';
+    if (isLate) html += '<div class="late-box"><div class="wk">Late shipment</div><div class="wv">' + daysLate + ' day' + (daysLate>1?'s':'') + ' late</div><div style="font-size:12px;color:var(--amber);margin-top:4px">Plan: ' + short(o.plan_ship||o.ship_date) + ' &middot; Actual: ' + short(date) + '</div></div>';
+    html += '<div style="font-size:12px;color:var(--muted);margin-top:12px">This will appear on the dashboard until management clears it.</div>';
+  }
+  html += '</div>';
+  $('sr-body').innerHTML = html;
+  openModal('ov-ship-result');
+}
+
+// --- ORDER DETAIL ---
+async function openOrderDetail(ordId, division) {
+  const o = (S.boardCache[S.view] || []).find(x => x.id === ordId);
+  if (!o) return;
+  S.detail = { orderId: ordId, order: o, bookings: [], receipts: [], approvals: [], tab: 'details', division: division || 'sweater' };
+  $('od-title').textContent = o.style + ' \u2014 ' + o.buyer;
+  $('od-sub').textContent = (o.house||'') + ' \u00b7 ' + fmt(o.qty) + ' pcs \u00b7 FOB ' + (o.fob||0).toFixed(2) + ' \u00b7 Ships ' + short(o.ship_date);
+  renderODTabs();
+  openModal('ov-od');
+  renderODContent();
+  await loadOrderDetailData(ordId);
+  renderODContent();
+}
+
+async function loadOrderDetailData(ordId) {
+  const [bk, rc, ap] = await Promise.all([
+    db.from('yarn_bookings').select('*').eq('order_id', ordId).order('booked_on'),
+    db.from('yarn_receipts').select('*').eq('order_id', ordId).order('received_on'),
+    db.from('approvals').select('*').eq('order_id', ordId).order('round'),
+  ]);
+  S.detail.bookings = bk.data || [];
+  S.detail.receipts = rc.data || [];
+  S.detail.approvals = ap.data || [];
+}
+
+function renderODTabs() {
+  const tabs = [{k:'details',n:'Details & TNA'},{k:'material',n:'Material'},{k:'approvals',n:'Approvals'}];
+  $('od-tabs').innerHTML = tabs.map(t =>
+    '<button class="od-tab ' + (S.detail.tab===t.k?'on':'') + '" onclick="switchODTab(\'' + t.k + '\')">' + t.n + '</button>'
+  ).join('');
+}
+
+function switchODTab(tab) { S.detail.tab = tab; renderODTabs(); renderODContent(); }
+function renderODContent() {
+  if (S.detail.tab === 'details') renderODDetails();
+  else if (S.detail.tab === 'material') renderODMaterial();
+  else renderODApprovals();
+}
+
+function renderODDetails() {
+  const o = S.detail.order;
+  const div = S.detail.division;
+  const VSTEPS = getSteps(div);
+  const VMILES = getMiles(div);
+  const canEdit = S.user.role === 'management' || S.user.id === o.merchant_id;
+  const ms = missedMiles(o);
+  const dl = daysTo(o.ship_date);
+
+  let tnaRows = VMILES.map(function(x) {
+    const p = o['plan_' + x.k], a = o['act_' + x.k];
+    let st = '<span class="chip run">No plan</span>', delay = '';
+    if (p) {
+      if (a) {
+        const dd = Math.round((toDate(a)-toDate(p))/86400000);
+        delay = dd > 0 ? '<span style="font-size:11px;font-family:var(--mono);color:var(--red)">+' + dd + 'd</span>' : '<span style="font-size:11px;color:var(--green)">On time</span>';
+        st = dd > 0 ? '<span class="chip bad">Late</span>' : '<span class="chip ok">Done</span>';
+      } else {
+        const dd = daysTo(p);
+        st = dd < 0 ? '<span class="chip bad">Overdue</span>' : dd<=3 ? '<span class="chip warn">Due soon</span>' : '<span class="chip run">Pending</span>';
+        delay = dd < 0 ? '<span style="font-size:11px;font-family:var(--mono);color:var(--red)">+' + (-dd) + 'd</span>' : '<span style="font-size:11px;color:var(--muted)">' + dd + 'd left</span>';
+      }
+    }
+    const actCell = canEdit
+      ? '<input class="tna-date-inp" type="date" value="' + (a||'') + '" onchange="setActFromDetail(\'' + o.id + '\',\'' + x.k + '\',this.value,\'' + div + '\')">'
+      : '<span style="font-family:var(--mono);font-size:12px">' + short(a) + '</span>';
+    return '<tr><td style="font-weight:500">' + x.n + '</td><td style="font-family:var(--mono);font-size:12px">' + short(p) + '</td><td>' + actCell + '</td><td style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' + st + ' ' + delay + '</td></tr>';
+  }).join('');
+
+  let prodRows = VSTEPS.map(function(s) {
+    const v = o[s.k]||0;
+    const pct = o.qty ? Math.min(100,100*v/o.qty) : 0;
+    const full = v>=(o.qty||0)&&(o.qty||0)>0;
+    const inp = canEdit ? '<input class="prod-inp" type="number" min="0" max="' + o.qty + '" value="' + v + '" onchange="setProdFromDetail(\'' + o.id + '\',\'' + s.k + '\',this.value)">' : '';
+    return '<div class="prod-row"><div class="prod-lbl">' + s.n + '</div><div class="prod-bar"><div class="prod-fill ' + (full?'full':'') + '" style="width:' + pct + '%"></div></div><div class="prod-nums">' + fmt(v) + ' / ' + fmt(o.qty) + '</div>' + inp + '</div>';
+  }).join('');
+
+  $('od-body').innerHTML =
+    '<div class="od-kpis">' +
+    '<div class="od-kpi"><div class="k">Order qty</div><div class="v">' + fmt(o.qty) + '</div></div>' +
+    '<div class="od-kpi"><div class="k">FOB</div><div class="v">' + (o.fob||0).toFixed(2) + '</div></div>' +
+    '<div class="od-kpi"><div class="k">Total value</div><div class="v">' + money((o.qty||0)*(o.fob||0)) + '</div></div>' +
+    '<div class="od-kpi"><div class="k">Ship date</div><div class="v">' + short(o.ship_date) + '</div></div>' +
+    '<div class="od-kpi"><div class="k">Days left</div><div class="v" style="' + (dl!=null&&dl<=5?'color:var(--red)':'') + '">' + (dl!=null?dl:'--') + '</div></div>' +
+    '<div class="od-kpi"><div class="k">TNA issues</div><div class="v" style="' + (ms.length?'color:var(--red)':'') + '">' + ms.length + '</div></div>' +
+    '<div class="od-kpi"><div class="k">Packed</div><div class="v">' + pctPacked(o) + '%</div></div>' +
+    '</div>' +
+    '<div class="od-section"><div class="od-section-title">TNA \u2014 Plan vs Actual</div>' +
+    '<table class="tna-cmp"><thead><tr><th>Milestone</th><th>Plan date</th><th>Actual date</th><th>Status / Delay</th></tr></thead><tbody>' + tnaRows + '</tbody></table></div>' +
+    '<div class="od-section"><div class="od-section-title">Production progress</div>' +
+    '<div class="prod-rows">' + prodRows + '</div>' +
+    (o.remarks ? '<div style="margin-top:10px;font-size:12.5px;color:var(--muted);padding:8px 10px;background:#FAF9F5;border-radius:7px;border:1px solid var(--line)">' + o.remarks + '</div>' : '') +
+    '</div>';
+}
+
+function renderODMaterial() {
+  const o = S.detail.order;
+  const div = S.detail.division;
+  const unit = div === 'knit' ? 'kgs' : 'lbs';
+  const matLabel = div === 'knit' ? 'Fabric' : 'Yarn';
+  const canEdit = S.user.role === 'management' || S.user.id === o.merchant_id;
+  const bk = S.detail.bookings, rc = S.detail.receipts;
+  const totalBooked = bk.reduce(function(s,x){return s+(x.qty||0);},0);
+  const totalRecvd  = rc.reduce(function(s,x){return s+(x.qty||0);},0);
+  const balance = totalBooked - totalRecvd;
+  const today0 = new Date().toISOString().slice(0,10);
+
+  let bkRows = bk.length ? '<table class="mat-table"><thead><tr><th>Date</th><th>Supplier</th><th style="text-align:right">Qty (' + unit + ')</th>' + (canEdit?'<th></th>':'') + '</tr></thead><tbody>' +
+    bk.map(function(b){ return '<tr><td style="font-family:var(--mono);font-size:12px">' + short(b.booked_on) + '</td><td>' + (b.supplier||'--') + '</td><td style="text-align:right;font-family:var(--mono)">' + fmt(b.qty) + '</td>' + (canEdit?'<td><button class="btn sm danger" onclick="deleteBooking(\'' + b.id + '\')">x</button></td>':'') + '</tr>'; }).join('') +
+    '</tbody></table>' : '<div style="color:var(--muted);font-size:13px;padding:6px 0">No bookings yet.</div>';
+
+  let rcRows = rc.length ? '<table class="mat-table"><thead><tr><th>Date</th><th style="text-align:right">Qty (' + unit + ')</th><th style="text-align:right">Running total</th>' + (canEdit?'<th></th>':'') + '</tr></thead><tbody>' +
+    rc.map(function(r,i){ const run=rc.slice(0,i+1).reduce(function(s,x){return s+(x.qty||0);},0); return '<tr><td style="font-family:var(--mono);font-size:12px">' + short(r.received_on) + '</td><td style="text-align:right;font-family:var(--mono)">' + fmt(r.qty) + '</td><td style="text-align:right;font-family:var(--mono);color:var(--muted)">' + fmt(run) + '</td>' + (canEdit?'<td><button class="btn sm danger" onclick="deleteReceipt(\'' + r.id + '\')">x</button></td>':'') + '</tr>'; }).join('') +
+    '</tbody></table>' : '<div style="color:var(--muted);font-size:13px;padding:6px 0">No receipts yet.</div>';
+
+  const addBkBtn = canEdit ? '<button class="btn sm pri" onclick="showAddBookingForm()">+ Add booking</button>' : '';
+  const addRcBtn = canEdit ? '<button class="btn sm pri" onclick="showAddReceiptForm()">+ Add receipt</button>' : '';
+
+  const summary = bk.length ? '<div class="mat-summary"><div class="item"><div class="k">Booked</div><div class="v">' + fmt(totalBooked) + ' ' + unit + '</div></div><div class="item"><div class="k">Received</div><div class="v ' + (totalRecvd>=totalBooked&&totalBooked>0?'ok':'') + '">' + fmt(totalRecvd) + ' ' + unit + '</div></div><div class="item"><div class="k">Balance</div><div class="v ' + (balance>0?'bad':balance===0&&totalBooked>0?'ok':'') + '">' + fmt(balance) + ' ' + unit + '</div></div></div>' : '';
+
+  $('od-body').innerHTML =
+    '<div class="od-section"><div class="od-section-title">' + matLabel + ' bookings (' + unit + ') ' + addBkBtn + '</div>' +
+    bkRows +
+    '<div id="add-booking-form" style="display:none;border-top:1px solid var(--line);margin-top:8px;padding-top:10px">' +
+    '<div class="add-form-row"><div class="f"><label>Date</label><input type="date" id="bk-date" value="' + today0 + '"></div><div class="f"><label>Supplier</label><input type="text" id="bk-supplier" placeholder="Name" style="width:160px"></div><div class="f"><label>Qty (' + unit + ')</label><input type="number" id="bk-qty" placeholder="0" style="width:90px"></div><button class="btn sm pri" onclick="saveBooking()">Save</button><button class="btn sm ghost" onclick="$(\'add-booking-form\').style.display=\'none\'">Cancel</button></div></div>' +
+    summary + '</div>' +
+    '<div class="od-section"><div class="od-section-title">' + matLabel + ' received (' + unit + ') ' + addRcBtn + '</div>' +
+    rcRows +
+    '<div id="add-receipt-form" style="display:none;border-top:1px solid var(--line);margin-top:8px;padding-top:10px">' +
+    '<div class="add-form-row"><div class="f"><label>Date</label><input type="date" id="rc-date" value="' + today0 + '"></div><div class="f"><label>Qty (' + unit + ')</label><input type="number" id="rc-qty" placeholder="0" style="width:110px"></div><button class="btn sm pri" onclick="saveReceipt()">Save</button><button class="btn sm ghost" onclick="$(\'add-receipt-form\').style.display=\'none\'">Cancel</button></div></div></div>';
+}
+
+function renderODApprovals() {
+  const o = S.detail.order;
+  const canEdit = S.user.role === 'management' || S.user.id === o.merchant_id;
+  const AP = S.detail.approvals;
+
+  function sec(type, label) {
+    const rounds = AP.filter(function(a){return a.type===type;}).sort(function(a,b){return a.round-b.round;});
+    const nextR = rounds.length ? Math.max.apply(null, rounds.map(function(r){return r.round;}))+1 : 1;
+    const addBtn = canEdit ? '<button class="btn sm" onclick="addApprovalRound(\'' + o.id + '\',\'' + type + '\')">+ Round ' + nextR + '</button>' : '';
+    let h = '<div class="apv-section"><div class="apv-title">' + label + ' ' + addBtn + '</div>';
+    if (!rounds.length) {
+      h += '<div style="color:var(--muted);font-size:13px;padding:4px 0">No rounds recorded yet.</div>';
+    } else {
+      rounds.forEach(function(r) {
+        const st = r.approved_on ? '<span class="chip ok">Approved</span>' : r.submitted_on ? '<span class="chip warn">Awaiting approval</span>' : '<span class="chip run">Not submitted</span>';
+        const subInp = canEdit ? '<input class="apv-date-inp" type="date" value="' + (r.submitted_on||'') + '" onchange="updateApproval(\'' + r.id + '\',\'submitted_on\',this.value)">' : '<span style="font-family:var(--mono);font-size:12px">' + short(r.submitted_on) + '</span>';
+        const apvInp = canEdit ? '<input class="apv-date-inp" type="date" value="' + (r.approved_on||'') + '" onchange="updateApproval(\'' + r.id + '\',\'approved_on\',this.value)">' : '<span style="font-family:var(--mono);font-size:12px">' + short(r.approved_on) + '</span>';
+        h += '<div class="apv-row"><div class="apv-round-lbl">Round ' + r.round + '</div><div class="apv-field-lbl">Submitted</div>' + subInp + '<div class="apv-field-lbl" style="margin-left:8px">Approved</div>' + apvInp + '<div style="margin-left:auto">' + st + '</div></div>';
+      });
+    }
+    return h + '</div>';
+  }
+
+  $('od-body').innerHTML = sec('labdip','Lab Dip') + sec('fit','Fit Approval') + sec('pp','PP Approval');
+}
+
+async function setActFromDetail(ordId, mKey, val, div) {
+  await setAct(ordId, mKey, val, div);
+  const updated = S.boardCache[S.view] ? S.boardCache[S.view].find(function(x){return x.id===ordId;}) : null;
+  if (updated) { S.detail.order = updated; renderODContent(); }
+}
+
+async function setProdFromDetail(ordId, sk, val) {
+  await setProd(ordId, sk, val);
+  const updated = S.boardCache[S.view] ? S.boardCache[S.view].find(function(x){return x.id===ordId;}) : null;
+  if (updated) { S.detail.order = updated; renderODContent(); }
+}
+
+function showAddBookingForm() { const f=$('add-booking-form'); if(f) f.style.display=f.style.display==='none'?'block':'none'; }
+function showAddReceiptForm() { const f=$('add-receipt-form'); if(f) f.style.display=f.style.display==='none'?'block':'none'; }
+
+async function saveBooking() {
+  const dt=$('bk-date').value, qty=parseFloat($('bk-qty').value)||0, sup=$('bk-supplier').value.trim();
+  if (!dt||!qty){toast('Date and quantity required','err');return;}
+  const {error}=await db.from('yarn_bookings').insert({order_id:S.detail.orderId,booked_on:dt,qty:qty,supplier:sup});
+  if (!error){await loadOrderDetailData(S.detail.orderId);renderODContent();toast('Booking saved','ok-t');}
+  else toast('Error saving','err');
+}
+
+async function deleteBooking(id) {
+  if (!confirm('Remove this booking?')) return;
+  await db.from('yarn_bookings').delete().eq('id',id);
+  await loadOrderDetailData(S.detail.orderId); renderODContent();
+}
+
+async function saveReceipt() {
+  const dt=$('rc-date').value, qty=parseFloat($('rc-qty').value)||0;
+  if (!dt||!qty){toast('Date and quantity required','err');return;}
+  const {error}=await db.from('yarn_receipts').insert({order_id:S.detail.orderId,received_on:dt,qty:qty});
+  if (!error){await loadOrderDetailData(S.detail.orderId);renderODContent();toast('Receipt saved','ok-t');}
+  else toast('Error saving','err');
+}
+
+async function deleteReceipt(id) {
+  if (!confirm('Remove this receipt?')) return;
+  await db.from('yarn_receipts').delete().eq('id',id);
+  await loadOrderDetailData(S.detail.orderId); renderODContent();
+}
+
+async function addApprovalRound(ordId, type) {
+  const existing = S.detail.approvals.filter(function(a){return a.type===type;});
+  const nextRound = existing.length ? Math.max.apply(null, existing.map(function(r){return r.round;}))+1 : 1;
+  const {error}=await db.from('approvals').insert({order_id:ordId,type:type,round:nextRound});
+  if (!error){await loadOrderDetailData(ordId);renderODContent();}
+  else toast('Error adding round','err');
+}
+
+async function updateApproval(id, field, val) {
+  const obj = {}; obj[field] = val||null;
+  const {error}=await db.from('approvals').update(obj).eq('id',id);
+  if (!error){await loadOrderDetailData(S.detail.orderId);renderODContent();}
+  else toast('Error saving','err');
+}
+
+// --- ALERTS ---
+async function dismissAlert(alertId) {
+  await db.from('shipment_alerts').update({dismissed:true,dismissed_by:S.user.name,dismissed_at:new Date().toISOString()}).eq('id',alertId);
+  await loadAlerts();
+  if (S.view==='dashboard') renderDashboard();
+}
+
+// --- EXCEL EXPORT ---
+async function exportExcel() {
+  if (typeof XLSX === 'undefined'){toast('Excel library loading, try again','err');return;}
+  const buyer=$('pr-buyer')?$('pr-buyer').value:'';
+  const uid=S.printTarget;
+  const merch=S.users.find(function(u){return u.id===uid;});
+  const division=merch&&merch.division||'sweater';
+  const VSTEPS=getSteps(division);
+  const orders=(S.boardCache[uid]||S.orders.filter(function(o){return o.merchant_id===uid;}))
+    .filter(function(o){return !o.shipped&&(!buyer||o.buyer===buyer);})
+    .sort(function(a,b){return (daysTo(a.ship_date)||999)-(daysTo(b.ship_date)||999);});
+  const headers=['Style','Buyer','Buying House','Gauge','Colour','Composition','Order Qty','FOB','Total Value','Ship Date','Days Left'].concat(VSTEPS.map(function(s){return s.n;})).concat(['Balance','Status','Remarks']);
+  const rows=orders.map(function(o){
+    const dl=daysTo(o.ship_date);
+    const ms=missedMiles(o);
+    const status=ms.length?'LATE':dl!=null&&dl<=5?'URGENT':dl!=null&&dl<=10?'DUE SOON':'ON PLAN';
+    return [o.style,o.buyer,o.house||'',o.gauge||'',o.color||'',o.comp||'',o.qty||0,o.fob||0,(o.qty||0)*(o.fob||0),o.ship_date?new Date(o.ship_date+'T00:00:00').toLocaleDateString('en-GB'):'',dl!=null?dl:''].concat(VSTEPS.map(function(s){return o[s.k]||0;})).concat([(o.qty||0)-(o.prod_packing||0),status,o.remarks||'']);
+  });
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([headers].concat(rows));
+  ws['!cols']=headers.map(function(h){return {wch:Math.max(h.length+2,12)};});
+  XLSX.utils.book_append_sheet(wb,ws,'Production Status');
+  const fname=(merch?merch.name:'Production')+'_'+(buyer||'All')+'_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  XLSX.writeFile(wb,fname);
+  toast('Excel downloaded','ok-t');
+}
+
 
 // ─── PRINT ───
 function openPrint(uid) {
@@ -1332,6 +1819,7 @@ function renderPrint() {
 // ─── ADMIN ───
 function openAdmin() {
   $('a_name').value = ''; $('a_team').value = ''; $('a_pwd').value = '';
+  $('a_type').value = 'merchant'; handleProfileType();
   $('admin-err').style.display = 'none';
   $('mgmt_pwd').value = '';
   renderAdminList();
@@ -1341,39 +1829,48 @@ function openAdmin() {
 function renderAdminList() {
   const staff = S.users.filter(u => u.role !== 'management');
   $('admin-list').innerHTML = staff.length
-    ? staff.map(m => `<div class="admin-row">
-        <div>
-          <div class="nm">${m.name}
-            <span class="div-badge ${m.role === 'mid_management' ? 'sweater' : (m.division||'sweater')}" style="${m.role==='mid_management'?'background:#FEF3C7;color:#92400E':''}">
-              ${m.role === 'mid_management' ? 'Mid-mgmt' : m.division === 'knit' ? 'Knit' : 'Sweater'}
-            </span>
+    ? staff.map(m => {
+        const isMid = m.role === 'mid_management';
+        const badgeStyle = isMid ? 'background:#FEF3C7;color:#92400E' : m.division === 'knit' ? 'background:#D1FAE5;color:#065F46' : 'background:#EDE9FE;color:#5B21B6';
+        const badgeLabel = isMid ? titleOf(m) : (m.division === 'knit' ? 'Knit' : 'Sweater');
+        return `<div class="admin-row">
+          <div>
+            <div class="nm">${m.name}
+              <span class="div-badge" style="${badgeStyle};margin-left:6px">${badgeLabel}</span>
+            </div>
+            <div class="tm">${m.team||''} · Password: <code style="background:#F3F1EA;padding:1px 5px;border-radius:4px;font-size:11px">${m.password}</code></div>
           </div>
-          <div class="tm">${m.team||''} · Current password: <code style="background:#F3F1EA;padding:1px 5px;border-radius:4px;font-size:11px">${m.password}</code></div>
-        </div>
-        <input type="text" id="pw_${m.id}" placeholder="New password">
-        <button class="btn sm" onclick="resetPwd('${m.id}')">Reset</button>
-        <button class="btn sm danger" onclick="deleteMerchant('${m.id}','${m.name}')">Remove</button>
-      </div>`).join('')
-    : `<div class="sub2">No users added yet.</div>`;
+          <input type="text" id="pw_${m.id}" placeholder="New password">
+          <button class="btn sm" onclick="resetPwd('${m.id}')">Reset</button>
+          <button class="btn sm danger" onclick="deleteMerchant('${m.id}','${m.name}')">Remove</button>
+        </div>`;
+      }).join('')
+    : `<div class="sub2">No profiles added yet.</div>`;
 }
 
 async function addMerchant() {
   const name = $('a_name').value.trim();
   const pwd  = $('a_pwd').value.trim();
-  const role = $('a_role').value;
-  const div  = $('a_div').value;
+  const type = $('a_type').value;
   if (!name || !pwd) {
     $('admin-err').textContent = 'Name and password are required.';
     $('admin-err').style.display = 'block'; return;
   }
   $('admin-err').style.display = 'none';
+
+  // Derive role and title from profile type
+  const isMerch = type === 'merchant';
+  const role  = isMerch ? 'merchant' : 'mid_management';
+  const title = isMerch ? 'Merchandiser' : type === 'hod' ? 'HOD' : type === 'manager' ? 'Manager' : type === 'audit' ? 'Audit' : 'Other';
+
   const { error } = await db.from('users').insert({
-    name, role, password: pwd,
+    name, role, title, password: pwd,
     team: $('a_team').value,
-    division: role === 'mid_management' ? null : div
+    division: isMerch ? $('a_div').value : null
   });
   if (!error) {
     $('a_name').value = ''; $('a_team').value = ''; $('a_pwd').value = '';
+    $('a_type').value = 'merchant'; handleProfileType();
     toast(`${name} added`, 'ok-t');
     await loadUsers();
     renderAdminList();
@@ -1638,6 +2135,32 @@ function renderDashPdf() {
   $('dpdf-body').innerHTML = html;
 }
 
+// ─── THEME & SIDEBAR ───
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  $('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('pt_theme', next);
+}
+
+function toggleSidebar() {
+  const shell = $('app');
+  const collapsed = shell.classList.toggle('sb-off');
+  $('sb-toggle').textContent = collapsed ? '▶' : '◀';
+  localStorage.setItem('pt_sb', collapsed ? '0' : '1');
+}
+
+function applyPrefs() {
+  const theme = localStorage.getItem('pt_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  if ($('theme-btn')) $('theme-btn').textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (localStorage.getItem('pt_sb') === '0') {
+    $('app').classList.add('sb-off');
+    $('sb-toggle').textContent = '▶';
+  }
+}
+
 // ─── NOTES ───
 let noteTargetId = null;
 
@@ -1677,9 +2200,9 @@ async function dismissNote(noteId) {
 }
 
 // ─── ADMIN HELPERS ───
-function toggleDivField() {
-  const role = $('a_role').value;
-  $('div-field').style.display = role === 'mid_management' ? 'none' : '';
+function handleProfileType() {
+  const type = $('a_type').value;
+  $('div-field').style.display = type === 'merchant' ? '' : 'none';
 }
 
 async function deleteMerchant(uid, name) {
