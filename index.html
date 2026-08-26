@@ -749,14 +749,20 @@ document.addEventListener('keydown', e => {
 
 // ─── AUTH ───
 async function init() {
-  // Load names for login dropdown before session check
+  // Load user names for dropdown
   try {
-    const { data } = await db.from('users').select('name,role').order('name');
-    if (data) {
+    const { data, error } = await db.from('users').select('name,role,title').order('name');
+    if (data && data.length) {
       $('l_name').innerHTML = '<option value="">— Select your name —</option>' +
         data.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+    } else {
+      $('l_name').innerHTML = '<option value="">No users found — check setup</option>';
+      console.error('Users load error:', error);
     }
-  } catch(e) { /* offline, will show error on login attempt */ }
+  } catch(e) {
+    $('l_name').innerHTML = '<option value="">Connection error — check internet</option>';
+    console.error('Init error:', e);
+  }
 
   // Check saved session
   const saved = localStorage.getItem('pt_uid');
@@ -1122,7 +1128,7 @@ async function renderBoard(uid) {
   $('stamp').innerHTML = '';
   $('act-row').innerHTML = '';
   if (!S.boardCache[uid]) {
-    $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading ' + merch.name + "\u2019s board…</div>';
+    $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading ' + merch.name + '\'s board...</div>';
   }
 
   const division = merch.division || 'sweater';
