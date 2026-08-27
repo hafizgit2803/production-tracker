@@ -2189,6 +2189,11 @@ var _ldOrdId = null, _ldDiv = null;
 
 // Generic approval modal) || {};
 
+// ─── APPROVAL FLOW MODAL ───
+var S_apv = { ordId: null, type: null, division: null, rounds: [], step: null };
+var APV_LABELS = { labdip: 'Lab Dip', sizeset: 'Size Set', fit: 'Fit', pp: 'PP Approval' };
+var APV_PLAN_KEY = { labdip: 'plan_yarn', sizeset: 'plan_knit', fit: 'plan_sew', pp: 'plan_pp' };
+
 async function openApvFlow(ordId, type, division) {
   try {
     S_apv.ordId = ordId;
@@ -2223,7 +2228,7 @@ async function openApvFlow(ordId, type, division) {
     openModal('ov-apv-flow');
   } catch(err) {
     console.error('openApvFlow error:', err);
-    toast('Error opening approval modal', 'err');
+    toast('Error: ' + (err && err.message ? err.message : String(err)), 'err');
   }
 }
 
