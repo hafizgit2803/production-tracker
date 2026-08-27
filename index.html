@@ -444,6 +444,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .card table th{font-size:9.5px;padding:5px 8px}
 .card table td{padding:5px 8px}
 .card table .apv-chip{font-size:10.5px}
+.apv-flow-modal{max-width:460px}
 .apv-chip{display:block;width:100%;padding:5px 7px;border-radius:7px;font-size:10.5px;
   font-weight:600;cursor:pointer;border:1px solid;line-height:1.4;text-align:center;
   transition:opacity .12s;white-space:normal;box-sizing:border-box;background:none}
@@ -572,6 +573,143 @@ button.apv-chip{font-family:inherit}
   </main>
 </div>
 
+
+
+<!-- ═══ MODAL: NEW ORDER ═══ -->
+<div class="ov" id="ov-order" onclick="if(event.target===this)closeModal('ov-order')">
+  <div class="modal wide">
+    <div class="m-h"><div><h3>New order</h3><div class="msub" id="ord-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-order')">Cancel</button></div>
+    <div class="m-b">
+      <div class="grid3" style="margin-bottom:10px">
+        <div class="f"><label>Style / SKU</label><input id="o_style" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" placeholder="e.g. KB-7742"></div>
+        <div class="f"><label>Buyer</label><input id="o_buyer" list="dl_buyer" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" autocomplete="off"></div>
+        <div class="f"><label>Buying house</label><input id="o_house" list="dl_house" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" autocomplete="off"></div>
+      </div>
+      <div class="grid3" style="margin-bottom:10px">
+        <div class="f"><label>Gauge</label><input id="o_gauge" list="dl_gauge" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" autocomplete="off" placeholder="e.g. 12" onblur="if(this.value&&!this.value.toLowerCase().includes('gg'))this.value=this.value+'GG'"><div class="hint" style="font-size:10px;margin-top:2px">GG added automatically</div></div>
+        <div class="f"><label>Colour</label><input id="o_color" list="dl_color" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" autocomplete="off"></div>
+        <div class="f"><label>Composition</label><input id="o_comp" list="dl_comp" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" autocomplete="off" placeholder="e.g. 100% Cotton"></div>
+      </div>
+      <div class="grid3" style="margin-bottom:10px">
+        <div class="f"><label>Order qty (pcs)</label><input id="o_qty" type="number" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" onchange="calcTotal()"></div>
+        <div class="f"><label>FOB (USD)</label><input id="o_fob" type="number" step="0.01" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" onchange="calcTotal()"></div>
+        <div class="f"><label>Total value (USD)</label><input id="o_total" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" readonly></div>
+      </div>
+      <div class="card-h" style="padding:6px 0 10px;border:0"><h3 style="font-size:13px">TNA Plan dates</h3></div>
+      <div class="grid3" style="margin-bottom:4px">
+        <div class="f"><label>Ship date</label><input id="p_ship" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label>Yarn inhouse</label><input id="p_yarn" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label>PP approval</label><input id="p_pp" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+      </div>
+      <div class="grid3">
+        <div class="f"><label>Sewing start</label><input id="p_sew" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label>Knitting done</label><input id="p_knit" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label>Final inspection</label><input id="p_insp" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+      </div>
+      <div class="form-err" id="ord-err" style="display:none"></div>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-order')">Cancel</button>
+      <button class="btn pri" id="save-order-btn" onclick="saveOrder()">Save order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: TNA ═══ -->
+<div class="ov" id="ov-tna" onclick="if(event.target===this)closeModal('ov-tna')">
+  <div class="modal wide">
+    <div class="m-h"><div><h3 id="tna-title">TNA</h3><div class="msub" id="tna-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-tna')">Close</button></div>
+    <div class="m-b" id="tna-body"></div>
+    <div class="m-f"><button class="btn" onclick="closeModal('ov-tna')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: SHIP ═══ -->
+<div class="ov" id="ov-ship" onclick="if(event.target===this)closeModal('ov-ship')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Mark as shipped</h3><div class="msub" id="ship-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-ship')">Cancel</button></div>
+    <div class="m-b">
+      <p style="margin-bottom:12px;color:var(--muted);font-size:13px">This order will be moved to Shipped and kept for 2 years.</p>
+      <div class="grid2">
+        <div class="f"><label>Shipment date</label><input id="ship_date_actual" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label>Qty shipped (pcs)</label><input id="ship_qty_actual" type="number" min="0" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+      </div>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-ship')">Cancel</button>
+      <button class="btn pri" id="confirm-ship-btn" onclick="confirmShip()">Confirm shipped</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: SHIP RESULT ═══ -->
+<div class="ov" id="ov-ship-result" onclick="if(event.target===this)closeModal('ov-ship-result')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3 id="sr-title">Shipped</h3><div class="msub" id="sr-sub"></div></div></div>
+    <div class="m-b" id="sr-body"></div>
+    <div class="m-f"><button class="btn pri" onclick="closeModal('ov-ship-result')">Done</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: PRINT / EXPORT ═══ -->
+<div class="ov" id="ov-print" onclick="if(event.target===this)closeModal('ov-print')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3 id="pr-title">Export</h3><div class="msub" id="pr-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-print')">Cancel</button></div>
+    <div class="m-b">
+      <div class="f" style="margin-bottom:18px"><label>Filter by buyer</label>
+        <select id="pr-buyer" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></select></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn pri" onclick="downloadPDF()" style="padding:11px;font-size:13.5px">&#x2193; Download PDF</button>
+        <button class="btn" onclick="exportExcel()" style="padding:11px;font-size:13.5px">&#x2193; Download Excel</button>
+      </div>
+      <div class="hint" style="margin-top:14px">PDF opens print dialog — choose "Save as PDF".</div>
+    </div>
+    <div class="m-f"><button class="btn" onclick="closeModal('ov-print')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDIT COMPLETED QTY ═══ -->
+<div class="ov" id="ov-edit-qty" onclick="if(event.target===this)closeModal('ov-edit-qty')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Edit quantity</h3><div class="msub">Order complete — update if incorrect</div></div>
+      <button class="btn" onclick="closeModal('ov-edit-qty')">Cancel</button></div>
+    <div class="m-b">
+      <div class="eq-step" id="eq-step" style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px"></div>
+      <div class="f"><label>New quantity (pcs)</label>
+        <input id="eq-val" type="number" min="0" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:16px;font-family:var(--mono);color:var(--ink)">
+      </div>
+      <div class="hint" style="margin-top:6px">Order qty: <strong id="eq-max"></strong> pcs. Enter a lower value to revert to active tracking.</div>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-edit-qty')">Cancel</button>
+      <button class="btn pri" onclick="saveEditQty()">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: MATERIAL (Yarn/Fabric) ═══ -->
+<div class="ov" id="ov-material" onclick="if(event.target===this)closeModal('ov-material')">
+  <div class="modal" style="max-width:560px">
+    <div class="m-h"><div><h3 id="mat-title">Material</h3><div class="msub" id="mat-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-material')">Close</button></div>
+    <div class="m-b" id="mat-body"></div>
+    <div class="m-f"><button class="btn" onclick="closeModal('ov-material')">Close</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ORDER DETAIL ═══ -->
+<div class="ov" id="ov-od" onclick="if(event.target===this)closeModal('ov-od')">
+  <div class="modal wide">
+    <div class="m-h"><div><h3 id="od-title">Order</h3><div class="msub" id="od-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-od')">Close</button></div>
+    <div class="m-b" id="od-body"></div>
+    <div class="m-f"><button class="btn" onclick="closeModal('ov-od')">Close</button></div>
+  </div>
+</div>
 
 <!-- ═══ MODAL: APPROVAL FLOW ═══ -->
 <div class="ov" id="ov-apv-flow" onclick="if(event.target===this)closeModal('ov-apv-flow')">
@@ -1110,6 +1248,22 @@ function subscribeRealtime() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'tna_requests' }, async () => {
       await loadTNARequests(); renderRail();
       if (S.view === 'requests' || S.view === 'my-requests') render();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'yarn_bookings' }, async () => {
+      Object.keys(S.boardCache).forEach(function(m){delete S.boardCache[m];});
+      if (S.view !== 'dashboard' && S.view !== 'shipped') { await reloadSummaries(S.view); renderBoard(S.view); }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'yarn_receipts' }, async () => {
+      Object.keys(S.boardCache).forEach(function(m){delete S.boardCache[m];});
+      if (S.view !== 'dashboard' && S.view !== 'shipped') { await reloadSummaries(S.view); renderBoard(S.view); }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'approvals' }, async () => {
+      Object.keys(S.boardCache).forEach(function(m){delete S.boardCache[m];});
+      if (S.view !== 'dashboard' && S.view !== 'shipped') { await reloadSummaries(S.view); renderBoard(S.view); }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'accessories' }, async () => {
+      Object.keys(S.boardCache).forEach(function(m){delete S.boardCache[m];});
+      if (S.view !== 'dashboard' && S.view !== 'shipped') { await reloadSummaries(S.view); renderBoard(S.view); }
     })
     .subscribe();
 }
