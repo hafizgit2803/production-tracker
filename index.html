@@ -524,8 +524,51 @@ button.apv-chip{font-family:inherit}
 </head>
 <body>
 
+<div id="login-wrap">
+  <div class="login-card">
+    <h1 class="login-title">Production Tracker</h1>
+    <p class="login-sub">Shahana Group &mdash; Internal use only</p>
+    <div class="f"><label>Your name</label>
+      <select id="login-name"><option value="">Loading&hellip;</option></select></div>
+    <div class="f"><label>Password</label>
+      <input type="password" id="login-pwd" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-err" id="login-err"></div>
+    <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
+    <p class="login-hint">Forgot password? Contact management.</p>
+  </div>
 </div>
 
+<div class="shell" id="app" style="display:none">
+  <div class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()">&#x25C0;</div>
+  <nav class="rail">
+    <div class="brand">
+      <span class="brand-icon">&#x1F9F6;</span>
+      <div>
+        <div class="brand-name">Shahana Group</div>
+        <div class="brand-sub">Production Tracker</div>
+      </div>
+    </div>
+    <div class="rail-body" id="rail-body"></div>
+    <div class="rail-foot">
+      <div class="user-row" id="user-row"></div>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" style="width:100%;text-align:left;padding:7px 9px;margin-bottom:6px;border-radius:8px;border:1px solid var(--line);background:none;font-size:12.5px;cursor:pointer;color:var(--muted)">&#x1F319; Dark mode</button>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </nav>
+  <main class="main">
+    <div class="top">
+      <div class="crumb" id="crumb">Overview</div>
+      <div class="pagehead">
+        <div><h2 id="page-title">Dashboard</h2><div class="sub2" id="page-sub"></div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="stamp" id="stamp"></div>
+          <button onclick="location.reload()" title="Refresh page" style="background:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;transition:all .15s" onmouseover="this.style.background='var(--accent-soft)';this.style.color='var(--accent)'" onmouseout="this.style.background='none';this.style.color='var(--muted)'">&#x21bb; Refresh</button>
+        </div>
+      </div>
+      <div class="act-row" id="act-row"></div>
+    </div>
+    <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
+  </main>
 </div>
 
 
