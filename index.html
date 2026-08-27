@@ -1421,9 +1421,7 @@ async function renderBoard(uid) {
     const approved = latest && latest.approved_on;
     const tnaWarn = planDate && !approved && daysTo(planDate) < 0
       ? ' <span style="color:var(--red);font-size:9px">\u26a0</span>' : '';
-    if (!latest) return canUpd
-      ? '<button class="apv-chip not-sent" onclick="' + oc + '">Not submitted' + tnaWarn + '</button>'
-      : '<span class="apv-chip not-sent">Not submitted' + tnaWarn + '</span>';
+    if (!latest) return '<button class="apv-chip not-sent" onclick="' + oc + '">Not submitted' + tnaWarn + '</button>';
     if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">Approved<br><span style="font-weight:400;font-size:9.5px">' + short(latest.approved_on) + '</span></button>';
     if (latest.rejected_on) return '<button class="apv-chip rejected" onclick="' + oc + '">Rejected<br><span style="font-weight:400;font-size:9.5px">' + short(latest.rejected_on) + '</span>' + tnaWarn + '</button>';
     if (latest.submitted_on) return '<button class="apv-chip submitted" onclick="' + oc + '">Submitted<br><span style="font-weight:400;font-size:9.5px">' + short(latest.submitted_on) + '</span>' + tnaWarn + '</button>';
@@ -1444,9 +1442,7 @@ async function renderBoard(uid) {
       return '<button class="apv-chip approved" style="background:#D1FAE5;color:#065F46;border-color:#6EE7B7" onclick="' + oc + '">All booked</button>';
     if (booked.length > 0)
       return '<button class="apv-chip submitted" onclick="' + oc + '">Partial<br><span style="font-weight:400;font-size:9.5px">' + booked.length + '/' + total + ' booked</span></button>';
-    return canUpd
-      ? '<button class="apv-chip not-sent" onclick="' + oc + '">Not booked</button>'
-      : '<span class="apv-chip not-sent">Not booked</span>';
+    return '<button class="apv-chip not-sent" onclick="' + oc + '">Not booked</button>';
   }
 
   const rows = os.map(function(o) {
