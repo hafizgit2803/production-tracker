@@ -694,9 +694,9 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 <div class="ov" id="ov-apv-flow" onclick="if(event.target===this)closeModal('ov-apv-flow')">
   <div class="modal apv-flow-modal">
     <div class="m-h"><div><h3 id="apvf-title">Approval</h3><div class="msub" id="apvf-sub"></div></div>
-      <button class="xbtn" onclick="closeModal('ov-apv-flow')">&#x2715;</button></div>
+      <button class="xbtn" onclick="closeModal(\'ov-apv-flow\')">&#x2715;</button></div>
     <div class="m-b" id="apvf-body"></div>
-    <div class="m-f" id="apvf-foot"><button class="btn" onclick="closeModal('ov-apv-flow')">Close</button></div>
+    <div class="m-f" id="apvf-foot"><button class="btn" onclick="closeModal(\'ov-apv-flow\')">Close</button></div>
   </div>
 </div>
 
@@ -1407,24 +1407,30 @@ async function renderBoard(uid) {
   const matLabel = division === 'knit' ? 'Fabric' : 'Yarn';
   const isMerchant = S.user.id === uid;
 
-  function apvChip(sum, type, ordId, div2, canUpd) {
+  function apvChip(sum, type, ordId, div2, canUpd, planDate) {
     const rounds = (sum.ap[type] || []).sort(function(a,b){return a.round-b.round;});
     const latest = rounds[rounds.length - 1];
     const oc = "event.stopPropagation();openApvFlow('" + ordId + "','" + type + "','" + div2 + "')";
-    if (!latest) return canUpd ? '<button class="apv-chip not-sent" onclick="' + oc + '">Not sent</button>' : '<span class="apv-chip not-sent">Not sent</span>';
-    if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">\u2713 ' + short(latest.approved_on) + '</button>';
-    if (latest.rejected_on) return '<button class="apv-chip rejected" onclick="' + oc + '">\u2717 R' + latest.round + ' Rejected</button>';
-    if (latest.submitted_on) return '<button class="apv-chip submitted" onclick="' + oc + '">Sent ' + short(latest.submitted_on) + '</button>';
-    return '<button class="apv-chip not-sent" onclick="' + oc + '">R' + latest.round + '</button>';
+    const approved = latest && latest.approved_on;
+    const tnaWarn = planDate && !approved && daysTo(planDate) < 0
+      ? ' <span style="color:var(--red);font-size:9px">⚠</span>' : '';
+    if (!latest) return canUpd
+      ? '<button class="apv-chip not-sent" onclick="' + oc + '">Not submitted' + tnaWarn + '</button>'
+      : '<span class="apv-chip not-sent">Not submitted' + tnaWarn + '</span>';
+    if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">✓ Approved<br>' + short(latest.approved_on) + '</button>';
+    if (latest.rejected_on) return '<button class="apv-chip rejected" onclick="' + oc + '">✗ Rejected<br>' + short(latest.rejected_on) + tnaWarn + '</button>';
+    if (latest.submitted_on) return '<button class="apv-chip submitted" onclick="' + oc + '">Submitted<br>' + short(latest.submitted_on) + tnaWarn + '</button>';
+    return '<button class="apv-chip not-sent" onclick="' + oc + '">Round ' + latest.round + tnaWarn + '</button>';
   }
+
 
   const rows = os.map(function(o) {
     const ms = missedMiles(o), dl = daysTo(o.ship_date);
     const sum = sums[o.id] || {bk:0, rc:0, ap:{}};
 
-    const ldChip = apvChip(sum, 'labdip', o.id, division, isMerchant);
-    const ftChip = apvChip(sum, 'fit',    o.id, division, isMerchant);
-    const ppChip = apvChip(sum, 'pp',     o.id, division, isMerchant);
+    const ldChip = apvChip(sum, 'labdip', o.id, division, isMerchant, o.plan_yarn);
+    const ftChip = apvChip(sum, 'fit',    o.id, division, isMerchant, o.plan_sew);
+    const ppChip = apvChip(sum, 'pp',     o.id, division, isMerchant, o.plan_pp);
 
     const totalBk = sum.bk, totalRc = sum.rc, bal = totalBk - totalRc;
     const yarnInner = totalBk > 0
@@ -2297,101 +2303,96 @@ async function openApvFlow(ordId, type, division) {
 
 
 function renderApvModal() {
-  var o = (S.boardCache[S.view]||[]).find(function(x){return x.id===S_apv.ordId;}) || {};
+  var o = null;
+  Object.keys(S.boardCache).forEach(function(mid){
+    if (!o) o = (S.boardCache[mid]||[]).find(function(x){return x.id===S_apv.ordId;});
+  });
+  o = o || {};
   var planKey = APV_PLAN_KEY[S_apv.type];
   var planDate = o[planKey];
   var dl = planDate ? daysTo(planDate) : null;
-  var planClass = dl != null ? (dl < 0 ? 'overdue' : dl <= 7 ? 'soon' : '') : '';
+  var pc = dl===null?'#73706A':dl<0?'var(--red)':dl<=7?'var(--amber)':'var(--green)';
+  var pb = dl===null?'#F7F5EF':dl<0?'var(--red-soft)':dl<=7?'var(--amber-soft)':'var(--green-soft)';
+  var pbd = dl===null?'var(--line)':dl<0?'#EBC4BC':dl<=7?'#F6D860':'#86EFAC';
+  var planLabel = !planDate ? 'No TNA date set'
+    : dl<0 ? short(planDate)+' — '+(-dl)+' days overdue'
+    : dl===0 ? short(planDate)+' — Due today'
+    : short(planDate)+' — '+dl+' days left';
 
-  // TNA banner
-  var tnaBanner = '<div class="apv-tna-banner">'
-    + '<div class="icon">\uD83D\uDCC5</div>'
-    + '<div class="info"><div class="k">TNA Plan Date</div>'
-    + '<div class="v ' + planClass + '">' + (planDate ? short(planDate) : 'Not set')
-    + (dl != null ? ' \u00b7 ' + (dl < 0 ? '<span style="color:var(--red)">' + (-dl) + 'd overdue</span>' : dl === 0 ? 'Today' : dl + 'd left') : '')
-    + '</div></div></div>';
+  var tnaBanner = '<div style="background:'+pb+';border:1px solid '+pbd+';border-radius:10px;padding:10px 14px;margin-bottom:14px">'
+    + '<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:'+pc+';font-weight:700;margin-bottom:3px">TNA Plan Date</div>'
+    + '<div style="font-size:14px;font-weight:600;color:'+pc+'">'+planLabel+'</div></div>';
 
-  // History
   var histHTML = '';
   if (S_apv.rounds.length) {
-    histHTML = '<div class="apv-history">'
-      + '<div class="apv-history-title">History</div>'
+    histHTML = '<div style="margin-bottom:14px">'
+      + '<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:10px">History</div>'
       + S_apv.rounds.map(function(r) {
-          var status = r.approved_on ? '<span class="chip ok" style="font-size:10px">\u2713 Approved</span>'
-            : r.rejected_on ? '<span class="chip bad" style="font-size:10px">\u2717 Rejected</span>'
-            : r.submitted_on ? '<span class="chip warn" style="font-size:10px">Awaiting</span>'
-            : '<span class="chip run" style="font-size:10px">Started</span>';
-          return '<div class="apv-history-item">'
-            + '<div class="round-badge">Round ' + r.round + '</div>'
-            + '<div class="dates">'
-            + (r.submitted_on ? '<div class="date-row"><span class="dl">Submitted</span><span class="dv">' + short(r.submitted_on) + '</span></div>' : '')
-            + (r.approved_on  ? '<div class="date-row"><span class="dl">Approved</span><span class="dv" style="color:var(--green);font-weight:600">' + short(r.approved_on) + '</span></div>' : '')
-            + (r.rejected_on  ? '<div class="date-row"><span class="dl">Rejected</span><span class="dv" style="color:var(--red)">' + short(r.rejected_on) + '</span></div>' : '')
-            + '</div>' + status + '</div>';
+          var isOk=!!r.approved_on, isRj=!!r.rejected_on;
+          var dot = isOk?'var(--green)':isRj?'var(--red)':'var(--amber)';
+          var badge = isOk
+            ? '<span style="background:var(--green-soft);color:var(--green);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">✓ Approved</span>'
+            : isRj
+            ? '<span style="background:var(--red-soft);color:var(--red);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">✗ Rejected</span>'
+            : '<span style="background:var(--amber-soft);color:var(--amber);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">Awaiting</span>';
+          return '<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #F0EDE4">'
+            + '<div style="width:8px;height:8px;border-radius:50%;background:'+dot+';flex-shrink:0;margin-top:5px"></div>'
+            + '<div style="flex:1"><div style="font-weight:600;font-size:12.5px;margin-bottom:4px">Round '+r.round+'</div>'
+            + (r.submitted_on?'<div style="font-size:12px;color:var(--muted);margin-bottom:2px">Submitted <strong style="color:var(--ink);font-family:var(--mono)">'+short(r.submitted_on)+'</strong></div>':'')
+            + (r.approved_on ?'<div style="font-size:12px;color:var(--green);font-weight:600">Approved <span style="font-family:var(--mono)">'+short(r.approved_on)+'</span></div>':'')
+            + (r.rejected_on ?'<div style="font-size:12px;color:var(--red)">Rejected <span style="font-family:var(--mono)">'+short(r.rejected_on)+'</span></div>':'')
+            + '</div>'+badge+'</div>';
         }).join('')
       + '</div>';
   }
 
-  // Action area
-  var actionHTML = '';
-  var footHTML = '<button class="btn" onclick="closeModal(\'ov-apv-flow\')">Close</button>';
-  var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length-1] : null;
-  var nextRound = S_apv.rounds.length ? (latest.round + 1) : 1;
-  var today0 = new Date().toISOString().slice(0,10);
+  var actionHTML='', footHTML='<button class="btn" onclick="closeModal(\'ov-apv-flow\')">Close</button>';
+  var latest=S_apv.rounds.length?S_apv.rounds[S_apv.rounds.length-1]:null;
+  var nextRound=latest?latest.round+1:1;
+  var today0=new Date().toISOString().slice(0,10);
+  var canAct=S.user.role!=='mid_management';
 
-  if (S_apv.step === 'submit') {
-    var rLabel = S_apv.rounds.length ? 'Round ' + nextRound + ' — resubmission' : 'Round 1 — first submission';
-    actionHTML = '<div class="apv-action">'
-      + '<div class="apv-action-title">' + rLabel + '</div>'
-      + '<div class="apv-date-label">When did you send it to the buyer?</div>'
-      + '<div class="apv-date-area">'
-      + '<input class="apv-date-big" type="date" id="apv-submit-date" value="' + today0 + '">'
-      + '</div></div>';
-    footHTML = '<button class="btn" onclick="closeModal(\'ov-apv-flow\')">Cancel</button>'
-      + '<button class="btn pri" onclick="apvDoSubmit()">Confirm submission</button>';
-  } else if (S_apv.step === 'outcome') {
-    actionHTML = '<div class="apv-action">'
-      + '<div class="apv-action-title">Round ' + (latest ? latest.round : 1) + ' — what was the outcome?</div>'
-      + '<div class="apv-outcome-btns">'
-      + '<button class="apv-outcome-btn approve" onclick="apvPickDate(\'approve\')">&#x2713; Approved</button>'
-      + '<button class="apv-outcome-btn reject" onclick="apvPickDate(\'reject\')">&#x2717; Rejected</button>'
-      + '</div></div>';
-  } else if (S_apv.step === 'pick-approve') {
-    actionHTML = '<div class="apv-action">'
-      + '<div class="apv-action-title">Date of approval</div>'
-      + '<div class="apv-date-label">When did the buyer approve?</div>'
-      + '<div class="apv-date-area"><input class="apv-date-big" type="date" id="apv-result-date" value="' + today0 + '"></div></div>';
-    footHTML = '<button class="btn" onclick="apvBackToOutcome()">Back</button>'
-      + '<button class="btn pri" style="background:var(--green);border-color:var(--green)" onclick="apvDoResult(\'approve\')">Confirm approved</button>';
-  } else if (S_apv.step === 'pick-reject') {
-    actionHTML = '<div class="apv-action">'
-      + '<div class="apv-action-title">Date of rejection</div>'
-      + '<div class="apv-date-label">When did the buyer reject?</div>'
-      + '<div class="apv-date-area"><input class="apv-date-big" type="date" id="apv-result-date" value="' + today0 + '"></div></div>';
-    footHTML = '<button class="btn" onclick="apvBackToOutcome()">Back</button>'
-      + '<button class="btn pri" style="background:var(--red);border-color:var(--red)" onclick="apvDoResult(\'reject\')">Confirm rejected</button>';
-  } else if (S_apv.step === 'done') {
-    var approvedRound = S_apv.rounds.find(function(r){return r.approved_on;});
-    actionHTML = '<div class="apv-action"><div class="apv-complete">'
-      + '<div class="icon">\u2705</div>'
-      + '<h4>Approved</h4>'
-      + '<p>Approved on ' + short(approvedRound ? approvedRound.approved_on : '') + ' (Round ' + (approvedRound ? approvedRound.round : '') + ')</p>'
-      + '</div></div>';
+  if (S_apv.step==='submit') {
+    var rLabel=S_apv.rounds.length?'Resubmit — Round '+nextRound:'Submit — Round 1';
+    actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
+      +'<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">'+rLabel+'</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:8px">When did you send it to the buyer?</div>'
+      +'<input class="apv-date-big" type="date" id="apv-submit-date" value="'+today0+'"></div>';
+    footHTML='<button class="btn" onclick="closeModal(\'ov-apv-flow\')">Cancel</button><button class="btn pri" onclick="apvDoSubmit()">Confirm submission</button>';
+  } else if (S_apv.step==='outcome') {
+    actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
+      +'<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px">Round '+(latest?latest.round:1)+' — What was the outcome?</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<button class="apv-outcome-btn approve" onclick="apvPickDate(\'approve\')">✓ Approved</button>'
+      +'<button class="apv-outcome-btn reject" onclick="apvPickDate(\'reject\')">✗ Rejected</button>'
+      +'</div></div>';
+  } else if (S_apv.step==='pick-approve') {
+    actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:8px">Date buyer approved:</div>'
+      +'<input class="apv-date-big" style="border-color:var(--green)" type="date" id="apv-result-date" value="'+today0+'"></div>';
+    footHTML='<button class="btn" onclick="apvBackToOutcome()">Back</button><button class="btn pri" style="background:var(--green);border-color:var(--green)" onclick="apvDoResult(\'approve\')">Confirm approved</button>';
+  } else if (S_apv.step==='pick-reject') {
+    actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:8px">Date buyer rejected:</div>'
+      +'<input class="apv-date-big" style="border-color:var(--red)" type="date" id="apv-result-date" value="'+today0+'"></div>';
+    footHTML='<button class="btn" onclick="apvBackToOutcome()">Back</button><button class="btn pri" style="background:var(--red);border-color:var(--red)" onclick="apvDoResult(\'reject\')">Confirm rejected</button>';
+  } else if (S_apv.step==='done') {
+    var ar=S_apv.rounds.find(function(r){return r.approved_on;});
+    actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px;text-align:center;padding-bottom:6px">'
+      +'<div style="width:44px;height:44px;border-radius:50%;background:var(--green-soft);border:2px solid #4ADE80;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:var(--green)">✓</div>'
+      +'<div style="font-size:16px;font-weight:600;color:var(--green);margin-bottom:4px">Approved</div>'
+      +'<div style="font-size:12.5px;color:var(--muted)">'+short(ar?ar.approved_on:'')+'  ·  Round '+(ar?ar.round:'')+'</div></div>';
   } else {
-    // history-only for non-merchant
-    actionHTML = S_apv.rounds.length
-      ? '<div class="apv-action"><div style="color:var(--muted);font-size:12.5px">Only the merchandiser can update this approval.</div></div>'
-      : '<div class="apv-action"><div style="color:var(--muted);font-size:12.5px">No approval activity yet.</div></div>';
+    actionHTML=!canAct
+      ?'<div style="border-top:1px solid var(--line);padding-top:12px;font-size:12.5px;color:var(--muted)">View only — the merchandiser manages this approval.</div>':'' ;
   }
 
-  $('apvf-body').innerHTML = tnaBanner + histHTML + actionHTML;
-  $('apvf-foot').innerHTML = footHTML;
-
-  // Auto-focus date input
-  setTimeout(function() {
-    var inp = document.getElementById('apv-submit-date') || document.getElementById('apv-result-date');
-    if (inp) { inp.focus(); try { inp.showPicker(); } catch(e){} }
-  }, 120);
+  $('apvf-body').innerHTML=tnaBanner+histHTML+actionHTML;
+  $('apvf-foot').innerHTML=footHTML;
+  setTimeout(function(){
+    var inp=document.getElementById('apv-submit-date')||document.getElementById('apv-result-date');
+    if(inp){inp.focus();try{inp.showPicker();}catch(e){}}
+  },150);
 }
 
 function apvPickDate(outcome) {
