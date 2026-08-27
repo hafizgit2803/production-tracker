@@ -870,16 +870,17 @@ document.addEventListener('click', function(e) {
 async function init() {
   // Load user names for dropdown
   try {
-    const { data, error } = await db.from('users').select('name,role,title').order('name');
+    const { data, error } = await db.from('users').select('*').order('name');
     if (data && data.length) {
       $('l_name').innerHTML = '<option value="">— Select your name —</option>' +
         data.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
     } else {
-      $('l_name').innerHTML = '<option value="">No users found — check setup</option>';
+      const msg = error ? error.message : 'No users found';
+      $('l_name').innerHTML = '<option value="">' + msg + ' — run setup SQL</option>';
       console.error('Users load error:', error);
     }
   } catch(e) {
-    $('l_name').innerHTML = '<option value="">Connection error — check internet</option>';
+    $('l_name').innerHTML = '<option value="">Connection error: ' + e.message + '</option>';
     console.error('Init error:', e);
   }
 
