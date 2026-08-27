@@ -266,8 +266,10 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 [data-theme="dark"] .pdf-wrap{background:#fff;color:#191817} /* PDF always light */
 
 /* ── SIDEBAR COLLAPSE ── */
-.rail{transition:width .22s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.shell.sb-off .rail{width:0!important;min-width:0!important;flex:0 0 0!important;overflow:hidden;border-right:none}
+.rail{transition:width .32s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;will-change:width}
+.rail-body,.brand,.rail-foot{transition:opacity .22s ease}
+.shell.sb-off .rail{width:0!important;min-width:0!important;flex:0 0 0!important;border-right:none}
+.shell.sb-off .rail-body,.shell.sb-off .brand,.shell.sb-off .rail-foot{opacity:0;pointer-events:none}
 .sb-toggle{position:fixed;left:244px;top:50%;transform:translateY(-50%);
   width:18px;height:46px;background:var(--rail);border:1px solid var(--line);
   border-left:none;border-radius:0 8px 8px 0;cursor:pointer;z-index:50;
@@ -434,6 +436,12 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .apv-history-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px}
 .apv-history-row:last-child{border:none}
 
+.logout-btn{width:100%;padding:8px 12px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s}
+.logout-btn:hover{background:var(--red-soft);border-color:#EBC4BC;color:var(--red)}
+.card table th{font-size:9.5px;padding:5px 8px}
+.card table td{padding:5px 8px}
+.card table .apv-chip{font-size:10.5px}
+
 @media print{
   html,body{height:auto}
   .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
@@ -485,10 +493,9 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
     </div>
     <div class="rail-body" id="rail-body"></div>
     <div class="rail-foot">
-      <div style="display:flex;align-items:center;gap:4px;padding:2px 4px 8px">
-        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
-      </div>
       <div class="user-row" id="user-row"></div>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" style="width:100%;text-align:left;padding:7px 9px;margin-bottom:6px;border-radius:8px;border:1px solid var(--line);background:none;font-size:12.5px;cursor:pointer;color:var(--muted)">🌙 Dark mode</button>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
     </div>
   </aside>
   <main class="main">
@@ -518,7 +525,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
           <div class="f"><label>Buying house</label><input id="o_house" list="dl_house" autocomplete="off" placeholder="e.g. Grand Sea"></div>
           <div class="f"><label>Buyer</label><input id="o_buyer" list="dl_buyer" autocomplete="off" placeholder="e.g. Zeeman"></div>
           <div class="f"><label>Style no.</label><input id="o_style" autocomplete="off" placeholder="e.g. 148856"></div>
-          <div class="f"><label>Gauge</label><input id="o_gauge" list="dl_gauge" autocomplete="off" placeholder="e.g. 12GG"></div>
+          <div class="f"><label>Gauge</label><input id="o_gauge" list="dl_gauge" autocomplete="off" placeholder="e.g. 12" onblur="if(this.value&&!this.value.toLowerCase().includes('gg'))this.value=this.value+'GG'"><div class="hint" style="font-size:10px;margin-top:2px">GG added automatically</div></div>
           <div class="f"><label>Colours</label><input id="o_color" list="dl_color" autocomplete="off" placeholder="e.g. Navy, Ecru"></div>
           <div class="f"><label>Yarn composition</label><input id="o_comp" list="dl_comp" autocomplete="off" placeholder="e.g. 100% Acrylic"></div>
           <div class="f"><label>Order qty (pcs)</label><input id="o_qty" type="number" min="0" oninput="calcTotal()"></div>
@@ -679,6 +686,17 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
       <button class="btn" onclick="closeModal('ov-labdip-hist')">Close</button>
       <button class="btn pri" id="ld-add-btn" onclick="addLDRoundFromModal()">+ Add round</button>
     </div>
+  </div>
+</div>
+
+
+<!-- ═══ MODAL: APPROVAL FLOW ═══ -->
+<div class="ov" id="ov-apv-flow" onclick="if(event.target===this)closeModal('ov-apv-flow')">
+  <div class="modal apv-flow-modal">
+    <div class="m-h"><div><h3 id="apvf-title">Approval</h3><div class="msub" id="apvf-sub"></div></div>
+      <button class="xbtn" onclick="closeModal('ov-apv-flow')">&#x2715;</button></div>
+    <div class="m-b" id="apvf-body"></div>
+    <div class="m-f" id="apvf-foot"><button class="btn" onclick="closeModal('ov-apv-flow')">Close</button></div>
   </div>
 </div>
 
@@ -846,6 +864,7 @@ const DASH_COLS = [
 // ─── Helpers ───
 const $ = id => document.getElementById(id);
 const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
+const fmtGauge = g => !g ? '' : (g.toLowerCase().includes('gg') ? g : g + 'GG');
 const money = n => '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
 const toDate = s => s ? new Date(s + 'T00:00:00') : null;
@@ -1177,13 +1196,7 @@ function renderRail() {
 
   $('rail-body').innerHTML = html;
 
-  $('user-row').innerHTML = `
-    <div class="av">${initials(u.name)}</div>
-    <div class="info">
-      <div class="uname">${u.name}</div>
-      <div class="urole">${titleOf(u)}</div>
-    </div>
-    <button class="lo-btn" onclick="doLogout()" title="Sign out">↩</button>`;
+  $('user-row').innerHTML = `<div class="av">${initials(u.name)}</div><div class="info"><div class="uname">${u.name}</div><div class="urole">${titleOf(u)}</div></div>`;
 }
 
 // ─── DASHBOARD ───
@@ -1445,7 +1458,7 @@ async function renderBoard(uid) {
       + '<div class="sub2" style="margin-left:10px;font-size:10px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div></td>'
       + '<td>' + o.buyer + '</td>'
       + '<td style="font-size:10.5px">' + (o.house||'—') + '</td>'
-      + '<td style="font-size:10.5px">' + ([o.gauge,o.color,o.comp].filter(Boolean).join(' · ')||'—') + '</td>'
+      + '<td style="font-size:10.5px">' + ([fmtGauge(o.gauge),o.color,o.comp].filter(Boolean).join(' · ')||'—') + '</td>'
       + '<td class="num">' + fmt(o.qty) + '</td>'
       + '<td class="num">' + (o.fob||0).toFixed(2) + '</td>'
       + '<td class="num">' + money((o.qty||0)*(o.fob||0)) + '</td>'
@@ -2246,38 +2259,42 @@ var APV_LABELS = { labdip: 'Lab Dip', fit: 'Fit Approval', pp: 'PP Approval' };
 var APV_PLAN_KEY = { labdip: 'plan_yarn', fit: 'plan_sew', pp: 'plan_pp' };
 
 async function openApvFlow(ordId, type, division) {
-  S_apv.ordId = ordId;
-  S_apv.type = type;
-  S_apv.division = division;
-  S_apv.step = null;
-
-  var label = APV_LABELS[type] || type;
-  var o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;}) || {};
-  $('apvf-title').textContent = label;
-  $('apvf-sub').textContent = o.style + ' \u2014 ' + o.buyer + ' \u00b7 ' + fmt(o.qty) + ' pcs';
-
-  // Load all rounds for this type
-  var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
-  S_apv.rounds = res.data || [];
-
-  // Determine current step
-  var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length - 1] : null;
-  var isMerchant = S.user.id === S.view;
-
-  if (!latest || latest.rejected_on) {
-    // No round yet, or last was rejected — show submission date picker
-    S_apv.step = isMerchant ? 'submit' : 'history';
-  } else if (latest.approved_on) {
-    S_apv.step = 'done';
-  } else if (latest.submitted_on) {
-    S_apv.step = isMerchant ? 'outcome' : 'history';
-  } else {
-    S_apv.step = isMerchant ? 'submit' : 'history';
+  try {
+    S_apv.ordId = ordId;
+    S_apv.type = type;
+    S_apv.division = division || 'sweater';
+    S_apv.step = null;
+    var label = APV_LABELS[type] || type;
+    // Search all board caches
+    var o = null;
+    Object.keys(S.boardCache).forEach(function(mid){
+      if (!o) o = (S.boardCache[mid]||[]).find(function(x){return x.id===ordId;});
+    });
+    o = o || {};
+    if (!$('apvf-title')) { toast('Modal not found','err'); return; }
+    $('apvf-title').textContent = label;
+    $('apvf-sub').textContent = (o.style||'') + (o.buyer ? ' — ' + o.buyer : '') + (o.qty ? ' · ' + fmt(o.qty) + ' pcs' : '');
+    var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
+    S_apv.rounds = res.data || [];
+    var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length - 1] : null;
+    var canAct = S.user.role !== 'mid_management';
+    if (!latest || latest.rejected_on) {
+      S_apv.step = canAct ? 'submit' : 'history';
+    } else if (latest.approved_on) {
+      S_apv.step = 'done';
+    } else if (latest.submitted_on) {
+      S_apv.step = canAct ? 'outcome' : 'history';
+    } else {
+      S_apv.step = canAct ? 'submit' : 'history';
+    }
+    renderApvModal();
+    openModal('ov-apv-flow');
+  } catch(err) {
+    console.error('openApvFlow error:', err);
+    toast('Error opening approval modal', 'err');
   }
-
-  renderApvModal();
-  openModal('ov-apv-flow');
 }
+
 
 function renderApvModal() {
   var o = (S.boardCache[S.view]||[]).find(function(x){return x.id===S_apv.ordId;}) || {};
