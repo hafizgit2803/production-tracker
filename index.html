@@ -529,10 +529,11 @@ button.apv-chip{font-family:inherit}
     <h1 class="login-title">Production Tracker</h1>
     <p class="login-sub">Shahana Group &mdash; Internal use only</p>
     <div class="f"><label>Your name</label>
-      <select id="login-name"><option value="">Loading&hellip;</option></select></div>
+      <select id="l_name"><option value="">Loading&hellip;</option></select></div>
     <div class="f"><label>Password</label>
-      <input type="password" id="login-pwd" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="form-err" id="login-err"></div>
+      <input type="password" id="l_pwd" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-err" id="l_err" style="display:none"></div>
+    <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact management.</p>
   </div>
