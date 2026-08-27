@@ -490,6 +490,16 @@ button.apv-chip{font-family:inherit}
 [data-theme="dark"] .req-card{background:var(--panel)}
 [data-theme="dark"] .req-card-reason{background:#252325}
 
+
+/* Note replies */
+.note-reply-box{background:var(--accent-soft);border:1px solid var(--line);border-radius:7px;
+  padding:8px 11px;margin-top:8px;font-size:12.5px}
+.note-reply-box .rl{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-bottom:4px}
+.note-reply-form{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
+.note-reply-form textarea{flex:1;padding:6px 9px;border:1px solid var(--line);border-radius:8px;
+  background:#FCFBF7;font-size:12.5px;resize:none;color:var(--ink)}
+
 @media print{
   html,body{height:auto}
   .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
@@ -786,6 +796,38 @@ button.apv-chip{font-family:inherit}
   </div>
 </div>
 
+<!-- ═══ MODAL: CONFIRM DELETE ORDER ═══ -->
+<div class="ov" id="ov-delete-order" onclick="if(event.target===this)closeModal('ov-delete-order')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Delete order?</h3><div class="msub" id="del-order-sub"></div></div>
+      <button class="xbtn" data-close="ov-delete-order">&#x2715;</button></div>
+    <div class="m-b">
+      <div style="background:var(--red-soft);border:1px solid #FECACA;border-radius:9px;padding:12px 14px;font-size:13px;color:var(--red)">
+        <strong>This cannot be undone.</strong> All production data, approvals, yarn bookings and accessories for this order will be permanently deleted.
+      </div>
+    </div>
+    <div class="m-f">
+      <button class="btn" data-close="ov-delete-order">Cancel</button>
+      <button class="btn danger" onclick="confirmDeleteOrder()">Yes, delete order</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRM UNSHIP ═══ -->
+<div class="ov" id="ov-unship" onclick="if(event.target===this)closeModal('ov-unship')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Restore to live?</h3><div class="msub" id="unship-sub"></div></div>
+      <button class="xbtn" data-close="ov-unship">&#x2715;</button></div>
+    <div class="m-b">
+      <p style="color:var(--muted);font-size:13px">This order will be moved back to live orders and the shipment record will be cleared.</p>
+    </div>
+    <div class="m-f">
+      <button class="btn" data-close="ov-unship">Cancel</button>
+      <button class="btn pri" onclick="confirmUnship()">Yes, restore to live</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ MODAL: ADD NOTE ═══ -->
 <div class="ov" id="ov-note" onclick="if(event.target===this)closeModal('ov-note')">
   <div class="modal slim">
@@ -956,7 +998,7 @@ const money = n => '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '
 const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
 const toDate = s => s ? new Date(s + 'T00:00:00') : null;
 const daysTo = s => s ? Math.round((toDate(s) - today()) / 86400000) : null;
-const short = s => !s ? '—' : toDate(s).toLocaleDateString('en-GB', {day:'2-digit',month:'short'});
+const short = s => { if(!s) return '—'; const p=String(s).split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:s; };
 const initials = n => n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 const titleOf = u => u.title || (u.role === 'management' ? 'Management' : u.role === 'mid_management' ? 'HOD' : 'Merchandiser');
 
@@ -1342,7 +1384,7 @@ function renderRail() {
 function renderDashboard() {
   $('crumb').textContent = 'Overview';
   $('page-title').textContent = 'Dashboard';
-  $('act-row').innerHTML = '';
+  $('act-row').innerHTML = '<button class="btn sm ghost" onclick="refreshPage()" style="float:right;font-size:12px" title="Refresh">&#x21bb; Refresh</button>';
 
   const isM = S.user.role === 'management';
   const live = S.orders;
@@ -1473,7 +1515,7 @@ async function renderBoard(uid) {
   $('page-title').textContent = merch.name;
   $('page-sub').innerHTML = '';
   $('stamp').innerHTML = '';
-  $('act-row').innerHTML = '';
+  $('act-row').innerHTML = '<button class="btn sm ghost" onclick="refreshPage()" style="float:right;font-size:12px" title="Refresh">&#x21bb; Refresh</button>';
   if (!S.boardCache[uid]) {
     $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading ' + merch.name + '\'s board...</div>';
   }
@@ -1516,7 +1558,8 @@ async function renderBoard(uid) {
         <div class="note-body">
           <div class="note-meta">${n.created_by} · ${new Date(n.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
           <div class="note-text">${n.content}</div>
-          ${canEdit ? `<div class="note-actions"><button class="btn sm pri" onclick="dismissNote('${n.id}')">✓ Mark as done</button></div>` : ''}
+          ${n.reply ? `<div class="note-reply-box"><div class="rl">Reply from ${n.replied_by||'Merchant'}</div>${n.reply}</div>` : (S.user.role==='merchant' && !n.is_closed ? `<div class="note-reply-form"><textarea rows="2" placeholder="Reply to this note..." id="rep-${n.id}"></textarea><button class="btn sm pri" onclick="submitNoteReply('${n.id}',$(\'rep-${n.id}\').value)">Send</button></div>` : '')}
+          ${canEdit ? `<div class="note-actions"><button class="btn sm pri" onclick="dismissNote('${n.id}')">✓ Mark as done</button>${n.reply&&isMgmt?`<button class="btn sm" onclick="resolveNote('${n.id}')">Resolve</button>`:''}</div>` : ''}
         </div>
       </div>`;
     });
@@ -1595,9 +1638,10 @@ async function renderBoard(uid) {
     const sum = sums[o.id] || {bk:0, rc:0, ap:{}, acc:{}};
 
     // Approval chips (after yarn/accessories)
-    const ldChip = apvChip(sum, 'labdip', o.id, division, isMerchant, o.plan_yarn);
-    const ftChip = apvChip(sum, 'fit',    o.id, division, isMerchant, o.plan_sew);
-    const ppChip = apvChip(sum, 'pp',     o.id, division, isMerchant, o.plan_pp);
+    const ldChip = apvChip(sum, 'labdip',  o.id, division, isMerchant, o.plan_yarn);
+    const ftChip = apvChip(sum, 'fit',     o.id, division, isMerchant, o.plan_sew);
+    const ppChip = apvChip(sum, 'pp',      o.id, division, isMerchant, o.plan_pp);
+    const ssChip = apvChip(sum, 'sizeset', o.id, division, isMerchant, o.plan_knit);
     const acChip = accChip(sum, o.id, isMerchant);
 
     // Yarn column
@@ -1643,12 +1687,14 @@ async function renderBoard(uid) {
       + '<td class="apv-col">' + ldChip + '</td>'
       + '<td class="apv-col">' + ftChip + '</td>'
       + '<td class="apv-col">' + ppChip + '</td>'
+      + '<td class="apv-col">' + ssChip + '</td>'
       + prodCells
       + '<td class="num" style="font-weight:600">' + fmt((o.qty||0)-(o.prod_packing||0)) + '</td>'
       + '<td>' + remCell + '</td>'
       + '<td style="white-space:nowrap">'
       + '<button class="btn sm" onclick="event.stopPropagation();openTNA(\'' + o.id + '\',\'' + division + '\')">TNA' + (ms.length ? ' <span style="color:var(--red)">&#9679;</span>' : '') + '</button>'
       + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();openShip(\'' + o.id + '\')">Ship</button>' : '')
+      + (canEdit ? ' <button class="btn sm danger" style="padding:2px 6px;font-size:10px" onclick="event.stopPropagation();openDeleteOrder(\'' + o.id + '\',\'' + o.style + '\',\'' + o.buyer + '\')">&#x2715;</button>' : '')
       + '</td></tr>';
   }).join('');
 
@@ -1665,7 +1711,7 @@ async function renderBoard(uid) {
     + '<th rowspan="2" class="num">Days</th>'
     + '<th class="grp" rowspan="2">' + matLabel + '<br>(' + unit + ')</th>'
     + '<th class="grp" rowspan="2">Accessories</th>'
-    + '<th class="grp" colspan="3">Approvals</th>'
+    + '<th class="grp" colspan="4">Approvals</th>'
     + '<th class="grp" colspan="' + VSTEPS.length + '">Production</th>'
     + '<th rowspan="2" class="num">Bal</th>'
     + '<th rowspan="2">Notes</th>'
@@ -1674,6 +1720,7 @@ async function renderBoard(uid) {
     + '<th class="grp" style="font-size:9px">Lab Dip</th>'
     + '<th class="grp" style="font-size:9px">Fit</th>'
     + '<th class="grp" style="font-size:9px">PP</th>'
+    + '<th class="grp" style="font-size:9px">Size Set</th>'
     + VSTEPS.map(function(s){return '<th class="grp" style="font-size:9px">'+s.n+'</th>';}).join('')
     + '</tr></thead>'
     + '<tbody>' + rows + '</tbody>'
@@ -1688,7 +1735,7 @@ async function renderShippedPage() {
   $('page-title').textContent = 'Shipped orders';
   $('page-sub').innerHTML = 'Shipped orders · auto-deleted after 2 years';
   $('stamp').innerHTML = '';
-  $('act-row').innerHTML = '';
+  $('act-row').innerHTML = '<button class="btn sm ghost" onclick="refreshPage()" style="float:right;font-size:12px" title="Refresh">&#x21bb; Refresh</button>';
   if (!S.archiveLoaded) {
     $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading archive…</div>';
     await loadArchiveData();
@@ -1720,12 +1767,13 @@ function renderArchive() {
       <td>${short(o.shipped_on)}</td>
       <td class="sub2">Expires ${exp.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</td>
       <td class="sub2">${o.remarks||'—'}</td>
+      <td><button class="btn sm" onclick="openUnship('${o.id}','${o.style}')">&#x21b6; Restore</button></td>
     </tr>`;
   }).join('');
 
   $('content').innerHTML = `<div class="card"><div class="scroller"><table>
     <thead><tr><th>Style</th><th>Merchandiser</th><th>Buyer</th><th>Buying house</th>
-      <th class="num">Qty</th><th class="num">Value</th><th>Shipped</th><th>Auto-expires</th><th>Remarks</th></tr></thead>
+      <th class="num">Qty</th><th class="num">Value</th><th>Shipped</th><th>Auto-expires</th><th>Remarks</th><th></th></tr></thead>
     <tbody>${rows}</tbody>
   </table></div></div>`;
 }
@@ -2411,8 +2459,8 @@ async function savePPDate(id, field, val, ordId, division) {
 var S_apv = { ordId: null, type: null, division: null, rounds: [], step: null };
 // step: 'submit' | 'outcome' | 'pick-approve' | 'pick-reject' | 'done'
 
-var APV_LABELS = { labdip: 'Lab Dip', fit: 'Fit Approval', pp: 'PP Approval' };
-var APV_PLAN_KEY = { labdip: 'plan_yarn', fit: 'plan_sew', pp: 'plan_pp' };
+var APV_LABELS = { labdip: 'Lab Dip', sizeset: 'Size Set', fit: 'Fit Approval', pp: 'PP Approval' };
+var APV_PLAN_KEY = { labdip: 'plan_yarn', sizeset: 'plan_knit', fit: 'plan_sew', pp: 'plan_pp' };
 
 async function openApvFlow(ordId, type, division) {
   try {
@@ -2612,35 +2660,47 @@ function openTNARequestForm(ordId, fieldName, fieldLabel, currentVal) {
 }
 
 async function submitTNARequest() {
-  const proposed = $('tnareq-date').value;
-  const reason = $('tnareq-reason').value.trim();
-  if (!proposed) { toast('Please pick a proposed date', 'err'); return; }
-  if (!reason) { toast('Please enter a reason', 'err'); return; }
+  try {
+    const dateEl = $('tnareq-date'), reasonEl = $('tnareq-reason');
+    if (!dateEl || !reasonEl) { toast('Form not found — refresh page', 'err'); return; }
+    const proposed = dateEl.value;
+    const reason = reasonEl.value.trim();
+    if (!proposed) { toast('Please pick a proposed date', 'err'); return; }
+    if (!reason) { toast('Please enter a reason', 'err'); return; }
+    if (!_tnareq.ordId) { toast('Order not identified — close and retry', 'err'); return; }
 
-  // Get order info for denormalization
-  var o = null;
-  Object.keys(S.boardCache).forEach(function(mid){
-    if (!o) o = (S.boardCache[mid]||[]).find(function(x){return x.id===_tnareq.ordId;});
-  });
-  if (!o) o = S.orders.find(function(x){return x.id===_tnareq.ordId;}) || {};
+    var o = null;
+    Object.keys(S.boardCache).forEach(function(mid){
+      if (!o) o = (S.boardCache[mid]||[]).find(function(x){return x.id===_tnareq.ordId;});
+    });
+    if (!o) o = S.orders.find(function(x){return x.id===_tnareq.ordId;}) || {};
 
-  const { error } = await db.from('tna_requests').insert({
-    order_id: _tnareq.ordId,
-    merchant_id: S.user.id,
-    field_name: _tnareq.field,
-    field_label: _tnareq.label,
-    current_val: _tnareq.current || null,
-    proposed_val: proposed,
-    reason: reason,
-    status: 'pending',
-    style: o.style || '',
-    buyer: o.buyer || ''
-  });
-  if (error) { toast('Error submitting request', 'err'); return; }
-  closeModal('ov-tna-req');
-  await loadTNARequests();
-  renderRail();
-  toast('Request submitted — awaiting HOD/Manager approval');
+    const payload = {
+      order_id: _tnareq.ordId,
+      merchant_id: S.user.id,
+      field_name: _tnareq.field,
+      field_label: _tnareq.label,
+      current_val: _tnareq.current || null,
+      proposed_val: proposed,
+      reason: reason,
+      status: 'pending',
+      style: o.style || '',
+      buyer: o.buyer || ''
+    };
+    const { error } = await db.from('tna_requests').insert(payload);
+    if (error) {
+      console.error('TNA request error:', error);
+      toast('Error: ' + (error.message || 'check migration6.sql was run'), 'err');
+      return;
+    }
+    closeModal('ov-tna-req');
+    await loadTNARequests();
+    renderRail();
+    toast('Request submitted — awaiting HOD/Manager approval');
+  } catch(err) {
+    console.error('submitTNARequest exception:', err);
+    toast('Unexpected error — check console', 'err');
+  }
 }
 
 // ─── REQUESTS VIEW (HOD/Manager inbox) ───
@@ -2649,7 +2709,7 @@ function renderRequestsView() {
   $('page-title').textContent = 'TNA Change Requests';
   $('page-sub').innerHTML = 'Pending requests from merchandisers';
   $('stamp').innerHTML = '';
-  $('act-row').innerHTML = '';
+  $('act-row').innerHTML = '<button class="btn sm ghost" onclick="refreshPage()" style="float:right;font-size:12px" title="Refresh">&#x21bb; Refresh</button>';
 
   const pending = S.tnaRequests.filter(function(r){ return r.status === 'pending'; });
 
@@ -2709,7 +2769,7 @@ function renderMyRequests() {
   $('page-title').textContent = 'My TNA Requests';
   $('page-sub').innerHTML = 'Status of your change requests';
   $('stamp').innerHTML = '';
-  $('act-row').innerHTML = '';
+  $('act-row').innerHTML = '<button class="btn sm ghost" onclick="refreshPage()" style="float:right;font-size:12px" title="Refresh">&#x21bb; Refresh</button>';
 
   if (!S.tnaRequests.length) {
     $('content').innerHTML = '<div class="card"><div class="empty"><h4>No requests</h4><div>When you request a TNA date change, it will appear here.</div></div></div>';
@@ -2850,6 +2910,87 @@ async function saveAccField(ordId, itemType, field, value) {
     toast('Error saving accessory', 'err');
   }
 }
+
+// ─── DELETE ORDER ───
+var _deleteOrdId = null;
+function openDeleteOrder(ordId, style, buyer) {
+  _deleteOrdId = ordId;
+  $('del-order-sub').textContent = style + ' — ' + buyer;
+  openModal('ov-delete-order');
+}
+async function confirmDeleteOrder() {
+  if (!_deleteOrdId) return;
+  const { error } = await db.from('orders').delete().eq('id', _deleteOrdId);
+  if (error) { toast('Error deleting order', 'err'); return; }
+  closeModal('ov-delete-order');
+  // Clear caches
+  Object.keys(S.boardCache).forEach(function(m){
+    S.boardCache[m] = (S.boardCache[m]||[]).filter(function(o){return o.id!==_deleteOrdId;});
+  });
+  S.orders = S.orders.filter(function(o){return o.id!==_deleteOrdId;});
+  _deleteOrdId = null;
+  toast('Order deleted');
+  renderBoard(S.view);
+}
+
+// ─── UNSHIP ORDER ───
+var _unshipOrdId = null;
+function openUnship(ordId, style) {
+  _unshipOrdId = ordId;
+  $('unship-sub').textContent = style + ' — restore to live orders';
+  openModal('ov-unship');
+}
+async function confirmUnship() {
+  if (!_unshipOrdId) return;
+  const { error } = await db.from('orders').update({
+    shipped: false, shipped_on: null, shipped_qty: null, updated_at: new Date().toISOString()
+  }).eq('id', _unshipOrdId);
+  if (error) { toast('Error restoring order', 'err'); return; }
+  // Remove shipment alert
+  await db.from('shipment_alerts').delete().eq('order_id', _unshipOrdId);
+  closeModal('ov-unship');
+  S.archiveLoaded = false;
+  S.archive = S.archive.filter(function(o){return o.id!==_unshipOrdId;});
+  await loadDashOrders();
+  _unshipOrdId = null;
+  toast('Order restored to live orders');
+  renderShippedPage();
+}
+
+// ─── REFRESH ───
+async function refreshPage() {
+  // Clear all caches
+  S.boardCache = {};
+  S.boardSummaries = {};
+  S.archiveLoaded = false;
+  S.archive = [];
+  await Promise.all([loadDashOrders(), loadNotes(), loadMemo(), loadTNARequests()]);
+  render();
+  toast('Refreshed');
+}
+
+// ─── NOTE REPLIES ───
+async function submitNoteReply(noteId, text) {
+  const t = text.trim();
+  if (!t) return;
+  const { error } = await db.from('notes').update({
+    reply: t,
+    replied_at: new Date().toISOString(),
+    replied_by: S.user.name
+  }).eq('id', noteId);
+  if (!error) {
+    await loadNotes();
+    render();
+    toast('Reply sent');
+  } else toast('Error sending reply', 'err');
+}
+
+async function resolveNote(noteId) {
+  const { error } = await db.from('notes').update({ is_closed: true, closed_at: new Date().toISOString() }).eq('id', noteId);
+  if (!error) { await loadNotes(); render(); toast('Note resolved'); }
+  else toast('Error', 'err');
+}
+
 
 // --- ORDER DETAIL ---
 async function openOrderDetail(ordId, division) {
