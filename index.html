@@ -1392,107 +1392,106 @@ async function renderBoard(uid) {
     const sums = (S.boardSummaries[uid] || {});
   const unit = division === 'knit' ? 'kgs' : 'lbs';
   const matLabel = division === 'knit' ? 'Fabric' : 'Yarn';
+  const isMerchant = S.user.id === uid;
 
-  const rows = os.map(o => {
+  function apvChip(sum, type, ordId, div2, canUpd) {
+    const rounds = (sum.ap[type] || []).sort(function(a,b){return a.round-b.round;});
+    const latest = rounds[rounds.length - 1];
+    const oc = "event.stopPropagation();openApvFlow('" + ordId + "','" + type + "','" + div2 + "')";
+    if (!latest) return canUpd ? '<button class="apv-chip not-sent" onclick="' + oc + '">Not sent</button>' : '<span class="apv-chip not-sent">Not sent</span>';
+    if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">\u2713 ' + short(latest.approved_on) + '</button>';
+    if (latest.rejected_on) return '<button class="apv-chip rejected" onclick="' + oc + '">\u2717 R' + latest.round + ' Rejected</button>';
+    if (latest.submitted_on) return '<button class="apv-chip submitted" onclick="' + oc + '">Sent ' + short(latest.submitted_on) + '</button>';
+    return '<button class="apv-chip not-sent" onclick="' + oc + '">R' + latest.round + '</button>';
+  }
+
+  const rows = os.map(function(o) {
     const ms = missedMiles(o), dl = daysTo(o.ship_date);
     const sum = sums[o.id] || {bk:0, rc:0, ap:{}};
 
-    // YARN column
+    const ldChip = apvChip(sum, 'labdip', o.id, division, isMerchant);
+    const ftChip = apvChip(sum, 'fit',    o.id, division, isMerchant);
+    const ppChip = apvChip(sum, 'pp',     o.id, division, isMerchant);
+
     const totalBk = sum.bk, totalRc = sum.rc, bal = totalBk - totalRc;
-    const yarnCell = `<td class="col-yarn">
-      ${totalBk > 0 ? `
-        <div class="row"><span class="k">Bkd</span><span class="v">${fmt(totalBk)}</span></div>
-        <div class="row"><span class="k">Rcvd</span><span class="v ${totalRc>=totalBk?'ok':''}">${fmt(totalRc)}</span></div>
-        <div class="row"><span class="k">Bal</span><span class="v ${bal>0?'bad':bal===0?'ok':''}">${fmt(bal)}</span></div>
-      ` : '<div style="color:var(--muted);font-size:10px">No booking</div>'}
-      ${canEdit ? `<button class="mat-add-btn" onclick="event.stopPropagation();openMaterialModal('${o.id}','${division}')">+ Add</button>` : ''}
-    </td>`;
+    const yarnInner = totalBk > 0
+      ? '<div class="row"><span class="k">Bkd</span><span class="v">' + fmt(totalBk) + '</span></div>'
+        + '<div class="row"><span class="k">Rcvd</span><span class="v ' + (totalRc>=totalBk?'ok':'') + '">' + fmt(totalRc) + '</span></div>'
+        + '<div class="row"><span class="k">Bal</span><span class="v ' + (bal>0?'bad':bal===0&&totalBk>0?'ok':'') + '">' + fmt(bal) + '</span></div>'
+      : '<div style="color:var(--muted);font-size:10px;padding:2px 0">No booking</div>';
 
-    // PP APPROVAL column
-    const ppRounds = (sum.ap['pp'] || []).sort(function(a,b){return a.round-b.round;});
-    const latestPP = ppRounds.length ? ppRounds[ppRounds.length-1] : null;
-    const ppApproved = latestPP && latestPP.approved_on;
-    const planPP = o.plan_pp;
-    let ppCell = '<td class="col-pp">';
-    if (planPP) ppCell += `<div class="pp-tna">TNA: <strong>${short(planPP)}</strong></div>`;
-    if (ppApproved) {
-      ppCell += `<button class="ok-chip" style="font-size:10.5px;padding:2px 9px" onclick="event.stopPropagation();openPPModal('${o.id}','${division}')">✓ OK · R${latestPP.round}</button>`;
-    } else if (latestPP) {
-      ppCell += `<div class="pp-round-lbl">Round ${latestPP.round}
-        ${canEdit?`<button class="btn sm" style="padding:1px 5px;font-size:9px" onclick="event.stopPropagation();openPPModal('${o.id}','${division}')">+R</button>`:''}
-      </div>
-      <div class="pp-row"><span class="pp-lbl">Sent</span>
-        ${canEdit?`<input class="pp-date" type="date" value="${latestPP.submitted_on||''}" onchange="event.stopPropagation();savePPDate('${latestPP.id}','submitted_on',this.value,'${o.id}','${division}')">`:`<span style="font-family:var(--mono);font-size:10.5px">${short(latestPP.submitted_on)}</span>`}
-      </div>
-      <div class="pp-row"><span class="pp-lbl">Appr</span>
-        ${canEdit?`<input class="pp-date" type="date" value="${latestPP.approved_on||''}" onchange="event.stopPropagation();savePPDate('${latestPP.id}','approved_on',this.value,'${o.id}','${division}')">`:`<span style="font-family:var(--mono);font-size:10.5px">${short(latestPP.approved_on)}</span>`}
-      </div>`;
-    } else {
-      ppCell += `<div style="color:var(--muted);font-size:10px">No round yet</div>
-        ${canEdit?`<button class="mat-add-btn" onclick="event.stopPropagation();openPPModal('${o.id}','${division}')">+ Add round 1</button>`:''}`;
-    }
-    ppCell += '</td>';
+    const yarnCell = '<td class="col-yarn">' + yarnInner
+      + (canEdit ? '<button class="mat-add-btn" onclick="event.stopPropagation();openMaterialModal(\'' + o.id + '\',\'' + division + '\')">+ Booking</button>' : '')
+      + '</td>';
 
-    const mainRow = `<tr class="${rowClass(o)}" onclick="if(!event.target.closest('button,input,a'))toggleRowExpand('${o.id}','${division}')">
-      <td class="stk" style="cursor:pointer">
-        <span class="flag ${ms.length?'on':''}">​</span>
-        <span class="sty">${o.style}</span>
-        <div class="sub2" style="margin-left:10px;font-size:10px">${ms.length ? ms.length+'× late' : pctPacked(o)+'% packed'}</div>
-      </td>
-      <td>${o.buyer}</td>
-      <td style="font-size:10.5px">${o.house||'—'}</td>
-      <td style="font-size:10.5px">${[o.gauge,o.color,o.comp].filter(Boolean).join(' · ')||'—'}</td>
-      <td class="num">${fmt(o.qty)}</td>
-      <td class="num">${(o.fob||0).toFixed(2)}</td>
-      <td class="num">${money((o.qty||0)*(o.fob||0))}</td>
-      <td style="font-size:10.5px">${short(o.ship_date)}</td>
-      <td class="num">${dl==null?'—':dl<0?`<span class="chip bad" style="font-size:10px">${dl}</span>`:dl<=5?`<span class="chip warn" style="font-size:10px">${dl}</span>`:dl}</td>
-      ${VSTEPS.map(s => {
-        const v = o[s.k] || 0, full = v >= (o.qty||0) && (o.qty||0) > 0;
-        const pct = o.qty ? Math.min(100, 100*v/o.qty) : 0;
-        if (full && canEdit) return `<td style="text-align:center"><button class="ok-chip" style="font-size:10px;padding:2px 8px" onclick="event.stopPropagation();openEditQty('${o.id}','${s.k}',${v},${o.qty},'${s.n}')">✓ OK</button></td>`;
-        return `<td><div class="cell">
-          <span class="bar" style="width:38px"><i style="width:${pct}%"></i></span>
-          ${canEdit ? `<input class="qtyin" type="number" min="0" max="${o.qty}" value="${v}" style="width:58px" onchange="setProd('${o.id}','${s.k}',this.value)">` : `<span style="font-family:var(--mono);font-size:11px">${fmt(v)}</span>`}
-        </div></td>`;
-      }).join('')}
-      ${yarnCell}
-      ${ppCell}
-      <td class="num" style="font-weight:600">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
-      <td>${canEdit ? `<input class="rem-in" style="width:100px" value="${(o.remarks||'').replace(/"/g,'&quot;')}" placeholder="Note…" onchange="setRemark('${o.id}',this.value)">` : `<span class="sub2">${o.remarks||'—'}</span>`}</td>
-      <td style="white-space:nowrap">
-        <button class="btn sm" onclick="event.stopPropagation();openTNA('${o.id}','${division}')">TNA${ms.length?` <span style="color:var(--red)">●</span>`:''}</button>
-        ${canEdit ? `<button class="btn sm" style="margin-left:3px" onclick="event.stopPropagation();openShip('${o.id}')">Ship</button>` : ''}
-      </td>
-    </tr>`;
-    return mainRow;
+    const dlSpan = dl==null ? '—' : dl<0 ? '<span class="chip bad" style="font-size:10px">'+dl+'</span>' : dl<=5 ? '<span class="chip warn" style="font-size:10px">'+dl+'</span>' : dl;
+
+    const prodCells = VSTEPS.map(function(s) {
+      const v = o[s.k] || 0, full = v >= (o.qty||0) && (o.qty||0) > 0;
+      const pct = o.qty ? Math.min(100, 100*v/o.qty) : 0;
+      if (full && canEdit) return '<td style="text-align:center"><button class="ok-chip" style="font-size:10px;padding:2px 8px" onclick="event.stopPropagation();openEditQty(\'' + o.id + '\',\'' + s.k + '\',' + v + ',' + o.qty + ',\'' + s.n + '\')">&#x2713; OK</button></td>';
+      return '<td><div class="cell"><span class="bar" style="width:38px"><i style="width:' + pct + '%"></i></span>'
+        + (canEdit ? '<input class="qtyin" type="number" min="0" max="' + o.qty + '" value="' + v + '" style="width:58px" onchange="setProd(\'' + o.id + '\',\'' + s.k + '\',this.value)">' : '<span style="font-family:var(--mono);font-size:11px">' + fmt(v) + '</span>')
+        + '</div></td>';
+    }).join('');
+
+    const remCell = canEdit
+      ? '<input class="rem-in" style="width:100px" value="' + (o.remarks||'').replace(/"/g,'&quot;') + '" placeholder="Note\u2026" onchange="setRemark(\'' + o.id + '\',this.value)">'
+      : '<span class="sub2">' + (o.remarks||'—') + '</span>';
+
+    return '<tr class="' + rowClass(o) + '" onclick="if(!event.target.closest(\'button,input,a\'))toggleRowExpand(\'' + o.id + '\',\'' + division + '\')">'
+      + '<td class="stk" style="cursor:pointer"><span class="flag ' + (ms.length?'on':'') + '">\u200b</span>'
+      + '<span class="sty">' + o.style + '</span>'
+      + '<div class="sub2" style="margin-left:10px;font-size:10px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div></td>'
+      + '<td>' + o.buyer + '</td>'
+      + '<td style="font-size:10.5px">' + (o.house||'—') + '</td>'
+      + '<td style="font-size:10.5px">' + ([o.gauge,o.color,o.comp].filter(Boolean).join(' · ')||'—') + '</td>'
+      + '<td class="num">' + fmt(o.qty) + '</td>'
+      + '<td class="num">' + (o.fob||0).toFixed(2) + '</td>'
+      + '<td class="num">' + money((o.qty||0)*(o.fob||0)) + '</td>'
+      + '<td style="font-size:10.5px">' + short(o.ship_date) + '</td>'
+      + '<td class="num">' + dlSpan + '</td>'
+      + '<td style="text-align:center">' + ldChip + '</td>'
+      + '<td style="text-align:center">' + ftChip + '</td>'
+      + '<td style="text-align:center">' + ppChip + '</td>'
+      + prodCells
+      + yarnCell
+      + '<td class="num" style="font-weight:600">' + fmt((o.qty||0)-(o.prod_packing||0)) + '</td>'
+      + '<td>' + remCell + '</td>'
+      + '<td style="white-space:nowrap">'
+      + '<button class="btn sm" onclick="event.stopPropagation();openTNA(\'' + o.id + '\',\'' + division + '\')">TNA' + (ms.length ? ' <span style="color:var(--red)">&#9679;</span>' : '') + '</button>'
+      + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();openShip(\'' + o.id + '\')">Ship</button>' : '')
+      + '</td></tr>';
   }).join('');
 
-    $('content').innerHTML = notesHtml + `<div class="card"><div class="scroller"><table>
-    <thead>
-      <tr>
-        <th class="stk" rowspan="2">Style</th>
-        <th rowspan="2">Buyer</th>
-        <th rowspan="2">Buying<br>House</th>
-        <th rowspan="2">Gauge · Colour · Comp</th>
-        <th rowspan="2" class="num">Qty</th>
-        <th rowspan="2" class="num">FOB</th>
-        <th rowspan="2" class="num">Value</th>
-        <th rowspan="2">Ship</th>
-        <th rowspan="2" class="num">Days</th>
-        <th class="grp" colspan="${VSTEPS.length}">Production — ${canEdit?'enter cumulative qty':'view only'}</th>
-        <th class="grp" rowspan="2">${matLabel}<br>(${unit})</th>
-        <th class="grp" rowspan="2">PP Approval</th>
-        <th rowspan="2" class="num">Bal</th>
-        <th rowspan="2">Remarks</th>
-        <th rowspan="2"></th>
-      </tr>
-      <tr>${VSTEPS.map(s=>`<th class="grp" style="font-size:9px">${s.n}</th>`).join('')}</tr>
-    </thead>
-    <tbody>${rows}</tbody>
-  </table></div></div>
-  ${!canEdit?`<div class="sub2" style="margin-top:-10px;padding-bottom:4px">View only — contact the merchandiser to update quantities.</div>`:''}`;
+  $('content').innerHTML = notesHtml + '<div class="card"><div class="scroller"><table>'
+    + '<thead><tr>'
+    + '<th class="stk" rowspan="2">Style</th>'
+    + '<th rowspan="2">Buyer</th>'
+    + '<th rowspan="2">House</th>'
+    + '<th rowspan="2">Details</th>'
+    + '<th rowspan="2" class="num">Qty</th>'
+    + '<th rowspan="2" class="num">FOB</th>'
+    + '<th rowspan="2" class="num">Value</th>'
+    + '<th rowspan="2">Ship</th>'
+    + '<th rowspan="2" class="num">Days</th>'
+    + '<th class="grp" colspan="3">Approvals</th>'
+    + '<th class="grp" colspan="' + VSTEPS.length + '">Production</th>'
+    + '<th class="grp" rowspan="2">' + matLabel + ' (' + unit + ')</th>'
+    + '<th rowspan="2" class="num">Bal</th>'
+    + '<th rowspan="2">Notes</th>'
+    + '<th rowspan="2"></th>'
+    + '</tr><tr>'
+    + '<th class="grp" style="font-size:9px">Lab Dip</th>'
+    + '<th class="grp" style="font-size:9px">Fit</th>'
+    + '<th class="grp" style="font-size:9px">PP</th>'
+    + VSTEPS.map(function(s){return '<th class="grp" style="font-size:9px">'+s.n+'</th>';}).join('')
+    + '</tr></thead>'
+    + '<tbody>' + rows + '</tbody>'
+    + '</table></div></div>'
+    + (!canEdit ? '<div class="sub2" style="margin-top:-10px;padding-bottom:4px">View only.</div>' : '');
 }
+
 
 // ─── ARCHIVE ───
 async function renderArchivePage() {
@@ -2236,6 +2235,194 @@ async function savePPDate(id, field, val, ordId, division) {
   await db.from('approvals').update(obj).eq('id', id);
   await reloadSummaries(S.view);
   renderBoard(S.view);
+}
+
+
+// ─── APPROVAL FLOW MODAL ───
+var S_apv = { ordId: null, type: null, division: null, rounds: [], step: null };
+// step: 'submit' | 'outcome' | 'pick-approve' | 'pick-reject' | 'done'
+
+var APV_LABELS = { labdip: 'Lab Dip', fit: 'Fit Approval', pp: 'PP Approval' };
+var APV_PLAN_KEY = { labdip: 'plan_yarn', fit: 'plan_sew', pp: 'plan_pp' };
+
+async function openApvFlow(ordId, type, division) {
+  S_apv.ordId = ordId;
+  S_apv.type = type;
+  S_apv.division = division;
+  S_apv.step = null;
+
+  var label = APV_LABELS[type] || type;
+  var o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;}) || {};
+  $('apvf-title').textContent = label;
+  $('apvf-sub').textContent = o.style + ' \u2014 ' + o.buyer + ' \u00b7 ' + fmt(o.qty) + ' pcs';
+
+  // Load all rounds for this type
+  var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
+  S_apv.rounds = res.data || [];
+
+  // Determine current step
+  var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length - 1] : null;
+  var isMerchant = S.user.id === S.view;
+
+  if (!latest || latest.rejected_on) {
+    // No round yet, or last was rejected — show submission date picker
+    S_apv.step = isMerchant ? 'submit' : 'history';
+  } else if (latest.approved_on) {
+    S_apv.step = 'done';
+  } else if (latest.submitted_on) {
+    S_apv.step = isMerchant ? 'outcome' : 'history';
+  } else {
+    S_apv.step = isMerchant ? 'submit' : 'history';
+  }
+
+  renderApvModal();
+  openModal('ov-apv-flow');
+}
+
+function renderApvModal() {
+  var o = (S.boardCache[S.view]||[]).find(function(x){return x.id===S_apv.ordId;}) || {};
+  var planKey = APV_PLAN_KEY[S_apv.type];
+  var planDate = o[planKey];
+  var dl = planDate ? daysTo(planDate) : null;
+  var planClass = dl != null ? (dl < 0 ? 'overdue' : dl <= 7 ? 'soon' : '') : '';
+
+  // TNA banner
+  var tnaBanner = '<div class="apv-tna-banner">'
+    + '<div class="icon">\uD83D\uDCC5</div>'
+    + '<div class="info"><div class="k">TNA Plan Date</div>'
+    + '<div class="v ' + planClass + '">' + (planDate ? short(planDate) : 'Not set')
+    + (dl != null ? ' \u00b7 ' + (dl < 0 ? '<span style="color:var(--red)">' + (-dl) + 'd overdue</span>' : dl === 0 ? 'Today' : dl + 'd left') : '')
+    + '</div></div></div>';
+
+  // History
+  var histHTML = '';
+  if (S_apv.rounds.length) {
+    histHTML = '<div class="apv-history">'
+      + '<div class="apv-history-title">History</div>'
+      + S_apv.rounds.map(function(r) {
+          var status = r.approved_on ? '<span class="chip ok" style="font-size:10px">\u2713 Approved</span>'
+            : r.rejected_on ? '<span class="chip bad" style="font-size:10px">\u2717 Rejected</span>'
+            : r.submitted_on ? '<span class="chip warn" style="font-size:10px">Awaiting</span>'
+            : '<span class="chip run" style="font-size:10px">Started</span>';
+          return '<div class="apv-history-item">'
+            + '<div class="round-badge">Round ' + r.round + '</div>'
+            + '<div class="dates">'
+            + (r.submitted_on ? '<div class="date-row"><span class="dl">Submitted</span><span class="dv">' + short(r.submitted_on) + '</span></div>' : '')
+            + (r.approved_on  ? '<div class="date-row"><span class="dl">Approved</span><span class="dv" style="color:var(--green);font-weight:600">' + short(r.approved_on) + '</span></div>' : '')
+            + (r.rejected_on  ? '<div class="date-row"><span class="dl">Rejected</span><span class="dv" style="color:var(--red)">' + short(r.rejected_on) + '</span></div>' : '')
+            + '</div>' + status + '</div>';
+        }).join('')
+      + '</div>';
+  }
+
+  // Action area
+  var actionHTML = '';
+  var footHTML = '<button class="btn" onclick="closeModal(\'ov-apv-flow\')">Close</button>';
+  var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length-1] : null;
+  var nextRound = S_apv.rounds.length ? (latest.round + 1) : 1;
+  var today0 = new Date().toISOString().slice(0,10);
+
+  if (S_apv.step === 'submit') {
+    var rLabel = S_apv.rounds.length ? 'Round ' + nextRound + ' — resubmission' : 'Round 1 — first submission';
+    actionHTML = '<div class="apv-action">'
+      + '<div class="apv-action-title">' + rLabel + '</div>'
+      + '<div class="apv-date-label">When did you send it to the buyer?</div>'
+      + '<div class="apv-date-area">'
+      + '<input class="apv-date-big" type="date" id="apv-submit-date" value="' + today0 + '">'
+      + '</div></div>';
+    footHTML = '<button class="btn" onclick="closeModal(\'ov-apv-flow\')">Cancel</button>'
+      + '<button class="btn pri" onclick="apvDoSubmit()">Confirm submission</button>';
+  } else if (S_apv.step === 'outcome') {
+    actionHTML = '<div class="apv-action">'
+      + '<div class="apv-action-title">Round ' + (latest ? latest.round : 1) + ' — what was the outcome?</div>'
+      + '<div class="apv-outcome-btns">'
+      + '<button class="apv-outcome-btn approve" onclick="apvPickDate(\'approve\')">&#x2713; Approved</button>'
+      + '<button class="apv-outcome-btn reject" onclick="apvPickDate(\'reject\')">&#x2717; Rejected</button>'
+      + '</div></div>';
+  } else if (S_apv.step === 'pick-approve') {
+    actionHTML = '<div class="apv-action">'
+      + '<div class="apv-action-title">Date of approval</div>'
+      + '<div class="apv-date-label">When did the buyer approve?</div>'
+      + '<div class="apv-date-area"><input class="apv-date-big" type="date" id="apv-result-date" value="' + today0 + '"></div></div>';
+    footHTML = '<button class="btn" onclick="apvBackToOutcome()">Back</button>'
+      + '<button class="btn pri" style="background:var(--green);border-color:var(--green)" onclick="apvDoResult(\'approve\')">Confirm approved</button>';
+  } else if (S_apv.step === 'pick-reject') {
+    actionHTML = '<div class="apv-action">'
+      + '<div class="apv-action-title">Date of rejection</div>'
+      + '<div class="apv-date-label">When did the buyer reject?</div>'
+      + '<div class="apv-date-area"><input class="apv-date-big" type="date" id="apv-result-date" value="' + today0 + '"></div></div>';
+    footHTML = '<button class="btn" onclick="apvBackToOutcome()">Back</button>'
+      + '<button class="btn pri" style="background:var(--red);border-color:var(--red)" onclick="apvDoResult(\'reject\')">Confirm rejected</button>';
+  } else if (S_apv.step === 'done') {
+    var approvedRound = S_apv.rounds.find(function(r){return r.approved_on;});
+    actionHTML = '<div class="apv-action"><div class="apv-complete">'
+      + '<div class="icon">\u2705</div>'
+      + '<h4>Approved</h4>'
+      + '<p>Approved on ' + short(approvedRound ? approvedRound.approved_on : '') + ' (Round ' + (approvedRound ? approvedRound.round : '') + ')</p>'
+      + '</div></div>';
+  } else {
+    // history-only for non-merchant
+    actionHTML = S_apv.rounds.length
+      ? '<div class="apv-action"><div style="color:var(--muted);font-size:12.5px">Only the merchandiser can update this approval.</div></div>'
+      : '<div class="apv-action"><div style="color:var(--muted);font-size:12.5px">No approval activity yet.</div></div>';
+  }
+
+  $('apvf-body').innerHTML = tnaBanner + histHTML + actionHTML;
+  $('apvf-foot').innerHTML = footHTML;
+
+  // Auto-focus date input
+  setTimeout(function() {
+    var inp = document.getElementById('apv-submit-date') || document.getElementById('apv-result-date');
+    if (inp) { inp.focus(); try { inp.showPicker(); } catch(e){} }
+  }, 120);
+}
+
+function apvPickDate(outcome) {
+  S_apv.step = outcome === 'approve' ? 'pick-approve' : 'pick-reject';
+  renderApvModal();
+}
+
+function apvBackToOutcome() {
+  S_apv.step = 'outcome';
+  renderApvModal();
+}
+
+async function apvDoSubmit() {
+  var dt = document.getElementById('apv-submit-date');
+  var date = dt ? dt.value : '';
+  if (!date) { toast('Please pick a date', 'err'); return; }
+  var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length-1] : null;
+  var nextRound = latest ? latest.round + 1 : 1;
+  var { error } = await db.from('approvals').insert({
+    order_id: S_apv.ordId, type: S_apv.type, round: nextRound, submitted_on: date
+  });
+  if (error) { toast('Error saving', 'err'); return; }
+  toast('Submission recorded', 'ok-t');
+  await reloadSummaries(S.view);
+  renderBoard(S.view);
+  // Reload rounds and refresh modal
+  var res = await db.from('approvals').select('*').eq('order_id', S_apv.ordId).eq('type', S_apv.type).order('round');
+  S_apv.rounds = res.data || [];
+  S_apv.step = 'outcome';
+  renderApvModal();
+}
+
+async function apvDoResult(outcome) {
+  var dt = document.getElementById('apv-result-date');
+  var date = dt ? dt.value : '';
+  if (!date) { toast('Please pick a date', 'err'); return; }
+  var latest = S_apv.rounds[S_apv.rounds.length-1];
+  if (!latest) return;
+  var upd = outcome === 'approve' ? { approved_on: date } : { rejected_on: date };
+  var { error } = await db.from('approvals').update(upd).eq('id', latest.id);
+  if (error) { toast('Error saving', 'err'); return; }
+  toast(outcome === 'approve' ? 'Approved!' : 'Rejection recorded', outcome === 'approve' ? 'ok-t' : '');
+  await reloadSummaries(S.view);
+  renderBoard(S.view);
+  var res = await db.from('approvals').select('*').eq('order_id', S_apv.ordId).eq('type', S_apv.type).order('round');
+  S_apv.rounds = res.data || [];
+  S_apv.step = outcome === 'approve' ? 'done' : 'submit';
+  renderApvModal();
 }
 
 
