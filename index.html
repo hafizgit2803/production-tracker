@@ -50,7 +50,7 @@ a{color:var(--accent);text-decoration:none}
 .ni .badge{font-size:10px;font-weight:700;color:#fff;background:var(--red);
   border-radius:20px;padding:1px 6px;min-width:17px;text-align:center}
 .ni .ct{font-size:11px;color:var(--muted)}
-.rail-foot{padding:10px 8px;border-top:1px solid var(--line);flex:0 0 auto}
+.rail-foot{padding:10px 8px 18px;border-top:1px solid var(--line);flex:0 0 auto;margin-bottom:env(safe-area-inset-bottom,0)}
 .user-row{display:flex;align-items:center;gap:8px;padding:6px 4px}
 .user-row .av{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;
   font-size:11px;font-weight:700;display:grid;place-items:center;flex:0 0 28px}
@@ -582,7 +582,7 @@ button.apv-chip{font-family:inherit}
     <div class="rail-body" id="rail-body"></div>
     <div class="rail-foot">
       <div class="user-row" id="user-row"></div>
-      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" style="width:100%;text-align:left;padding:7px 9px;margin-bottom:6px;border-radius:8px;border:1px solid var(--line);background:none;font-size:12.5px;cursor:pointer;color:var(--muted)">&#x1F319; Dark mode</button>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" style="width:100%;text-align:left;padding:7px 9px;margin-bottom:8px;border-radius:8px;border:1px solid var(--line);background:none;font-size:12.5px;cursor:pointer;color:var(--muted)">&#x1F319; Dark mode</button>
       <button class="logout-btn" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
@@ -1512,7 +1512,9 @@ function renderRail() {
   // Admin panel (admin only)
   if (isAdmin) {
     html += '<div class="rail-sep"></div>';
-    html += ni('admin', '&#x2699;', 'Admin');
+    html += '<button class="ni" onclick="openAdmin()">'
+      + '<span class="av" style="font-size:12px">&#x2699;</span>'
+      + '<span class="nm">Admin</span></button>';
   }
 
   $('rail-body').innerHTML = html;
