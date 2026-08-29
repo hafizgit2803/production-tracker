@@ -636,6 +636,9 @@ button.apv-chip{font-family:inherit}
         <div class="f"><label>Knitting done</label><input id="p_knit" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
         <div class="f"><label>Final inspection</label><input id="p_insp" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
       </div>
+      <div class="grid3">
+        <div class="f"><label>Packing items inhouse</label><input id="p_pack" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+      </div>
       <div class="form-err" id="ord-err" style="display:none"></div>
     </div>
     <div class="m-f">
@@ -812,6 +815,19 @@ button.apv-chip{font-family:inherit}
   </div>
 </div>
 
+<!-- ═══ MODAL: ASSIGN MERCHANTS ═══ -->
+<div class="ov" id="ov-assign" onclick="if(event.target===this)closeModal('ov-assign')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Assign Merchants</h3><div class="msub" id="assign-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-assign')">Cancel</button></div>
+    <div class="m-b" id="assign-body"></div>
+    <div class="m-f">
+      <button class="btn" onclick="closeModal('ov-assign')">Cancel</button>
+      <button class="btn pri" onclick="saveAssignments()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ MODAL: ADD NOTE ═══ -->
 <div class="ov" id="ov-note" onclick="if(event.target===this)closeModal('ov-note')">
   <div class="modal slim">
@@ -864,11 +880,11 @@ button.apv-chip{font-family:inherit}
         <div class="f">
           <label>Profile type</label>
           <select id="a_type" onchange="handleProfileType()">
-            <option value="merchant">Merchandiser</option>
-            <option value="hod">HOD</option>
+            <option value="merchant">Merchant</option>
             <option value="manager">Manager</option>
+            <option value="hod">HOD</option>
             <option value="audit">Audit</option>
-            <option value="other">Other</option>
+            <option value="management">Management</option>
           </select>
         </div>
         <div class="f" id="div-field">
@@ -982,7 +998,7 @@ const toDate = s => s ? new Date(s + 'T00:00:00') : null;
 const daysTo = s => s ? Math.round((toDate(s) - today()) / 86400000) : null;
 const short = s => { if(!s) return '—'; const p=String(s).split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:s; };
 const initials = n => n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-const titleOf = u => u.title || (u.role === 'management' ? 'Management' : u.role === 'mid_management' ? 'HOD' : 'Merchandiser');
+const titleOf = u => u.title || (u.role === 'management' ? 'Management' : 'Merchandiser');
 
 const ago = dt => {
   const m = Math.round((Date.now() - new Date(dt).getTime()) / 60000);
@@ -1103,6 +1119,7 @@ async function startApp() {
   $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading dashboard…</div>';
 
   // Stage 2 — dashboard data in background (~300ms)
+  await loadMyAssignments();
   await Promise.all([loadDashOrders(), loadNotes(), loadMemo(), loadTNARequests()]);
   cleanOldArchive(); // fire and forget
   subscribeRealtime();
@@ -1125,25 +1142,10 @@ async function loadDashOrders() {
   await loadAlerts();
 }
 
-async function loadTNARequests() {
-  if (S.user.role === 'merchant') {
-    const { data } = await db.from('tna_requests').select('*').eq('merchant_id', S.user.id).order('created_at', { ascending: false });
-    S.tnaRequests = data || [];
-    const newResolved = S.tnaRequests.filter(function(r){ return r.status !== 'pending' && !r.merchant_seen; });
-    if (newResolved.length) {
-      newResolved.forEach(function(r){
-        toast((r.status==='approved'?'\u2713 TNA updated: ':'\u2717 Request rejected: ') + r.field_label, r.status==='approved'?'ok-t':'err');
-      });
-      await db.from('tna_requests').update({ merchant_seen: true }).in('id', newResolved.map(function(r){return r.id;}));
-    }
-  } else if (S.user.role === 'mid_management') {
-    const { data } = await db.from('tna_requests').select('*').eq('status','pending').order('created_at', { ascending: false });
-    S.tnaRequests = data || [];
-  } else { S.tnaRequests = []; }
-}
+
 
 async function loadAlerts() {
-  const canSee = S.user.role === 'management' || S.user.role === 'mid_management';
+  const canSee = ['admin','management','hod','manager','audit'].includes(S.user.role);
   if (!canSee) { S.alerts = []; return; }
   const { data: ad } = await db.from('shipment_alerts').select('*').eq('dismissed', false).order('created_at', { ascending: false });
   S.alerts = ad || [];
@@ -1308,6 +1310,15 @@ function render() {
 }
 
 function setView(v) {
+  // Guard: manager can only view assigned merchants
+  if (S.user.role === 'manager' &&
+      !['dashboard','shipped','requests','my-requests'].includes(v) &&
+      v !== S.user.id) {
+    if (!S.myAssignments.includes(v)) {
+      toast('You are not assigned to this merchant');
+      return;
+    }
+  }
   S.view = v;
   renderRail();
   if (v === 'dashboard') renderDashboard();
@@ -1317,67 +1328,205 @@ function setView(v) {
   else renderBoard(v);
 }
 
+// ─── LOAD MANAGER ASSIGNMENTS ───
+async function loadMyAssignments() {
+  if (S.user.role !== 'manager') { S.myAssignments = []; return; }
+  const { data } = await db.from('manager_assignments')
+    .select('merchant_id').eq('manager_id', S.user.id);
+  S.myAssignments = (data || []).map(function(a){ return a.merchant_id; });
+}
+
+// ─── ASSIGNMENT MODAL (Admin only) ───
+var _assignManagerId = null;
+async function openAssignMerchants(managerId, managerName) {
+  _assignManagerId = managerId;
+  $('assign-sub').textContent = managerName;
+  $('assign-body').innerHTML = '<div class="loading"><span class="spin"></span></div>';
+  openModal('ov-assign');
+
+  const { data: existing } = await db.from('manager_assignments')
+    .select('merchant_id').eq('manager_id', managerId);
+  const assigned = new Set((existing || []).map(function(a){ return a.merchant_id; }));
+  const merchants = S.users.filter(function(u){ return u.role === 'merchant'; })
+    .sort(function(a,b){ return a.name.localeCompare(b.name); });
+
+  if (!merchants.length) {
+    $('assign-body').innerHTML = '<div style="color:var(--muted)">No merchants found. Add merchants first.</div>';
+    return;
+  }
+
+  var html = '<div style="display:flex;flex-direction:column;gap:8px">';
+  merchants.forEach(function(m) {
+    var checked = assigned.has(m.id) ? 'checked' : '';
+    html += '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer">'
+      + '<input type="checkbox" id="assign-' + m.id + '" value="' + m.id + '" ' + checked + ' style="width:16px;height:16px">'
+      + '<span style="flex:1"><strong>' + m.name + '</strong><span style="color:var(--muted);font-size:11px;margin-left:8px">' + (m.division||'sweater') + '</span></span>'
+      + (checked ? '<span style="font-size:10px;color:var(--green);font-weight:600">Assigned</span>' : '')
+      + '</label>';
+  });
+  html += '</div>';
+  $('assign-body').innerHTML = html;
+}
+
+async function saveAssignments() {
+  if (!_assignManagerId) return;
+  const merchants = S.users.filter(function(u){ return u.role === 'merchant'; });
+  const selected = merchants.filter(function(m){
+    var el = document.getElementById('assign-' + m.id);
+    return el && el.checked;
+  }).map(function(m){ return m.id; });
+
+  // Delete existing, insert new
+  await db.from('manager_assignments').delete().eq('manager_id', _assignManagerId);
+  if (selected.length) {
+    var rows = selected.map(function(mid){ return { manager_id: _assignManagerId, merchant_id: mid }; });
+    await db.from('manager_assignments').insert(rows);
+  }
+  closeModal('ov-assign');
+  toast('Assignments saved (' + selected.length + ' merchants)');
+  renderAdminList();
+}
+
+// ─── UPDATED renderRail FOR 6 TIERS ───
 function renderRail() {
-  const u = S.user;
-  const isMgmt = u.role === 'management';
-  const isMid  = u.role === 'mid_management';
-  const canSeeAll = isMgmt || isMid;
-  const merchants = S.users.filter(x => x.role === 'merchant');
+  var u = S.user;
+  if (!u) return;
+  var r = u.role;
+  var isAdmin    = r === 'admin';
+  var isMgmt     = r === 'management';
+  var isHOD      = r === 'hod';
+  var isAudit    = r === 'audit';
+  var isManager  = r === 'manager';
+  var isMerchant = r === 'merchant';
+  var seeAll     = isAdmin || isMgmt || isHOD || isAudit;
 
-  let html = `
-    <button class="ni ${S.view==='dashboard'?'on':''}" onclick="setView('dashboard')">
-      <span class="av">▦</span><span class="nm">Dashboard</span>
-    </button>`;
-
-  if (canSeeAll) {
-    html += `<div class="rail-sep"></div><div class="rail-label">Merchandisers</div>`;
-    html += merchants.map(m => {
-      const os = S.orders.filter(o => o.merchant_id === m.id);
-      const bad = os.filter(o => missedMiles(o).length).length;
-      const openNotes = S.notes.filter(n => n.merchant_id === m.id && !n.is_closed).length;
-      return `<button class="ni ${S.view===m.id?'on':''}" onclick="setView('${m.id}')">
-        <span class="av">${initials(m.name)}</span>
-        <span class="nm">${m.name}</span>
-        ${bad ? `<span class="badge">${bad}</span>` : openNotes ? `<span class="badge" style="background:var(--amber)">${openNotes}</span>` : `<span class="ct">${os.length}</span>`}
-      </button>`;
-    }).join('');
-  } else {
-    html += `<button class="ni ${S.view===u.id?'on':''}" onclick="setView('${u.id}')">
-      <span class="av">${initials(u.name)}</span><span class="nm">My board</span>
-    </button>`;
+  // Update user row and theme button
+  $('user-row').innerHTML = '<div class="av">' + initials(u.name) + '</div>'
+    + '<div class="info"><div class="uname">' + u.name + '</div>'
+    + '<div class="urole">' + roleLabel(r) + '</div></div>';
+  var tb = $('theme-btn');
+  if (tb) {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    tb.textContent = isDark ? '\u2600\uFE0F Light mode' : '\uD83C\uDF19 Dark mode';
   }
 
-  html += `<div class="rail-sep"></div>
-    <button class="ni ${S.view==='archive'?'on':''}" onclick="setView('shipped')">
-      <span class="av">&#x2713;</span><span class="nm">Shipped</span>
-      <span class="ct">${S.archive.length}</span>
-    </button>`;
-  if (isMid) {
-    const pr = S.tnaRequests.filter(function(r){return r.status==='pending';}).length;
-    html += `<button class="ni ${S.view==='requests'?'on':''}" onclick="setView('requests')">
-      <span class="av" style="font-size:11px">&#x1F4EC;</span><span class="nm">Requests</span>
-      ${pr ? `<span class="badge">${pr}</span>` : '<span class="ct">0</span>'}
-    </button>`;
-  }
-  if (S.user.role === 'merchant') {
-    const ur = S.tnaRequests.filter(function(r){return r.status!=='pending'&&!r.merchant_seen;}).length;
-    const tr2 = S.tnaRequests.length;
-    html += `<button class="ni ${S.view==='my-requests'?'on':''}" onclick="setView('my-requests')">
-      <span class="av" style="font-size:11px">&#x1F4CB;</span><span class="nm">My Requests</span>
-      ${ur ? `<span class="badge">${ur}</span>` : tr2 ? `<span class="ct">${tr2}</span>` : ''}
-    </button>`;
+  function ni(view, icon, label, count, isBadge) {
+    var on = S.view === view ? 'on' : '';
+    var cntHtml = count > 0 ? (isBadge ? '<span class="badge">' + count + '</span>' : '<span class="ct">' + count + '</span>') : '';
+    return '<button class="ni ' + on + '" onclick="setView(\'' + view + '\')">'
+      + '<span class="av" style="font-size:12px">' + icon + '</span>'
+      + '<span class="nm">' + label + '</span>' + cntHtml + '</button>';
   }
 
-  if (isMgmt) {
-    html += `<button class="ni" onclick="openAdmin()">
-      <span class="av">⚙</span><span class="nm">Admin</span>
-    </button>`;
+  var html = ni('dashboard', '&#x2302;', 'Dashboard');
+
+  // Merchant sections
+  if (seeAll) {
+    var sweater = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division!=='knit'; });
+    var knit    = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division==='knit'; });
+    if (sweater.length) {
+      html += '<div class="rail-label">Sweater</div>';
+      sweater.forEach(function(m) {
+        var on = S.view === m.id ? 'on' : '';
+        var badge = (S.notes||[]).filter(function(n){ return !n.is_closed && n.merchant_id===m.id; }).length;
+        html += '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
+          + '<div class="av">' + initials(m.name) + '</div>'
+          + '<div class="nm">' + m.name + '</div>'
+          + (badge ? '<span class="badge">' + badge + '</span>' : '') + '</button>';
+      });
+    }
+    if (knit.length) {
+      html += '<div class="rail-label">Knit</div>';
+      knit.forEach(function(m) {
+        var on = S.view === m.id ? 'on' : '';
+        html += '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
+          + '<div class="av">' + initials(m.name) + '</div>'
+          + '<div class="nm">' + m.name + '</div></button>';
+      });
+    }
+  } else if (isManager) {
+    var assigned = S.users.filter(function(u2){
+      return u2.role==='merchant' && S.myAssignments.includes(u2.id);
+    });
+    if (assigned.length) {
+      html += '<div class="rail-label">My Merchants</div>';
+      assigned.forEach(function(m) {
+        var on = S.view === m.id ? 'on' : '';
+        html += '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
+          + '<div class="av">' + initials(m.name) + '</div>'
+          + '<div class="nm">' + m.name + '</div></button>';
+      });
+    } else {
+      html += '<div class="rail-label" style="color:var(--muted)">No merchants assigned yet</div>';
+    }
+  } else if (isMerchant) {
+    html += ni(u.id, '&#x25A6;', 'My Board');
+  }
+
+  html += '<div class="rail-sep"></div>';
+  html += ni('shipped', '&#x2713;', 'Shipped', S.archive.length);
+
+  // Inbox (admin, management, hod, manager)
+  if (can('inbox')) {
+    var pendingReqs = S.tnaRequests.filter(function(r2){ return r2.status==='pending'; }).length;
+    var alerts = (S.alerts||[]).filter(function(a){ return !a.dismissed; }).length;
+    var inboxBadge = pendingReqs + alerts;
+    html += ni('requests', '&#x1F4EC;', 'Inbox', inboxBadge, inboxBadge > 0);
+  }
+
+  // My Requests (merchant only)
+  if (isMerchant) {
+    var unread = S.tnaRequests.filter(function(r2){ return r2.status!=='pending'&&!r2.merchant_seen; }).length;
+    html += ni('my-requests', '&#x1F4CB;', 'My Requests', unread || S.tnaRequests.length, unread > 0);
+  }
+
+  // Admin panel (admin only)
+  if (isAdmin) {
+    html += '<div class="rail-sep"></div>';
+    html += ni('admin', '&#x2699;', 'Admin');
   }
 
   $('rail-body').innerHTML = html;
-
-  $('user-row').innerHTML = `<div class="av">${initials(u.name)}</div><div class="info"><div class="uname">${u.name}</div><div class="urole">${titleOf(u)}</div></div>`;
 }
+
+// ─── UPDATED loadTNARequests FOR 6 TIERS ───
+async function loadTNARequests() {
+  var r = S.user.role;
+  if (r === 'merchant') {
+    var { data } = await db.from('tna_requests').select('*')
+      .eq('merchant_id', S.user.id).order('created_at', { ascending: false });
+    S.tnaRequests = data || [];
+    var newResolved = S.tnaRequests.filter(function(req){ return req.status!=='pending'&&!req.merchant_seen; });
+    if (newResolved.length) {
+      newResolved.forEach(function(req){
+        toast((req.status==='approved'?'\u2713 TNA updated: ':'\u2717 Rejected: ') + req.field_label, req.status==='approved'?'ok-t':'err');
+      });
+      await db.from('tna_requests').update({ merchant_seen: true })
+        .in('id', newResolved.map(function(req){ return req.id; }));
+    }
+  } else if (r === 'admin' || r === 'hod') {
+    var { data: d2 } = await db.from('tna_requests').select('*')
+      .eq('status','pending').order('created_at', { ascending: false });
+    S.tnaRequests = d2 || [];
+  } else if (r === 'manager') {
+    if (!S.myAssignments.length) { S.tnaRequests = []; return; }
+    var { data: d3 } = await db.from('tna_requests').select('*')
+      .eq('status','pending').in('merchant_id', S.myAssignments)
+      .order('created_at', { ascending: false });
+    S.tnaRequests = d3 || [];
+  } else {
+    // management, audit — no TNA request inbox (they see shipment alerts separately)
+    S.tnaRequests = [];
+  }
+}
+
+// ─── UPDATED renderAdminList — shows Assign button for managers ───
+async function openAssignFromList(managerId, managerName) {
+  await openAssignMerchants(managerId, managerName);
+}
+
+
+
 
 // ─── DASHBOARD ───
 function renderDashboard() {
@@ -1407,7 +1556,7 @@ function renderDashboard() {
 
   const isMA = S.user.role === 'management';
   let alertHtml = '';
-  if ((isMA || S.user.role === 'mid_management') && S.alerts && S.alerts.length) {
+  if (can('inbox') && S.alerts && S.alerts.length) {
     alertHtml = '<div class="alert-cards"><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">Shipment alerts — ' + S.alerts.length + ' unresolved</div>' +
       S.alerts.map(function(a) {
         const icon = a.alert_type === 'late' ? '⏰' : '⚠️';
@@ -1526,9 +1675,9 @@ async function renderBoard(uid) {
 
   const stale = merch.updated_at && (Date.now() - new Date(merch.updated_at).getTime()) > 86400000;
   const isMgmt  = S.user.role === 'management';
-  const isMid   = S.user.role === 'mid_management';
-  const canEdit = isMgmt || S.user.id === uid;
-  const canNote = isMgmt || isMid;
+  const isMid   = ['hod','manager','audit'].includes(S.user.role);
+  const canEdit = S.user.role === 'admin' || S.user.id === uid;
+  const canNote = can('send_notes');
 
   $('crumb').textContent = 'Merchandiser';
   $('page-title').innerHTML = merch.name +
@@ -1671,7 +1820,9 @@ async function renderBoard(uid) {
       + '<div class="sub2" style="margin-left:10px;font-size:10px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div></td>'
       + '<td>' + o.buyer + '</td>'
       + '<td style="font-size:10.5px">' + (o.house||'—') + '</td>'
-      + '<td style="font-size:10.5px">' + ([fmtGauge(o.gauge),o.color,o.comp].filter(Boolean).join(' · ')||'—') + '</td>'
+      + '<td style="font-size:10.5px">' + (fmtGauge(o.gauge)||'—') + '</td>'
+      + '<td style="font-size:10.5px">' + (o.color||'—') + '</td>'
+      + '<td style="font-size:10.5px">' + (o.comp||'—') + '</td>'
       + '<td class="num">' + fmt(o.qty) + '</td>'
       + '<td class="num">' + (o.fob||0).toFixed(2) + '</td>'
       + '<td class="num">' + money((o.qty||0)*(o.fob||0)) + '</td>'
@@ -1698,7 +1849,9 @@ async function renderBoard(uid) {
     + '<th class="stk" rowspan="2">Style</th>'
     + '<th rowspan="2">Buyer</th>'
     + '<th rowspan="2">House</th>'
-    + '<th rowspan="2">Details</th>'
+    + '<th rowspan="2">Gauge</th>'
+    + '<th rowspan="2">Colour</th>'
+    + '<th rowspan="2">Composition</th>'
     + '<th rowspan="2" class="num">Qty</th>'
     + '<th rowspan="2" class="num">FOB</th>'
     + '<th rowspan="2" class="num">Value</th>'
@@ -1782,7 +1935,7 @@ function openOrder(mid) {
   $('ord-sub').textContent = 'For ' + (m ? m.name : '');
   $('ord-err').style.display = 'none';
   ['o_house','o_buyer','o_style','o_gauge','o_color','o_comp','o_qty','o_fob',
-   'p_yarn','p_pp','p_sew','p_pack','p_knit','p_insp','p_ship'].forEach(id => $(id).value = '');
+   'p_yarn','p_pp','p_sew','p_pack','p_knit','p_insp','p_ship'].forEach(id => { const el=$(id); if(el) el.value=''; });
   $('o_total').value = '';
   openModal('ov-order');
 }
@@ -1815,7 +1968,7 @@ async function saveOrder() {
     comp: $('o_comp').value, qty, fob: Number($('o_fob').value)||0,
     ship_date: $('p_ship').value || null,
     plan_yarn: $('p_yarn').value||null, plan_pp: $('p_pp').value||null,
-    plan_sew: $('p_sew').value||null, plan_pack: $('p_pack').value||null,
+    plan_sew: $('p_sew')&&$('p_sew').value||null, plan_pack: $('p_pack')&&$('p_pack').value||null,
     plan_knit: $('p_knit').value||null, plan_insp: $('p_insp').value||null,
     plan_ship: $('p_ship').value||null,
     updated_by: S.user.name, updated_at: new Date().toISOString()
@@ -2397,7 +2550,7 @@ async function openApvFlow(ordId, type, division) {
     var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
     S_apv.rounds = res.data || [];
     var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length - 1] : null;
-    var canAct = S.user.role !== 'mid_management';
+    var canAct = ['admin','merchant','manager'].includes(S.user.role) || S.user.id === S.view;
     if (!latest || latest.rejected_on) {
       S_apv.step = canAct ? 'submit' : 'history';
     } else if (latest.approved_on) {
@@ -2464,7 +2617,7 @@ function renderApvModal() {
   var latest=S_apv.rounds.length?S_apv.rounds[S_apv.rounds.length-1]:null;
   var nextRound=latest?latest.round+1:1;
   var today0=new Date().toISOString().slice(0,10);
-  var canAct=S.user.role!=='mid_management';
+  var canAct=['admin','merchant','manager'].includes(S.user.role)||S.user.id===S.view;
 
   if (S_apv.step==='submit') {
     var rLabel=S_apv.rounds.length?'Resubmit — Round '+nextRound:'Submit — Round 1';
@@ -2627,7 +2780,12 @@ function renderRequestsView() {
   $('stamp').innerHTML = '';
   $('act-row').innerHTML = '';
 
-  const pending = S.tnaRequests.filter(function(r){ return r.status === 'pending'; });
+  // For manager, only show their assigned merchants' requests
+  const pending = S.tnaRequests.filter(function(r) {
+    if (r.status !== 'pending') return false;
+    if (S.user.role === 'manager') return S.myAssignments.includes(r.merchant_id);
+    return true;
+  });
 
   if (!pending.length) {
     $('content').innerHTML = '<div class="card"><div class="empty"><h4>No pending requests</h4><div>All TNA change requests have been resolved.</div></div></div>';
@@ -2880,6 +3038,7 @@ async function refreshPage() {
   S.boardSummaries = {};
   S.archiveLoaded = false;
   S.archive = [];
+  await loadMyAssignments();
   await Promise.all([loadDashOrders(), loadNotes(), loadMemo(), loadTNARequests()]);
   render();
   toast('Refreshed');
@@ -3213,25 +3372,33 @@ function openAdmin() {
 }
 
 function renderAdminList() {
-  const staff = S.users.filter(u => u.role !== 'management');
+  const staff = S.users.filter(function(u){ return u.role !== 'admin'; })
+    .sort(function(a,b){ return a.name.localeCompare(b.name); });
+  const roleColors = {
+    management: 'background:#EDE9FE;color:#5B21B6',
+    hod: 'background:#FEF3C7;color:#92400E',
+    manager: 'background:#D1FAE5;color:#065F46',
+    audit: 'background:#E0F2FE;color:#0369A1',
+    merchant: 'background:#F3F4F6;color:#374151',
+  };
   $('admin-list').innerHTML = staff.length
-    ? staff.map(m => {
-        const isMid = m.role === 'mid_management';
-        const badgeStyle = isMid ? 'background:#FEF3C7;color:#92400E' : m.division === 'knit' ? 'background:#D1FAE5;color:#065F46' : 'background:#EDE9FE;color:#5B21B6';
-        const badgeLabel = isMid ? titleOf(m) : (m.division === 'knit' ? 'Knit' : 'Sweater');
-        return `<div class="admin-row">
-          <div>
-            <div class="nm">${m.name}
-              <span class="div-badge" style="${badgeStyle};margin-left:6px">${badgeLabel}</span>
-            </div>
-            <div class="tm">${m.team||''} · Password: <code style="background:#F3F1EA;padding:1px 5px;border-radius:4px;font-size:11px">${m.password}</code></div>
-          </div>
-          <input type="text" id="pw_${m.id}" placeholder="New password">
-          <button class="btn sm" onclick="resetPwd('${m.id}')">Reset</button>
-          <button class="btn sm danger" onclick="deleteMerchant('${m.id}','${m.name}')">Remove</button>
-        </div>`;
+    ? staff.map(function(m) {
+        var badgeStyle = roleColors[m.role] || 'background:#F3F4F6;color:#374151';
+        var label = roleLabel(m.role);
+        var assignBtn = m.role === 'manager'
+          ? '<button class="btn sm" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name + '\')">Assign merchants</button>'
+          : '';
+        return '<div class="a-row">'
+          + '<div class="a-name">' + m.name + '</div>'
+          + '<span class="chip" style="' + badgeStyle + ';font-size:10px;padding:2px 8px">' + label + '</span>'
+          + (m.division ? '<span style="font-size:11px;color:var(--muted)">' + m.division + '</span>' : '')
+          + '<div style="flex:1"></div>'
+          + assignBtn
+          + '<button class="btn sm" onclick="editUser(\'' + m.id + '\')">Edit</button>'
+          + '<button class="btn sm danger" onclick="deleteUser(\'' + m.id + '\')">Delete</button>'
+          + '</div>';
       }).join('')
-    : `<div class="sub2">No profiles added yet.</div>`;
+    : '<div style="color:var(--muted);padding:12px">No users yet. Add one above.</div>';
 }
 
 async function addMerchant() {
@@ -3246,7 +3413,7 @@ async function addMerchant() {
 
   // Derive role and title from profile type
   const isMerch = type === 'merchant';
-  const role  = isMerch ? 'merchant' : 'mid_management';
+  const role  = $('a_type').value;
   const title = isMerch ? 'Merchandiser' : type === 'hod' ? 'HOD' : type === 'manager' ? 'Manager' : type === 'audit' ? 'Audit' : 'Other';
 
   const { error } = await db.from('users').insert({
@@ -3587,8 +3754,9 @@ async function dismissNote(noteId) {
 
 // ─── ADMIN HELPERS ───
 function handleProfileType() {
-  const type = $('a_type').value;
-  $('div-field').style.display = type === 'merchant' ? '' : 'none';
+  const t = $('a_type').value;
+  const divField = $('div-field');
+  if (divField) divField.style.display = t === 'merchant' ? 'block' : 'none';
 }
 
 async function deleteMerchant(uid, name) {
