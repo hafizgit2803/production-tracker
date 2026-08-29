@@ -1158,21 +1158,34 @@ async function startApp() {
   $('app').style.display = 'flex';
   applyPrefs();
 
-  // Stage 1 — users only (~100ms): show rail immediately
-  await loadUsers();
-  renderRail();
-  $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading dashboard…</div>';
+  try {
+    await loadUsers();
+  } catch(e) { console.error('loadUsers failed:', e); }
 
-  // Stage 2 — dashboard data in background (~300ms)
-  await loadMyAssignments();
-  await Promise.all([loadDashOrders(), loadNotes(), loadMemo(), loadTNARequests()]);
-  cleanOldArchive(); // fire and forget
+  try {
+    renderRail();
+  } catch(e) {
+    console.error('renderRail failed:', e);
+    $('content').innerHTML = '<div class="card" style="padding:20px;color:var(--red)">Rail error: ' + e.message + '</div>';
+    return;
+  }
+
+  $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading…</div>';
+
+  try { await loadMyAssignments(); } catch(e) { console.error('loadMyAssignments:', e); }
+  try { await loadDashOrders(); } catch(e) { console.error('loadDashOrders:', e); }
+  try { await loadNotes(); } catch(e) { console.error('loadNotes:', e); }
+  try { await loadMemo(); } catch(e) { console.error('loadMemo:', e); }
+  try { await loadTNARequests(); } catch(e) { console.error('loadTNARequests:', e); }
+
+  cleanOldArchive();
   subscribeRealtime();
+
   try {
     render();
   } catch(err) {
     console.error('render() failed:', err);
-    $('content').innerHTML = '<div class="card" style="padding:20px;color:var(--red)">Error loading: ' + (err.message||err) + '<br><br><button class="btn" onclick="location.reload()">Refresh</button></div>';
+    $('content').innerHTML = '<div class="card" style="padding:20px;color:var(--red)">Render error: ' + (err.message||err) + '<br><br><button class="btn" onclick="location.reload()">Refresh</button></div>';
   }
 }
 
