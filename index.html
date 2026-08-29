@@ -31,7 +31,7 @@ a{color:var(--accent);text-decoration:none}
 /* ── SHELL ── */
 .shell{display:flex;height:100vh;height:100dvh;overflow:hidden}
 .rail{width:244px;flex:0 0 244px;background:var(--rail);border-right:1px solid var(--line);
-  display:flex;flex-direction:column;height:100%;min-height:0}
+  display:flex;flex-direction:column;overflow:hidden;height:100%}
 .brand{padding:18px 16px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
 .brand h1{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.2px}
 .brand span{font-size:11px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:2px;display:block}
@@ -50,7 +50,7 @@ a{color:var(--accent);text-decoration:none}
 .ni .badge{font-size:10px;font-weight:700;color:#fff;background:var(--red);
   border-radius:20px;padding:1px 6px;min-width:17px;text-align:center}
 .ni .ct{font-size:11px;color:var(--muted)}
-.rail-foot{padding:10px 8px 18px;border-top:1px solid var(--line);flex:0 0 auto;margin-bottom:env(safe-area-inset-bottom,0)}
+.rail-foot{padding:8px 8px 10px;border-top:1px solid var(--line);flex-shrink:0;overflow:hidden}
 .user-row{display:flex;align-items:center;gap:8px;padding:6px 4px}
 .user-row .av{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;
   font-size:11px;font-weight:700;display:grid;place-items:center;flex:0 0 28px}
@@ -468,7 +468,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .apv-history-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px}
 .apv-history-row:last-child{border:none}
 
-.logout-btn{width:100%;padding:8px 12px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s}
+.logout-btn{width:100%;padding:7px 10px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s}
 .logout-btn:hover{background:var(--red-soft);border-color:#EBC4BC;color:var(--red)}
 .card table th{font-size:9.5px;padding:5px 8px}
 .card table td{padding:5px 8px}
@@ -554,6 +554,58 @@ button.apv-chip{font-family:inherit}
 [data-theme="dark"] .merchant-chip{background:#252325;border-color:var(--line);color:var(--muted)}
 [data-theme="dark"] .merchant-chip.assigned{background:#0E2018;border-color:#16A34A;color:#4ADE80}
 
+
+/* ── ADMIN PAGE STYLES ── */
+.adm-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:20px 22px;margin-bottom:16px}
+.adm-card-head{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.adm-h3{font-family:var(--serif);font-size:16px;font-weight:600;margin:0}
+.adm-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.adm-lbl{display:block;font-size:11px;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.adm-inp{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:8px;
+  background:#FCFBF7;color:var(--ink);font-size:13.5px;transition:border-color .15s;box-sizing:border-box}
+.adm-inp:focus{outline:none;border-color:var(--accent);background:#fff}
+.adm-sel{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:8px;
+  background:#FCFBF7;color:var(--ink);font-size:13.5px;box-sizing:border-box}
+.adm-field{display:flex;flex-direction:column;min-width:0}
+.adm-field-btn{justify-content:flex-end}
+.adm-save-btn{width:100%;padding:9px 16px;font-size:13px}
+.adm-row3{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+.adm-add-grid{display:grid;grid-template-columns:1fr 1fr 140px 120px auto;gap:12px;align-items:end}
+.adm-err{font-size:12px;color:var(--red);margin-top:8px;padding:6px 10px;
+  background:var(--red-soft);border-radius:6px;border:1px solid #FECACA}
+/* User row cards */
+.adm-user-row{display:flex;align-items:center;gap:12px;padding:12px 4px;
+  border-bottom:1px solid #F0EDE4}
+.adm-user-row:last-child{border-bottom:none}
+.adm-user-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#fff}
+.adm-user-info{flex:1;min-width:0}
+.adm-user-name{font-weight:600;font-size:14px;margin-bottom:3px}
+.adm-user-meta{display:flex;align-items:center;gap:6px}
+.adm-user-actions{display:flex;gap:6px;flex-shrink:0}
+/* Inline edit form */
+.adm-edit-form{background:#F7F5EF;border:1px solid var(--accent);border-radius:0 0 10px 10px;
+  padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;
+  margin-left:-4px;margin-right:-4px}
+[data-theme="dark"] .adm-inp,.adm-inp{background:#FCFBF7}
+[data-theme="dark"] .adm-inp{background:#2A2828;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .adm-sel{background:#2A2828;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .adm-edit-form{background:#1E1D1F}
+[data-theme="dark"] .adm-card{background:var(--panel)}
+
+
+/* Password reveal */
+.pwd-wrap{position:relative;display:flex;align-items:center}
+.pwd-wrap .adm-inp,.pwd-wrap input{padding-right:34px;width:100%;box-sizing:border-box}
+.pwd-eye{position:absolute;right:8px;background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:13px;padding:4px;line-height:1;user-select:none;
+  -webkit-user-select:none;flex-shrink:0;border-radius:4px}
+.pwd-eye:hover{color:var(--accent)}
+.pwd-eye:active{color:var(--ink)}
+
 @media print{
   html,body{height:auto}
   .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
@@ -582,7 +634,7 @@ button.apv-chip{font-family:inherit}
     <div class="f"><label>Your name</label>
       <select id="l_name"><option value="">Loading&hellip;</option></select></div>
     <div class="f"><label>Password</label>
-      <input type="password" id="l_pwd" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="pwd-wrap"><input type="password" id="l_pwd" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd('l_pwd',true)" onmouseup="showPwd('l_pwd',false)" onmouseleave="showPwd('l_pwd',false)" ontouchstart="showPwd('l_pwd',true)" ontouchend="showPwd('l_pwd',false)">&#x1F441;</button></div></div>
     <div class="form-err" id="l_err" style="display:none"></div>
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
@@ -604,7 +656,7 @@ button.apv-chip{font-family:inherit}
     <div class="rail-foot">
       <div class="user-row" id="user-row"></div>
       <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" style="width:100%;text-align:left;padding:7px 9px;margin-bottom:8px;border-radius:8px;border:1px solid var(--line);background:none;font-size:12.5px;cursor:pointer;color:var(--muted)">&#x1F319; Dark mode</button>
-      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+      <button class="logout-btn" onclick="doLogout()">&#x2192; Sign out</button>
     </div>
   </nav>
   <main class="main">
@@ -2989,59 +3041,67 @@ async function resolveNote(noteId) {
 
 
 // ─── ADMIN PAGE (full page, not modal) ───
+// ─── ADMIN PAGE — REDESIGNED ───
 function renderAdminPage() {
   $('crumb').textContent = 'Admin';
   $('page-title').textContent = 'Admin Panel';
-  $('page-sub').innerHTML = 'Manage users, roles and assignments';
+  $('page-sub').innerHTML = 'User management &amp; assignments';
   $('stamp').innerHTML = '';
   $('act-row').innerHTML = '';
 
-  var inp = 'style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink);font-size:13px"';
+  var inp = 'class="adm-inp"';
+  var sel = 'class="adm-sel"';
 
-  $('content').innerHTML = ''
+  $('content').innerHTML =
 
-  // ── My Account ──────────────────────────────────────────────────────────
-  + '<div class="card" style="margin-bottom:16px">'
-  + '<div class="card-h"><h3>My Account</h3><span class="note">Update your admin name and password</span></div>'
-  + '<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;padding:0 0 4px">'
-  + '<div class="f" style="margin:0"><label>Display name</label><input id="admin-own-name" ' + inp + ' value="' + (S.user.name||'').replace(/"/g,'&quot;') + '"></div>'
-  + '<div class="f" style="margin:0"><label>New password</label><input id="admin-own-pwd" type="password" ' + inp + ' placeholder="Leave blank to keep current"></div>'
-  + '<button class="btn pri" onclick="saveMyProfile()" style="height:38px">Save</button>'
+  // ── My Account ─────────────────────────────────────────────────────────
+  '<div class="adm-card">'
+  + '<div class="adm-card-head"><div><h3 class="adm-h3">My Account</h3><div class="adm-sub">Change your display name and password</div></div></div>'
+  + '<div class="adm-row3">'
+  + '<div class="adm-field"><label class="adm-lbl">Display name</label><input id="admin-own-name" ' + inp + ' value="' + (S.user.name||'').replace(/"/g,'&quot;') + '"></div>'
+  + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="admin-own-pwd" type="password" ' + inp + ' placeholder="Leave blank to keep current"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'admin-own-pwd\',true)" onmouseup="showPwd(\'admin-own-pwd\',false)" onmouseleave="showPwd(\'admin-own-pwd\',false)" ontouchstart="showPwd(\'admin-own-pwd\',true)" ontouchend="showPwd(\'admin-own-pwd\',false)">&#x1F441;</button></div></div>'
+  + '<div class="adm-field adm-field-btn"><button class="btn pri adm-save-btn" onclick="saveMyProfile()">Save changes</button></div>'
   + '</div>'
-  + '<div id="admin-own-err" style="display:none;color:var(--red);font-size:12px;margin-top:6px"></div>'
+  + '<div id="admin-own-err" class="adm-err" style="display:none"></div>'
   + '</div>'
 
-  // ── Add User ─────────────────────────────────────────────────────────────
-  + '<div class="card" style="margin-bottom:16px">'
-  + '<div class="card-h"><h3>Add user</h3></div>'
-  + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end">'
-  + '<div class="f" style="margin:0"><label>Name</label><input id="a_name" ' + inp + ' placeholder="Full name"></div>'
-  + '<div class="f" style="margin:0"><label>Password</label><input id="a_pwd" ' + inp + ' placeholder="Set password"></div>'
-  + '<div class="f" style="margin:0"><label>Role</label><select id="a_type" ' + inp + ' onchange="handleProfileType()">'
+  // ── Add User ────────────────────────────────────────────────────────────
+  + '<div class="adm-card">'
+  + '<div class="adm-card-head"><h3 class="adm-h3">Add user</h3></div>'
+  + '<div class="adm-add-grid">'
+  + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="a_name" ' + inp + ' placeholder="Full name"></div>'
+  + '<div class="adm-field"><label class="adm-lbl">Password</label><div class="pwd-wrap"><input id="a_pwd" type="password" ' + inp + ' placeholder="Set password"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'a_pwd\',true)" onmouseup="showPwd(\'a_pwd\',false)" onmouseleave="showPwd(\'a_pwd\',false)" ontouchstart="showPwd(\'a_pwd\',true)" ontouchend="showPwd(\'a_pwd\',false)">&#x1F441;</button></div></div>'
+  + '<div class="adm-field"><label class="adm-lbl">Role</label>'
+  + '<select id="a_type" ' + sel + ' onchange="handleProfileType()">'
   + '<option value="merchant">Merchant</option>'
   + '<option value="manager">Manager</option>'
   + '<option value="hod">HOD</option>'
   + '<option value="audit">Audit</option>'
   + '<option value="management">Management</option>'
   + '</select></div>'
-  + '<div class="f" style="margin:0" id="div-field"><label>Division</label><select id="a_div" ' + inp + '>'
+  + '<div class="adm-field" id="div-field"><label class="adm-lbl">Division</label>'
+  + '<select id="a_div" ' + sel + '>'
   + '<option value="sweater">Sweater</option>'
   + '<option value="knit">Knit</option>'
   + '</select></div>'
-  + '<button class="btn pri" onclick="addMerchant()" style="height:38px">Add</button>'
+  + '<div class="adm-field adm-field-btn"><button class="btn pri adm-save-btn" onclick="addMerchant()">Add user</button></div>'
   + '</div>'
-  + '<div id="admin-err" style="display:none;color:var(--red);font-size:12px;margin-top:6px"></div>'
+  + '<div id="admin-err" class="adm-err" style="display:none"></div>'
   + '</div>'
 
-  // ── User List ─────────────────────────────────────────────────────────────
-  + '<div class="card">'
-  + '<div class="card-h"><h3>Users</h3></div>'
+  // ── Users list ──────────────────────────────────────────────────────────
+  + '<div class="adm-card">'
+  + '<div class="adm-card-head"><h3 class="adm-h3">Users</h3>'
+  + '<span class="adm-sub">' + (S.users.filter(function(u){return u.role!=='admin';}).length) + ' accounts</span>'
+  + '</div>'
   + '<div id="admin-list"></div>'
   + '</div>';
 
   renderAdminList();
   handleProfileType();
 }
+
+
 
 // ─── SAVE MY OWN PROFILE (admin renames/changes pwd) ───
 async function saveMyProfile() {
@@ -3079,93 +3139,92 @@ function renderAdminList() {
   var staff = S.users.filter(function(u){ return u.role !== 'admin'; })
     .sort(function(a,b){ return a.name.localeCompare(b.name); });
   var roleColors = {
-    management: 'background:#EDE9FE;color:#5B21B6',
-    hod:        'background:#FEF3C7;color:#92400E',
-    manager:    'background:#D1FAE5;color:#065F46',
-    audit:      'background:#E0F2FE;color:#0369A1',
-    merchant:   'background:#F3F4F6;color:#374151',
+    management:'background:#EDE9FE;color:#5B21B6', hod:'background:#FEF3C7;color:#92400E',
+    manager:'background:#D1FAE5;color:#065F46', audit:'background:#E0F2FE;color:#0369A1',
+    merchant:'background:#F3F4F6;color:#374151'
   };
-  var merchants = S.users.filter(function(u){ return u.role === 'merchant'; })
+  var avColors = {
+    management:'#7C3AED', hod:'#D97706', manager:'#059669',
+    audit:'#0284C7', merchant:'#6B7280'
+  };
+  var merchants = S.users.filter(function(u){ return u.role==='merchant'; })
     .sort(function(a,b){ return a.name.localeCompare(b.name); });
+  var inp = 'class="adm-inp"';
+  var sel = 'class="adm-sel"';
 
-  $('admin-list').innerHTML = staff.length
-    ? staff.map(function(m) {
-        var bc = roleColors[m.role] || 'background:#F3F4F6;color:#374151';
-        var isEdit   = _editUserId === m.id;
-        var isAssign = _assignManagerId === m.id;
+  if (!staff.length) {
+    $('admin-list').innerHTML = '<div style="color:var(--muted);padding:16px 4px;font-size:13px">No users yet. Add one above.</div>';
+    return;
+  }
 
-        // Assign button for managers
-        var assignCount = isAssign ? _assignedSet.size : 0;
-        var assignBtn = m.role === 'manager'
-          ? '<button class="btn sm' + (isAssign ? ' pri' : '') + '" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name.replace(/'/g,"\'") + '\')" style="margin-right:4px">'
-            + (isAssign ? '&#x2713; Assigning (' + assignCount + ')' : '&#x1F4CB; Assign merchants')
-            + '</button>'
-          : '';
+  $('admin-list').innerHTML = staff.map(function(m) {
+    var bc  = roleColors[m.role] || roleColors.merchant;
+    var avc = avColors[m.role]   || '#6B7280';
+    var isEdit   = _editUserId === m.id;
+    var isAssign = _assignManagerId === m.id;
 
-        var main = '<div class="a-row" style="border-radius:' + (isEdit||isAssign?'8px 8px 0 0':'8px') + ';' + (isEdit||isAssign?'border-bottom:none':'') + '">'
-          + '<div class="a-name">' + m.name + '</div>'
-          + '<span class="chip" style="' + bc + ';font-size:10px;padding:2px 8px">' + roleLabel(m.role) + '</span>'
-          + (m.division ? '<span style="font-size:11px;color:var(--muted)">' + m.division + '</span>' : '')
-          + '<div style="flex:1"></div>'
-          + assignBtn
-          + '<button class="btn sm' + (isEdit?' pri':'') + '" onclick="editUser(\'' + m.id + '\')" style="margin-right:4px">' + (isEdit?'Done':'Edit') + '</button>'
-          + '<button class="btn sm danger" onclick="deleteUser(\'' + m.id + '\')">Delete</button>'
-          + '</div>';
+    var assignBtn = m.role === 'manager'
+      ? '<button class="btn sm' + (isAssign?' pri':'') + '" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name.replace(/'/g,"\'") + '\')" style="gap:4px">'
+        + (isAssign ? '&#x2713; Assigning (' + _assignedSet.size + ')' : '&#x1F4CB; Assign')
+        + '</button>'
+      : '';
 
-        // Inline assignment panel
-        var assignPanel = '';
-        if (isAssign) {
-          var sweaterMerchants = merchants.filter(function(u){ return u.division !== 'knit'; });
-          var knitMerchants    = merchants.filter(function(u){ return u.division === 'knit'; });
+    var mainRow = '<div class="adm-user-row" style="' + (isEdit||isAssign?'border-radius:10px 10px 0 0;margin-bottom:0;border-bottom:none':'border-radius:10px') + '">'
+      + '<div class="adm-user-av" style="background:' + avc + '">' + initials(m.name) + '</div>'
+      + '<div class="adm-user-info">'
+      + '<div class="adm-user-name">' + m.name + '</div>'
+      + '<div class="adm-user-meta">'
+      + '<span class="chip" style="' + bc + ';font-size:10px;padding:2px 8px">' + roleLabel(m.role) + '</span>'
+      + (m.division ? '<span style="font-size:11px;color:var(--muted)">' + m.division + '</span>' : '')
+      + '</div></div>'
+      + '<div class="adm-user-actions">'
+      + assignBtn
+      + '<button class="btn sm' + (isEdit?' pri':'') + '" onclick="editUser(\'' + m.id + '\')">' + (isEdit?'Done':'Edit') + '</button>'
+      + '<button class="btn sm danger" onclick="deleteUser(\'' + m.id + '\')">Delete</button>'
+      + '</div></div>';
 
-          function chipGroup(list, groupLabel) {
-            if (!list.length) return '';
-            return '<div style="margin-bottom:10px">'
-              + '<div style="font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">' + groupLabel + '</div>'
-              + '<div class="merchant-chips">'
-              + list.map(function(merch){
-                  var active = _assignedSet.has(merch.id);
-                  return '<button class="merchant-chip' + (active?' assigned':'') + '" onclick="toggleMerchantAssign(\'' + merch.id + '\')">'
-                    + '<span class="chip-dot"></span>'
-                    + merch.name
-                    + '</button>';
-                }).join('')
-              + '</div></div>';
-          }
+    // Inline edit form
+    var editPanel = isEdit
+      ? '<div class="adm-edit-form">'
+        + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="eu-name-' + m.id + '" ' + inp + ' value="' + m.name.replace(/"/g,'&quot;') + '"></div>'
+                + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" ' + inp + ' placeholder="Leave blank to keep"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'eu-pwd-'+m.id+'\',true)" onmouseup="showPwd(\'eu-pwd-'+m.id+'\',false)" onmouseleave="showPwd(\'eu-pwd-'+m.id+'\',false)">&#x1F441;</button></div></div>'
+        + '<div class="adm-field"><label class="adm-lbl">Role</label>'
+        + '<select id="eu-role-' + m.id + '" ' + sel + '>'
+        + ['merchant','manager','hod','audit','management'].map(function(r){
+            return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
+          }).join('')
+        + '</select></div>'
+        + '<div class="adm-field adm-field-btn"><button class="btn pri adm-save-btn" onclick="saveEditUser(\'' + m.id + '\')">Save</button></div>'
+        + '</div>'
+      : '';
 
-          assignPanel = '<div class="assign-panel">'
-            + '<div class="assign-panel-title">Click merchants to assign/unassign &mdash; changes save instantly</div>'
-            + (merchants.length
-                ? chipGroup(sweaterMerchants, 'Sweater division') + chipGroup(knitMerchants, 'Knit division')
-                : '<div style="color:var(--muted);font-size:12.5px">No merchants added yet.</div>')
-            + '<div style="border-top:1px solid var(--line);margin-top:8px;padding-top:10px;display:flex;justify-content:space-between;align-items:center">'
-            + '<span style="font-size:12px;color:var(--muted)">' + _assignedSet.size + ' merchant' + (_assignedSet.size!==1?'s':'') + ' assigned to ' + m.name + '</span>'
-            + '<button class="btn sm" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name + '\')">Done</button>'
-            + '</div></div>';
-        }
+    // Assignment panel
+    var assignPanel = '';
+    if (isAssign) {
+      var sweaterM = merchants.filter(function(u){ return u.division !== 'knit'; });
+      var knitM    = merchants.filter(function(u){ return u.division === 'knit'; });
+      function chipGrp(list, grpLabel) {
+        if (!list.length) return '';
+        return '<div style="margin-bottom:12px">'
+          + '<div class="adm-lbl" style="margin-bottom:8px">' + grpLabel + '</div>'
+          + '<div class="merchant-chips">'
+          + list.map(function(merch){
+              var active = _assignedSet.has(merch.id);
+              return '<button class="merchant-chip' + (active?' assigned':'') + '" onclick="toggleMerchantAssign(\'' + merch.id + '\')">'
+                + '<span class="chip-dot"></span>' + merch.name + '</button>';
+            }).join('') + '</div></div>';
+      }
+      assignPanel = '<div class="assign-panel">'
+        + '<div class="adm-lbl" style="margin-bottom:12px">Click to assign / unassign &mdash; saves instantly</div>'
+        + (merchants.length ? chipGrp(sweaterM,'Sweater') + chipGrp(knitM,'Knit') : '<div style="color:var(--muted);font-size:12.5px">No merchants yet.</div>')
+        + '<div style="border-top:1px solid var(--line);padding-top:10px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">'
+        + '<span style="font-size:12px;color:var(--muted)">' + _assignedSet.size + ' merchant' + (_assignedSet.size!==1?'s':'') + ' assigned</span>'
+        + '<button class="btn sm" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name + '\')">Done</button>'
+        + '</div></div>';
+    }
 
-        // Inline edit panel
-        var editPanel = '';
-        if (isEdit) {
-          var inp2 = 'style="width:100%;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12px;color:var(--ink)"';
-          editPanel = '<div style="border:1px solid var(--accent);border-top:none;border-radius:0 0 8px 8px;padding:12px;background:#FAFAF7;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:1px">'
-            + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Name</div>'
-            + '<input id="eu-name-' + m.id + '" ' + inp2 + ' value="' + m.name.replace(/"/g,'&quot;') + '"></div>'
-            + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">New password</div>'
-            + '<input id="eu-pwd-' + m.id + '" type="password" ' + inp2 + ' placeholder="Leave blank to keep"></div>'
-            + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Role</div>'
-            + '<select id="eu-role-' + m.id + '" ' + inp2 + '>'
-            + ['merchant','manager','hod','audit','management'].map(function(r){
-                return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
-              }).join('')
-            + '</select></div>'
-            + '<button class="btn sm pri" onclick="saveEditUser(\'' + m.id + '\')" style="height:32px">Save</button>'
-            + '</div>';
-        }
-
-        return main + assignPanel + editPanel;
-      }).join('')
-    : '<div style="color:var(--muted);padding:14px">No users yet.</div>';
+    return mainRow + editPanel + assignPanel;
+  }).join('');
 }
 
 async function saveEditUser(uid) {
@@ -3975,6 +4034,8 @@ async function loadTNARequests() {
   }
 }
 
+
+function showPwd(id, show) { var el = $(id); if (el) el.type = show ? 'text' : 'password'; }
 
 // ─── START ───
 init();
