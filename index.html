@@ -3868,6 +3868,114 @@ async function deleteMerchant(uid, name) {
   } else { toast('Error. Try again.', 'err'); }
 }
 
+// ─── RENDER RAIL (6-tier sidebar) ───
+function renderRail() {
+  var u = S.user;
+  if (!u) return;
+  var r = u.role;
+  var isAdmin   = r === 'admin';
+  var isMgmt    = r === 'management';
+  var isHOD     = r === 'hod';
+  var isAudit   = r === 'audit';
+  var isManager = r === 'manager';
+  var isMerchant= r === 'merchant';
+  var seeAll    = isAdmin || isMgmt || isHOD || isAudit;
+
+  var userRowEl = $('user-row');
+  if (userRowEl) {
+    userRowEl.innerHTML = '<div class="av">' + initials(u.name) + '</div>'
+      + '<div class="info"><div class="uname">' + u.name + '</div>'
+      + '<div class="urole">' + roleLabel(r) + '</div></div>';
+  }
+  var tb = $('theme-btn');
+  if (tb) {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    tb.textContent = isDark ? '\u2600\uFE0F Light mode' : '\uD83C\uDF19 Dark mode';
+  }
+
+  function ni(view, icon, label, count, isBadge) {
+    var on = S.view === view ? 'on' : '';
+    var cntHtml = count > 0 ? (isBadge ? '<span class="badge">' + count + '</span>' : '<span class="ct">' + count + '</span>') : '';
+    return '<button class="ni ' + on + '" onclick="setView(\'' + view + '\')">'
+      + '<span class="av" style="font-size:12px">' + icon + '</span>'
+      + '<span class="nm">' + label + '</span>' + cntHtml + '</button>';
+  }
+
+  function merchantBtn(m) {
+    var on = S.view === m.id ? 'on' : '';
+    var badge = (S.notes||[]).filter(function(n){ return !n.is_closed && n.merchant_id===m.id; }).length;
+    return '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
+      + '<div class="av">' + initials(m.name) + '</div>'
+      + '<div class="nm">' + m.name + '</div>'
+      + (badge ? '<span class="badge">' + badge + '</span>' : '') + '</button>';
+  }
+
+  var html = ni('dashboard', '&#x2302;', 'Dashboard');
+
+  if (seeAll) {
+    var sweater = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division!=='knit'; });
+    var knit    = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division==='knit'; });
+    if (sweater.length) { html += '<div class="rail-label">Sweater</div>'; sweater.forEach(function(m){ html += merchantBtn(m); }); }
+    if (knit.length)    { html += '<div class="rail-label">Knit</div>';    knit.forEach(function(m){ html += merchantBtn(m); }); }
+  } else if (isManager) {
+    var assigned = S.users.filter(function(u2){ return u2.role==='merchant' && S.myAssignments.includes(u2.id); });
+    if (assigned.length) { html += '<div class="rail-label">My Merchants</div>'; assigned.forEach(function(m){ html += merchantBtn(m); }); }
+    else html += '<div class="rail-label" style="color:var(--muted)">No merchants assigned yet</div>';
+  } else if (isMerchant) {
+    html += ni(u.id, '&#x25A6;', 'My Board');
+  }
+
+  html += '<div class="rail-sep"></div>';
+  html += ni('shipped', '&#x2713;', 'Shipped', S.archive.length);
+
+  if (can('inbox')) {
+    var pendingReqs = (S.tnaRequests||[]).filter(function(r2){ return r2.status==='pending'; }).length;
+    var alerts = (S.alerts||[]).filter(function(a){ return !a.dismissed; }).length;
+    var inboxBadge = pendingReqs + alerts;
+    html += ni('requests', '&#x1F4EC;', 'Inbox', inboxBadge, inboxBadge > 0);
+  }
+  if (isMerchant) {
+    var unread = (S.tnaRequests||[]).filter(function(r2){ return r2.status!=='pending'&&!r2.merchant_seen; }).length;
+    var total  = (S.tnaRequests||[]).length;
+    html += ni('my-requests', '&#x1F4CB;', 'My Requests', unread||total, unread>0);
+  }
+  if (isAdmin) {
+    html += '<div class="rail-sep"></div>';
+    html += '<button class="ni ' + (S.view==='admin'?'on':'') + '" onclick="setView(\'admin\')">'
+      + '<span class="av" style="font-size:12px">&#x2699;</span>'
+      + '<span class="nm">Admin</span></button>';
+  }
+
+  var rb = $('rail-body');
+  if (rb) rb.innerHTML = html;
+}
+
+// ─── LOAD TNA REQUESTS (6-tier) ───
+async function loadTNARequests() {
+  var r = S.user.role;
+  if (r === 'merchant') {
+    var res1 = await db.from('tna_requests').select('*').eq('merchant_id', S.user.id).order('created_at', { ascending: false });
+    S.tnaRequests = res1.data || [];
+    var newResolved = S.tnaRequests.filter(function(req){ return req.status!=='pending'&&!req.merchant_seen; });
+    if (newResolved.length) {
+      newResolved.forEach(function(req){
+        toast((req.status==='approved'?'\u2713 TNA updated: ':'\u2717 Rejected: ') + req.field_label, req.status==='approved'?'ok-t':'err');
+      });
+      await db.from('tna_requests').update({ merchant_seen: true }).in('id', newResolved.map(function(req){ return req.id; }));
+    }
+  } else if (r === 'admin' || r === 'hod') {
+    var res2 = await db.from('tna_requests').select('*').eq('status','pending').order('created_at', { ascending: false });
+    S.tnaRequests = res2.data || [];
+  } else if (r === 'manager') {
+    if (!S.myAssignments || !S.myAssignments.length) { S.tnaRequests = []; return; }
+    var res3 = await db.from('tna_requests').select('*').eq('status','pending').in('merchant_id', S.myAssignments).order('created_at', { ascending: false });
+    S.tnaRequests = res3.data || [];
+  } else {
+    S.tnaRequests = [];
+  }
+}
+
+
 // ─── START ───
 init();
 </script>
