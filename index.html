@@ -29,13 +29,13 @@ button{cursor:pointer}
 a{color:var(--accent);text-decoration:none}
 
 /* ── SHELL ── */
-.shell{display:flex;height:100vh;overflow:hidden}
+.shell{display:flex;height:100vh;height:100dvh;overflow:hidden}
 .rail{width:244px;flex:0 0 244px;background:var(--rail);border-right:1px solid var(--line);
-  display:flex;flex-direction:column;height:100vh}
+  display:flex;flex-direction:column;height:100%;min-height:0}
 .brand{padding:18px 16px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
 .brand h1{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.2px}
 .brand span{font-size:11px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:2px;display:block}
-.rail-body{flex:1;overflow-y:auto;padding:10px 8px}
+.rail-body{flex:1;overflow-y:auto;padding:10px 8px;min-height:0}
 .rail-sep{height:1px;background:var(--line);margin:8px 4px}
 .rail-label{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
   font-weight:700;padding:10px 8px 5px}
@@ -532,6 +532,27 @@ button.apv-chip{font-family:inherit}
 .note-reply-form{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
 .note-reply-form textarea{flex:1;padding:6px 9px;border:1px solid var(--line);border-radius:8px;
   background:#FCFBF7;font-size:12.5px;resize:none;color:var(--ink)}
+
+
+/* Manager assignment inline panel */
+.assign-panel{border:1px solid var(--accent);border-top:none;border-radius:0 0 10px 10px;
+  padding:16px;background:#FAFAF7;margin-bottom:1px}
+[data-theme="dark"] .assign-panel{background:#1E1D1F}
+.assign-panel-title{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-bottom:12px}
+.merchant-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.merchant-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;
+  border-radius:20px;font-size:12.5px;font-weight:500;cursor:pointer;
+  border:1.5px solid var(--line);background:#F7F5EF;color:var(--muted);
+  transition:all .15s;user-select:none}
+.merchant-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.merchant-chip.assigned{background:var(--green-soft);border-color:#4ADE80;
+  color:#065F46;font-weight:600}
+.merchant-chip.assigned:hover{background:#BBF7D0;border-color:#22C55E}
+.merchant-chip .chip-dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.7}
+.merchant-chip .chip-div{font-size:10px;opacity:.7;margin-left:2px}
+[data-theme="dark"] .merchant-chip{background:#252325;border-color:var(--line);color:var(--muted)}
+[data-theme="dark"] .merchant-chip.assigned{background:#0E2018;border-color:#16A34A;color:#4ADE80}
 
 @media print{
   html,body{height:auto}
@@ -1335,13 +1356,13 @@ function render() {
   else if (S.view === 'shipped' || S.view === 'archive') renderShippedPage();
   else if (S.view === 'requests') renderRequestsView();
   else if (S.view === 'my-requests') renderMyRequests();
+  else if (S.view === 'admin') renderAdminPage();
   else renderBoard(S.view);
 }
 
 function setView(v) {
-  // Guard: manager can only view assigned merchants
   if (S.user.role === 'manager' &&
-      !['dashboard','shipped','requests','my-requests'].includes(v) &&
+      !['dashboard','shipped','requests','my-requests','admin'].includes(v) &&
       v !== S.user.id) {
     if (!S.myAssignments.includes(v)) {
       toast('You are not assigned to this merchant');
@@ -1354,6 +1375,7 @@ function setView(v) {
   else if (v === 'shipped' || v === 'archive') renderShippedPage();
   else if (v === 'requests') renderRequestsView();
   else if (v === 'my-requests') renderMyRequests();
+  else if (v === 'admin') renderAdminPage();
   else renderBoard(v);
 }
 
@@ -1367,188 +1389,43 @@ async function loadMyAssignments() {
 
 // ─── ASSIGNMENT MODAL (Admin only) ───
 var _assignManagerId = null;
+var _assignedSet = new Set();
+
 async function openAssignMerchants(managerId, managerName) {
-  _assignManagerId = managerId;
-  $('assign-sub').textContent = managerName;
-  $('assign-body').innerHTML = '<div class="loading"><span class="spin"></span></div>';
-  openModal('ov-assign');
-
-  const { data: existing } = await db.from('manager_assignments')
-    .select('merchant_id').eq('manager_id', managerId);
-  const assigned = new Set((existing || []).map(function(a){ return a.merchant_id; }));
-  const merchants = S.users.filter(function(u){ return u.role === 'merchant'; })
-    .sort(function(a,b){ return a.name.localeCompare(b.name); });
-
-  if (!merchants.length) {
-    $('assign-body').innerHTML = '<div style="color:var(--muted)">No merchants found. Add merchants first.</div>';
+  if (_assignManagerId === managerId) {
+    _assignManagerId = null;
+    _assignedSet = new Set();
+    renderAdminList();
     return;
   }
-
-  var html = '<div style="display:flex;flex-direction:column;gap:8px">';
-  merchants.forEach(function(m) {
-    var checked = assigned.has(m.id) ? 'checked' : '';
-    html += '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer">'
-      + '<input type="checkbox" id="assign-' + m.id + '" value="' + m.id + '" ' + checked + ' style="width:16px;height:16px">'
-      + '<span style="flex:1"><strong>' + m.name + '</strong><span style="color:var(--muted);font-size:11px;margin-left:8px">' + (m.division||'sweater') + '</span></span>'
-      + (checked ? '<span style="font-size:10px;color:var(--green);font-weight:600">Assigned</span>' : '')
-      + '</label>';
-  });
-  html += '</div>';
-  $('assign-body').innerHTML = html;
-}
-
-async function saveAssignments() {
-  if (!_assignManagerId) return;
-  const merchants = S.users.filter(function(u){ return u.role === 'merchant'; });
-  const selected = merchants.filter(function(m){
-    var el = document.getElementById('assign-' + m.id);
-    return el && el.checked;
-  }).map(function(m){ return m.id; });
-
-  // Delete existing, insert new
-  await db.from('manager_assignments').delete().eq('manager_id', _assignManagerId);
-  if (selected.length) {
-    var rows = selected.map(function(mid){ return { manager_id: _assignManagerId, merchant_id: mid }; });
-    await db.from('manager_assignments').insert(rows);
-  }
-  closeModal('ov-assign');
-  toast('Assignments saved (' + selected.length + ' merchants)');
+  _assignManagerId = managerId;
+  _assignedSet = new Set();
+  renderAdminList(); // show skeleton first
+  const { data } = await db.from('manager_assignments')
+    .select('merchant_id').eq('manager_id', managerId);
+  _assignedSet = new Set((data || []).map(function(a){ return a.merchant_id; }));
   renderAdminList();
 }
 
-// ─── UPDATED renderRail FOR 6 TIERS ───
-function renderRail() {
-  var u = S.user;
-  if (!u) return;
-  var r = u.role;
-  var isAdmin    = r === 'admin';
-  var isMgmt     = r === 'management';
-  var isHOD      = r === 'hod';
-  var isAudit    = r === 'audit';
-  var isManager  = r === 'manager';
-  var isMerchant = r === 'merchant';
-  var seeAll     = isAdmin || isMgmt || isHOD || isAudit;
-
-  // Update user row and theme button
-  $('user-row').innerHTML = '<div class="av">' + initials(u.name) + '</div>'
-    + '<div class="info"><div class="uname">' + u.name + '</div>'
-    + '<div class="urole">' + roleLabel(r) + '</div></div>';
-  var tb = $('theme-btn');
-  if (tb) {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    tb.textContent = isDark ? '\u2600\uFE0F Light mode' : '\uD83C\uDF19 Dark mode';
-  }
-
-  function ni(view, icon, label, count, isBadge) {
-    var on = S.view === view ? 'on' : '';
-    var cntHtml = count > 0 ? (isBadge ? '<span class="badge">' + count + '</span>' : '<span class="ct">' + count + '</span>') : '';
-    return '<button class="ni ' + on + '" onclick="setView(\'' + view + '\')">'
-      + '<span class="av" style="font-size:12px">' + icon + '</span>'
-      + '<span class="nm">' + label + '</span>' + cntHtml + '</button>';
-  }
-
-  var html = ni('dashboard', '&#x2302;', 'Dashboard');
-
-  // Merchant sections
-  if (seeAll) {
-    var sweater = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division!=='knit'; });
-    var knit    = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division==='knit'; });
-    if (sweater.length) {
-      html += '<div class="rail-label">Sweater</div>';
-      sweater.forEach(function(m) {
-        var on = S.view === m.id ? 'on' : '';
-        var badge = (S.notes||[]).filter(function(n){ return !n.is_closed && n.merchant_id===m.id; }).length;
-        html += '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
-          + '<div class="av">' + initials(m.name) + '</div>'
-          + '<div class="nm">' + m.name + '</div>'
-          + (badge ? '<span class="badge">' + badge + '</span>' : '') + '</button>';
-      });
-    }
-    if (knit.length) {
-      html += '<div class="rail-label">Knit</div>';
-      knit.forEach(function(m) {
-        var on = S.view === m.id ? 'on' : '';
-        html += '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
-          + '<div class="av">' + initials(m.name) + '</div>'
-          + '<div class="nm">' + m.name + '</div></button>';
-      });
-    }
-  } else if (isManager) {
-    var assigned = S.users.filter(function(u2){
-      return u2.role==='merchant' && S.myAssignments.includes(u2.id);
-    });
-    if (assigned.length) {
-      html += '<div class="rail-label">My Merchants</div>';
-      assigned.forEach(function(m) {
-        var on = S.view === m.id ? 'on' : '';
-        html += '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
-          + '<div class="av">' + initials(m.name) + '</div>'
-          + '<div class="nm">' + m.name + '</div></button>';
-      });
-    } else {
-      html += '<div class="rail-label" style="color:var(--muted)">No merchants assigned yet</div>';
-    }
-  } else if (isMerchant) {
-    html += ni(u.id, '&#x25A6;', 'My Board');
-  }
-
-  html += '<div class="rail-sep"></div>';
-  html += ni('shipped', '&#x2713;', 'Shipped', S.archive.length);
-
-  // Inbox (admin, management, hod, manager)
-  if (can('inbox')) {
-    var pendingReqs = S.tnaRequests.filter(function(r2){ return r2.status==='pending'; }).length;
-    var alerts = (S.alerts||[]).filter(function(a){ return !a.dismissed; }).length;
-    var inboxBadge = pendingReqs + alerts;
-    html += ni('requests', '&#x1F4EC;', 'Inbox', inboxBadge, inboxBadge > 0);
-  }
-
-  // My Requests (merchant only)
-  if (isMerchant) {
-    var unread = S.tnaRequests.filter(function(r2){ return r2.status!=='pending'&&!r2.merchant_seen; }).length;
-    html += ni('my-requests', '&#x1F4CB;', 'My Requests', unread || S.tnaRequests.length, unread > 0);
-  }
-
-  // Admin panel (admin only)
-  if (isAdmin) {
-    html += '<div class="rail-sep"></div>';
-    html += '<button class="ni" onclick="openAdmin()">'
-      + '<span class="av" style="font-size:12px">&#x2699;</span>'
-      + '<span class="nm">Admin</span></button>';
-  }
-
-  $('rail-body').innerHTML = html;
-}
-
-// ─── UPDATED loadTNARequests FOR 6 TIERS ───
-async function loadTNARequests() {
-  var r = S.user.role;
-  if (r === 'merchant') {
-    var { data } = await db.from('tna_requests').select('*')
-      .eq('merchant_id', S.user.id).order('created_at', { ascending: false });
-    S.tnaRequests = data || [];
-    var newResolved = S.tnaRequests.filter(function(req){ return req.status!=='pending'&&!req.merchant_seen; });
-    if (newResolved.length) {
-      newResolved.forEach(function(req){
-        toast((req.status==='approved'?'\u2713 TNA updated: ':'\u2717 Rejected: ') + req.field_label, req.status==='approved'?'ok-t':'err');
-      });
-      await db.from('tna_requests').update({ merchant_seen: true })
-        .in('id', newResolved.map(function(req){ return req.id; }));
-    }
-  } else if (r === 'admin' || r === 'hod') {
-    var { data: d2 } = await db.from('tna_requests').select('*')
-      .eq('status','pending').order('created_at', { ascending: false });
-    S.tnaRequests = d2 || [];
-  } else if (r === 'manager') {
-    if (!S.myAssignments.length) { S.tnaRequests = []; return; }
-    var { data: d3 } = await db.from('tna_requests').select('*')
-      .eq('status','pending').in('merchant_id', S.myAssignments)
-      .order('created_at', { ascending: false });
-    S.tnaRequests = d3 || [];
+async function toggleMerchantAssign(merchantId) {
+  if (!_assignManagerId) return;
+  if (_assignedSet.has(merchantId)) {
+    await db.from('manager_assignments').delete()
+      .eq('manager_id', _assignManagerId).eq('merchant_id', merchantId);
+    _assignedSet.delete(merchantId);
   } else {
-    // management, audit — no TNA request inbox (they see shipment alerts separately)
-    S.tnaRequests = [];
+    await db.from('manager_assignments').insert({
+      manager_id: _assignManagerId, merchant_id: merchantId
+    });
+    _assignedSet.add(merchantId);
   }
+  // Update myAssignments if current user is this manager
+  if (S.user.id === _assignManagerId) {
+    S.myAssignments = Array.from(_assignedSet);
+    renderRail();
+  }
+  renderAdminList();
+  toast(_assignedSet.has(merchantId) ? 'Assigned' : 'Unassigned', 'ok-t');
 }
 
 // ─── UPDATED renderAdminList — shows Assign button for managers ───
@@ -3098,6 +2975,217 @@ async function resolveNote(noteId) {
 }
 
 
+// ─── ADMIN PAGE (full page, not modal) ───
+function renderAdminPage() {
+  $('crumb').textContent = 'Admin';
+  $('page-title').textContent = 'Admin Panel';
+  $('page-sub').innerHTML = 'Manage users, roles and assignments';
+  $('stamp').innerHTML = '';
+  $('act-row').innerHTML = '';
+
+  var inp = 'style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink);font-size:13px"';
+
+  $('content').innerHTML = ''
+
+  // ── My Account ──────────────────────────────────────────────────────────
+  + '<div class="card" style="margin-bottom:16px">'
+  + '<div class="card-h"><h3>My Account</h3><span class="note">Update your admin name and password</span></div>'
+  + '<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;padding:0 0 4px">'
+  + '<div class="f" style="margin:0"><label>Display name</label><input id="admin-own-name" ' + inp + ' value="' + (S.user.name||'').replace(/"/g,'&quot;') + '"></div>'
+  + '<div class="f" style="margin:0"><label>New password</label><input id="admin-own-pwd" type="password" ' + inp + ' placeholder="Leave blank to keep current"></div>'
+  + '<button class="btn pri" onclick="saveMyProfile()" style="height:38px">Save</button>'
+  + '</div>'
+  + '<div id="admin-own-err" style="display:none;color:var(--red);font-size:12px;margin-top:6px"></div>'
+  + '</div>'
+
+  // ── Add User ─────────────────────────────────────────────────────────────
+  + '<div class="card" style="margin-bottom:16px">'
+  + '<div class="card-h"><h3>Add user</h3></div>'
+  + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end">'
+  + '<div class="f" style="margin:0"><label>Name</label><input id="a_name" ' + inp + ' placeholder="Full name"></div>'
+  + '<div class="f" style="margin:0"><label>Password</label><input id="a_pwd" ' + inp + ' placeholder="Set password"></div>'
+  + '<div class="f" style="margin:0"><label>Role</label><select id="a_type" ' + inp + ' onchange="handleProfileType()">'
+  + '<option value="merchant">Merchant</option>'
+  + '<option value="manager">Manager</option>'
+  + '<option value="hod">HOD</option>'
+  + '<option value="audit">Audit</option>'
+  + '<option value="management">Management</option>'
+  + '</select></div>'
+  + '<div class="f" style="margin:0" id="div-field"><label>Division</label><select id="a_div" ' + inp + '>'
+  + '<option value="sweater">Sweater</option>'
+  + '<option value="knit">Knit</option>'
+  + '</select></div>'
+  + '<button class="btn pri" onclick="addMerchant()" style="height:38px">Add</button>'
+  + '</div>'
+  + '<div id="admin-err" style="display:none;color:var(--red);font-size:12px;margin-top:6px"></div>'
+  + '</div>'
+
+  // ── User List ─────────────────────────────────────────────────────────────
+  + '<div class="card">'
+  + '<div class="card-h"><h3>Users</h3></div>'
+  + '<div id="admin-list"></div>'
+  + '</div>';
+
+  renderAdminList();
+  handleProfileType();
+}
+
+// ─── SAVE MY OWN PROFILE (admin renames/changes pwd) ───
+async function saveMyProfile() {
+  var name = ($('admin-own-name').value || '').trim();
+  var pwd  = ($('admin-own-pwd').value  || '').trim();
+  var errEl = $('admin-own-err');
+  errEl.style.display = 'none';
+  if (!name) { errEl.textContent = 'Name cannot be empty'; errEl.style.display = 'block'; return; }
+  var update = { name: name };
+  if (pwd) update.password = pwd;
+  const { error } = await db.from('users').update(update).eq('id', S.user.id);
+  if (error) { errEl.textContent = 'Error: ' + error.message; errEl.style.display = 'block'; return; }
+  S.user.name = name;
+  if (pwd) S.user.password = pwd;
+  await loadUsers();
+  renderRail();
+  renderAdminPage();
+  toast('Profile updated \u2014 ' + name);
+}
+
+// ─── EDIT USER INLINE (in admin page) ───
+var _editUserId = null;
+function editUser(uid) {
+  if (_editUserId === uid) {
+    // Toggle close
+    _editUserId = null;
+    renderAdminList();
+    return;
+  }
+  _editUserId = uid;
+  renderAdminList();
+}
+
+function renderAdminList() {
+  var staff = S.users.filter(function(u){ return u.role !== 'admin'; })
+    .sort(function(a,b){ return a.name.localeCompare(b.name); });
+  var roleColors = {
+    management: 'background:#EDE9FE;color:#5B21B6',
+    hod:        'background:#FEF3C7;color:#92400E',
+    manager:    'background:#D1FAE5;color:#065F46',
+    audit:      'background:#E0F2FE;color:#0369A1',
+    merchant:   'background:#F3F4F6;color:#374151',
+  };
+  var merchants = S.users.filter(function(u){ return u.role === 'merchant'; })
+    .sort(function(a,b){ return a.name.localeCompare(b.name); });
+
+  $('admin-list').innerHTML = staff.length
+    ? staff.map(function(m) {
+        var bc = roleColors[m.role] || 'background:#F3F4F6;color:#374151';
+        var isEdit   = _editUserId === m.id;
+        var isAssign = _assignManagerId === m.id;
+
+        // Assign button for managers
+        var assignCount = isAssign ? _assignedSet.size : 0;
+        var assignBtn = m.role === 'manager'
+          ? '<button class="btn sm' + (isAssign ? ' pri' : '') + '" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name.replace(/'/g,"\'") + '\')" style="margin-right:4px">'
+            + (isAssign ? '&#x2713; Assigning (' + assignCount + ')' : '&#x1F4CB; Assign merchants')
+            + '</button>'
+          : '';
+
+        var main = '<div class="a-row" style="border-radius:' + (isEdit||isAssign?'8px 8px 0 0':'8px') + ';' + (isEdit||isAssign?'border-bottom:none':'') + '">'
+          + '<div class="a-name">' + m.name + '</div>'
+          + '<span class="chip" style="' + bc + ';font-size:10px;padding:2px 8px">' + roleLabel(m.role) + '</span>'
+          + (m.division ? '<span style="font-size:11px;color:var(--muted)">' + m.division + '</span>' : '')
+          + '<div style="flex:1"></div>'
+          + assignBtn
+          + '<button class="btn sm' + (isEdit?' pri':'') + '" onclick="editUser(\'' + m.id + '\')" style="margin-right:4px">' + (isEdit?'Done':'Edit') + '</button>'
+          + '<button class="btn sm danger" onclick="deleteUser(\'' + m.id + '\')">Delete</button>'
+          + '</div>';
+
+        // Inline assignment panel
+        var assignPanel = '';
+        if (isAssign) {
+          var sweaterMerchants = merchants.filter(function(u){ return u.division !== 'knit'; });
+          var knitMerchants    = merchants.filter(function(u){ return u.division === 'knit'; });
+
+          function chipGroup(list, groupLabel) {
+            if (!list.length) return '';
+            return '<div style="margin-bottom:10px">'
+              + '<div style="font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">' + groupLabel + '</div>'
+              + '<div class="merchant-chips">'
+              + list.map(function(merch){
+                  var active = _assignedSet.has(merch.id);
+                  return '<button class="merchant-chip' + (active?' assigned':'') + '" onclick="toggleMerchantAssign(\'' + merch.id + '\')">'
+                    + '<span class="chip-dot"></span>'
+                    + merch.name
+                    + '</button>';
+                }).join('')
+              + '</div></div>';
+          }
+
+          assignPanel = '<div class="assign-panel">'
+            + '<div class="assign-panel-title">Click merchants to assign/unassign &mdash; changes save instantly</div>'
+            + (merchants.length
+                ? chipGroup(sweaterMerchants, 'Sweater division') + chipGroup(knitMerchants, 'Knit division')
+                : '<div style="color:var(--muted);font-size:12.5px">No merchants added yet.</div>')
+            + '<div style="border-top:1px solid var(--line);margin-top:8px;padding-top:10px;display:flex;justify-content:space-between;align-items:center">'
+            + '<span style="font-size:12px;color:var(--muted)">' + _assignedSet.size + ' merchant' + (_assignedSet.size!==1?'s':'') + ' assigned to ' + m.name + '</span>'
+            + '<button class="btn sm" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name + '\')">Done</button>'
+            + '</div></div>';
+        }
+
+        // Inline edit panel
+        var editPanel = '';
+        if (isEdit) {
+          var inp2 = 'style="width:100%;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12px;color:var(--ink)"';
+          editPanel = '<div style="border:1px solid var(--accent);border-top:none;border-radius:0 0 8px 8px;padding:12px;background:#FAFAF7;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:1px">'
+            + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Name</div>'
+            + '<input id="eu-name-' + m.id + '" ' + inp2 + ' value="' + m.name.replace(/"/g,'&quot;') + '"></div>'
+            + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">New password</div>'
+            + '<input id="eu-pwd-' + m.id + '" type="password" ' + inp2 + ' placeholder="Leave blank to keep"></div>'
+            + '<div><div style="font-size:10px;color:var(--muted);margin-bottom:3px">Role</div>'
+            + '<select id="eu-role-' + m.id + '" ' + inp2 + '>'
+            + ['merchant','manager','hod','audit','management'].map(function(r){
+                return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
+              }).join('')
+            + '</select></div>'
+            + '<button class="btn sm pri" onclick="saveEditUser(\'' + m.id + '\')" style="height:32px">Save</button>'
+            + '</div>';
+        }
+
+        return main + assignPanel + editPanel;
+      }).join('')
+    : '<div style="color:var(--muted);padding:14px">No users yet.</div>';
+}
+
+async function saveEditUser(uid) {
+  var nameEl = $('eu-name-' + uid);
+  var pwdEl  = $('eu-pwd-'  + uid);
+  var roleEl = $('eu-role-' + uid);
+  if (!nameEl) return;
+  var name = nameEl.value.trim();
+  var pwd  = pwdEl  ? pwdEl.value.trim()  : '';
+  var role = roleEl ? roleEl.value : null;
+  if (!name) { toast('Name cannot be empty', 'err'); return; }
+  var update = { name: name };
+  if (pwd)  update.password = pwd;
+  if (role) update.role = role;
+  var { error } = await db.from('users').update(update).eq('id', uid);
+  if (error) { toast('Error: ' + error.message, 'err'); return; }
+  toast(name + ' updated');
+  _editUserId = null;
+  await loadUsers();
+  renderAdminList();
+}
+
+async function deleteUser(uid) {
+  var u = S.users.find(function(x){ return x.id===uid; });
+  if (!u || !confirm('Delete ' + u.name + '? This cannot be undone.')) return;
+  var { error } = await db.from('users').delete().eq('id', uid);
+  if (error) { toast('Error deleting user', 'err'); return; }
+  toast(u.name + ' deleted');
+  await loadUsers();
+  renderAdminList();
+}
+
+
 // --- ORDER DETAIL ---
 async function openOrderDetail(ordId, division) {
   const o = (S.boardCache[S.view] || []).find(x => x.id === ordId);
@@ -3393,44 +3481,9 @@ function renderPrint() {
 }
 
 // ─── ADMIN ───
-function openAdmin() {
-  $('a_name').value = ''; $('a_team').value = ''; $('a_pwd').value = '';
-  $('a_type').value = 'merchant'; handleProfileType();
-  $('admin-err').style.display = 'none';
-  $('mgmt_pwd').value = '';
-  renderAdminList();
-  openModal('ov-admin');
-}
 
-function renderAdminList() {
-  const staff = S.users.filter(function(u){ return u.role !== 'admin'; })
-    .sort(function(a,b){ return a.name.localeCompare(b.name); });
-  const roleColors = {
-    management: 'background:#EDE9FE;color:#5B21B6',
-    hod: 'background:#FEF3C7;color:#92400E',
-    manager: 'background:#D1FAE5;color:#065F46',
-    audit: 'background:#E0F2FE;color:#0369A1',
-    merchant: 'background:#F3F4F6;color:#374151',
-  };
-  $('admin-list').innerHTML = staff.length
-    ? staff.map(function(m) {
-        var badgeStyle = roleColors[m.role] || 'background:#F3F4F6;color:#374151';
-        var label = roleLabel(m.role);
-        var assignBtn = m.role === 'manager'
-          ? '<button class="btn sm" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name + '\')">Assign merchants</button>'
-          : '';
-        return '<div class="a-row">'
-          + '<div class="a-name">' + m.name + '</div>'
-          + '<span class="chip" style="' + badgeStyle + ';font-size:10px;padding:2px 8px">' + label + '</span>'
-          + (m.division ? '<span style="font-size:11px;color:var(--muted)">' + m.division + '</span>' : '')
-          + '<div style="flex:1"></div>'
-          + assignBtn
-          + '<button class="btn sm" onclick="editUser(\'' + m.id + '\')">Edit</button>'
-          + '<button class="btn sm danger" onclick="deleteUser(\'' + m.id + '\')">Delete</button>'
-          + '</div>';
-      }).join('')
-    : '<div style="color:var(--muted);padding:12px">No users yet. Add one above.</div>';
-}
+
+
 
 async function addMerchant() {
   const name = $('a_name').value.trim();
