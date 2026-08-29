@@ -990,6 +990,30 @@ const DASH_COLS = [
 
 // ─── Helpers ───
 const $ = id => document.getElementById(id);
+const ROLE_LABELS = {
+  admin: 'Administrator', management: 'Management', hod: 'Head of Dept',
+  manager: 'Manager', audit: 'Audit', merchant: 'Merchandiser'
+};
+const roleLabel = function(r) { return ROLE_LABELS[r] || r; };
+
+function can(action, merchantId) {
+  if (!S.user) return false;
+  var r = S.user.role;
+  var uid = merchantId || S.view;
+  switch(action) {
+    case 'edit':        return r === 'admin' || (r === 'merchant' && S.user.id === uid);
+    case 'view_board':  return ['admin','management','hod','audit'].includes(r) ||
+                               (r === 'manager' && S.myAssignments && S.myAssignments.includes(uid)) ||
+                               (r === 'merchant' && S.user.id === uid);
+    case 'send_notes':  return ['admin','management','hod','manager'].includes(r);
+    case 'inbox':       return ['admin','management','hod','manager'].includes(r);
+    case 'requests':    return ['admin','hod','manager'].includes(r);
+    case 'admin_panel': return r === 'admin';
+    case 'see_all':     return ['admin','management','hod','audit','manager'].includes(r);
+    default: return false;
+  }
+}
+
 const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
 const fmtGauge = g => !g ? '' : (g.toLowerCase().includes('gg') ? g : g + 'GG');
 const money = n => '$' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -1123,7 +1147,12 @@ async function startApp() {
   await Promise.all([loadDashOrders(), loadNotes(), loadMemo(), loadTNARequests()]);
   cleanOldArchive(); // fire and forget
   subscribeRealtime();
-  render();
+  try {
+    render();
+  } catch(err) {
+    console.error('render() failed:', err);
+    $('content').innerHTML = '<div class="card" style="padding:20px;color:var(--red)">Error loading: ' + (err.message||err) + '<br><br><button class="btn" onclick="location.reload()">Refresh</button></div>';
+  }
 }
 
 // ─── DATA ───
@@ -1590,7 +1619,7 @@ function renderDashboard() {
     <div class="card-h"><h3>TNA misses</h3><span class="note">Milestones past their plan date with no actual entered</span></div>
     ${late.length ? `<div class="scroller"><table>
       <thead><tr>
-        ${isM ? '<th>Merchandiser</th>' : ''}
+        ${S.user.role !== 'merchant' ? '<th>Merchandiser</th>' : ''}
         <th>Buyer</th><th>Style</th><th class="num">Order qty</th>
         <th>Shipment</th><th class="num">Days left</th>
         <th>Missed milestones</th><th class="num">Worst delay</th><th></th>
@@ -1603,7 +1632,7 @@ function renderDashboard() {
         }));
         const merch = S.users.find(u => u.id === o.merchant_id);
         return `<tr class="late">
-          ${isM ? `<td>${merch ? merch.name : '—'}</td>` : ''}
+          ${S.user.role !== 'merchant' ? `<td>${merch ? merch.name : '—'}</td>` : ''}
           <td>${o.buyer}</td><td class="sty">${o.style}</td>
           <td class="num">${fmt(o.qty)}</td><td>${short(o.ship_date)}</td>
           <td class="num">${daysTo(o.ship_date)}</td>
@@ -1615,8 +1644,8 @@ function renderDashboard() {
     : `<div class="empty"><h4>All milestones on plan</h4><div>No TNA breaches at this time.</div></div>`}
   </div>`;
 
-  // By-merchant table (management only)
-  if (isM) {
+  // By-merchant table (all non-merchant roles)
+  if (['admin','management','hod','manager','audit'].includes(S.user.role)) {
     const merchants = S.users.filter(u => u.role === 'merchant');
     html += `<div class="card">
       <div class="card-h"><h3>By merchandiser</h3><span class="note">Click a row to open their board</span></div>
@@ -1676,7 +1705,7 @@ async function renderBoard(uid) {
   const stale = merch.updated_at && (Date.now() - new Date(merch.updated_at).getTime()) > 86400000;
   const isMgmt  = S.user.role === 'management';
   const isMid   = ['hod','manager','audit'].includes(S.user.role);
-  const canEdit = S.user.role === 'admin' || S.user.id === uid;
+  const canEdit = can('edit', uid);
   const canNote = can('send_notes');
 
   $('crumb').textContent = 'Merchandiser';
@@ -3571,7 +3600,7 @@ function renderDashPdf() {
   if (late.length) {
     html += `<table class="pdf-table">
       <thead><tr>
-        ${isM ? '<th>Merchandiser</th>' : ''}
+        ${S.user.role !== 'merchant' ? '<th>Merchandiser</th>' : ''}
         <th>Buyer</th><th>Buying house</th><th>Style</th>
         <th class="r">Order qty</th><th>Ship date</th><th class="r">Days left</th>
         <th>Missed milestones</th><th class="r">Worst delay</th><th>Status</th>
@@ -3609,7 +3638,7 @@ function renderDashPdf() {
     </div>
     <table class="pdf-table">
       <thead><tr>
-        ${isM ? '<th>Merchandiser</th>' : ''}
+        ${S.user.role !== 'merchant' ? '<th>Merchandiser</th>' : ''}
         <th>Buyer</th><th>Style</th><th>Gauge</th>
         <th class="r">Order qty</th><th class="r">FOB</th><th class="r">Value</th>
         <th>Ship date</th><th class="r">Days</th>
@@ -3622,7 +3651,7 @@ function renderDashPdf() {
         const rc = ms ? 'late-row' : (dl != null && dl <= 10 ? 'warn-row' : '');
         const merch = S.users.find(u => u.id === o.merchant_id);
         return `<tr class="${rc}">
-          ${isM ? `<td>${merch ? merch.name : '—'}</td>` : ''}
+          ${S.user.role !== 'merchant' ? `<td>${merch ? merch.name : '—'}</td>` : ''}
           <td>${o.buyer}</td><td class="bold">${o.style}</td><td>${o.gauge||'—'}</td>
           <td class="r">${fmt(o.qty)}</td>
           <td class="r">${(o.fob||0).toFixed(2)}</td>
