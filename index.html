@@ -67,7 +67,7 @@ a{color:var(--accent);text-decoration:none}
 .lo-btn:hover{background:rgba(0,0,0,.07);color:var(--ink)}
 
 .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.top{padding:20px 24px 0;flex:0 0 auto}
+.top{padding:20px 24px 0;flex:0 0 auto;border-bottom:1px solid var(--line);padding-bottom:14px}
 .crumb{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:4px}
 .pagehead h2{font-family:var(--serif);font-size:32px;font-weight:600;letter-spacing:-.6px;margin-top:2px}
@@ -76,7 +76,7 @@ a{color:var(--accent);text-decoration:none}
 .stamp .val.stale{color:var(--red)}
 .stamp .sub{font-size:11px;color:var(--muted);text-align:right}
 .act-row{display:flex;gap:8px;margin:14px 0 0;flex-wrap:wrap}
-.content{flex:1;overflow-y:auto;padding:16px 24px 60px}
+.content{flex:1;overflow-y:auto;padding:20px 24px 60px}
 
 /* ── BUTTONS ── */
 .btn{border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:8px;
@@ -1119,6 +1119,7 @@ const DASH_COLS = [
 
 // ─── Helpers ───
 const $ = id => document.getElementById(id);
+var ROLE_ORDER = { management:1, audit:2, hod:3, manager:4, merchant:5 };
 const ROLE_LABELS = {
   admin: 'Administrator', management: 'Management', hod: 'Head of Dept',
   manager: 'Manager', audit: 'Audit', merchant: 'Merchandiser'
@@ -3135,8 +3136,9 @@ function renderAdminPage() {
   // ── Add User ────────────────────────────────────────────────────────────
   + '<div class="adm-card">'
   + '<div class="adm-card-head"><h3 class="adm-h3">Add user</h3></div>'
-  + '<div class="adm-add-grid">'
+  + '<div class="adm-add-grid" style="grid-template-columns:1fr 1fr 1fr 140px 120px auto">'
   + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="a_name" ' + inp + ' placeholder="Full name"></div>'
+  + '<div class="adm-field"><label class="adm-lbl">Designation</label><input id="a_designation" ' + inp + ' placeholder="e.g. Senior Merchandiser"></div>'
   + '<div class="adm-field"><label class="adm-lbl">Password</label><div class="pwd-wrap"><input id="a_pwd" type="password" ' + inp + ' placeholder="Set password"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'a_pwd\',true)" onmouseup="showPwd(\'a_pwd\',false)" onmouseleave="showPwd(\'a_pwd\',false)" ontouchstart="showPwd(\'a_pwd\',true)" ontouchend="showPwd(\'a_pwd\',false)">&#x1F441;</button></div></div>'
   + '<div class="adm-field"><label class="adm-lbl">Role</label>'
   + '<select id="a_type" ' + sel + ' onchange="handleProfileType()">'
@@ -3204,7 +3206,11 @@ function editUser(uid) {
 
 function renderAdminList() {
   var staff = S.users.filter(function(u){ return u.role !== 'admin'; })
-    .sort(function(a,b){ return a.name.localeCompare(b.name); });
+    .sort(function(a,b){
+      var ra=(ROLE_ORDER[a.role]||9), rb=(ROLE_ORDER[b.role]||9);
+      if (ra!==rb) return ra-rb;
+      return a.name.localeCompare(b.name);
+    });
   var roleColors = {
     management:'background:#EDE9FE;color:#5B21B6', hod:'background:#FEF3C7;color:#92400E',
     manager:'background:#D1FAE5;color:#065F46', audit:'background:#E0F2FE;color:#0369A1',
@@ -3228,6 +3234,7 @@ function renderAdminList() {
       + '<div class="adm-user-av" style="background:' + avc + '">' + initials(m.name) + '</div>'
       + '<div class="adm-user-info">'
       + '<div class="adm-user-name">' + m.name + '</div>'
+      + (m.title ? '<div style="font-size:11.5px;color:var(--muted);margin-top:1px;font-style:italic">' + m.title + '</div>' : '')
       + '<div class="adm-user-meta">'
       + '<span class="chip" style="' + bc + ';font-size:10px;padding:2px 8px">' + roleLabel(m.role) + '</span>'
       + (m.division ? '<span style="font-size:11px;color:var(--muted);margin-left:4px">' + m.division + '</span>' : '')
@@ -3247,6 +3254,7 @@ function renderAdminList() {
     var editPanel = isEdit
       ? '<div class="adm-edit-form" style="margin-bottom:8px">'
         + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="eu-name-' + m.id + '" ' + inp + ' value="' + m.name.replace(/"/g,'&quot;') + '"></div>'
+        + '<div class="adm-field"><label class="adm-lbl">Designation</label><input id="eu-desig-' + m.id + '" ' + inp + ' value="' + (m.title||'').replace(/"/g,'&quot;') + '" placeholder="e.g. Senior Merchandiser"></div>'
         + '<div class="adm-field"><label class="adm-lbl">New password</label>'
         + '<div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" ' + inp + ' placeholder="Leave blank to keep">'
         + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)">&#x1F441;</button></div></div>'
@@ -3273,7 +3281,9 @@ async function saveEditUser(uid) {
   var pwd  = pwdEl  ? pwdEl.value.trim()  : '';
   var role = roleEl ? roleEl.value : null;
   if (!name) { toast('Name cannot be empty', 'err'); return; }
-  var update = { name: name };
+  var desigEl = $('eu-desig-' + uid);
+  var desig = desigEl ? desigEl.value.trim() : '';
+  var update = { name: name, title: desig||null };
   if (pwd)  update.password = pwd;
   if (role) update.role = role;
   var { error } = await db.from('users').update(update).eq('id', uid);
@@ -3614,9 +3624,10 @@ async function addMerchant() {
   if (!name) { errEl.textContent='Name is required.'; errEl.style.display='block'; return; }
   if (!pwd)  { errEl.textContent='Password is required.'; errEl.style.display='block'; return; }
   const division = type === 'merchant' && $('a_div') ? $('a_div').value : null;
-  const { error } = await db.from('users').insert({ name, role: type, password: pwd, division });
+  const designation = ($('a_designation').value||'').trim();
+  const { error } = await db.from('users').insert({ name, role: type, password: pwd, division, title: designation||null });
   if (!error) {
-    $('a_name').value=''; $('a_pwd').value='';
+    $('a_name').value=''; $('a_pwd').value=''; if($('a_designation')) $('a_designation').value='';
     $('a_type').value='merchant'; handleProfileType();
     toast(name + ' added', 'ok-t');
     await loadUsers(); renderAdminList(); renderRail();
