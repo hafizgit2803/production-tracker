@@ -1138,7 +1138,7 @@ function can(action, merchantId) {
     case 'send_notes':  return ['admin','management','hod','manager'].includes(r);
     case 'inbox':       return ['admin','management','hod','manager'].includes(r);
     case 'requests':    return ['admin','hod','manager'].includes(r);
-    case 'admin_panel': return r === 'admin' || r === 'management';
+    case 'admin_panel': return r === 'admin';
     case 'see_all':     return ['admin','management','hod','audit','manager'].includes(r);
     default: return false;
   }
@@ -1493,6 +1493,10 @@ function render() {
 }
 
 function setView(v) {
+  if (v === 'admin' && S.user.role !== 'admin') {
+    toast('Access restricted to Admin only');
+    return;
+  }
   if (S.user.role === 'manager' &&
       !['dashboard','shipped','requests','my-requests','admin'].includes(v) &&
       v !== S.user.id) {
@@ -3123,7 +3127,7 @@ function renderAdminPage() {
 
   // ── My Account ─────────────────────────────────────────────────────────
   '<div class="adm-card">'
-  + '<div class="adm-card-head"><div><h3 class="adm-h3">My Account</h3><div class="adm-sub">Change your display name and password' + (S.user.role==='management'?' &mdash; <span style="color:var(--amber)">Run all_missing_migrations.sql in Supabase to upgrade to Admin role</span>':'') + '</div></div></div>'
+  + '<div class="adm-card-head"><div><h3 class="adm-h3">My Account</h3><div class="adm-sub">Change your display name and password' + '</div></div></div>'
   + '<div class="adm-row3" style="grid-template-columns:1fr 1fr 1fr auto">'
   + '<div class="adm-field"><label class="adm-lbl">Display name</label><input id="admin-own-name" ' + inp + ' value="' + (S.user.name||'').replace(/"/g,'&quot;') + '"></div>'
   + '<div class="adm-field"><label class="adm-lbl">Current password</label><div class="pwd-wrap"><input id="admin-cur-pwd" type="password" ' + inp + ' value="' + (S.user.password||'').replace(/"/g,'&quot;') + '" readonly style="background:#F3F4F6;cursor:default"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'admin-cur-pwd\',true)" onmouseup="showPwd(\'admin-cur-pwd\',false)" onmouseleave="showPwd(\'admin-cur-pwd\',false)" ontouchstart="showPwd(\'admin-cur-pwd\',true)" ontouchend="showPwd(\'admin-cur-pwd\',false)">&#x1F441;</button></div></div>'
@@ -4047,7 +4051,7 @@ function renderRail() {
     var total  = (S.tnaRequests||[]).length;
     html += ni('my-requests', '&#x1F4CB;', 'My Requests', unread||total, unread>0);
   }
-  if (isAdmin || isMgmt) {
+  if (isAdmin) {
     html += '<div class="rail-sep"></div>';
     html += '<button class="ni ' + (S.view==='admin'?'on':'') + '" onclick="setView(\'admin\')">'
       + '<span class="av" style="font-size:12px">&#x2699;</span>'
