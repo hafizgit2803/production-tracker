@@ -477,7 +477,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .apv-history-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px}
 .apv-history-row:last-child{border:none}
 
-.logout-btn{width:100%;padding:7px 10px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s}
+.logout-btn{width:100%;padding:7px 10px;background:none;border:1.5px solid var(--line);border-radius:8px;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s}
 .logout-btn:hover{background:var(--red-soft);border-color:#EBC4BC;color:var(--red)}
 .card table th{font-size:9.5px;padding:5px 8px}
 .card table td{padding:5px 8px}
@@ -727,8 +727,8 @@ button.apv-chip{font-family:inherit}
     <div class="form-err" id="l_err" style="display:none"></div>
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
-    <p class="login-hint">Forgot password? Contact management.</p>
-    <p style="font-size:10px;color:var(--line);text-align:center;margin-top:8px">v2026-08-30 05:52</p>
+    <p class="login-hint">Forgot password? Contact Admin.</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-30</p>
   </div>
 </div>
 
@@ -745,7 +745,7 @@ button.apv-chip{font-family:inherit}
     <div class="rail-body" id="rail-body"></div>
     <div class="rail-foot">
       <div class="user-row" id="user-row"></div>
-      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" style="width:100%;text-align:left;padding:7px 9px;margin-bottom:8px;border-radius:8px;border:1px solid var(--line);background:none;font-size:12.5px;cursor:pointer;color:var(--muted)">&#x1F319; Dark mode</button>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" style="width:100%;text-align:left;padding:7px 9px;margin-bottom:8px;border-radius:8px;border:1.5px solid var(--line);background:none;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)">&#x1F319; Dark mode</button>
       <button class="logout-btn" onclick="doLogout()">&#x2192; Sign out</button>
     </div>
   </nav>
@@ -3124,9 +3124,10 @@ function renderAdminPage() {
   // ── My Account ─────────────────────────────────────────────────────────
   '<div class="adm-card">'
   + '<div class="adm-card-head"><div><h3 class="adm-h3">My Account</h3><div class="adm-sub">Change your display name and password' + (S.user.role==='management'?' &mdash; <span style="color:var(--amber)">Run all_missing_migrations.sql in Supabase to upgrade to Admin role</span>':'') + '</div></div></div>'
-  + '<div class="adm-row3">'
+  + '<div class="adm-row3" style="grid-template-columns:1fr 1fr 1fr auto">'
   + '<div class="adm-field"><label class="adm-lbl">Display name</label><input id="admin-own-name" ' + inp + ' value="' + (S.user.name||'').replace(/"/g,'&quot;') + '"></div>'
-  + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="admin-own-pwd" type="password" ' + inp + ' placeholder="Leave blank to keep current"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'admin-own-pwd\',true)" onmouseup="showPwd(\'admin-own-pwd\',false)" onmouseleave="showPwd(\'admin-own-pwd\',false)" ontouchstart="showPwd(\'admin-own-pwd\',true)" ontouchend="showPwd(\'admin-own-pwd\',false)">&#x1F441;</button></div></div>'
+  + '<div class="adm-field"><label class="adm-lbl">Current password</label><div class="pwd-wrap"><input id="admin-cur-pwd" type="password" ' + inp + ' value="' + (S.user.password||'').replace(/"/g,'&quot;') + '" readonly style="background:#F3F4F6;cursor:default"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'admin-cur-pwd\',true)" onmouseup="showPwd(\'admin-cur-pwd\',false)" onmouseleave="showPwd(\'admin-cur-pwd\',false)" ontouchstart="showPwd(\'admin-cur-pwd\',true)" ontouchend="showPwd(\'admin-cur-pwd\',false)">&#x1F441;</button></div></div>'
+  + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="admin-own-pwd" type="password" ' + inp + ' placeholder="Enter new password"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'admin-own-pwd\',true)" onmouseup="showPwd(\'admin-own-pwd\',false)" onmouseleave="showPwd(\'admin-own-pwd\',false)" ontouchstart="showPwd(\'admin-own-pwd\',true)" ontouchend="showPwd(\'admin-own-pwd\',false)">&#x1F441;</button></div></div>'
   + '<div class="adm-field adm-field-btn"><button class="btn pri adm-save-btn" onclick="saveMyProfile()">Save changes</button></div>'
   + '</div>'
   + '<div id="admin-own-err" class="adm-err" style="display:none"></div>'
