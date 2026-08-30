@@ -1506,7 +1506,7 @@ function setView(v) {
   else if (v === 'shipped' || v === 'archive') renderShippedPage();
   else if (v === 'requests') renderRequestsView();
   else if (v === 'my-requests') renderMyRequests();
-  else if (v === 'admin') renderAdminPage();
+  else if (v === 'admin') { try { renderAdminPage(); } catch(e) { console.error('renderAdminPage error:',e); $('content').innerHTML='<div style="padding:20px;color:red">Admin page error: '+e.message+'</div>'; } }
   else renderBoard(v);
 }
 
@@ -3112,9 +3112,8 @@ function renderAdminPage() {
   $('crumb').textContent = 'Admin';
   $('page-title').textContent = 'Admin Panel';
   $('page-sub').innerHTML = 'User management &amp; assignments';
-  $('act-row').innerHTML = '<button class="btn pri" onclick="openMerchantAssign()" style="display:flex;align-items:center;gap:8px;padding:9px 16px"><span style="font-size:16px">&#x1F517;</span> Merchant Assignment</button>';
   $('stamp').innerHTML = '';
-  $('act-row').innerHTML = '';
+  $('act-row').innerHTML = '<button class="btn pri" onclick="openMerchantAssign()" style="display:flex;align-items:center;gap:8px;padding:9px 16px"><span style="font-size:16px">&#x1F517;</span> Merchant Assignment</button>';
 
   var inp = 'class="adm-inp"';
   var sel = 'class="adm-sel"';
