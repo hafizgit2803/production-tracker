@@ -35,7 +35,11 @@ a{color:var(--accent);text-decoration:none}
 .brand{padding:18px 16px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
 .brand h1{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.2px}
 .brand span{font-size:11px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:2px;display:block}
-.rail-body{flex:1;overflow-y:auto;padding:10px 8px;min-height:0}
+.rail-body{flex:1;overflow-y:auto;padding:10px 8px;min-height:0;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.rail-body::-webkit-scrollbar{width:4px}
+.rail-body::-webkit-scrollbar-track{background:transparent}
+.rail-body::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.rail-body::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 .rail-sep{height:1px;background:var(--line);margin:8px 4px}
 .rail-label{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
   font-weight:700;padding:10px 8px 5px}
@@ -289,7 +293,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .rail{
   transition:width .32s cubic-bezier(.4,0,.2,1),
              flex-basis .32s cubic-bezier(.4,0,.2,1);
-  position:relative;overflow:hidden;will-change:width;
+  position:relative;will-change:width;
   flex-shrink:0}
 .brand,.rail-body,.rail-foot{
   transition:opacity .2s ease .05s;
@@ -4146,24 +4150,29 @@ var _maManagers = [];
 var _maMerchants = [];
 
 async function openMerchantAssign() {
-  $('ma-body').innerHTML = '<div class="loading"><span class="spin"></span> Loading assignments\u2026</div>';
-  openModal('ov-merchant-assign');
+  try {
+    if (!$('ov-merchant-assign')) { toast('Reload page', 'err'); return; }
+    $('ma-body').innerHTML = '<div class="loading"><span class="spin"></span></div>';
+    openModal('ov-merchant-assign');
 
-  var [usersRes, assignRes] = await Promise.all([
-    db.from('users').select('id,name,role,division').order('name'),
-    db.from('manager_assignments').select('manager_id,merchant_id')
-  ]);
+    var usersRes = await db.from('users').select('id,name,role,division').order('name');
+    var assignRes = await db.from('manager_assignments').select('manager_id,merchant_id');
 
-  _maManagers  = (usersRes.data||[]).filter(function(u){ return u.role==='manager'; });
-  _maMerchants = (usersRes.data||[]).filter(function(u){ return u.role==='merchant'; });
+    _maManagers  = (usersRes.data||[]).filter(function(u){ return u.role==='manager'; });
+    _maMerchants = (usersRes.data||[]).filter(function(u){ return u.role==='merchant'; });
 
-  _maAssignments = {};
-  _maManagers.forEach(function(m){ _maAssignments[m.id] = []; });
-  (assignRes.data||[]).forEach(function(a){
-    if (_maAssignments[a.manager_id]) _maAssignments[a.manager_id].push(a.merchant_id);
-  });
+    _maAssignments = {};
+    _maManagers.forEach(function(m){ _maAssignments[m.id] = []; });
+    (assignRes.data||[]).forEach(function(a){
+      if (_maAssignments[a.manager_id]) _maAssignments[a.manager_id].push(a.merchant_id);
+    });
 
-  renderMAModal();
+    renderMAModal();
+  } catch(e) {
+    console.error('openMerchantAssign:', e);
+    toast('Error: ' + e.message, 'err');
+    if ($('ma-body')) $('ma-body').innerHTML = '<div style="padding:20px;color:var(--red)">Error: ' + e.message + '</div>';
+  }
 }
 
 function renderMAModal() {
