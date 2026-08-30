@@ -1024,17 +1024,21 @@ button.apv-chip{font-family:inherit}
 </div>
 
 <!-- ═══ MODAL: DASHBOARD PDF ═══ -->
-<div class="ov" id="ov-dash-pdf" onclick="if(event.target===this)closeDashPdf()">
-  <div class="modal wide">
-    <div class="m-h no-print">
-      <div><h3>Export dashboard as PDF</h3><div class="msub" id="dpdf-sub"></div></div>
-      
+<div class="ov" id="ov-dash-pdf" onclick="if(event.target===this)closeDashPdf()" style="padding:16px">
+  <div class="modal" style="max-width:1100px;width:98vw;max-height:92vh;display:flex;flex-direction:column">
+    <div class="m-h no-print" style="flex-shrink:0">
+      <div>
+        <h3>Dashboard Export Preview</h3>
+        <div class="msub" id="dpdf-sub">Review before printing</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="closeDashPdf()">Cancel</button>
+        <button class="btn pri" onclick="printDashPdf()" style="display:flex;align-items:center;gap:6px">
+          <span>&#x1F5A8;</span> Print / Save as PDF
+        </button>
+      </div>
     </div>
-    <div class="m-b" id="dpdf-body" style="padding:24px 28px"></div>
-    <div class="m-f no-print">
-      <button class="btn" onclick="closeDashPdf()">Cancel</button>
-      <button class="btn pri" onclick="printDashPdf()">Print / Save as PDF</button>
-    </div>
+    <div class="m-b" id="dpdf-body" style="flex:1;overflow-y:auto;min-height:0;padding:0;background:#F7F5EF;border-radius:0 0 14px 14px"></div>
   </div>
 </div>
 
@@ -3684,216 +3688,130 @@ function printDashPdf() {
 }
 
 function renderDashPdf() {
-  const isM = S.user.role === 'management';
-  const live = S.orders;
-  const late = live.filter(o => missedMiles(o).length);
-  const totalQty = live.reduce((s, o) => s + (o.qty || 0), 0);
-  const totalBal = live.reduce((s, o) => s + ((o.qty || 0) - (o.prod_packing || 0)), 0);
-  const totalVal = live.reduce((s, o) => s + ((o.qty || 0) * (o.fob || 0)), 0);
-  const totalPacked = live.reduce((s, o) => s + (o.prod_packing || 0), 0);
-  const urgent = live.filter(o => { const d = daysTo(o.ship_date); return d != null && d <= 10; });
-  const merchants = S.users.filter(u => u.role === 'merchant');
+  var live = S.orders;
+  var late = live.filter(function(o){ return missedMiles(o).length; });
+  var totalQty = live.reduce(function(s,o){ return s+(o.qty||0); }, 0);
+  var totalBal = live.reduce(function(s,o){ return s+(o.qty||0)-(o.prod_packing||0); }, 0);
+  var totalVal = live.reduce(function(s,o){ return s+(o.qty||0)*(o.fob||0); }, 0);
+  var totalPkd = live.reduce(function(s,o){ return s+(o.prod_packing||0); }, 0);
+  var thisYear = new Date().getFullYear();
+  var shippedY = S.archive.filter(function(o){ return o.shipped_on && new Date(o.shipped_on).getFullYear()===thisYear; });
+  var shpQty = shippedY.reduce(function(s,o){ return s+(o.qty||0); }, 0);
+  var shpVal = shippedY.reduce(function(s,o){ return s+(o.qty||0)*(o.fob||0); }, 0);
+  var merchants = S.users.filter(function(u){ return u.role==='merchant'; });
+  var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  var genTime = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
-  const thisYear = new Date().getFullYear();
-  const shippedThisYear = S.archive.filter(o => o.shipped_on && new Date(o.shipped_on).getFullYear() === thisYear);
-  const shippedQty = shippedThisYear.reduce((s, o) => s + (o.qty || 0), 0);
-  const shippedVal = shippedThisYear.reduce((s, o) => s + ((o.qty || 0) * (o.fob || 0)), 0);
-  const genDate = new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'});
-  const genTime = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+  $('dpdf-sub').textContent = genDate + ' \u00b7 ' + S.user.name;
 
-  $('dpdf-sub').textContent = `Generated ${genDate} · ${S.user.name}`;
+  function kpi(label, value, sub, red) {
+    return '<div style="background:#fff;border:1px solid #E5E2D9;border-radius:10px;padding:14px 16px;' + (red?'border-left:3px solid #C0392B':'') + '">'
+      + '<div style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:#73706A;font-weight:700;margin-bottom:5px">' + label + '</div>'
+      + '<div style="font-family:Georgia,serif;font-size:24px;font-weight:600;letter-spacing:-.4px;' + (red?'color:#C0392B':'') + '">' + value + '</div>'
+      + (sub ? '<div style="font-size:11px;color:#A0A09A;margin-top:3px">' + sub + '</div>' : '')
+      + '</div>';
+  }
 
-  // ── KPI pills helper
-  const pill = (v, type) => `<span class="pdf-pill ${type}">${v}</span>`;
-  const statusPill = o => {
-    const ms = missedMiles(o).length;
-    const dl = daysTo(o.ship_date);
-    if (ms) return pill('LATE', 'red');
-    if (dl != null && dl <= 5) return pill('URGENT', 'amber');
-    if (dl != null && dl <= 10) return pill('DUE SOON', 'amber');
-    const pct = pctPacked(o);
-    if (pct === 100) return pill('PACKED', 'green');
-    return pill('ON PLAN', 'grey');
-  };
+  var html = '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;color:#191817;background:#fff;margin:20px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">'
 
-  // ── Build HTML
-  let html = `<div class="pdf-wrap">
+  // ── Header
+  + '<div style="padding:24px 28px 20px;border-bottom:2px solid #191817;display:flex;justify-content:space-between;align-items:flex-end">'
+  + '<div>'
+  + '<div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#73706A;font-weight:700;margin-bottom:6px">Shahana Group</div>'
+  + '<div style="font-family:Georgia,serif;font-size:26px;font-weight:600;letter-spacing:-.4px">Production Dashboard</div>'
+  + '</div>'
+  + '<div style="text-align:right">'
+  + '<div style="font-size:13px;color:#191817;font-weight:600">' + genDate + '</div>'
+  + '<div style="font-size:11px;color:#73706A;margin-top:2px">Generated ' + genTime + ' by ' + S.user.name + '</div>'
+  + '</div></div>'
 
-    <!-- Header -->
-    <div class="pdf-header">
-      <div class="left">
-        <div class="co">Shahana Group</div>
-        <h1>Production Dashboard</h1>
-      </div>
-      <div class="right">
-        <div class="dt">${genDate}</div>
-        <div class="gen">Generated at ${genTime} by ${S.user.name}</div>
-      </div>
-    </div>
+  // ── KPIs
+  + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:20px 28px;background:#F7F5EF;border-bottom:1px solid #E5E2D9">'
+  + kpi('Live orders', live.length, fmt(totalQty) + ' pcs booked')
+  + kpi('Balance to ship', fmt(totalBal), Math.round(100*totalPkd/Math.max(totalQty,1)) + '% packed')
+  + kpi('Order value', '$' + (totalVal/1e6).toFixed(2) + 'M', 'USD, live orders')
+  + kpi('TNA misses', late.length, late.length === 0 ? 'All milestones on plan' : late.length + ' orders behind plan', late.length > 0)
+  + '</div>'
+  + '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px 28px 20px;background:#F7F5EF;border-bottom:1px solid #E5E2D9">'
+  + kpi('Shipped ' + thisYear + ' — qty', fmt(shpQty), shippedY.length + ' orders closed this year')
+  + kpi('Shipped ' + thisYear + ' — value', '$' + (shpVal/1e6).toFixed(2) + 'M', 'USD shipped this year')
+  + '</div>';
 
-    <!-- KPIs -->
-    <div class="pdf-kpis">
-      <div class="pdf-kpi">
-        <div class="k">Live orders</div>
-        <div class="v">${live.length}</div>
-        <div class="n">${fmt(totalQty)} pcs booked</div>
-      </div>
-      <div class="pdf-kpi">
-        <div class="k">Packed qty</div>
-        <div class="v">${fmt(totalPacked)}</div>
-        <div class="n">${live.length ? Math.round(100*totalPacked/Math.max(totalQty,1)) : 0}% of total order</div>
-      </div>
-      <div class="pdf-kpi">
-        <div class="k">Balance to ship</div>
-        <div class="v">${fmt(totalBal)}</div>
-        <div class="n">pcs not yet packed</div>
-      </div>
-      <div class="pdf-kpi">
-        <div class="k">Total order value</div>
-        <div class="v">${(totalVal/1e6).toFixed(2)}M</div>
-        <div class="n">USD, live orders</div>
-      </div>
-      <div class="pdf-kpi ${late.length ? 'red-kpi' : ''}">
-        <div class="k">TNA misses</div>
-        <div class="v">${late.length}</div>
-        <div class="n">${urgent.length} ship within 10 days</div>
-      </div>
-      <div class="pdf-kpi">
-        <div class="k">Shipped ${thisYear} — qty</div>
-        <div class="v">${fmt(shippedQty)}</div>
-        <div class="n">${shippedThisYear.length} order${shippedThisYear.length!==1?'s':''} closed</div>
-      </div>
-      <div class="pdf-kpi">
-        <div class="k">Shipped ${thisYear} — value</div>
-        <div class="v">${(shippedVal/1e6).toFixed(2)}M</div>
-        <div class="n">USD shipped this year</div>
-      </div>
-    </div>`;
+  // ── By-merchandiser table
+  if (merchants.length) {
+    var mRows = merchants.map(function(m) {
+      var os = live.filter(function(o){ return o.merchant_id===m.id; });
+      var q = os.reduce(function(s,o){ return s+(o.qty||0); }, 0);
+      var p = os.reduce(function(s,o){ return s+(o.prod_packing||0); }, 0);
+      var lt = os.filter(function(o){ return missedMiles(o).length; }).length;
+      var near = os.length ? os.slice().sort(function(a,b){ return (daysTo(a.ship_date)||999)-(daysTo(b.ship_date)||999); })[0] : null;
+      var rowBg = lt ? '#FEF2F2' : '';
+      return '<tr style="background:' + rowBg + ';border-bottom:1px solid #F0EDE4">'
+        + '<td style="padding:9px 12px;font-weight:600">' + m.name + '</td>'
+        + '<td style="padding:9px 12px;text-align:right;font-variant-numeric:tabular-nums">' + os.length + '</td>'
+        + '<td style="padding:9px 12px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(q) + '</td>'
+        + '<td style="padding:9px 12px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(p) + '</td>'
+        + '<td style="padding:9px 12px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums">' + fmt(q-p) + '</td>'
+        + '<td style="padding:9px 12px;text-align:right">' + money(os.reduce(function(s,o){ return s+(o.qty||0)*(o.fob||0); }, 0)) + '</td>'
+        + '<td style="padding:9px 12px;' + (lt?'color:#C0392B;font-weight:700':'color:#A0A09A') + '">' + (lt ? lt + ' late' : '\u2014') + '</td>'
+        + '<td style="padding:9px 12px;font-size:11px;color:#73706A">' + (near ? short(near.ship_date) + ' \u00b7 ' + near.style : '\u2014') + '</td>'
+        + '</tr>';
+    }).join('');
 
-  // ── TNA miss section
-  html += `<div class="pdf-section">
-    <div class="pdf-section-title">
-      TNA Misses
-      <span>${late.length} order${late.length !== 1 ? 's' : ''} behind plan</span>
-    </div>`;
+    html += '<div style="padding:20px 28px 0">'
+      + '<div style="font-family:Georgia,serif;font-size:15px;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline">'
+      + 'By Merchandiser <span style="font-family:-apple-system,sans-serif;font-size:11px;color:#73706A;font-weight:400">' + merchants.length + ' accounts</span></div>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      + '<thead><tr style="background:#F7F5EF">'
+      + '<th style="padding:8px 12px;text-align:left;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Merchandiser</th>'
+      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Orders</th>'
+      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Booked</th>'
+      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Packed</th>'
+      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Balance</th>'
+      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Value</th>'
+      + '<th style="padding:8px 12px;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">TNA</th>'
+      + '<th style="padding:8px 12px;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Next ship</th>'
+      + '</tr></thead><tbody>' + mRows + '</tbody></table></div>';
+  }
+
+  // ── TNA misses table
+  html += '<div style="padding:20px 28px 0">'
+    + '<div style="font-family:Georgia,serif;font-size:15px;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline">'
+    + 'TNA Misses <span style="font-family:-apple-system,sans-serif;font-size:11px;color:' + (late.length?'#C0392B':'#73706A') + ';font-weight:400">' + (late.length ? late.length + ' behind plan' : 'All on plan') + '</span></div>';
 
   if (late.length) {
-    html += `<table class="pdf-table">
-      <thead><tr>
-        ${S.user.role !== 'merchant' ? '<th>Merchandiser</th>' : ''}
-        <th>Buyer</th><th>Buying house</th><th>Style</th>
-        <th class="r">Order qty</th><th>Ship date</th><th class="r">Days left</th>
-        <th>Missed milestones</th><th class="r">Worst delay</th><th>Status</th>
-      </tr></thead>
-      <tbody>${late.map(o => {
-        const ms = missedMiles(o);
-        const worst = Math.max(...ms.map(x => {
-          const p = o['plan_' + x.k], a = o['act_' + x.k];
-          return a ? Math.round((toDate(a) - toDate(p)) / 86400000) : -daysTo(p);
-        }));
-        const merch = S.users.find(u => u.id === o.merchant_id);
-        const dl = daysTo(o.ship_date);
-        return `<tr class="late-row">
-          ${isM ? `<td class="bold">${merch ? merch.name : '—'}</td>` : ''}
-          <td>${o.buyer}</td><td>${o.house}</td><td class="bold">${o.style}</td>
-          <td class="r">${fmt(o.qty)}</td><td>${short(o.ship_date)}</td>
-          <td class="r" style="color:#C0392B;font-weight:700">${dl}</td>
-          <td>${ms.map(x => x.n).join(', ')}</td>
-          <td class="r" style="color:#C0392B;font-weight:700">+${worst}d</td>
-          <td>${pill('LATE','red')}</td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table>`;
+    html += '<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      + '<thead><tr style="background:#FEF2F2">'
+      + ['Merchandiser','Buyer','Style','Ship date','Days left','Missed milestones'].map(function(h){
+          return '<th style="padding:8px 12px;text-align:left;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#C0392B;font-weight:700;border-bottom:2px solid #FECACA">' + h + '</th>';
+        }).join('')
+      + '</tr></thead><tbody>'
+      + late.map(function(o) {
+          var merch = S.users.find(function(u){ return u.id===o.merchant_id; });
+          var ms = missedMiles(o);
+          var dl = daysTo(o.ship_date);
+          return '<tr style="background:#FEF2F2;border-bottom:1px solid #FEE2E2">'
+            + '<td style="padding:8px 12px">' + (merch?merch.name:'\u2014') + '</td>'
+            + '<td style="padding:8px 12px">' + o.buyer + '</td>'
+            + '<td style="padding:8px 12px;font-weight:600">' + o.style + '</td>'
+            + '<td style="padding:8px 12px;font-variant-numeric:tabular-nums">' + short(o.ship_date) + '</td>'
+            + '<td style="padding:8px 12px;font-weight:700;color:#C0392B;font-variant-numeric:tabular-nums">' + dl + '</td>'
+            + '<td style="padding:8px 12px;color:#C0392B">' + ms.map(function(m){ return m.n; }).join(', ') + '</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
   } else {
-    html += `<div style="padding:16px;color:#73706A;font-size:12px;border:1px solid #E5E2D9;border-radius:8px;text-align:center">
-      ✓ All milestones are on or ahead of plan.</div>`;
-  }
-  html += `</div>`;
-
-  // ── All live orders section
-  html += `<div class="pdf-section">
-    <div class="pdf-section-title">
-      All Live Orders
-      <span>${live.length} orders · ${fmt(totalQty)} pcs · ${money(totalVal)}</span>
-    </div>
-    <table class="pdf-table">
-      <thead><tr>
-        ${S.user.role !== 'merchant' ? '<th>Merchandiser</th>' : ''}
-        <th>Buyer</th><th>Style</th><th>Gauge</th>
-        <th class="r">Order qty</th><th class="r">FOB</th><th class="r">Value</th>
-        <th>Ship date</th><th class="r">Days</th>
-        <th class="r">Knitting</th><th class="r">Linking</th><th class="r">Packing</th>
-        <th class="r">Balance</th><th>Status</th>
-      </tr></thead>
-      <tbody>${live.map(o => {
-        const dl = daysTo(o.ship_date);
-        const ms = missedMiles(o).length;
-        const rc = ms ? 'late-row' : (dl != null && dl <= 10 ? 'warn-row' : '');
-        const merch = S.users.find(u => u.id === o.merchant_id);
-        return `<tr class="${rc}">
-          ${S.user.role !== 'merchant' ? `<td>${merch ? merch.name : '—'}</td>` : ''}
-          <td>${o.buyer}</td><td class="bold">${o.style}</td><td>${o.gauge||'—'}</td>
-          <td class="r">${fmt(o.qty)}</td>
-          <td class="r">${(o.fob||0).toFixed(2)}</td>
-          <td class="r">${money((o.qty||0)*(o.fob||0))}</td>
-          <td>${short(o.ship_date)}</td>
-          <td class="r">${dl != null ? dl : '—'}</td>
-          <td class="r">${fmt(o.prod_knitting||0)}</td>
-          <td class="r">${fmt(o.prod_linking||0)}</td>
-          <td class="r">${fmt(o.prod_packing||0)}</td>
-          <td class="r bold">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
-          <td>${statusPill(o)}</td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table>
-  </div>`;
-
-  // ── By-merchandiser summary (management only)
-  if (isM && merchants.length) {
-    html += `<div class="pdf-section">
-      <div class="pdf-section-title">Summary by Merchandiser</div>
-      <table class="pdf-table">
-        <thead><tr>
-          <th>Merchandiser</th><th>Team</th><th class="r">Orders</th>
-          <th class="r">Booked qty</th><th class="r">Packed</th><th class="r">Balance</th>
-          <th class="r">Value (USD)</th><th class="r">TNA late</th>
-          <th>Nearest ship</th><th>Last updated</th>
-        </tr></thead>
-        <tbody>${merchants.map(m => {
-          const os = live.filter(o => o.merchant_id === m.id);
-          const q = os.reduce((s,o)=>s+(o.qty||0),0);
-          const p = os.reduce((s,o)=>s+(o.prod_packing||0),0);
-          const lt = os.filter(o=>missedMiles(o).length).length;
-          const near = os.length ? [...os].sort((a,b)=>(daysTo(a.ship_date)||999)-(daysTo(b.ship_date)||999))[0] : null;
-          const isStale = m.updated_at && (Date.now()-new Date(m.updated_at).getTime())>86400000;
-          return `<tr class="${lt?'late-row':''}">
-            <td class="bold">${m.name}</td><td class="muted">${m.team||'—'}</td>
-            <td class="r">${os.length}</td>
-            <td class="r">${fmt(q)}</td>
-            <td class="r">${fmt(p)}</td>
-            <td class="r bold">${fmt(q-p)}</td>
-            <td class="r">${money(os.reduce((s,o)=>s+(o.qty||0)*(o.fob||0),0))}</td>
-            <td class="r">${lt ? `<span style="color:#C0392B;font-weight:700">${lt}</span>` : '—'}</td>
-            <td>${near ? short(near.ship_date)+' · '+near.style : '—'}</td>
-            <td class="${isStale?'':'muted'}" style="${isStale?'color:#C05621;font-weight:600':''}">${m.updated_at?ago(m.updated_at):'Never'}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>
-    </div>`;
+    html += '<div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:9px;padding:14px 16px;font-size:13px;color:#065F46">'
+      + '&#x2713; All milestones are on or ahead of plan.</div>';
   }
 
   // ── Footer
-  html += `<div class="pdf-footer">
-    <div>Shahana Group Production Tracker · ${genDate}</div>
-    <div>Confidential — Internal use only</div>
-  </div>
-  <div class="pdf-note">
-    Row colours: red = TNA milestone missed · yellow = shipment within 10 days.
-    Balance = order quantity minus packed quantity.
-  </div>
+  html += '<div style="margin:24px 28px 0;padding-top:14px;border-top:1px solid #E5E2D9;display:flex;justify-content:space-between;padding-bottom:24px;font-size:10px;color:#A0A09A">'
+    + '<span>Shahana Group Production Tracker \u00b7 ' + genDate + '</span>'
+    + '<span>Confidential \u2014 Internal use only</span></div>'
+    + '</div>'; // end white card
 
-  </div>`; // end pdf-wrap
-
+  html += '</div>'; // end outer bg
   $('dpdf-body').innerHTML = html;
 }
 
