@@ -3205,11 +3205,11 @@ function editUser(uid) {
 }
 
 function renderAdminList() {
+  var roleOrder = { management:1, audit:2, hod:3, manager:4, merchant:5 };
   var staff = S.users.filter(function(u){ return u.role !== 'admin'; })
     .sort(function(a,b){
-      var ra=(ROLE_ORDER[a.role]||9), rb=(ROLE_ORDER[b.role]||9);
-      if (ra!==rb) return ra-rb;
-      return a.name.localeCompare(b.name);
+      var ra = roleOrder[a.role]||9, rb = roleOrder[b.role]||9;
+      return ra !== rb ? ra - rb : a.name.localeCompare(b.name);
     });
   var roleColors = {
     management:'background:#EDE9FE;color:#5B21B6', hod:'background:#FEF3C7;color:#92400E',
@@ -3217,11 +3217,9 @@ function renderAdminList() {
     merchant:'background:#F3F4F6;color:#374151'
   };
   var avColors = { management:'#7C3AED', hod:'#D97706', manager:'#059669', audit:'#0284C7', merchant:'#6B7280' };
-  var inp = 'class="adm-inp"';
-  var sel = 'class="adm-sel"';
 
   if (!staff.length) {
-    $('admin-list').innerHTML = '<div style="color:var(--muted);padding:16px 4px;font-size:13px">No users yet. Add one above.</div>';
+    $('admin-list').innerHTML = '<div style="color:var(--muted);padding:16px 4px;font-size:13px">No users yet.</div>';
     return;
   }
 
@@ -3229,44 +3227,50 @@ function renderAdminList() {
     var bc  = roleColors[m.role] || roleColors.merchant;
     var avc = avColors[m.role]   || '#6B7280';
     var isEdit = _editUserId === m.id;
+    var safePwd = (m.password||'').replace(/"/g,'&quot;');
+    var safeName = (m.name||'').replace(/"/g,'&quot;');
+    var safeDesig = (m.title||'').replace(/"/g,'&quot;');
 
-    var mainRow = '<div class="adm-user-row" style="' + (isEdit ? 'border-bottom:none' : '') + '">'
+    var mainRow = '<div class="adm-user-row" style="' + (isEdit?'border-bottom:none':'') + '">'
       + '<div class="adm-user-av" style="background:' + avc + '">' + initials(m.name) + '</div>'
       + '<div class="adm-user-info">'
       + '<div class="adm-user-name">' + m.name + '</div>'
       + (m.title ? '<div style="font-size:11.5px;color:var(--muted);margin-top:1px;font-style:italic">' + m.title + '</div>' : '')
-      + '<div class="adm-user-meta">'
+      + '<div class="adm-user-meta" style="margin-top:4px">'
       + '<span class="chip" style="' + bc + ';font-size:10px;padding:2px 8px">' + roleLabel(m.role) + '</span>'
       + (m.division ? '<span style="font-size:11px;color:var(--muted);margin-left:4px">' + m.division + '</span>' : '')
       + '</div>'
       + '<div style="margin-top:6px;display:flex;align-items:center;gap:8px">'
-      + '<span style="font-size:10.5px;color:var(--muted);font-weight:600;width:60px;flex-shrink:0">Password</span>'
+      + '<span style="font-size:10.5px;color:var(--muted);font-weight:600;flex-shrink:0">Password</span>'
       + '<div class="pwd-wrap" style="width:180px">'
-      + '<input type="password" value="' + (m.password||'').replace(/"/g,'&quot;') + '" readonly ' + inp + ' style="padding:4px 32px 4px 9px;font-size:12px;background:#F3F4F6;cursor:default;font-family:var(--mono)">'
-      + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)" ontouchstart="showPwdEl(this,true)" ontouchend="showPwdEl(this,false)">&#x1F441;</button>'
+      + '<input type="password" value="' + safePwd + '" readonly class="adm-inp" style="padding:4px 32px 4px 9px;font-size:12px;background:#F3F4F6;cursor:default;font-family:var(--mono)">'
+      + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)">&#x1F441;</button>'
       + '</div></div>'
       + '</div>'
       + '<div class="adm-user-actions">'
-      + '<button class="btn sm' + (isEdit?' pri':'') + '" onclick="editUser(\' + m.id + \')">' + (isEdit ? 'Done' : 'Edit') + '</button>'
-      + '<button class="btn sm danger" onclick="deleteUser(\' + m.id + \')">Delete</button>'
+      + '<button class="btn sm' + (isEdit?' pri':'') + '" data-uid="' + m.id + '" onclick="editUser(this.dataset.uid)">' + (isEdit?'Done':'Edit') + '</button>'
+      + '<button class="btn sm danger" data-uid="' + m.id + '" onclick="deleteUser(this.dataset.uid)">Delete</button>'
       + '</div></div>';
 
-    var editPanel = isEdit
-      ? '<div class="adm-edit-form" style="margin-bottom:8px">'
-        + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="eu-name-' + m.id + '" ' + inp + ' value="' + m.name.replace(/"/g,'&quot;') + '"></div>'
-        + '<div class="adm-field"><label class="adm-lbl">Designation</label><input id="eu-desig-' + m.id + '" ' + inp + ' value="' + (m.title||'').replace(/"/g,'&quot;') + '" placeholder="e.g. Senior Merchandiser"></div>'
-        + '<div class="adm-field"><label class="adm-lbl">New password</label>'
-        + '<div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" ' + inp + ' placeholder="Leave blank to keep">'
-        + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)">&#x1F441;</button></div></div>'
-        + '<div class="adm-field"><label class="adm-lbl">Role</label>'
-        + '<select id="eu-role-' + m.id + '" ' + sel + '>'
-        + ['merchant','manager','hod','audit','management'].map(function(r){
-            return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
-          }).join('')
-        + '</select></div>'
-        + '<div class="adm-field adm-field-btn"><button class="btn pri adm-save-btn" onclick="saveEditUser(\' + m.id + \')">Save</button></div>'
-        + '</div>'
-      : '';
+    if (!isEdit) return mainRow;
+
+    var editPanel = '<div class="adm-edit-form" style="margin-bottom:8px">'
+      + '<div class="adm-field"><label class="adm-lbl">Name</label>'
+      + '<input id="eu-name-' + m.id + '" class="adm-inp" value="' + safeName + '"></div>'
+      + '<div class="adm-field"><label class="adm-lbl">Designation</label>'
+      + '<input id="eu-desig-' + m.id + '" class="adm-inp" value="' + safeDesig + '" placeholder="e.g. Senior Merchandiser"></div>'
+      + '<div class="adm-field"><label class="adm-lbl">New password</label>'
+      + '<div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" class="adm-inp" placeholder="Leave blank to keep">'
+      + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)">&#x1F441;</button></div></div>'
+      + '<div class="adm-field"><label class="adm-lbl">Role</label>'
+      + '<select id="eu-role-' + m.id + '" class="adm-sel">'
+      + ['merchant','manager','hod','audit','management'].map(function(r){
+          return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
+        }).join('')
+      + '</select></div>'
+      + '<div class="adm-field adm-field-btn">'
+      + '<button class="btn pri adm-save-btn" data-uid="' + m.id + '" onclick="saveEditUser(this.dataset.uid)">Save</button>'
+      + '</div></div>';
 
     return mainRow + editPanel;
   }).join('');
