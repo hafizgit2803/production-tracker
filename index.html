@@ -3210,12 +3210,7 @@ function renderAdminList() {
     manager:'background:#D1FAE5;color:#065F46', audit:'background:#E0F2FE;color:#0369A1',
     merchant:'background:#F3F4F6;color:#374151'
   };
-  var avColors = {
-    management:'#7C3AED', hod:'#D97706', manager:'#059669',
-    audit:'#0284C7', merchant:'#6B7280'
-  };
-  var merchants = S.users.filter(function(u){ return u.role==='merchant'; })
-    .sort(function(a,b){ return a.name.localeCompare(b.name); });
+  var avColors = { management:'#7C3AED', hod:'#D97706', manager:'#059669', audit:'#0284C7', merchant:'#6B7280' };
   var inp = 'class="adm-inp"';
   var sel = 'class="adm-sel"';
 
@@ -3227,70 +3222,45 @@ function renderAdminList() {
   $('admin-list').innerHTML = staff.map(function(m) {
     var bc  = roleColors[m.role] || roleColors.merchant;
     var avc = avColors[m.role]   || '#6B7280';
-    var isEdit   = _editUserId === m.id;
-    var isAssign = _assignManagerId === m.id;
+    var isEdit = _editUserId === m.id;
 
-    var assignBtn = m.role === 'manager'
-      ? '<button class="btn sm' + (isAssign?' pri':'') + '" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name.replace(/'/g,"\'") + '\')" style="gap:4px">'
-        + (isAssign ? '&#x2713; Assigning (' + _assignedSet.size + ')' : '&#x1F4CB; Assign')
-        + '</button>'
-      : '';
-
-    var mainRow = '<div class="adm-user-row" style="' + (isEdit||isAssign?'border-radius:10px 10px 0 0;margin-bottom:0;border-bottom:none':'border-radius:10px') + '">'
+    var mainRow = '<div class="adm-user-row" style="' + (isEdit ? 'border-bottom:none' : '') + '">'
       + '<div class="adm-user-av" style="background:' + avc + '">' + initials(m.name) + '</div>'
       + '<div class="adm-user-info">'
       + '<div class="adm-user-name">' + m.name + '</div>'
       + '<div class="adm-user-meta">'
       + '<span class="chip" style="' + bc + ';font-size:10px;padding:2px 8px">' + roleLabel(m.role) + '</span>'
-      + (m.division ? '<span style="font-size:11px;color:var(--muted)">' + m.division + '</span>' : '')
+      + (m.division ? '<span style="font-size:11px;color:var(--muted);margin-left:4px">' + m.division + '</span>' : '')
+      + '</div>'
+      + '<div style="margin-top:6px;display:flex;align-items:center;gap:8px">'
+      + '<span style="font-size:10.5px;color:var(--muted);font-weight:600;width:60px;flex-shrink:0">Password</span>'
+      + '<div class="pwd-wrap" style="width:180px">'
+      + '<input type="password" value="' + (m.password||'').replace(/"/g,'&quot;') + '" readonly ' + inp + ' style="padding:4px 32px 4px 9px;font-size:12px;background:#F3F4F6;cursor:default;font-family:var(--mono)">'
+      + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)" ontouchstart="showPwdEl(this,true)" ontouchend="showPwdEl(this,false)">&#x1F441;</button>'
       + '</div></div>'
+      + '</div>'
       + '<div class="adm-user-actions">'
-      + assignBtn
-      + '<button class="btn sm' + (isEdit?' pri':'') + '" onclick="editUser(\'' + m.id + '\')">' + (isEdit?'Done':'Edit') + '</button>'
-      + '<button class="btn sm danger" onclick="deleteUser(\'' + m.id + '\')">Delete</button>'
+      + '<button class="btn sm' + (isEdit?' pri':'') + '" onclick="editUser(\' + m.id + \')">' + (isEdit ? 'Done' : 'Edit') + '</button>'
+      + '<button class="btn sm danger" onclick="deleteUser(\' + m.id + \')">Delete</button>'
       + '</div></div>';
 
-    // Inline edit form
     var editPanel = isEdit
-      ? '<div class="adm-edit-form">'
+      ? '<div class="adm-edit-form" style="margin-bottom:8px">'
         + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="eu-name-' + m.id + '" ' + inp + ' value="' + m.name.replace(/"/g,'&quot;') + '"></div>'
-                + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" ' + inp + ' placeholder="Leave blank to keep"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'eu-pwd-'+m.id+'\',true)" onmouseup="showPwd(\'eu-pwd-'+m.id+'\',false)" onmouseleave="showPwd(\'eu-pwd-'+m.id+'\',false)">&#x1F441;</button></div></div>'
+        + '<div class="adm-field"><label class="adm-lbl">New password</label>'
+        + '<div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" ' + inp + ' placeholder="Leave blank to keep">'
+        + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)">&#x1F441;</button></div></div>'
         + '<div class="adm-field"><label class="adm-lbl">Role</label>'
         + '<select id="eu-role-' + m.id + '" ' + sel + '>'
         + ['merchant','manager','hod','audit','management'].map(function(r){
             return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
           }).join('')
         + '</select></div>'
-        + '<div class="adm-field adm-field-btn"><button class="btn pri adm-save-btn" onclick="saveEditUser(\'' + m.id + '\')">Save</button></div>'
+        + '<div class="adm-field adm-field-btn"><button class="btn pri adm-save-btn" onclick="saveEditUser(\' + m.id + \')">Save</button></div>'
         + '</div>'
       : '';
 
-    // Assignment panel
-    var assignPanel = '';
-    if (isAssign) {
-      var sweaterM = merchants.filter(function(u){ return u.division !== 'knit'; });
-      var knitM    = merchants.filter(function(u){ return u.division === 'knit'; });
-      function chipGrp(list, grpLabel) {
-        if (!list.length) return '';
-        return '<div style="margin-bottom:12px">'
-          + '<div class="adm-lbl" style="margin-bottom:8px">' + grpLabel + '</div>'
-          + '<div class="merchant-chips">'
-          + list.map(function(merch){
-              var active = _assignedSet.has(merch.id);
-              return '<button class="merchant-chip' + (active?' assigned':'') + '" onclick="toggleMerchantAssign(\'' + merch.id + '\')">'
-                + '<span class="chip-dot"></span>' + merch.name + '</button>';
-            }).join('') + '</div></div>';
-      }
-      assignPanel = '<div class="assign-panel">'
-        + '<div class="adm-lbl" style="margin-bottom:12px">Click to assign / unassign &mdash; saves instantly</div>'
-        + (merchants.length ? chipGrp(sweaterM,'Sweater') + chipGrp(knitM,'Knit') : '<div style="color:var(--muted);font-size:12.5px">No merchants yet.</div>')
-        + '<div style="border-top:1px solid var(--line);padding-top:10px;margin-top:4px;display:flex;justify-content:space-between;align-items:center">'
-        + '<span style="font-size:12px;color:var(--muted)">' + _assignedSet.size + ' merchant' + (_assignedSet.size!==1?'s':'') + ' assigned</span>'
-        + '<button class="btn sm" onclick="openAssignMerchants(\'' + m.id + '\',\'' + m.name + '\')">Done</button>'
-        + '</div></div>';
-    }
-
-    return mainRow + editPanel + assignPanel;
+    return mainRow + editPanel;
   }).join('');
 }
 
@@ -3636,38 +3606,24 @@ function renderPrint() {
 
 
 async function addMerchant() {
-  const name = $('a_name').value.trim();
-  const pwd  = $('a_pwd').value.trim();
+  const name = ($('a_name').value||'').trim();
+  const pwd  = ($('a_pwd').value||'').trim();
   const type = $('a_type').value;
-  if (!name || !pwd) {
-    $('admin-err').textContent = 'Name and password are required.';
-    $('admin-err').style.display = 'block'; return;
-  }
-  $('admin-err').style.display = 'none';
-
-  // Derive role and title from profile type
-  const isMerch = type === 'merchant';
-  const role  = $('a_type').value;
-  const title = isMerch ? 'Merchandiser' : type === 'hod' ? 'HOD' : type === 'manager' ? 'Manager' : type === 'audit' ? 'Audit' : 'Other';
-
-  const { error } = await db.from('users').insert({
-    name, role, title, password: pwd,
-    team: $('a_team').value,
-    division: isMerch ? $('a_div').value : null
-  });
+  const errEl = $('admin-err');
+  errEl.style.display = 'none';
+  if (!name) { errEl.textContent='Name is required.'; errEl.style.display='block'; return; }
+  if (!pwd)  { errEl.textContent='Password is required.'; errEl.style.display='block'; return; }
+  const division = type === 'merchant' && $('a_div') ? $('a_div').value : null;
+  const { error } = await db.from('users').insert({ name, role: type, password: pwd, division });
   if (!error) {
-    $('a_name').value = ''; $('a_team').value = ''; $('a_pwd').value = '';
-    $('a_type').value = 'merchant'; handleProfileType();
-    toast(`${name} added`, 'ok-t');
-    await loadUsers();
-    renderAdminList();
-    renderRail();
+    $('a_name').value=''; $('a_pwd').value='';
+    $('a_type').value='merchant'; handleProfileType();
+    toast(name + ' added', 'ok-t');
+    await loadUsers(); renderAdminList(); renderRail();
   } else if (error.code === '23505') {
-    $('admin-err').textContent = 'A user with that name already exists.';
-    $('admin-err').style.display = 'block';
+    errEl.textContent='A user with that name already exists.'; errEl.style.display='block';
   } else {
-    $('admin-err').textContent = 'Error saving. Try again.';
-    $('admin-err').style.display = 'block';
+    errEl.textContent='Error: ' + error.message; errEl.style.display='block';
   }
 }
 
@@ -4114,6 +4070,10 @@ async function loadTNARequests() {
 
 
 function showPwd(id, show) { var el = $(id); if (el) el.type = show ? 'text' : 'password'; }
+function showPwdEl(btn, show) {
+  var wrap = btn ? btn.closest('.pwd-wrap') : null;
+  if (wrap) { var inp = wrap.querySelector('input'); if (inp) inp.type = show ? 'text' : 'password'; }
+}
 
 function saveAssignments() { closeModal('ov-assign'); } // stub - assignments now instant
 
