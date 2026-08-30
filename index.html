@@ -33,7 +33,7 @@ a{color:var(--accent);text-decoration:none}
 /* ── SHELL ── */
 .shell{display:flex;height:100vh;height:100dvh;overflow:hidden}
 .rail{width:244px;flex:0 0 244px;background:var(--rail);border-right:1px solid var(--line);
-  display:flex;flex-direction:column;overflow:hidden;height:100%}
+  display:flex;flex-direction:column;height:100%}
 .brand{padding:18px 16px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
 .brand h1{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.2px}
 .brand span{font-size:11px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:2px;display:block}
@@ -297,9 +297,12 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
              flex-basis .32s cubic-bezier(.4,0,.2,1);
   position:relative;will-change:width;
   flex-shrink:0}
-.brand,.rail-body,.rail-foot{
+.brand,.rail-foot{
   transition:opacity .2s ease .05s;
   white-space:nowrap;overflow:hidden}
+.rail-body{
+  transition:opacity .2s ease .05s;
+  white-space:nowrap}
 .shell.sb-off .rail{width:0!important;min-width:0!important;flex:0 0 0!important;border-right:none}
 .shell.sb-off .brand,.shell.sb-off .rail-body,.shell.sb-off .rail-foot{
   opacity:0;pointer-events:none;transition:opacity .12s ease}
