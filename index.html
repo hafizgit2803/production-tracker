@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Production Tracker — Shahana Group</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- SheetJS loaded on demand -->
 <style>
 :root{
   --bg:#FAF9F5;--panel:#FFFFFF;--rail:#F0EEE6;--ink:#191817;--muted:#73706A;
@@ -717,7 +717,7 @@ button.apv-chip{font-family:inherit}
   <div class="login-card">
     <h1 class="login-title">Production Tracker</h1>
     <p class="login-sub">Shahana Group &mdash; Internal use only</p>
-    <div class="f"><label>Your name</label>
+    <div class="f"><label for="l_name">Your name</label>
       <select id="l_name"><option value="">Loading&hellip;</option></select></div>
     <div class="f"><label>Password</label>
       <div class="pwd-wrap"><input type="password" id="l_pwd" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd('l_pwd',true)" onmouseup="showPwd('l_pwd',false)" onmouseleave="showPwd('l_pwd',false)" ontouchstart="showPwd('l_pwd',true)" ontouchend="showPwd('l_pwd',false)">&#x1F441;</button></div></div>
@@ -1036,51 +1036,6 @@ button.apv-chip{font-family:inherit}
 </div>
 
 <!-- ═══ MODAL: ADMIN ═══ -->
-<div class="ov" id="ov-admin" onclick="if(event.target===this)closeModal('ov-admin')">
-  <div class="modal">
-    <div class="m-h"><div><h3>Admin — Manage users</h3><div class="msub">Add profiles and reset passwords</div></div></div>
-    <div class="m-b">
-      <div class="card-h" style="padding:0 0 12px;border:0"><h3 style="font-size:14px">Add profile</h3></div>
-      <div class="grid3" style="margin-bottom:10px">
-        <div class="f"><label>Full name</label><input id="a_name" placeholder="e.g. Taher Ahmed"></div>
-        <div class="f"><label>Team / section</label><input id="a_team" placeholder="e.g. Knit Merchandising"></div>
-        <div class="f"><label>Password</label><input id="a_pwd" type="text" placeholder="Set a password"></div>
-      </div>
-      <div class="grid2" style="margin-bottom:14px;max-width:440px">
-        <div class="f">
-          <label>Profile type</label>
-          <select id="a_type" onchange="handleProfileType()">
-            <option value="merchant">Merchant</option>
-            <option value="manager">Manager</option>
-            <option value="hod">HOD</option>
-            <option value="audit">Audit</option>
-            <option value="management">Management</option>
-          </select>
-        </div>
-        <div class="f" id="div-field">
-          <label>Division</label>
-          <select id="a_div">
-            <option value="sweater">Sweater</option>
-            <option value="knit">Knit</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-err" id="admin-err"></div>
-      <button class="btn pri" style="margin-bottom:22px" onclick="addMerchant()">Add profile</button>
-      <div class="card-h" style="padding:0 0 10px;border:0"><h3 style="font-size:14px">Reset password</h3></div>
-      <div id="admin-list"></div>
-      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
-        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Change management password</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input id="mgmt_pwd" type="text" placeholder="New password" style="max-width:200px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7">
-          <button class="btn sm pri" onclick="changeMgmtPwd()">Save</button>
-        </div>
-      </div>
-    </div>
-    <div class="m-f"><button class="btn" onclick="closeModal('ov-admin')">Close</button></div>
-  </div>
-</div>
-
 <!-- Autocomplete datalists -->
 <datalist id="dl_house"></datalist>
 <datalist id="dl_buyer"></datalist>
@@ -1179,7 +1134,7 @@ function can(action, merchantId) {
     case 'send_notes':  return ['admin','management','hod','manager'].includes(r);
     case 'inbox':       return ['admin','management','hod','manager'].includes(r);
     case 'requests':    return ['admin','hod','manager'].includes(r);
-    case 'admin_panel': return r === 'admin';
+    case 'admin_panel': return r === 'admin' || r === 'management';
     case 'see_all':     return ['admin','management','hod','audit','manager'].includes(r);
     default: return false;
   }
@@ -3165,7 +3120,7 @@ function renderAdminPage() {
 
   // ── My Account ─────────────────────────────────────────────────────────
   '<div class="adm-card">'
-  + '<div class="adm-card-head"><div><h3 class="adm-h3">My Account</h3><div class="adm-sub">Change your display name and password</div></div></div>'
+  + '<div class="adm-card-head"><div><h3 class="adm-h3">My Account</h3><div class="adm-sub">Change your display name and password' + (S.user.role==='management'?' &mdash; <span style="color:var(--amber)">Run all_missing_migrations.sql in Supabase to upgrade to Admin role</span>':'') + '</div></div></div>'
   + '<div class="adm-row3">'
   + '<div class="adm-field"><label class="adm-lbl">Display name</label><input id="admin-own-name" ' + inp + ' value="' + (S.user.name||'').replace(/"/g,'&quot;') + '"></div>'
   + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="admin-own-pwd" type="password" ' + inp + ' placeholder="Leave blank to keep current"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd(\'admin-own-pwd\',true)" onmouseup="showPwd(\'admin-own-pwd\',false)" onmouseleave="showPwd(\'admin-own-pwd\',false)" ontouchstart="showPwd(\'admin-own-pwd\',true)" ontouchend="showPwd(\'admin-own-pwd\',false)">&#x1F441;</button></div></div>'
@@ -3591,6 +3546,17 @@ async function dismissAlert(alertId) {
 
 // --- EXCEL EXPORT ---
 async function exportExcel() {
+  if (typeof XLSX === 'undefined') {
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = function(){ exportExcelRun(); };
+    document.head.appendChild(s);
+    toast('Loading Excel engine…');
+    return;
+  }
+  exportExcelRun();
+}
+function exportExcelRun() {
   if (typeof XLSX === 'undefined'){toast('Excel library loading, try again','err');return;}
   const buyer=$('pr-buyer')?$('pr-buyer').value:'';
   const uid=S.printTarget;
@@ -4107,7 +4073,7 @@ function renderRail() {
     var total  = (S.tnaRequests||[]).length;
     html += ni('my-requests', '&#x1F4CB;', 'My Requests', unread||total, unread>0);
   }
-  if (isAdmin) {
+  if (isAdmin || isMgmt) {
     html += '<div class="rail-sep"></div>';
     html += '<button class="ni ' + (S.view==='admin'?'on':'') + '" onclick="setView(\'admin\')">'
       + '<span class="av" style="font-size:12px">&#x2699;</span>'
