@@ -1342,6 +1342,7 @@ async function startApp() {
 
   try {
     render();
+    // JS running OK
   } catch(err) {
     console.error('render() failed:', err);
     $('content').innerHTML = '<div class="card" style="padding:20px;color:var(--red)">Render error: ' + (err.message||err) + '<br><br><button class="btn" onclick="location.reload()">Refresh</button></div>';
