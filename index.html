@@ -606,6 +606,86 @@ button.apv-chip{font-family:inherit}
 .pwd-eye:hover{color:var(--accent)}
 .pwd-eye:active{color:var(--ink)}
 
+
+/* ── MERCHANT ASSIGNMENT MODAL ── */
+.ma-modal{max-width:960px;width:95vw;max-height:88vh;display:flex!important;flex-direction:column}
+.ma-modal .m-b{padding:0;flex:1;overflow-y:auto;min-height:0}
+.ma-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:20px}
+.ma-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:16px;position:relative;transition:box-shadow .15s}
+.ma-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.ma-card-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;
+  padding-bottom:12px;border-bottom:1px solid #F0EDE4}
+.ma-mgr-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.ma-mgr-name{font-weight:700;font-size:14px}
+.ma-mgr-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.ma-chips{display:flex;flex-direction:column;gap:7px;min-height:44px;margin-bottom:12px}
+.ma-chip{display:flex;align-items:center;gap:8px;background:#ECFDF5;
+  border:1px solid #A7F3D0;border-radius:9px;padding:7px 8px 7px 10px;
+  animation:chipIn .18s ease}
+@keyframes chipIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ma-chip-av{width:26px;height:26px;border-radius:50%;background:#10B981;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:10px;
+  font-weight:700;flex-shrink:0}
+.ma-chip-info{flex:1;min-width:0}
+.ma-chip-name{font-size:12.5px;font-weight:600;color:#065F46;display:block;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ma-chip-div{font-size:10px;color:#10B981;background:#D1FAE5;
+  padding:1px 6px;border-radius:10px;display:inline-block}
+.ma-chip-rm{background:none;border:none;color:#6EE7B7;cursor:pointer;
+  font-size:13px;padding:3px 5px;border-radius:5px;flex-shrink:0;
+  transition:all .1s;line-height:1}
+.ma-chip-rm:hover{background:#FEE2E2;color:#DC2626}
+.ma-empty{color:var(--muted);font-size:12px;text-align:center;padding:12px 8px;
+  border:1.5px dashed var(--line);border-radius:8px}
+/* Add button + dropdown */
+.ma-add-wrap{position:relative}
+.ma-add-btn{width:100%;padding:8px 12px;background:none;
+  border:1.5px dashed var(--accent);border-radius:9px;
+  color:var(--accent);font-size:12.5px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.ma-add-btn:hover{background:var(--accent-soft);border-style:solid}
+.ma-add-btn .plus{font-size:18px;line-height:1}
+.ma-dropdown{position:absolute;bottom:calc(100% + 8px);left:0;right:0;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,.14);z-index:200;display:none;
+  max-height:220px;overflow-y:auto}
+.ma-dd-item{width:100%;background:none;border:none;padding:9px 12px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;font-size:12.5px;transition:background .1s;
+  text-align:left}
+.ma-dd-item:hover{background:var(--accent-soft)}
+.ma-dd-item:first-child{border-radius:11px 11px 0 0}
+.ma-dd-item:last-child{border-radius:0 0 11px 11px}
+.ma-dd-av{width:28px;height:28px;border-radius:50%;background:#E5E7EB;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:#6B7280;flex-shrink:0}
+.ma-dd-name{flex:1;font-weight:500;color:var(--ink)}
+.ma-dd-badge{font-size:10px;color:var(--muted);background:var(--accent-soft);
+  padding:2px 7px;border-radius:10px}
+.ma-dd-empty{padding:12px;color:var(--muted);font-size:12px;text-align:center}
+/* Unassigned section */
+.ma-unassigned{padding:16px 20px;border-top:2px solid var(--line);
+  background:var(--amber-soft)}
+.ma-ua-title{font-size:11px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--amber);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.ma-ua-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ma-ua-chip{display:flex;align-items:center;gap:6px;padding:5px 11px;
+  background:#fff;border:1px solid #FDE68A;border-radius:20px;font-size:12px;font-weight:500}
+.ma-ua-div{font-size:10px;color:var(--muted);padding:1px 6px;
+  background:#FEF3C7;border-radius:10px}
+[data-theme="dark"] .ma-card{background:var(--panel)}
+[data-theme="dark"] .ma-chip{background:#0E2018;border-color:#065F46}
+[data-theme="dark"] .ma-chip-name{color:#34D399}
+[data-theme="dark"] .ma-chip-div{background:#064E3B;color:#6EE7B7}
+[data-theme="dark"] .ma-chip-rm{color:#065F46}
+[data-theme="dark"] .ma-add-btn{color:var(--accent)}
+[data-theme="dark"] .ma-dropdown{background:var(--panel)}
+[data-theme="dark"] .ma-ua-chip{background:#1E1D1F;border-color:#92400E}
+[data-theme="dark"] .ma-ua-div{background:#78350F;color:#FCD34D}
+
 @media print{
   html,body{height:auto}
   .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
@@ -895,9 +975,19 @@ button.apv-chip{font-family:inherit}
       <button class="btn" onclick="closeModal('ov-assign')">Cancel</button></div>
     <div class="m-b" id="assign-body"></div>
     <div class="m-f">
-      <button class="btn" onclick="closeModal('ov-assign')">Cancel</button>
-      <button class="btn pri" onclick="saveAssignments()">Save</button>
+      <button class="btn" onclick="closeModal('ov-assign')">Close</button>
     </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: MERCHANT ASSIGNMENT ═══ -->
+<div class="ov" id="ov-merchant-assign" onclick="if(event.target===this)closeModal('ov-merchant-assign')">
+  <div class="modal ma-modal">
+    <div class="m-h">
+      <div><h3>Merchant Assignment</h3><div class="msub">One merchant per manager &mdash; changes save instantly</div></div>
+      <button class="btn" data-close="ov-merchant-assign">Close</button>
+    </div>
+    <div class="m-b" id="ma-body"><div class="loading"><span class="spin"></span></div></div>
   </div>
 </div>
 
@@ -1146,6 +1236,15 @@ document.addEventListener('click', function(e) {
   const btn = e.target.closest('[data-close]');
   if (btn) closeModal(btn.dataset.close);
 });
+// Catch global errors that prevent init() from running
+window.onerror = function(msg, src, line) {
+  var el = $('l_name');
+  if (el && el.innerHTML.includes('Loading')) {
+    el.innerHTML = '<option value="">Error: ' + msg + ' (line ' + line + ')</option>';
+  }
+  console.error('Global error:', msg, 'line:', line);
+  return false;
+};
 
 // ─── AUTH ───
 async function init() {
@@ -3047,6 +3146,7 @@ function renderAdminPage() {
   $('crumb').textContent = 'Admin';
   $('page-title').textContent = 'Admin Panel';
   $('page-sub').innerHTML = 'User management &amp; assignments';
+  $('act-row').innerHTML = '<button class="btn pri" onclick="openMerchantAssign()" style="display:flex;align-items:center;gap:8px;padding:9px 16px"><span style="font-size:16px">&#x1F517;</span> Merchant Assignment</button>';
   $('stamp').innerHTML = '';
   $('act-row').innerHTML = '';
 
@@ -4037,6 +4137,163 @@ async function loadTNARequests() {
 
 
 function showPwd(id, show) { var el = $(id); if (el) el.type = show ? 'text' : 'password'; }
+
+function saveAssignments() { closeModal('ov-assign'); } // stub - assignments now instant
+
+// ─── MERCHANT ASSIGNMENT MODAL ───
+var _maAssignments = {}; // managerId -> [merchantId,...]
+var _maManagers = [];
+var _maMerchants = [];
+
+async function openMerchantAssign() {
+  $('ma-body').innerHTML = '<div class="loading"><span class="spin"></span> Loading assignments\u2026</div>';
+  openModal('ov-merchant-assign');
+
+  var [usersRes, assignRes] = await Promise.all([
+    db.from('users').select('id,name,role,division').order('name'),
+    db.from('manager_assignments').select('manager_id,merchant_id')
+  ]);
+
+  _maManagers  = (usersRes.data||[]).filter(function(u){ return u.role==='manager'; });
+  _maMerchants = (usersRes.data||[]).filter(function(u){ return u.role==='merchant'; });
+
+  _maAssignments = {};
+  _maManagers.forEach(function(m){ _maAssignments[m.id] = []; });
+  (assignRes.data||[]).forEach(function(a){
+    if (_maAssignments[a.manager_id]) _maAssignments[a.manager_id].push(a.merchant_id);
+  });
+
+  renderMAModal();
+}
+
+function renderMAModal() {
+  var assignedSet = new Set();
+  Object.values(_maAssignments).forEach(function(list){ list.forEach(function(id){ assignedSet.add(id); }); });
+  var unassigned = _maMerchants.filter(function(m){ return !assignedSet.has(m.id); });
+  var merchantMap = {};
+  _maMerchants.forEach(function(m){ merchantMap[m.id] = m; });
+
+  var managerColors = ['#7C3AED','#0369A1','#059669','#D97706','#BE185D','#DC2626','#0891B2'];
+
+  if (!_maManagers.length) {
+    $('ma-body').innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">No managers yet. Add manager accounts in the Users section first.</div>';
+    return;
+  }
+
+  var grid = '<div class="ma-grid">';
+  _maManagers.forEach(function(mgr, idx) {
+    var color = managerColors[idx % managerColors.length];
+    var assigned = _maAssignments[mgr.id] || [];
+    var available = _maMerchants.filter(function(m){ return !assignedSet.has(m.id); });
+
+    var chipsHtml = assigned.length
+      ? assigned.map(function(mid){
+          var m = merchantMap[mid];
+          if (!m) return '';
+          return '<div class="ma-chip">'
+            + '<div class="ma-chip-av">' + initials(m.name) + '</div>'
+            + '<div class="ma-chip-info">'
+            + '<span class="ma-chip-name">' + m.name + '</span>'
+            + (m.division ? '<span class="ma-chip-div">' + m.division + '</span>' : '')
+            + '</div>'
+            + '<button class="ma-chip-rm" onclick="maRemove(\'' + mgr.id + '\',\'' + mid + '\')" title="Remove">&#x2715;</button>'
+            + '</div>';
+        }).join('')
+      : '<div class="ma-empty">No merchants assigned yet</div>';
+
+    var ddItems = available.length
+      ? available.map(function(m){
+          return '<button class="ma-dd-item" onclick="maAssign(\'' + mgr.id + '\',\'' + m.id + '\')">'
+            + '<div class="ma-dd-av">' + initials(m.name) + '</div>'
+            + '<span class="ma-dd-name">' + m.name + '</span>'
+            + (m.division ? '<span class="ma-dd-badge">' + m.division + '</span>' : '')
+            + '</button>';
+        }).join('')
+      : '<div class="ma-dd-empty">All merchants are assigned</div>';
+
+    grid += '<div class="ma-card">'
+      + '<div class="ma-card-head">'
+      + '<div class="ma-mgr-av" style="background:' + color + '">' + initials(mgr.name) + '</div>'
+      + '<div><div class="ma-mgr-name">' + mgr.name + '</div>'
+      + '<div class="ma-mgr-sub">' + assigned.length + ' merchant' + (assigned.length!==1?'s':'') + ' assigned</div></div>'
+      + '</div>'
+      + '<div class="ma-chips">' + chipsHtml + '</div>'
+      + '<div class="ma-add-wrap" id="ma-wrap-' + mgr.id + '">'
+      + '<button class="ma-add-btn" onclick="maToggleDrop(\'' + mgr.id + '\')">'
+      + '<span class="plus">+</span> Add merchant</button>'
+      + '<div class="ma-dropdown" id="ma-dd-' + mgr.id + '">' + ddItems + '</div>'
+      + '</div>'
+      + '</div>';
+  });
+  grid += '</div>';
+
+  // Unassigned section
+  var uaHtml = '';
+  if (unassigned.length) {
+    uaHtml = '<div class="ma-unassigned">'
+      + '<div class="ma-ua-title">&#x26A0; ' + unassigned.length + ' unassigned merchant' + (unassigned.length!==1?'s':'') + '</div>'
+      + '<div class="ma-ua-chips">'
+      + unassigned.map(function(m){
+          return '<div class="ma-ua-chip"><span>' + m.name + '</span>'
+            + (m.division ? '<span class="ma-ua-div">' + m.division + '</span>' : '')
+            + '</div>';
+        }).join('')
+      + '</div></div>';
+  }
+
+  $('ma-body').innerHTML = grid + uaHtml;
+
+  // Close dropdown on outside click (within the modal)
+  var body = $('ma-body');
+  if (body) body.addEventListener('click', function(e) {
+    if (!e.target.closest('.ma-add-wrap')) {
+      document.querySelectorAll('.ma-dropdown').forEach(function(d){ d.style.display='none'; });
+    }
+  }, { once: false });
+}
+
+function maToggleDrop(managerId) {
+  document.querySelectorAll('.ma-dropdown').forEach(function(d){
+    if (d.id !== 'ma-dd-' + managerId) d.style.display = 'none';
+  });
+  var dd = $('ma-dd-' + managerId);
+  if (dd) dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
+}
+
+async function maAssign(managerId, merchantId) {
+  var { error } = await db.from('manager_assignments').insert({
+    manager_id: managerId, merchant_id: merchantId
+  });
+  if (error) { toast('Error: ' + (error.message||'check unique constraint'), 'err'); return; }
+  if (!_maAssignments[managerId]) _maAssignments[managerId] = [];
+  _maAssignments[managerId].push(merchantId);
+  // Update live sidebar if this manager is logged in
+  if (S.user && S.user.id === managerId) {
+    S.myAssignments = Array.from(_maAssignments[managerId]);
+    renderRail();
+  }
+  toast(merchantMap_name(merchantId) + ' assigned');
+  renderMAModal();
+}
+
+async function maRemove(managerId, merchantId) {
+  var { error } = await db.from('manager_assignments').delete()
+    .eq('manager_id', managerId).eq('merchant_id', merchantId);
+  if (error) { toast('Error removing', 'err'); return; }
+  _maAssignments[managerId] = (_maAssignments[managerId]||[]).filter(function(id){ return id!==merchantId; });
+  if (S.user && S.user.id === managerId) {
+    S.myAssignments = Array.from(_maAssignments[managerId]);
+    renderRail();
+  }
+  toast('Merchant unassigned');
+  renderMAModal();
+}
+
+function merchantMap_name(id) {
+  var m = _maMerchants.find(function(u){ return u.id===id; });
+  return m ? m.name : 'Merchant';
+}
+
 
 // ─── START ───
 init();
