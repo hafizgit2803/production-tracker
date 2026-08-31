@@ -739,19 +739,27 @@ button.apv-chip{font-family:inherit}
 .photo-add-pill:hover{background:var(--accent);color:#fff}
 
 
-/* Multi-column sticky */
-th.stk2,td.stk2{position:sticky;left:130px;z-index:20;background-color:var(--panel)}
-th.stk3,td.stk3{position:sticky;left:192px;z-index:20;background-color:var(--panel)}
-th.stk2{background-color:#F7F5EF!important;z-index:30}
-th.stk3{background-color:#F7F5EF!important;z-index:30}
-tbody tr:hover td.stk2{background-color:var(--panel)!important}
-tbody tr:hover td.stk3{background-color:var(--panel)!important}
-tbody tr.r10 td.stk2,tbody tr.r10 td.stk3{background-color:#FDF8EA!important}
-tbody tr.r5 td.stk2,tbody tr.r5 td.stk3{background-color:#FDF0E0!important}
-tbody tr.late td.stk2,tbody tr.late td.stk3{background-color:#FDECEA!important}
-[data-theme="dark"] th.stk2,[data-theme="dark"] th.stk3{background-color:#252325!important}
-[data-theme="dark"] td.stk2,[data-theme="dark"] td.stk3{background-color:var(--panel)!important}
-[data-theme="dark"] tbody tr:hover td.stk2,[data-theme="dark"] tbody tr:hover td.stk3{background-color:var(--panel)!important}
+/* Multi-column sticky — fixed widths ensure left values match */
+td.stk  {width:140px;min-width:140px;max-width:140px}
+td.stk2 {width:62px;min-width:62px;max-width:62px}
+td.stk3 {width:115px;min-width:115px;max-width:115px}
+td.stk4 {width:120px;min-width:120px;max-width:120px}
+th.stk2,td.stk2{position:sticky;left:140px;z-index:20;background-color:var(--panel);box-shadow:none}
+th.stk3,td.stk3{position:sticky;left:202px;z-index:20;background-color:var(--panel);box-shadow:none}
+th.stk4,td.stk4{position:sticky;left:317px;z-index:20;background-color:var(--panel);box-shadow:none}
+th.stk2{background-color:#F7F5EF;z-index:30}
+th.stk3{background-color:#F7F5EF;z-index:30}
+th.stk4{background-color:#F7F5EF;z-index:30;box-shadow:4px 0 8px -3px rgba(0,0,0,.10)}
+td.stk4{box-shadow:4px 0 8px -3px rgba(0,0,0,.10)}
+tbody tr:hover td.stk2,tbody tr:hover td.stk3,tbody tr:hover td.stk4{background-color:var(--panel)!important}
+tbody tr.r10 td.stk2,tbody tr.r10 td.stk3,tbody tr.r10 td.stk4{background-color:#FDF8EA!important}
+tbody tr.r5  td.stk2,tbody tr.r5  td.stk3,tbody tr.r5  td.stk4{background-color:#FDF0E0!important}
+tbody tr.late td.stk2,tbody tr.late td.stk3,tbody tr.late td.stk4{background-color:#FDECEA!important}
+[data-theme="dark"] th.stk2,[data-theme="dark"] th.stk3,[data-theme="dark"] th.stk4{background-color:#252325!important}
+[data-theme="dark"] td.stk2,[data-theme="dark"] td.stk3,[data-theme="dark"] td.stk4{background-color:var(--panel)!important}
+[data-theme="dark"] tbody tr.r10 td.stk2,[data-theme="dark"] tbody tr.r10 td.stk3,[data-theme="dark"] tbody tr.r10 td.stk4{background-color:#2A2010!important}
+[data-theme="dark"] tbody tr.r5  td.stk2,[data-theme="dark"] tbody tr.r5  td.stk3,[data-theme="dark"] tbody tr.r5  td.stk4{background-color:#2E1E10!important}
+[data-theme="dark"] tbody tr.late td.stk2,[data-theme="dark"] tbody tr.late td.stk3,[data-theme="dark"] tbody tr.late td.stk4{background-color:#2E1515!important}
 
 @media print{
   html,body{height:auto}
@@ -786,7 +794,7 @@ tbody tr.late td.stk2,tbody tr.late td.stk3{background-color:#FDECEA!important}
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.9</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-2.0</p>
   </div>
 </div>
 
@@ -1992,7 +2000,7 @@ async function renderBoard(uid) {
       + '<div class="sub2" style="margin-left:10px;font-size:10px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div></td>'
       + '<td class="stk2" style="text-align:center">' + (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(\'' + getStyleImage(uid,o.style) + '\',\'' + o.style + '\',\'' + uid + '\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\'' + o.style + '\',\'' + uid + '\')">[+] Photo</button>' : '--')) + '</td>'
       + '<td class="stk3" style="font-size:11px;font-family:var(--mono);color:var(--muted)">' + (o.po_number||'—') + '</td>'
-      + '<td>' + o.buyer + '</td>'
+      + '<td class="stk4">' + o.buyer + '</td>'
       + '<td style="font-size:10.5px">' + (o.house||'—') + '</td>'
       + '<td style="font-size:10.5px">' + (fmtGauge(o.gauge)||'—') + '</td>'
       + '<td style="font-size:10.5px">' + (o.color||'—') + '</td>'
@@ -2023,7 +2031,7 @@ async function renderBoard(uid) {
     + '<th class="stk" rowspan="2">Style</th>'
     + '<th class="stk2" rowspan="2">Photo</th>'
     + '<th class="stk3" rowspan="2">PO</th>'
-    + '<th rowspan="2">Buyer</th>'
+    + '<th class="stk4" rowspan="2">Buyer</th>'
     + '<th rowspan="2">House</th>'
     + '<th rowspan="2">Gauge</th>'
     + '<th rowspan="2">Colour</th>'
