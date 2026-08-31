@@ -1989,7 +1989,7 @@ async function renderBoard(uid) {
       + '<td class="stk" style="cursor:pointer"><span class="flag ' + (ms.length?'on':'') + '">\u200b</span>'
       + '<span class="sty">' + o.style + '</span>'
       + '<div class="sub2" style="margin-left:10px;font-size:10px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div></td>'
-      + '<td class="stk2" style="text-align:center">' + (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(getStyleImage(\''+uid+'\',\''+o.style+'\'),\''+o.style+'\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\''+o.style+'\',\''+uid+'\')">[+] Photo</button>' : '--')) + '</td>'
+      + '<td class="stk2" style="text-align:center">' + (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(\'' + getStyleImage(uid,o.style) + '\',\'' + o.style + '\',\'' + uid + '\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\'' + o.style + '\',\'' + uid + '\')"> + Photo</button>' : '--')) + '</td>'
       + '<td class="stk3" style="font-size:11px;font-family:var(--mono);color:var(--muted)">' + (o.po_number||'—') + '</td>'
       + '<td>' + o.buyer + '</td>'
       + '<td style="font-size:10.5px">' + (o.house||'—') + '</td>'
