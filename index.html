@@ -738,6 +738,20 @@ button.apv-chip{font-family:inherit}
   transition:all .15s;white-space:nowrap}
 .photo-add-pill:hover{background:var(--accent);color:#fff}
 
+
+/* Multi-column sticky */
+th.stk2,td.stk2{position:sticky;left:130px;z-index:4;background:var(--panel);background-clip:padding-box;box-shadow:none}
+th.stk3,td.stk3{position:sticky;left:192px;z-index:4;background:var(--panel);background-clip:padding-box}
+th.stk2{background:#F7F5EF;z-index:5}
+th.stk3{background:#F7F5EF;z-index:5}
+tbody tr:hover td.stk2{background-color:var(--panel)}
+tbody tr:hover td.stk3{background-color:var(--panel)}
+tbody tr.r10 td.stk2,tbody tr.r10 td.stk3{background-color:#FDF8EA!important}
+tbody tr.r5 td.stk2,tbody tr.r5 td.stk3{background-color:#FDF0E0!important}
+tbody tr.late td.stk2,tbody tr.late td.stk3{background-color:#FDECEA!important}
+[data-theme="dark"] th.stk2,[data-theme="dark"] th.stk3{background:#252325}
+[data-theme="dark"] td.stk2,[data-theme="dark"] td.stk3{background-color:var(--panel)}
+
 @media print{
   html,body{height:auto}
   .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
@@ -771,7 +785,7 @@ button.apv-chip{font-family:inherit}
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.5</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.8</p>
   </div>
 </div>
 
@@ -1975,8 +1989,8 @@ async function renderBoard(uid) {
       + '<td class="stk" style="cursor:pointer"><span class="flag ' + (ms.length?'on':'') + '">\u200b</span>'
       + '<span class="sty">' + o.style + '</span>'
       + '<div class="sub2" style="margin-left:10px;font-size:10px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div></td>'
-      + '<td style="text-align:center">' + (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(getStyleImage(\''+uid+'\',\''+o.style+'\'),\''+o.style+'\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\''+o.style+'\',\''+uid+'\')">[+] Photo</button>' : '--')) + '</td>'
-      + '<td style="font-size:11px;font-family:var(--mono);color:var(--muted)">' + (o.po_number||'—') + '</td>'
+      + '<td class="stk2" style="text-align:center">' + (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(getStyleImage(\''+uid+'\',\''+o.style+'\'),\''+o.style+'\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\''+o.style+'\',\''+uid+'\')">[+] Photo</button>' : '--')) + '</td>'
+      + '<td class="stk3" style="font-size:11px;font-family:var(--mono);color:var(--muted)">' + (o.po_number||'—') + '</td>'
       + '<td>' + o.buyer + '</td>'
       + '<td style="font-size:10.5px">' + (o.house||'—') + '</td>'
       + '<td style="font-size:10.5px">' + (fmtGauge(o.gauge)||'—') + '</td>'
@@ -2006,8 +2020,8 @@ async function renderBoard(uid) {
   $('content').innerHTML = notesHtml + '<div class="card"><div class="scroller"><table>'
     + '<thead><tr>'
     + '<th class="stk" rowspan="2">Style</th>'
-    + '<th rowspan="2">Photo</th>'
-    + '<th rowspan="2">PO</th>'
+    + '<th class="stk2" rowspan="2">Photo</th>'
+    + '<th class="stk3" rowspan="2">PO</th>'
     + '<th rowspan="2">Buyer</th>'
     + '<th rowspan="2">House</th>'
     + '<th rowspan="2">Gauge</th>'
@@ -4575,20 +4589,21 @@ async function uploadStyleImage(merchantId, style, file) {
   if(upRes.error){toast('Upload failed: '+upRes.error.message,'err');return null;}
   var urlData=db.storage.from('product-images').getPublicUrl(fileName);
   var url=urlData.data.publicUrl;
-  await db.from('style_images').upsert({merchant_id:merchantId,style:style,image_url:url},{onConflict:'merchant_id,style'});
-  _styleImagesCache[merchantId+'_'+style]=url;
+  await db.from('style_images').upsert({merchant_id:merchantId,style:style,image_url:url,storage_path:fileName},{onConflict:'merchant_id,style'});
+  _styleImagesCache[merchantId+'_'+style]={url:url,path:fileName};
   return url;
 }
 
 async function loadStyleImages(merchantId) {
-  var res=await db.from('style_images').select('style,image_url').eq('merchant_id',merchantId);
+  var res=await db.from('style_images').select('style,image_url,storage_path').eq('merchant_id',merchantId);
   (res.data||[]).forEach(function(row){
-    _styleImagesCache[merchantId+'_'+row.style]=row.image_url;
+    _styleImagesCache[merchantId+'_'+row.style]={url:row.image_url,path:row.storage_path||null};
   });
 }
 
 function getStyleImage(merchantId,style){
-  return _styleImagesCache[merchantId+'_'+style]||null;
+  var entry=_styleImagesCache[merchantId+'_'+style];
+  return entry ? (entry.url||entry) : null;
 }
 
 function openImageModal(url,style) {
@@ -4628,13 +4643,18 @@ async function openStyleImageModal(style, merchantId) {
 
   if(existing) {
     // Already has a photo - show it, offer to replace
-    _styleImagesCache[merchantId+'_'+style]=existing;
+    if(typeof _styleImagesCache[merchantId+'_'+style]==='object') {
+      _styleImagesCache[merchantId+'_'+style].url=existing;
+    } else {
+      _styleImagesCache[merchantId+'_'+style]={url:existing,path:null};
+    }
     $('si-body').innerHTML='<div style="text-align:center;margin-bottom:14px">'
       +'<img src="'+existing+'" style="max-width:100%;max-height:260px;border-radius:10px;object-fit:contain;border:1px solid var(--line)"></div>'
       +'<div style="background:var(--accent-soft);border:1px solid var(--accent);border-radius:9px;padding:10px 14px;font-size:12.5px;text-align:center">'
       +'Photo already linked to style <strong>'+style+'</strong>.<br>'
       +'<span style="color:var(--muted);font-size:11px">All POs of this style share the same photo.</span></div>';
     $('si-foot').innerHTML='<button class="btn" onclick="closeModal(\'ov-style-image\')">Close</button>'
+      +'<button class="btn danger" onclick="deleteStyleImage()">Delete photo</button>'
       +'<button class="btn" onclick="showSIUploadForm()">Replace photo</button>';
   } else {
     showSIUploadForm();
@@ -4682,6 +4702,37 @@ async function doSIUpload() {
     toast('Photo saved for '+_siStyle,'ok-t');
   }
   if(btn){btn.textContent='Upload photo';btn.style.pointerEvents='auto';}
+}
+
+
+async function deleteStyleImage() {
+  if (!confirm('Delete photo for style ' + _siStyle + '? This affects all POs of this style.')) return;
+  // Remove file from Supabase Storage using saved path
+  var entry = _styleImagesCache[_siMerchId + '_' + _siStyle];
+  var storagePath = entry && entry.path ? entry.path : null;
+  if (!storagePath) {
+    // Fallback: load path from DB
+    var dbRow = await db.from('style_images').select('storage_path').eq('merchant_id',_siMerchId).eq('style',_siStyle).maybeSingle();
+    storagePath = dbRow.data && dbRow.data.storage_path;
+  }
+  if (storagePath) {
+    var delRes = await db.storage.from('product-images').remove([storagePath]);
+    if (delRes.error) console.warn('Storage delete error:', delRes.error.message);
+    else console.log('File deleted from storage:', storagePath);
+  }
+  // Remove from style_images table
+  await db.from('style_images').delete().eq('merchant_id', _siMerchId).eq('style', _siStyle);
+  // Remove from cache
+  delete _styleImagesCache[_siMerchId + '_' + _siStyle];
+  closeModal('ov-style-image');
+  // Refresh board
+  if (S.view && !['dashboard','laying-goods','shipped','requests','my-requests','admin'].includes(S.view)) {
+    delete S.boardCache[S.view];
+    await loadBoardOrders(S.view);
+    await reloadSummaries(S.view);
+    renderBoard(S.view);
+  }
+  toast('Photo deleted', 'ok-t');
 }
 
 // ─── START ───
