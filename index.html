@@ -751,7 +751,7 @@ button.apv-chip{font-family:inherit}
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.2</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.3</p>
   </div>
 </div>
 
@@ -4018,21 +4018,21 @@ function renderRail() {
     if(asgn.length){html+='<div class="rail-label">My Merchants</div>';asgn.forEach(function(m){html+=mBtn(m);});}
     else html+='<div class="rail-label" style="color:var(--muted)">No merchants assigned</div>';
   } else if(isMerchant){
-    html+=ni(u.id,'&#x25A6;','My Board');
+    html+=ni(u.id,'&#x1F4CB;','My Board');
   }
   html+='<div class="rail-sep"></div>';
   var lgc=(S.layingGoods||[]).length;
-  html+=ni('laying-goods','[LG]','Laying Goods',lgc,lgc>0);
-  html+=ni('shipped','[SH]','Shipped',S.archive.length);
+  html+=ni('laying-goods','&#x1F4E6;','Laying Goods',lgc,lgc>0);
+  html+=ni('shipped','&#x2705;','Shipped',S.archive.length);
   if(can('inbox')){
     var pr=(S.tnaRequests||[]).filter(function(r2){return r2.status==='pending';}).length;
     var al=(S.alerts||[]).filter(function(a){return !a.dismissed;}).length;
     var ib=pr+al;
-    html+=ni('requests','[IN]','Inbox',ib,ib>0);
+    html+=ni('requests','&#x1F4EC;','Inbox',ib,ib>0);
   }
   if(isMerchant){
     var unr=(S.tnaRequests||[]).filter(function(r2){return r2.status!=='pending'&&!r2.merchant_seen;}).length;
-    html+=ni('my-requests','[MR]','My Requests',unr||(S.tnaRequests||[]).length,unr>0);
+    html+=ni('my-requests','&#x1F4CB;','My Requests',unr||(S.tnaRequests||[]).length,unr>0);
   }
   if(isAdmin){
     html+='<div class="rail-sep"></div>';
