@@ -752,7 +752,7 @@ button.apv-chip{font-family:inherit}
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-30</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.0</p>
   </div>
 </div>
 
@@ -1375,6 +1375,7 @@ async function startApp() {
   try { await loadNotes(); } catch(e) { console.error('loadNotes:', e); }
   try { await loadMemo(); } catch(e) { console.error('loadMemo:', e); }
   try { await loadTNARequests(); } catch(e) { console.error('loadTNARequests:', e); }
+  try { await loadLayingGoods(); } catch(e) { console.error('loadLayingGoods:', e); }
 
   cleanOldArchive();
   subscribeRealtime();
@@ -1569,6 +1570,7 @@ function render() {
   else if (S.view === 'requests') renderRequestsView();
   else if (S.view === 'my-requests') renderMyRequests();
   else if (S.view === 'admin') renderAdminPage();
+  else if (S.view === 'laying-goods') renderLayingGoods();
   else renderBoard(S.view);
 }
 
@@ -1591,6 +1593,7 @@ function setView(v) {
   else if (v === 'shipped' || v === 'archive') renderShippedPage();
   else if (v === 'requests') renderRequestsView();
   else if (v === 'my-requests') renderMyRequests();
+  else if (v === 'laying-goods') { renderLayingGoods(); return; }
   else if (v === 'admin') { try { renderAdminPage(); } catch(e) { console.error('renderAdminPage error:',e); $('content').innerHTML='<div style="padding:20px;color:red">Admin page error: '+e.message+'</div>'; } }
   else renderBoard(v);
 }
@@ -2211,6 +2214,7 @@ function openShip(ordId) {
 }
 
 async function confirmShip() {
+  if (S.layingGoods && S.shipTarget && S.layingGoods.find(function(x){ return x.id===S.shipTarget; })) { return confirmShipLaying(); }
   const boardO = S.boardCache[S.view] ? S.boardCache[S.view].find(x => x.id === S.shipTarget) : null;
   const o = boardO || S.orders.find(x => x.id === S.shipTarget);
   if (!o) return;
@@ -4645,6 +4649,16 @@ async function undoToLaying(ordId) {
 }
 
 
+
+function toggleSection(key) {
+  var el = document.getElementById('sec-' + key);
+  if (!el) return;
+  var arrow = el.previousElementSibling && el.previousElementSibling.querySelector('.rail-section-arrow');
+  var open = el.style.maxHeight !== '0px' && el.style.maxHeight !== '0';
+  el.style.maxHeight = open ? '0' : '2000px';
+  if (arrow) arrow.classList.toggle('open', !open);
+  localStorage.setItem('pt_sb_' + key, open ? '0' : '1');
+}
 // ─── START ───
 init();
 </script>
