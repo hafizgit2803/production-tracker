@@ -697,12 +697,11 @@ button.apv-chip{font-family:inherit}
 
 
 .insp-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;cursor:pointer;border:1.5px solid;transition:opacity .1s}
-.insp-chip:hover{opacity:.8}
 .insp-chip.pass{background:#ECFDF5;color:#065F46;border-color:#34D399}
 .insp-chip.fail{background:#FEF2F2;color:#991B1B;border-color:#FCA5A5}
 .insp-chip.hold{background:#FFFBEB;color:#92400E;border-color:#FDE68A}
 .insp-chip.pending{background:#F3F4F6;color:#6B7280;border-color:#D1D5DB}
-.insp-opt{padding:18px 10px;border-radius:10px;border:2px solid;font-size:14px;font-weight:700;cursor:pointer;line-height:1.6;transition:all .12s;background:none;width:100%}
+.insp-opt{padding:16px 10px;border-radius:10px;border:2px solid;font-size:14px;font-weight:700;cursor:pointer;line-height:1.6;transition:all .12s;background:none;width:100%}
 .insp-opt.pass{border-color:#34D399;color:#065F46}.insp-opt.pass:hover{background:#ECFDF5}
 .insp-opt.fail{border-color:#FCA5A5;color:#991B1B}.insp-opt.fail:hover{background:#FEF2F2}
 .insp-opt.hold{border-color:#FDE68A;color:#92400E}.insp-opt.hold:hover{background:#FFFBEB}
@@ -712,8 +711,8 @@ button.apv-chip{font-family:inherit}
 .lg-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .lg-filter button{padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:var(--panel);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500;color:var(--muted)}
 .lg-filter button.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.pl-warning{background:var(--amber-soft);border:1px solid #FDE68A;border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--amber)}
 .pl-locked{background:#F3F4F6;border:1px solid var(--line);border-radius:9px;padding:20px;text-align:center;color:var(--muted);font-size:13px}
+.pl-warning{background:var(--amber-soft);border:1px solid #FDE68A;border-radius:9px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:var(--amber)}
 .rail-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 8px 5px;cursor:pointer;user-select:none}
 .rail-section-arrow{font-size:9px;color:var(--muted);transition:transform .2s}
 .rail-section-arrow.open{transform:rotate(90deg)}
@@ -752,7 +751,7 @@ button.apv-chip{font-family:inherit}
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.0</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-1.2</p>
   </div>
 </div>
 
@@ -1026,7 +1025,7 @@ button.apv-chip{font-family:inherit}
   </div>
 </div>
 
-<!-- ═══ MODAL: PACKING LIST ═══ -->
+<!-- === PACKING LIST === -->
 <div class="ov" id="ov-packing-list" onclick="if(event.target===this)closeModal('ov-packing-list')">
   <div class="modal slim">
     <div class="m-h"><div><h3>Packing List</h3><div class="msub" id="pl-sub"></div></div>
@@ -1035,37 +1034,32 @@ button.apv-chip{font-family:inherit}
     <div class="m-f" id="pl-foot"><button class="btn" onclick="closeModal('ov-packing-list')">Cancel</button></div>
   </div>
 </div>
-
-<!-- ═══ MODAL: INSPECTION RESULT ═══ -->
+<!-- === INSPECTION === -->
 <div class="ov" id="ov-inspection" onclick="if(event.target===this)closeModal('ov-inspection')">
   <div class="modal slim">
     <div class="m-h"><div><h3>Inspection Result</h3><div class="msub" id="insp-sub"></div></div>
       <button class="btn" onclick="closeModal('ov-inspection')">Cancel</button></div>
     <div class="m-b">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:4px 0">
-        <button class="insp-opt pass" onclick="setInspection('pass')">&#x2713;<br>Pass</button>
-        <button class="insp-opt fail" onclick="setInspection('fail')">&#x2717;<br>Fail</button>
-        <button class="insp-opt hold" onclick="setInspection('hold')">&#x23F8;<br>Hold</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <button class="insp-opt pass" onclick="setInspection('pass')">&#x2713; Pass</button>
+        <button class="insp-opt fail" onclick="setInspection('fail')">&#x2717; Fail</button>
+        <button class="insp-opt hold" onclick="setInspection('hold')">Hold</button>
       </div>
     </div>
     <div class="m-f"><button class="btn" onclick="closeModal('ov-inspection')">Cancel</button></div>
   </div>
 </div>
-
-<!-- ═══ MODAL: LAYING GOODS EDIT ═══ -->
+<!-- === LAYING EDIT === -->
 <div class="ov" id="ov-laying-edit" onclick="if(event.target===this)closeModal('ov-laying-edit')">
   <div class="modal slim">
-    <div class="m-h"><div><h3>Edit Laying Goods</h3><div class="msub" id="le-sub"></div></div>
+    <div class="m-h"><div><h3>Edit Details</h3><div class="msub" id="le-sub"></div></div>
       <button class="btn" onclick="closeModal('ov-laying-edit')">Cancel</button></div>
     <div class="m-b">
       <div class="grid2">
         <div class="f"><label>CBM</label><input id="le-cbm" type="number" step="0.01" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
         <div class="f"><label>FRI Date</label><input id="le-fri" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
-        <div class="f"><label>Shipment Mode</label>
-          <select id="le-mode" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)">
-            <option value="sea">Sea</option><option value="air">Air</option>
-          </select></div>
-        <div class="f"><label>Packing List Qty</label><input id="le-plqty" type="number" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label>Shipment Mode</label><select id="le-mode" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"><option value="sea">Sea</option><option value="air">Air</option></select></div>
+        <div class="f"><label>PL Qty</label><input id="le-plqty" type="number" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
       </div>
     </div>
     <div class="m-f">
@@ -1376,6 +1370,7 @@ async function startApp() {
   try { await loadMemo(); } catch(e) { console.error('loadMemo:', e); }
   try { await loadTNARequests(); } catch(e) { console.error('loadTNARequests:', e); }
   try { await loadLayingGoods(); } catch(e) { console.error('loadLayingGoods:', e); }
+  try { await loadLayingGoods(); } catch(e) { console.error('loadLayingGoods:', e); }
 
   cleanOldArchive();
   subscribeRealtime();
@@ -1569,8 +1564,8 @@ function render() {
   else if (S.view === 'shipped' || S.view === 'archive') renderShippedPage();
   else if (S.view === 'requests') renderRequestsView();
   else if (S.view === 'my-requests') renderMyRequests();
-  else if (S.view === 'admin') renderAdminPage();
   else if (S.view === 'laying-goods') renderLayingGoods();
+  else if (S.view === 'admin') renderAdminPage();
   else renderBoard(S.view);
 }
 
@@ -1967,7 +1962,7 @@ async function renderBoard(uid) {
       + '<td>' + remCell + '</td>'
       + '<td style="white-space:nowrap">'
       + '<button class="btn sm" onclick="event.stopPropagation();openTNA(\'' + o.id + '\',\'' + division + '\')">TNA' + (ms.length ? ' <span style="color:var(--red)">&#9679;</span>' : '') + '</button>'
-      + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();openPackingList(\'' + o.id + '\')">&#x1F4E6; Packing List</button>' : '')
+      + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();openPackingList(\'' + o.id + '\')">Pack List</button>' : '')
       + (canEdit ? ' <button class="btn sm danger" style="padding:2px 6px;font-size:10px" onclick="event.stopPropagation();openDeleteOrder(\'' + o.id + '\',\'' + o.style + '\',\'' + o.buyer + '\')">&#x2715;</button>' : '')
       + '</td></tr>';
   }).join('');
@@ -2202,6 +2197,8 @@ async function setAct(ordId, mKey, val, division) {
 
 // ─── SHIP ───
 function openShip(ordId) {
+  S.shipTarget=ordId;
+  S.shipTarget = ordId;
   S.shipTarget = ordId;
   const o = (S.boardCache[S.view] || []).find(x => x.id === ordId) || S.orders.find(x => x.id === ordId);
   if (!o) return;
@@ -2214,6 +2211,7 @@ function openShip(ordId) {
 }
 
 async function confirmShip() {
+  if(S.layingGoods&&S.shipTarget&&(S.layingGoods||[]).find(function(x){return x.id===S.shipTarget;})){return confirmShipLaying();}
   if (S.layingGoods && S.shipTarget && S.layingGoods.find(function(x){ return x.id===S.shipTarget; })) { return confirmShipLaying(); }
   const boardO = S.boardCache[S.view] ? S.boardCache[S.view].find(x => x.id === S.shipTarget) : null;
   const o = boardO || S.orders.find(x => x.id === S.shipTarget);
@@ -3984,84 +3982,74 @@ async function deleteMerchant(uid, name) {
 
 // ─── RENDER RAIL (6-tier sidebar) ───
 function renderRail() {
-  var u = S.user;
-  if (!u) return;
-  var r = u.role;
-  var isAdmin   = r === 'admin';
-  var isMgmt    = r === 'management';
-  var isHOD     = r === 'hod';
-  var isAudit   = r === 'audit';
-  var isManager = r === 'manager';
-  var isMerchant= r === 'merchant';
-  var seeAll    = isAdmin || isMgmt || isHOD || isAudit;
-
-  var userRowEl = $('user-row');
-  if (userRowEl) {
-    userRowEl.innerHTML = '<div class="av">' + initials(u.name) + '</div>'
-      + '<div class="info"><div class="uname">' + u.name + '</div>'
-      + '<div class="urole">' + roleLabel(r) + '</div></div>';
+  var u=S.user; if(!u) return;
+  var r=u.role;
+  var isAdmin=r==='admin', isMgmt=r==='management', isHOD=r==='hod';
+  var isAudit=r==='audit', isManager=r==='manager', isMerchant=r==='merchant';
+  var seeAll=isAdmin||isMgmt||isHOD||isAudit;
+  var rb=$('rail-body'); if(!rb) return;
+  var tb=$('theme-btn');
+  if(tb){var dk=document.documentElement.getAttribute('data-theme')==='dark';tb.textContent=dk?'Light mode':'Dark mode';}
+  var ur=$('user-row');
+  if(ur) ur.innerHTML='<div class="av">'+initials(u.name)+'</div><div class="info"><div class="uname">'+u.name+'</div><div class="urole">'+roleLabel(r)+'</div></div>';
+  function ni(view,icon,label,count,badge){
+    var on=S.view===view?'on':'';
+    var cnt=count>0?(badge?'<span class="badge">'+count+'</span>':'<span class="ct">'+count+'</span>'):'';
+    return '<button class="ni '+on+'" onclick="setView(\''+view+'\')"><span class="av" style="font-size:12px">'+icon+'</span><span class="nm">'+label+'</span>'+cnt+'</button>';
   }
-  var tb = $('theme-btn');
-  if (tb) {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    tb.textContent = isDark ? '\u2600\uFE0F Light mode' : '\uD83C\uDF19 Dark mode';
+  function mBtn(m){
+    var on=S.view===m.id?'on':'';
+    var b=(S.notes||[]).filter(function(n){return !n.is_closed&&n.merchant_id===m.id;}).length;
+    return '<button class="ni '+on+'" onclick="setView(\''+m.id+'\')"><div class="av">'+initials(m.name)+'</div><div class="nm">'+m.name+'</div>'+(b?'<span class="badge">'+b+'</span>':'')+'</button>';
   }
-
-  function ni(view, icon, label, count, isBadge) {
-    var on = S.view === view ? 'on' : '';
-    var cntHtml = count > 0 ? (isBadge ? '<span class="badge">' + count + '</span>' : '<span class="ct">' + count + '</span>') : '';
-    return '<button class="ni ' + on + '" onclick="setView(\'' + view + '\')">'
-      + '<span class="av" style="font-size:12px">' + icon + '</span>'
-      + '<span class="nm">' + label + '</span>' + cntHtml + '</button>';
+  function sec(key,label,list){
+    if(!list.length) return '';
+    var open=localStorage.getItem('pt_sb_'+key)!=='0';
+    return '<div class="rail-section-hdr" onclick="toggleSection(\''+key+'\')"><div class="rail-label" style="padding:0;margin:0">'+label+'</div><span class="rail-section-arrow'+(open?' open':'')+'">&#x25B6;</span></div>'
+      +'<div class="rail-section-body" id="sec-'+key+'" style="max-height:'+(open?'2000px':'0')+'">'+list.map(mBtn).join('')+'</div>';
   }
-
-  function merchantBtn(m) {
-    var on = S.view === m.id ? 'on' : '';
-    var badge = (S.notes||[]).filter(function(n){ return !n.is_closed && n.merchant_id===m.id; }).length;
-    return '<button class="ni ' + on + '" onclick="setView(\'' + m.id + '\')">'
-      + '<div class="av">' + initials(m.name) + '</div>'
-      + '<div class="nm">' + m.name + '</div>'
-      + (badge ? '<span class="badge">' + badge + '</span>' : '') + '</button>';
+  var html=ni('dashboard','&#x2302;','Dashboard');
+  if(seeAll){
+    var sw=S.users.filter(function(u2){return u2.role==='merchant'&&u2.division!=='knit';});
+    var kn=S.users.filter(function(u2){return u2.role==='merchant'&&u2.division==='knit';});
+    html+=sec('sweater','Sweater',sw)+sec('knit','Knit',kn);
+  } else if(isManager){
+    var asgn=S.users.filter(function(u2){return u2.role==='merchant'&&S.myAssignments.includes(u2.id);});
+    if(asgn.length){html+='<div class="rail-label">My Merchants</div>';asgn.forEach(function(m){html+=mBtn(m);});}
+    else html+='<div class="rail-label" style="color:var(--muted)">No merchants assigned</div>';
+  } else if(isMerchant){
+    html+=ni(u.id,'&#x25A6;','My Board');
   }
-
-  var html = ni('dashboard', '&#x2302;', 'Dashboard');
-
-  if (seeAll) {
-    var sweater = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division!=='knit'; });
-    var knit    = S.users.filter(function(u2){ return u2.role==='merchant' && u2.division==='knit'; });
-    if (sweater.length) { html += '<div class="rail-label">Sweater</div>'; sweater.forEach(function(m){ html += merchantBtn(m); }); }
-    if (knit.length)    { html += '<div class="rail-label">Knit</div>';    knit.forEach(function(m){ html += merchantBtn(m); }); }
-  } else if (isManager) {
-    var assigned = S.users.filter(function(u2){ return u2.role==='merchant' && S.myAssignments.includes(u2.id); });
-    if (assigned.length) { html += '<div class="rail-label">My Merchants</div>'; assigned.forEach(function(m){ html += merchantBtn(m); }); }
-    else html += '<div class="rail-label" style="color:var(--muted)">No merchants assigned yet</div>';
-  } else if (isMerchant) {
-    html += ni(u.id, '&#x25A6;', 'My Board');
+  html+='<div class="rail-sep"></div>';
+  var lgc=(S.layingGoods||[]).length;
+  html+=ni('laying-goods','[LG]','Laying Goods',lgc,lgc>0);
+  html+=ni('shipped','[SH]','Shipped',S.archive.length);
+  if(can('inbox')){
+    var pr=(S.tnaRequests||[]).filter(function(r2){return r2.status==='pending';}).length;
+    var al=(S.alerts||[]).filter(function(a){return !a.dismissed;}).length;
+    var ib=pr+al;
+    html+=ni('requests','[IN]','Inbox',ib,ib>0);
   }
-
-  html += '<div class="rail-sep"></div>';
-  html += ni('shipped', '&#x2713;', 'Shipped', S.archive.length);
-
-  if (can('inbox')) {
-    var pendingReqs = (S.tnaRequests||[]).filter(function(r2){ return r2.status==='pending'; }).length;
-    var alerts = (S.alerts||[]).filter(function(a){ return !a.dismissed; }).length;
-    var inboxBadge = pendingReqs + alerts;
-    html += ni('requests', '&#x1F4EC;', 'Inbox', inboxBadge, inboxBadge > 0);
+  if(isMerchant){
+    var unr=(S.tnaRequests||[]).filter(function(r2){return r2.status!=='pending'&&!r2.merchant_seen;}).length;
+    html+=ni('my-requests','[MR]','My Requests',unr||(S.tnaRequests||[]).length,unr>0);
   }
-  if (isMerchant) {
-    var unread = (S.tnaRequests||[]).filter(function(r2){ return r2.status!=='pending'&&!r2.merchant_seen; }).length;
-    var total  = (S.tnaRequests||[]).length;
-    html += ni('my-requests', '&#x1F4CB;', 'My Requests', unread||total, unread>0);
+  if(isAdmin){
+    html+='<div class="rail-sep"></div>';
+    html+='<button class="ni'+(S.view==='admin'?' on':'')+'" onclick="setView(\'admin\')"><span class="av" style="font-size:12px">&#x2699;</span><span class="nm">Admin</span></button>';
   }
-  if (isAdmin) {
-    html += '<div class="rail-sep"></div>';
-    html += '<button class="ni ' + (S.view==='admin'?'on':'') + '" onclick="setView(\'admin\')">'
-      + '<span class="av" style="font-size:12px">&#x2699;</span>'
-      + '<span class="nm">Admin</span></button>';
-  }
+  rb.innerHTML=html;
+}
 
-  var rb = $('rail-body');
-  if (rb) rb.innerHTML = html;
+function toggleSection(key){
+  var el=document.getElementById('sec-'+key);
+  if(!el) return;
+  var hdr=el.previousElementSibling;
+  var arrow=hdr&&hdr.querySelector('.rail-section-arrow');
+  var open=el.style.maxHeight!=='0px'&&el.style.maxHeight!=='0';
+  el.style.maxHeight=open?'0':'2000px';
+  if(arrow) arrow.classList.toggle('open',!open);
+  localStorage.setItem('pt_sb_'+key,open?'0':'1');
 }
 
 // ─── LOAD TNA REQUESTS (6-tier) ───
@@ -4258,407 +4246,244 @@ function merchantMap_name(id) {
 }
 
 
-// ─── LAYING GOODS — FULL MODULE ───
+// === LAYING GOODS MODULE ===
+var _plOrdId=null, _lgFilter='all', _inspOrdId=null, _layingEditId=null;
 
-var _plOrdId = null;
-var _lgFilter = 'all';
-var _inspOrdId = null;
-var _layingEditId = null;
-
-// ── Load laying goods ──────────────────────────────────────────────────────
-async function loadLayingGoods() {
-  var q = db.from('orders').select('*').eq('stage', 'laying').order('ship_date', { ascending: true });
-  if (S.user.role === 'merchant') q = q.eq('merchant_id', S.user.id);
-  var { data } = await q;
-  S.layingGoods = data || [];
-  S.layingLoaded = true;
+async function loadLayingGoods(){
+  var r=S.user.role, q=db.from('orders').select('*').eq('stage','laying').order('ship_date',{ascending:true});
+  if(r==='merchant') q=q.eq('merchant_id',S.user.id);
+  var res=await q;
+  S.layingGoods=res.data||[];
+  S.layingLoaded=true;
 }
 
-// ── Open Packing List modal ────────────────────────────────────────────────
-function openPackingList(ordId) {
-  _plOrdId = ordId;
-  var o = (S.boardCache[S.view]||[]).find(function(x){ return x.id===ordId; })
-        || S.orders.find(function(x){ return x.id===ordId; }) || {};
-  $('pl-sub').textContent = (o.style||'') + (o.po_number ? ' / ' + o.po_number : '') + ' — ' + (o.buyer||'');
-  renderPackingListModal(o);
+function openPackingList(ordId){
+  _plOrdId=ordId;
+  var o=(S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;})||S.orders.find(function(x){return x.id===ordId;})||{};
+  $('pl-sub').textContent=(o.style||'')+(o.po_number?' / '+o.po_number:'')+' -- '+(o.buyer||'');
+  var packed=o.prod_packing||0, qty=o.qty||0;
+  if(qty>0&&packed>=qty){
+    var today0=new Date().toISOString().slice(0,10);
+    $('pl-body').innerHTML='<div style="background:#ECFDF5;border:1px solid #86EFAC;border-radius:9px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#065F46;font-weight:600">Packing complete - '+fmt(packed)+' pcs</div>'
+      +'<div class="grid2"><div class="f"><label>Packing list date</label><input id="pl-date" type="date" value="'+today0+'" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>'
+      +'<div class="f"><label>Packing list qty</label><input id="pl-qty" type="number" value="'+packed+'" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" oninput="checkShortPL('+qty+')"></div></div>'
+      +'<div id="pl-short-warn" style="display:none" class="pl-warning">Short production - packing list qty is less than order qty.</div>';
+    $('pl-foot').innerHTML='<button class="btn" onclick="closeModal(\'ov-packing-list\')">Cancel</button>'
+      +'<button class="btn pri" onclick="confirmPackingList()">Production Done - Move to Laying Goods</button>';
+  } else {
+    var pct=qty>0?Math.round(100*packed/qty):0;
+    $('pl-body').innerHTML='<div class="pl-locked"><div style="font-size:28px;margin-bottom:10px">[PL]</div>'
+      +'<div style="font-weight:600;margin-bottom:6px">Packing not yet complete</div>'
+      +'<div style="font-size:12.5px;margin-bottom:12px">Packed '+fmt(packed)+' of '+fmt(qty)+' pcs ('+pct+'%)</div>'
+      +'<div style="width:100%;height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:var(--accent);border-radius:3px"></div></div>'
+      +'<div style="margin-top:10px;font-size:12px;color:var(--muted)">Complete packing production to enable this form.</div></div>';
+    $('pl-foot').innerHTML='<button class="btn" onclick="closeModal(\'ov-packing-list\')">Close</button>';
+  }
   openModal('ov-packing-list');
 }
 
-function renderPackingListModal(o) {
-  var packed = o.prod_packing || 0;
-  var qty = o.qty || 0;
-  var packingDone = qty > 0 && packed >= qty;
-  var today0 = new Date().toISOString().slice(0,10);
+function checkShortPL(oqty){var el=$('pl-short-warn'),q=$('pl-qty');if(el&&q) el.style.display=(parseInt(q.value)||0)<oqty?'block':'none';}
 
-  if (!packingDone) {
-    var pct = qty > 0 ? Math.round(100*packed/qty) : 0;
-    $('pl-body').innerHTML = '<div class="pl-locked">'
-      + '<div style="font-size:28px;margin-bottom:10px">&#x1F4E6;</div>'
-      + '<div style="font-weight:600;margin-bottom:6px">Packing not yet complete</div>'
-      + '<div style="font-size:12.5px;margin-bottom:12px">Packed ' + fmt(packed) + ' of ' + fmt(qty) + ' pcs (' + pct + '%)</div>'
-      + '<div style="width:100%;height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden">'
-      + '<div style="width:' + pct + '%;height:100%;background:var(--accent);border-radius:3px"></div></div>'
-      + '<div style="margin-top:10px;font-size:12px;color:var(--muted)">Complete packing production to enable the packing list.</div></div>';
-    $('pl-foot').innerHTML = '<button class="btn" onclick="closeModal(\'ov-packing-list\')">Close</button>';
-    return;
-  }
-
-  $('pl-body').innerHTML = '<div style="margin-bottom:14px;background:var(--green-soft);border:1px solid #86EFAC;border-radius:9px;padding:10px 14px;font-size:12.5px;color:var(--green);font-weight:600">'
-    + '&#x2713; Packing complete — ' + fmt(packed) + ' pcs</div>'
-    + '<div class="grid2">'
-    + '<div class="f"><label>Packing list date</label><input id="pl-date" type="date" value="' + today0 + '" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>'
-    + '<div class="f"><label>Packing list qty (pcs)</label><input id="pl-qty" type="number" value="' + packed + '" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" oninput="checkShortPL(' + qty + ')"></div>'
-    + '</div>'
-    + '<div id="pl-short-warn" style="display:none" class="pl-warning">&#x26A0; Short — packing list qty is less than order qty. This will be flagged as a short shipment.</div>';
-  $('pl-foot').innerHTML = '<button class="btn" onclick="closeModal(\'ov-packing-list\')">Cancel</button>'
-    + '<button class="btn pri" onclick="confirmPackingList()">&#x2705; Production Done — Move to Laying Goods</button>';
-}
-
-function checkShortPL(orderQty) {
-  var el = $('pl-short-warn'), qEl = $('pl-qty');
-  if (!el || !qEl) return;
-  var v = parseInt(qEl.value)||0;
-  el.style.display = v < orderQty ? 'block' : 'none';
-}
-
-async function confirmPackingList() {
-  var dateEl = $('pl-date'), qtyEl = $('pl-qty');
-  if (!dateEl||!qtyEl) return;
-  var plDate = dateEl.value, plQty = parseInt(qtyEl.value)||0;
-  if (!plDate) { toast('Please enter the packing list date','err'); return; }
-  if (!plQty)  { toast('Please enter the packing list quantity','err'); return; }
-
-  var o = (S.boardCache[S.view]||[]).find(function(x){ return x.id===_plOrdId; })
-        || S.orders.find(function(x){ return x.id===_plOrdId; }) || {};
-  var shortQty = plQty < (o.qty||0) ? (o.qty||0) - plQty : 0;
-
-  var { error } = await db.from('orders').update({
-    stage: 'laying',
-    packing_list_date: plDate,
-    packing_list_qty: plQty,
-    short_qty: shortQty || null,
-    updated_at: new Date().toISOString(),
-    updated_by: S.user.name
-  }).eq('id', _plOrdId);
-
-  if (error) { toast('Error: ' + error.message, 'err'); return; }
-
-  if (shortQty > 0) {
-    toast('⚠ Short production — ' + fmt(shortQty) + ' pcs short. Flagged.', 'err');
-  } else {
-    toast('✓ Production complete — moved to Laying Goods', 'ok-t');
-  }
-
-  // Clear board cache for this merchant
-  if (S.view) delete S.boardCache[S.view];
-  S.layingLoaded = false;
+async function confirmPackingList(){
+  var dEl=$('pl-date'),qEl=$('pl-qty');
+  if(!dEl||!qEl) return;
+  var plDate=dEl.value, plQty=parseInt(qEl.value)||0;
+  if(!plDate){toast('Enter packing list date','err');return;}
+  if(!plQty){toast('Enter packing list qty','err');return;}
+  var o=(S.boardCache[S.view]||[]).find(function(x){return x.id===_plOrdId;})||S.orders.find(function(x){return x.id===_plOrdId;})||{};
+  var shortQty=plQty<(o.qty||0)?(o.qty||0)-plQty:0;
+  var res=await db.from('orders').update({stage:'laying',packing_list_date:plDate,packing_list_qty:plQty,short_qty:shortQty||null,updated_at:new Date().toISOString(),updated_by:S.user.name}).eq('id',_plOrdId);
+  if(res.error){toast('Error: '+res.error.message,'err');return;}
+  if(shortQty>0) toast('Short production - '+fmt(shortQty)+' pcs short','err');
+  else toast('Production done - moved to Laying Goods','ok-t');
+  if(S.view) delete S.boardCache[S.view];
+  S.layingLoaded=false;
   await loadDashOrders();
   closeModal('ov-packing-list');
   render();
 }
 
-// ── Render Laying Goods page ────────────────────────────────────────────────
-async function renderLayingGoods() {
-  $('crumb').textContent = 'Laying Goods';
-  $('page-title').textContent = 'Laying Goods';
-  $('stamp').innerHTML = '';
-  $('act-row').innerHTML = '';
-
-  if (!S.layingLoaded) {
-    $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading…</div>';
+async function renderLayingGoods(){
+  $('crumb').textContent='Laying Goods';
+  $('page-title').textContent='Laying Goods';
+  $('page-sub').innerHTML='';
+  $('stamp').innerHTML='';
+  $('act-row').innerHTML='';
+  if(!S.layingLoaded){
+    $('content').innerHTML='<div class="loading"><span class="spin"></span> Loading...</div>';
     await loadLayingGoods();
   }
-
-  var goods = S.layingGoods;
-  var isMerchant = S.user.role === 'merchant';
-
-  // Apply filter
-  var filtered = goods.filter(function(o) {
-    if (_lgFilter === 'awaiting') return !o.inspection_result;
-    if (_lgFilter === 'done')     return !!o.inspection_result;
-    if (_lgFilter === 'air')      return o.shipment_mode === 'air';
+  var goods=S.layingGoods||[];
+  var isMerchant=S.user.role==='merchant';
+  var filtered=goods.filter(function(o){
+    if(_lgFilter==='awaiting') return !o.inspection_result;
+    if(_lgFilter==='done') return !!o.inspection_result;
+    if(_lgFilter==='air') return o.shipment_mode==='air';
     return true;
   });
-
-  $('page-sub').innerHTML = goods.length + ' orders · ' + filtered.length + ' shown';
-
-  var filterHtml = '<div class="lg-filter">'
-    + ['all','awaiting','done','air'].map(function(f) {
-        var labels = {all:'All',awaiting:'Awaiting Inspection',done:'Inspection Done',air:'&#x2708; Air shipments'};
-        return '<button class="' + (_lgFilter===f?'on':'') + '" onclick="setLGFilter(\'' + f + '\')">' + labels[f] + '</button>';
-      }).join('') + '</div>';
-
-  if (!filtered.length) {
-    $('content').innerHTML = filterHtml + '<div class="card"><div class="empty"><h4>No orders here</h4><div>Orders move here once production is complete.</div></div></div>';
-    return;
-  }
-
-  // Group by merchant for seniors, flat for merchant
-  var html = filterHtml;
-
-  if (isMerchant) {
-    html += renderLGTable(filtered, false);
-  } else {
-    var merchants = S.users.filter(function(u){ return u.role==='merchant'; });
-    merchants.forEach(function(m) {
-      var mOrders = filtered.filter(function(o){ return o.merchant_id===m.id; });
-      if (!mOrders.length) return;
-      html += '<div style="margin-bottom:20px">'
-        + '<h3 style="font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'
-        + m.name + '<span class="div-badge ' + (m.division||'sweater') + '" style="margin-left:8px">' + (m.division||'sweater') + '</span>'
-        + '<span style="font-size:12px;font-weight:400;color:var(--muted);margin-left:8px">' + mOrders.length + ' orders</span></h3>'
-        + renderLGTable(mOrders, true)
-        + '</div>';
+  $('page-sub').innerHTML=goods.length+' orders';
+  var fHtml='<div class="lg-filter">'
+    +['all','awaiting','done','air'].map(function(f){var lb={all:'All',awaiting:'Awaiting Inspection',done:'Inspection Done',air:'Air shipments'};return '<button class="'+((_lgFilter===f)?'on':'')+'" onclick="setLGFilter(\''+f+'\')">'+lb[f]+'</button>';}).join('')+'</div>';
+  if(!filtered.length){$('content').innerHTML=fHtml+'<div class="card"><div class="empty"><h4>No orders</h4><p>Orders appear here once production is complete.</p></div></div>';return;}
+  var html=fHtml;
+  if(isMerchant){html+=lgTable(filtered,false);}
+  else{
+    var merchants=S.users.filter(function(u){return u.role==='merchant';});
+    merchants.forEach(function(m){
+      var mo=filtered.filter(function(o){return o.merchant_id===m.id;});
+      if(!mo.length) return;
+      html+='<div style="margin-bottom:20px"><h3 style="font-family:var(--serif);font-size:16px;font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">'+m.name+'<span style="font-size:12px;font-weight:400;color:var(--muted);margin-left:8px">'+mo.length+' orders</span></h3>'+lgTable(mo,false)+'</div>';
     });
   }
-
-  $('content').innerHTML = html;
+  $('content').innerHTML=html;
 }
 
-function setLGFilter(f) {
-  _lgFilter = f;
-  renderLayingGoods();
-}
+function setLGFilter(f){_lgFilter=f;renderLayingGoods();}
 
-function renderLGTable(orders, showMerch) {
-  var rows = orders.map(function(o) {
-    var dl = daysTo(o.ship_date);
-    var dlHtml = dl===null ? '—' : dl<0 ? '<span class="chip bad" style="font-size:10px">'+dl+'d</span>' : dl<=10 ? '<span class="chip warn" style="font-size:10px">'+dl+'d</span>' : '<span style="font-size:11px">'+dl+'d</span>';
-    var inspResult = o.inspection_result || 'pending';
-    var inspHtml = '<button class="insp-chip ' + inspResult + '" data-uid="' + o.id + '" onclick="openInspection(this.dataset.uid)">'
-      + (inspResult==='pass'?'&#x2713; Pass':inspResult==='fail'?'&#x2717; Fail':inspResult==='hold'?'&#x23F8; Hold':'&#x23F3; Pending')
-      + '</button>';
-    var modeHtml = '<span class="mode-chip ' + (o.shipment_mode||'sea') + '">'
-      + (o.shipment_mode==='air'?'&#x2708; Air':'&#x1F6A2; Sea') + '</span>';
-    var shortHtml = o.short_qty ? '<span class="chip warn" style="font-size:10px;margin-left:4px">Short ' + fmt(o.short_qty) + '</span>' : '';
-    var canAct = S.user.role === 'admin' || S.user.id === o.merchant_id;
-
+function lgTable(orders,showM){
+  var rows=orders.map(function(o){
+    var dl=daysTo(o.ship_date);
+    var dlH=dl===null?'--':dl<0?'<span class="chip bad" style="font-size:10px">'+dl+'d</span>':dl<=10?'<span class="chip warn" style="font-size:10px">'+dl+'d</span>':'<span style="font-size:11px">'+dl+'d</span>';
+    var ir=o.inspection_result||'pending';
+    var irLabel={pass:'Pass',fail:'Fail',hold:'Hold',pending:'Pending'}[ir]||ir;
+    var inspH='<button class="insp-chip '+ir+'" data-uid="'+o.id+'" onclick="openInspection(this.dataset.uid)">'+irLabel+'</button>';
+    var modeH='<span class="mode-chip '+(o.shipment_mode||'sea')+'">'+(o.shipment_mode==='air'?'Air':'Sea')+'</span>';
+    var canAct=S.user.role==='admin'||S.user.id===o.merchant_id;
+    var shortH=o.short_qty?'<span class="chip warn" style="font-size:10px;margin-left:4px">Short '+fmt(o.short_qty)+'</span>':'';
     return '<tr>'
-      + (showMerch ? '' : '')
-      + '<td class="sty">' + o.style + (o.po_number ? '<div style="font-size:10px;color:var(--muted);font-family:var(--mono)">' + o.po_number + '</div>' : '') + '</td>'
-      + '<td>' + (o.buyer||'—') + '</td>'
-      + '<td class="num">' + fmt(o.packing_list_qty||o.qty) + shortHtml + '</td>'
-      + '<td class="num">' + (o.fob||0).toFixed(2) + '</td>'
-      + '<td class="num">' + money((o.packing_list_qty||o.qty||0)*(o.fob||0)) + '</td>'
-      + '<td class="num">' + (o.cbm||'—') + '</td>'
-      + '<td>' + short(o.ship_date) + '</td>'
-      + '<td>' + dlHtml + '</td>'
-      + '<td>' + (o.fri_date ? short(o.fri_date) : '—') + '</td>'
-      + '<td>' + inspHtml + '</td>'
-      + '<td>' + modeHtml + '</td>'
-      + '<td><button class="btn sm" data-uid="' + o.id + '" onclick="openLGDetails(this.dataset.uid)">Details</button></td>'
-      + '<td style="white-space:nowrap">'
-      + (canAct ? '<button class="btn sm" data-uid="' + o.id + '" onclick="openLayingEdit(this.dataset.uid)" style="margin-right:4px">Edit</button>' : '')
-      + '<button class="btn sm danger" data-uid="' + o.id + '" onclick="undoToLive(this.dataset.uid)" style="margin-right:4px">&#x21A9; Undo</button>'
-      + (canAct ? '<button class="btn sm pri" data-uid="' + o.id + '" onclick="openShipFromLaying(this.dataset.uid)">Ship</button>' : '')
-      + '</td></tr>';
+      +'<td class="sty">'+o.style+(o.po_number?'<div style="font-size:10px;color:var(--muted);font-family:var(--mono)">'+o.po_number+'</div>':'')+'</td>'
+      +'<td>'+(o.buyer||'--')+'</td>'
+      +'<td class="num">'+fmt(o.packing_list_qty||o.qty)+shortH+'</td>'
+      +'<td class="num">'+((o.fob||0).toFixed(2))+'</td>'
+      +'<td class="num">'+money((o.packing_list_qty||o.qty||0)*(o.fob||0))+'</td>'
+      +'<td class="num">'+(o.cbm||'--')+'</td>'
+      +'<td>'+short(o.ship_date)+'</td>'
+      +'<td>'+dlH+'</td>'
+      +'<td>'+(o.fri_date?short(o.fri_date):'--')+'</td>'
+      +'<td>'+inspH+'</td>'
+      +'<td>'+modeH+'</td>'
+      +'<td><button class="btn sm" data-uid="'+o.id+'" onclick="openLGDetails(this.dataset.uid)">Details</button></td>'
+      +'<td style="white-space:nowrap">'
+      +(canAct?'<button class="btn sm" data-uid="'+o.id+'" onclick="openLayingEdit(this.dataset.uid)">Edit</button> ':'')
+      +'<button class="btn sm danger" data-uid="'+o.id+'" onclick="undoToLive(this.dataset.uid)">Undo</button>'
+      +(canAct?' <button class="btn sm pri" data-uid="'+o.id+'" onclick="openShipFromLaying(this.dataset.uid)">Ship</button>':'')
+      +'</td></tr>';
   }).join('');
-
   return '<div class="card"><div class="scroller"><table>'
-    + '<thead><tr>'
-    + '<th>Style / PO</th><th>Buyer</th><th class="num">PL Qty</th>'
-    + '<th class="num">FOB</th><th class="num">Value</th><th class="num">CBM</th>'
-    + '<th>Ship date</th><th class="num">Days</th><th>FRI date</th>'
-    + '<th>Inspection</th><th>Mode</th><th></th><th></th>'
-    + '</tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+    +'<thead><tr><th>Style/PO</th><th>Buyer</th><th class="num">PL Qty</th><th class="num">FOB</th><th class="num">Value</th><th class="num">CBM</th><th>Ship Date</th><th class="num">Days</th><th>FRI</th><th>Inspection</th><th>Mode</th><th></th><th></th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div></div>';
 }
 
-// ── Inspection ─────────────────────────────────────────────────────────────
-function openInspection(ordId) {
-  _inspOrdId = ordId;
-  var o = S.layingGoods.find(function(x){ return x.id===ordId; }) || {};
-  $('insp-sub').textContent = (o.style||'') + (o.po_number?' / '+o.po_number:'') + ' — ' + (o.buyer||'');
+function openInspection(ordId){
+  _inspOrdId=ordId;
+  var o=(S.layingGoods||[]).find(function(x){return x.id===ordId;})||{};
+  $('insp-sub').textContent=(o.style||'')+(o.po_number?' / '+o.po_number:'')+' -- '+(o.buyer||'');
   openModal('ov-inspection');
 }
 
-async function setInspection(result) {
-  if (!_inspOrdId) return;
-  var { error } = await db.from('orders').update({
-    inspection_result: result,
-    updated_at: new Date().toISOString()
-  }).eq('id', _inspOrdId);
-  if (error) { toast('Error', 'err'); return; }
-
-  // If air shipment — flag in sidebar/inbox (future enhancement)
-  var o = S.layingGoods.find(function(x){ return x.id===_inspOrdId; }) || {};
-  if (o.shipment_mode === 'air') toast('⚠ Air shipment — seniors will be notified', 'err');
-
-  var i = S.layingGoods.findIndex(function(x){ return x.id===_inspOrdId; });
-  if (i > -1) S.layingGoods[i].inspection_result = result;
+async function setInspection(result){
+  if(!_inspOrdId) return;
+  var res=await db.from('orders').update({inspection_result:result,updated_at:new Date().toISOString()}).eq('id',_inspOrdId);
+  if(res.error){toast('Error','err');return;}
+  var o=(S.layingGoods||[]).find(function(x){return x.id===_inspOrdId;});
+  if(o){o.inspection_result=result;if(o.shipment_mode==='air') toast('Air shipment - seniors will be notified','err');}
   closeModal('ov-inspection');
-  toast('Inspection marked: ' + result, 'ok-t');
+  toast('Inspection: '+result,'ok-t');
   renderLayingGoods();
 }
 
-// ── Laying Goods Edit ──────────────────────────────────────────────────────
-function openLayingEdit(ordId) {
-  _layingEditId = ordId;
-  var o = S.layingGoods.find(function(x){ return x.id===ordId; }) || {};
-  $('le-sub').textContent = (o.style||'') + (o.po_number?' / '+o.po_number:'');
-  $('le-cbm').value   = o.cbm   || '';
-  $('le-fri').value   = o.fri_date || '';
-  $('le-mode').value  = o.shipment_mode || 'sea';
-  $('le-plqty').value = o.packing_list_qty || o.qty || '';
+function openLayingEdit(ordId){
+  _layingEditId=ordId;
+  var o=(S.layingGoods||[]).find(function(x){return x.id===ordId;})||{};
+  $('le-sub').textContent=(o.style||'')+(o.po_number?' / '+o.po_number:'');
+  $('le-cbm').value=o.cbm||'';
+  $('le-fri').value=o.fri_date||'';
+  $('le-mode').value=o.shipment_mode||'sea';
+  $('le-plqty').value=o.packing_list_qty||o.qty||'';
   openModal('ov-laying-edit');
 }
 
-async function saveLayingEdit() {
-  if (!_layingEditId) return;
-  var { error } = await db.from('orders').update({
-    cbm:              parseFloat($('le-cbm').value)||null,
-    fri_date:         $('le-fri').value||null,
-    shipment_mode:    $('le-mode').value,
-    packing_list_qty: parseInt($('le-plqty').value)||null,
-    updated_at:       new Date().toISOString()
-  }).eq('id', _layingEditId);
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  var i = S.layingGoods.findIndex(function(x){ return x.id===_layingEditId; });
-  if (i > -1) {
-    S.layingGoods[i].cbm = parseFloat($('le-cbm').value)||null;
-    S.layingGoods[i].fri_date = $('le-fri').value||null;
-    S.layingGoods[i].shipment_mode = $('le-mode').value;
-    S.layingGoods[i].packing_list_qty = parseInt($('le-plqty').value)||null;
-  }
+async function saveLayingEdit(){
+  if(!_layingEditId) return;
+  var upd={cbm:parseFloat($('le-cbm').value)||null,fri_date:$('le-fri').value||null,shipment_mode:$('le-mode').value,packing_list_qty:parseInt($('le-plqty').value)||null,updated_at:new Date().toISOString()};
+  var res=await db.from('orders').update(upd).eq('id',_layingEditId);
+  if(res.error){toast('Error: '+res.error.message,'err');return;}
+  var o=(S.layingGoods||[]).find(function(x){return x.id===_layingEditId;});
+  if(o){Object.assign(o,upd);}
   closeModal('ov-laying-edit');
   toast('Saved');
   renderLayingGoods();
 }
 
-// ── Details chip ────────────────────────────────────────────────────────────
-function openLGDetails(ordId) {
-  var o = S.layingGoods.find(function(x){ return x.id===ordId; });
-  if (!o) return;
-  $('od-title').textContent = (o.style||'') + (o.po_number?' / '+o.po_number:'');
-  $('od-sub').textContent = (o.buyer||'') + ' · ' + fmt(o.qty) + ' pcs · FOB ' + (o.fob||0).toFixed(2) + ' · Ships ' + short(o.ship_date);
-  $('od-body').innerHTML = buildOrderDetailHtml(o);
+function openLGDetails(ordId){
+  var o=(S.layingGoods||[]).find(function(x){return x.id===ordId;});
+  if(!o) return;
+  $('od-title').textContent=(o.style||'')+(o.po_number?' / '+o.po_number:'');
+  $('od-sub').textContent=(o.buyer||'')+' - '+fmt(o.qty)+' pcs - Ships '+short(o.ship_date);
+  var rows=[['Style',o.style||'--'],['PO',o.po_number||'--'],['Buyer',o.buyer||'--'],['Order qty',fmt(o.qty)+' pcs'],['FOB',((o.fob||0).toFixed(2))+' USD'],['Value',money((o.qty||0)*(o.fob||0))],['Ship date',short(o.ship_date)],['PL qty',fmt(o.packing_list_qty)],['PL date',short(o.packing_list_date)],['CBM',o.cbm||'--'],['FRI date',short(o.fri_date)],['Inspection',o.inspection_result||'Pending'],['Mode',o.shipment_mode||'sea'],['Short qty',o.short_qty?fmt(o.short_qty)+' pcs':'None']];
+  $('od-body').innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px">'+rows.map(function(r){return '<tr style="border-bottom:1px solid #F0EDE4"><td style="padding:8px 10px;color:var(--muted);font-size:11.5px;width:130px">'+r[0]+'</td><td style="padding:8px 10px;font-weight:500">'+r[1]+'</td></tr>';}).join('')+'</table>';
   openModal('ov-od');
 }
 
-function buildOrderDetailHtml(o) {
-  var rows = [
-    ['Style', o.style||'—'], ['PO Number', o.po_number||'—'], ['Buyer', o.buyer||'—'],
-    ['Buying house', o.house||'—'], ['Gauge', o.gauge||'—'], ['Colour', o.color||'—'],
-    ['Composition', o.comp||'—'], ['Order qty', fmt(o.qty)+' pcs'],
-    ['FOB', (o.fob||0).toFixed(2)+' USD'], ['Total value', money((o.qty||0)*(o.fob||0))],
-    ['Ship date', short(o.ship_date)], ['Packing list qty', fmt(o.packing_list_qty)],
-    ['Packing list date', short(o.packing_list_date)], ['CBM', o.cbm||'—'],
-    ['FRI date', short(o.fri_date)], ['Inspection', o.inspection_result||'Pending'],
-    ['Shipment mode', o.shipment_mode||'sea'], ['Short qty', o.short_qty?fmt(o.short_qty)+' pcs':'None'],
-  ];
-  return '<table style="width:100%;border-collapse:collapse;font-size:13px">'
-    + rows.map(function(r){
-        return '<tr style="border-bottom:1px solid #F0EDE4">'
-          + '<td style="padding:8px 10px;color:var(--muted);font-size:11.5px;width:140px">' + r[0] + '</td>'
-          + '<td style="padding:8px 10px;font-weight:500">' + r[1] + '</td></tr>';
-      }).join('') + '</table>';
-}
-
-// ── Undo flows ─────────────────────────────────────────────────────────────
-async function undoToLive(ordId) {
-  if (!confirm('Move this order back to Live Orders?')) return;
-  var { error } = await db.from('orders').update({
-    stage: 'live',
-    packing_list_date: null, packing_list_qty: null,
-    cbm: null, fri_date: null, inspection_result: null,
-    shipment_mode: 'sea', short_qty: null,
-    updated_at: new Date().toISOString()
-  }).eq('id', ordId);
-  if (error) { toast('Error','err'); return; }
-  S.layingGoods = S.layingGoods.filter(function(x){ return x.id!==ordId; });
-  S.layingLoaded = false;
-  delete S.boardCache[S.view];
+async function undoToLive(ordId){
+  if(!confirm('Move back to Live Orders?')) return;
+  var res=await db.from('orders').update({stage:'live',packing_list_date:null,packing_list_qty:null,cbm:null,fri_date:null,inspection_result:null,shipment_mode:'sea',short_qty:null,updated_at:new Date().toISOString()}).eq('id',ordId);
+  if(res.error){toast('Error','err');return;}
+  S.layingGoods=(S.layingGoods||[]).filter(function(x){return x.id!==ordId;});
+  S.layingLoaded=false;
+  if(S.view) delete S.boardCache[S.view];
   await loadDashOrders();
   toast('Moved back to Live Orders');
   renderLayingGoods();
   renderRail();
 }
 
-// ── Ship from Laying Goods ─────────────────────────────────────────────────
-var _layingShipId = null;
-function openShipFromLaying(ordId) {
-  _layingShipId = ordId;
-  var o = S.layingGoods.find(function(x){ return x.id===ordId; }) || {};
-  S.shipTarget = ordId;
-  $('ship_qty_actual').value = o.packing_list_qty || o.qty || '';
-  $('ship-sub').textContent = (o.style||'') + (o.po_number?' / '+o.po_number:'') + ' — ' + fmt(o.packing_list_qty||o.qty||0) + ' pcs';
-  $('ship_date_actual').value = new Date().toISOString().slice(0,10);
-  $('confirm-ship-btn').disabled = false;
-  $('confirm-ship-btn').textContent = 'Confirm shipped';
-  openModal('ov-ship');
-}
-
-// Override confirmShip to update stage correctly
-var _originalConfirmShip = null;
-async function confirmShipLaying() {
-  var o = S.layingGoods.find(function(x){ return x.id===S.shipTarget; });
-  if (!o) { await confirmShip(); return; }
-  $('confirm-ship-btn').disabled = true;
-  $('confirm-ship-btn').textContent = 'Saving...';
-  var shippedOn  = $('ship_date_actual').value || new Date().toISOString().slice(0,10);
-  var shippedQty = parseInt($('ship_qty_actual').value) || o.packing_list_qty || o.qty || 0;
-  var planShip = o.plan_ship || o.ship_date;
-  var isLate  = planShip && shippedOn > planShip;
-  var isShort = shippedQty < (o.qty||0);
-  var shortQty = isShort ? (o.qty||0) - shippedQty : 0;
-  var daysLate = isLate ? Math.round((new Date(shippedOn)-new Date(planShip))/86400000) : 0;
-  var valueLost = shortQty * (o.fob||0);
-
-  var { error } = await db.from('orders').update({
-    stage: 'shipped', shipped: true,
-    shipped_on: shippedOn, shipped_qty: shippedQty,
-    updated_at: new Date().toISOString(), updated_by: S.user.name
-  }).eq('id', S.shipTarget);
-
-  if (!error) {
-    if (isLate || isShort) {
-      await db.from('shipment_alerts').insert({
-        order_id: o.id, style: o.style, buyer: o.buyer, merchant_id: o.merchant_id,
-        alert_type: isLate&&isShort?'both':isLate?'late':'short',
-        shipped_qty: shippedQty, short_qty: shortQty, days_late: daysLate, value_lost: valueLost
-      });
-    }
-    S.layingGoods = S.layingGoods.filter(function(x){ return x.id!==S.shipTarget; });
-    S.layingLoaded = false;
-    S.archiveLoaded = false;
-    closeModal('ov-ship');
-    await loadDashOrders();
-    toast('Shipped successfully', 'ok-t');
-    renderLayingGoods();
-    renderRail();
-  } else { toast('Error: '+error.message,'err'); }
-  $('confirm-ship-btn').disabled = false;
-  $('confirm-ship-btn').textContent = 'Confirm shipped';
-}
-
-// Undo from Shipped → Laying Goods
-async function undoToLaying(ordId) {
-  if (!confirm('Move this order back to Laying Goods?')) return;
-  var { error } = await db.from('orders').update({
-    stage: 'laying', shipped: false,
-    shipped_on: null, shipped_qty: null,
-    updated_at: new Date().toISOString()
-  }).eq('id', ordId);
-  if (error) { toast('Error','err'); return; }
-  await db.from('shipment_alerts').delete().eq('order_id', ordId);
-  S.archiveLoaded = false;
-  S.archive = S.archive.filter(function(x){ return x.id!==ordId; });
-  S.layingLoaded = false;
+async function undoToLaying(ordId){
+  if(!confirm('Move back to Laying Goods?')) return;
+  var res=await db.from('orders').update({stage:'laying',shipped:false,shipped_on:null,shipped_qty:null,updated_at:new Date().toISOString()}).eq('id',ordId);
+  if(res.error){toast('Error','err');return;}
+  await db.from('shipment_alerts').delete().eq('order_id',ordId);
+  S.archiveLoaded=false;
+  S.archive=(S.archive||[]).filter(function(x){return x.id!==ordId;});
+  S.layingLoaded=false;
   toast('Moved back to Laying Goods');
   renderShippedPage();
   renderRail();
 }
 
-
-
-function toggleSection(key) {
-  var el = document.getElementById('sec-' + key);
-  if (!el) return;
-  var arrow = el.previousElementSibling && el.previousElementSibling.querySelector('.rail-section-arrow');
-  var open = el.style.maxHeight !== '0px' && el.style.maxHeight !== '0';
-  el.style.maxHeight = open ? '0' : '2000px';
-  if (arrow) arrow.classList.toggle('open', !open);
-  localStorage.setItem('pt_sb_' + key, open ? '0' : '1');
+function openShipFromLaying(ordId){
+  S.shipTarget=ordId;
+  var o=(S.layingGoods||[]).find(function(x){return x.id===ordId;})||{};
+  $('ship_qty_actual').value=o.packing_list_qty||o.qty||'';
+  $('ship-sub').textContent=(o.style||'')+(o.po_number?' / '+o.po_number:'')+' -- '+fmt(o.packing_list_qty||o.qty||0)+' pcs';
+  $('ship_date_actual').value=new Date().toISOString().slice(0,10);
+  openModal('ov-ship');
 }
+
+async function confirmShipLaying(){
+  var o=(S.layingGoods||[]).find(function(x){return x.id===S.shipTarget;})||{};
+  var btn=$('confirm-ship-btn');
+  if(btn){btn.disabled=true;btn.textContent='Saving...';}
+  var shippedOn=$('ship_date_actual').value||new Date().toISOString().slice(0,10);
+  var shippedQty=parseInt($('ship_qty_actual').value)||o.packing_list_qty||o.qty||0;
+  var planShip=o.plan_ship||o.ship_date;
+  var isLate=planShip&&shippedOn>planShip;
+  var isShort=shippedQty<(o.qty||0);
+  var shortQty=isShort?(o.qty||0)-shippedQty:0;
+  var daysLate=isLate?Math.round((new Date(shippedOn)-new Date(planShip))/86400000):0;
+  var res=await db.from('orders').update({stage:'shipped',shipped:true,shipped_on:shippedOn,shipped_qty:shippedQty,updated_at:new Date().toISOString(),updated_by:S.user.name}).eq('id',S.shipTarget);
+  if(!res.error){
+    if(isLate||isShort) await db.from('shipment_alerts').insert({order_id:o.id,style:o.style,buyer:o.buyer,merchant_id:o.merchant_id,alert_type:isLate&&isShort?'both':isLate?'late':'short',shipped_qty:shippedQty,short_qty:shortQty,days_late:daysLate,value_lost:shortQty*(o.fob||0)});
+    S.layingGoods=(S.layingGoods||[]).filter(function(x){return x.id!==S.shipTarget;});
+    S.layingLoaded=false; S.archiveLoaded=false;
+    closeModal('ov-ship');
+    await loadDashOrders();
+    toast('Shipped!','ok-t');
+    renderLayingGoods(); renderRail();
+  } else toast('Error: '+res.error.message,'err');
+  if(btn){btn.disabled=false;btn.textContent='Confirm shipped';}
+}
+
 // ─── START ───
 init();
 </script>
