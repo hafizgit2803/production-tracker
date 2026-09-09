@@ -68,19 +68,19 @@ a{color:var(--accent);text-decoration:none}
 .lo-btn:hover{background:rgba(0,0,0,.07);color:var(--ink)}
 
 .main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.top{padding:20px 24px 0;flex:0 0 auto;border-bottom:1px solid var(--line);padding-bottom:14px}
-.crumb{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:4px}
-.pagehead h2{font-family:var(--serif);font-size:32px;font-weight:600;letter-spacing:-.6px;margin-top:2px}
-.stamp .lab{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right}
-.stamp .val{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.3px;margin-top:1px;text-align:right}
+.top{padding:11px 24px 0;flex:0 0 auto;border-bottom:1px solid var(--line);padding-bottom:8px}
+.crumb{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:1px}
+.pagehead h2{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.4px;margin-top:1px}
+.stamp .lab{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right}
+.stamp .val{font-family:var(--serif);font-size:14px;font-weight:600;letter-spacing:-.2px;margin-top:0;text-align:right}
 .stamp .val.stale{color:var(--red)}
-.stamp .sub{font-size:11px;color:var(--muted);text-align:right}
-.act-row{display:flex;gap:8px;margin:14px 0 0;flex-wrap:wrap}
-.content{flex:1;overflow-y:auto;padding:20px 24px 60px}
+.stamp .sub{font-size:10px;color:var(--muted);text-align:right}
+.act-row{display:flex;gap:8px;margin:8px 0 0;flex-wrap:wrap}
+.content{flex:1;overflow-y:auto;padding:12px 24px 60px}
 
 /* ── BUTTONS ── */
-.btn{border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:8px;
+.btn{border:1px solid var(--line);background:var(--panel);padding:6px 12px;border-radius:8px;
   font-weight:500;transition:background .1s}
 .btn:hover{background:#F4F2EB}
 .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -438,6 +438,9 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .exp-summary .sv.bad{color:var(--red)}
 .exp-summary .sv.ok{color:var(--green)}
 .exp-apv-row{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;border-bottom:1px solid #F0EDE4}
+.exp-apv-grid{display:flex;flex-wrap:wrap;gap:10px}
+.exp-apv-item{width:104px}
+.exp-apv-item-lbl{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
 .exp-apv-row:last-child{border:none}
 .exp-apv-lbl{width:54px;flex-shrink:0;font-weight:600;font-size:11px;color:var(--muted)}
 .exp-apv-date{padding:2px 6px;border:1px solid var(--line);border-radius:5px;
@@ -486,24 +489,28 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 
 .logout-btn{width:100%;padding:7px 10px;background:none;border:1.5px solid var(--line);border-radius:8px;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s}
 .logout-btn:hover{background:var(--red-soft);border-color:#EBC4BC;color:var(--red)}
-.card table th{font-size:9.5px;padding:5px 8px}
-.card table td{padding:5px 8px}
-.card table .apv-chip{font-size:10.5px}
+.card table th{font-size:8px;padding:3px 6px;line-height:1.15}
+.card table td{padding:3px 6px;line-height:1.15}
+.card table .apv-chip{font-size:9px}
 .apv-flow-modal{max-width:460px}
-.apv-chip{display:block;width:100%;padding:5px 7px;border-radius:7px;font-size:10.5px;
-  font-weight:600;cursor:pointer;border:1px solid;line-height:1.4;text-align:center;
-  transition:opacity .12s;white-space:normal;box-sizing:border-box;background:none}
+.apv-chip{display:block;width:100%;padding:5px 7px;border-radius:7px;font-size:9px;
+  font-weight:700;cursor:pointer;border:1.5px solid;line-height:1.35;text-align:center;letter-spacing:.01em;
+  transition:transform .12s ease,box-shadow .12s ease;white-space:normal;box-sizing:border-box;
+  box-shadow:0 1px 2px rgba(0,0,0,.07)}
 button.apv-chip{font-family:inherit}
-.apv-chip:hover{opacity:.82}
-.apv-chip.not-sent{background:#F4F2EB;color:#8A8780;border-color:#E5E2D9}
-.apv-chip.submitted{background:#FFFBEB;color:#92400E;border-color:#FDE68A}
-.apv-chip.approved{background:#ECFDF5;color:#065F46;border-color:#A7F3D0}
-.apv-chip.rejected{background:#FEF2F2;color:#991B1B;border-color:#FECACA}
-[data-theme="dark"] .apv-chip.not-sent{background:#252325;color:var(--muted);border-color:var(--line)}
-[data-theme="dark"] .apv-chip.submitted{background:#2A2010;color:#FCD34D;border-color:#78350F}
-[data-theme="dark"] .apv-chip.approved{background:#0E2018;color:#34D399;border-color:#065F46}
-[data-theme="dark"] .apv-chip.rejected{background:#2E1515;color:#FCA5A5;border-color:#991B1B}
-.apv-col{width:108px;text-align:center;vertical-align:middle;padding:4px 5px !important}
+.apv-chip:hover{transform:translateY(-1px);box-shadow:0 3px 9px rgba(0,0,0,.16)}
+.apv-chip.not-sent{background:#EDEBE1;color:#726E64;border-color:#DCD7C9}
+.apv-chip.submitted{background:#F59E0B;color:#fff;border-color:#D97706;box-shadow:0 1px 4px rgba(217,119,6,.4)}
+.apv-chip.approved{background:#16A34A;color:#fff;border-color:#15803D;box-shadow:0 1px 4px rgba(21,128,61,.4)}
+.apv-chip.rejected{background:#DC2626;color:#fff;border-color:#B91C1C;box-shadow:0 1px 4px rgba(185,28,28,.4)}
+[data-theme="dark"] .apv-chip.not-sent{background:#2E2C28;color:#A8A399;border-color:#443F35}
+[data-theme="dark"] .apv-chip.submitted{background:#B45309;color:#FEF3C7;border-color:#92400E}
+[data-theme="dark"] .apv-chip.approved{background:#15803D;color:#DCFCE7;border-color:#166534}
+[data-theme="dark"] .apv-chip.rejected{background:#B91C1C;color:#FEE2E2;border-color:#991B1B}
+.apv-date-line{font-size:8px;color:var(--muted);margin-top:2px;font-family:var(--mono);line-height:1.3}
+.apv-manual-date{margin-top:2px;padding:2px 4px;border:1px solid var(--line);border-radius:5px;
+  font-size:8px;background:#FCFBF7;color:var(--ink);width:100%;box-sizing:border-box}
+.apv-col{width:108px;text-align:center;vertical-align:middle;padding:2px 4px !important}
 .apv-outcome-btn{padding:14px 10px;border-radius:10px;border:2px solid;font-size:14px;
   font-weight:600;cursor:pointer;text-align:center;transition:all .12s;
   display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -727,7 +734,7 @@ button.apv-chip{font-family:inherit}
 
 
 /* Product image feature */
-.style-thumb{width:46px;height:46px;object-fit:cover;border-radius:6px;cursor:zoom-in;
+.style-thumb{width:32px;height:32px;object-fit:cover;border-radius:6px;cursor:zoom-in;
   vertical-align:middle;border:1px solid var(--line);transition:transform .15s;display:block;
   transform-origin:center center;margin:0 auto}
 .style-thumb:hover{transform:scale(2.4);z-index:60;position:relative;
@@ -776,7 +783,7 @@ tbody tr.late td.stk2,tbody tr.late td.stk3,tbody tr.late td.stk4{background-col
 
 /* Buyer section headers in board */
 .buyer-section-hdr{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 4px;cursor:pointer;user-select:none;border-bottom:2px solid var(--line);margin-bottom:8px}
+  padding:7px 4px;cursor:pointer;user-select:none;border-bottom:2px solid var(--line);margin-bottom:6px}
 .buyer-section-hdr:hover span:first-child{opacity:.8}
 
 
@@ -835,6 +842,17 @@ tbody tr.late td.stk2,tbody tr.late td.stk3,tbody tr.late td.stk4{background-col
 .cm-table th.center{text-align:center}
 .cm-table td{padding:8px 12px;border-bottom:1px solid #F0EDE4;font-size:13px;vertical-align:middle}
 .cm-table td.center{text-align:center}
+.cm-search-suggestions{position:absolute;top:calc(100% - 2px);left:16px;width:280px;max-width:calc(100% - 32px);
+  background:var(--panel);border:1.5px solid var(--line);border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.14);
+  z-index:20;max-height:280px;overflow-y:auto}
+.cm-search-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid #F0EDE4;display:flex;flex-direction:column;gap:2px}
+.cm-search-item:last-child{border-bottom:none}
+.cm-search-item:hover{background:var(--accent-soft)}
+.cm-search-item-name{font-size:13px;font-weight:600;color:var(--ink)}
+.cm-search-item-custom{font-size:10.5px;color:var(--muted);font-style:italic}
+.cm-search-empty{padding:12px;font-size:12.5px;color:var(--muted);text-align:center}
+@keyframes cmRowFlash{0%,100%{background:var(--accent-soft)}50%{background:#FDE68A}}
+.cm-row-flash{animation:cmRowFlash 0.8s ease 2}
 .cm-field-name{font-weight:600;color:var(--ink)}
 .cm-field-type{font-size:10.5px;color:var(--muted);text-transform:capitalize}
 .cm-toggle{width:36px;height:20px;border-radius:20px;background:#D1D5DB;position:relative;
@@ -871,7 +889,9 @@ tbody tr.late td.stk2,tbody tr.late td.stk3,tbody tr.late td.stk4{background-col
 /* Dynamic frozen columns (Column Manager freeze feature) */
 td.stk-dyn, th.stk-dyn{position:sticky;z-index:20;background-color:var(--panel)}
 th.stk-dyn{background-color:#F7F5EF;z-index:30}
-td.stk-last, th.stk-last{box-shadow:4px 0 8px -3px rgba(0,0,0,.10);border-right:1px solid var(--line)}
+td.stk-last, th.stk-last{box-shadow:6px 0 10px -4px rgba(0,0,0,.22);border-right:2px solid #C7C2B4}
+th.stk-last{border-right:2px solid #B5AFA0}
+[data-theme="dark"] td.stk-last, [data-theme="dark"] th.stk-last{box-shadow:6px 0 10px -4px rgba(0,0,0,.5);border-right:2px solid #46433E}
 tbody tr:hover td.stk-dyn{background-color:var(--panel)!important}
 tbody tr.r10 td.stk-dyn{background-color:#FDF8EA!important}
 tbody tr.r5  td.stk-dyn{background-color:#FDF0E0!important}
@@ -883,12 +903,29 @@ tbody tr.late td.stk-dyn{background-color:#FDECEA!important}
 [data-theme="dark"] tbody tr.late td.stk-dyn{background-color:#2E1515!important}
 
 
+/* Repeat order badge + history card */
+.repeat-badge{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;
+  background:var(--accent-soft);border:1px solid #E8CFC2;color:var(--accent);font-size:9.5px;margin-left:5px;
+  cursor:pointer;vertical-align:middle;transition:transform .15s ease,box-shadow .15s ease;line-height:1}
+.repeat-badge:hover{transform:scale(1.18);box-shadow:0 2px 8px rgba(201,100,66,.35)}
+[data-theme="dark"] .repeat-badge{background:#3A2C24;border-color:#5A4335}
+.rh-card{background:var(--accent-soft);border:1px solid #E8CFC2;border-radius:12px;padding:14px 16px}
+.rh-card + .rh-card{margin-top:10px}
+.rh-card-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.rh-card-icon{width:26px;height:26px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.rh-card-style{font-family:var(--serif);font-size:15.5px;font-weight:700;color:var(--accent)}
+.rh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+.rh-lbl{color:var(--muted);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;font-weight:600}
+.rh-val{font-weight:600;font-size:13px}
+[data-theme="dark"] .rh-card{background:#2A211B;border-color:#4A3A2E}
+[data-theme="dark"] .rh-card-icon{background:#252325}
+
 /* Dynamic buyer board table — locked widths prevent freeze overlap */
 table.dyn-board{table-layout:fixed}
 table.dyn-board th,table.dyn-board td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.dyn-board td.col-yarn,table.dyn-board td .cell{white-space:normal}
-table.dyn-board td.wrap2,table.dyn-board th.wrap2{white-space:normal;line-height:1.25;overflow:visible}
-table.dyn-board th{white-space:normal;line-height:1.3}
+table.dyn-board td.wrap2,table.dyn-board th.wrap2{white-space:normal;line-height:1.15;overflow:visible}
+table.dyn-board th{white-space:normal;line-height:1.15}
 table.dyn-board th.num{font-family:inherit;font-weight:800;letter-spacing:.05em}
 table.dyn-board td:has(.style-thumb:hover){overflow:visible}
 
@@ -932,7 +969,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-08-31 WF-5.1</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-09-09 WF-5.4-ROWCOMPACT</p>
   </div>
 </div>
 
@@ -967,7 +1004,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">v2026-08-31 WF-5.1</div>
+  <div id="ver-stamp">v2026-09-09 WF-5.4-ROWCOMPACT</div>
 </div>
 
 
@@ -978,6 +1015,24 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <div class="m-h"><div><h3>New order</h3><div class="msub" id="ord-sub"></div></div>
       <button class="btn" onclick="closeModal('ov-order')">Cancel</button></div>
     <div class="m-b">
+
+      <div class="f" id="o_repeat_box" style="margin-bottom:14px;background:var(--accent-soft);border:1px solid #E8CFC2;border-radius:9px;padding:12px 14px">
+        <label style="margin-bottom:8px">Is this a repeat order? <span style="font-size:11px;color:var(--muted);font-weight:400">(same style carried over from a previous season)</span></label>
+        <div style="display:flex;gap:16px">
+          <label style="display:flex;align-items:center;gap:6px;font-weight:500;cursor:pointer"><input type="radio" name="o_repeat" value="yes" onchange="onRepeatChange(this)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-weight:500;cursor:pointer"><input type="radio" name="o_repeat" value="no" onchange="onRepeatChange(this)" checked> No</label>
+        </div>
+        <div id="o_repeat_fields" style="display:none;margin-top:12px;padding-top:12px;border-top:1px dashed #E8CFC2">
+          <div class="grid2" style="margin-bottom:10px">
+            <div class="f"><label>Previous Style Number <span style="color:var(--red)">*</span></label><input id="o_repeat_style" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FFFFFF;color:var(--ink)" placeholder="e.g. KB-6210"></div>
+            <div class="f"><label>Previous Season</label><input id="o_repeat_season" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FFFFFF;color:var(--ink)" placeholder="e.g. Fall/Winter 2025"></div>
+          </div>
+          <div class="grid2">
+            <div class="f"><label>Previous Price (FOB, USD)</label><input id="o_repeat_price" type="number" step="0.01" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FFFFFF;color:var(--ink)" placeholder="e.g. 4.25"></div>
+            <div class="f"><label>Previous Quantity (pcs)</label><input id="o_repeat_qty" type="number" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FFFFFF;color:var(--ink)" placeholder="e.g. 12000"></div>
+          </div>
+        </div>
+      </div>
 
       <div class="card-h" style="padding:0 0 10px;border:0"><h3 style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Order Details</h3></div>
 
@@ -1041,6 +1096,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
       </div>
 
       <div class="card-h" style="padding:14px 0 10px;border-top:1px solid var(--line)"><h3 style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">TNA Plan Dates</h3></div>
+      <div id="o_tna_lock_note" style="display:none;margin-bottom:10px;background:var(--amber-soft);border:1px solid #F6D860;border-radius:8px;padding:9px 12px;font-size:12.5px">&#x1F512; <strong>TNA Locked</strong> &mdash; these dates can no longer be edited here. Use the TNA pill on the order row to request a change.</div>
       <div class="grid3" style="margin-bottom:10px">
         <div class="f"><label>Yarn Inhouse</label><input id="p_yarn" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
         <div class="f"><label>PP Approval</label><input id="p_pp" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
@@ -1048,10 +1104,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
       </div>
       <div class="grid3">
         <div class="f"><label>Packing Item Inhouse</label><input id="p_pack" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
-        <div class="f"><label>Knitting Start</label><input id="p_knit" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
         <div class="f"><label>Final Inspection Date</label><input id="p_insp" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
-      </div>
-      <div class="grid3" style="margin-top:10px">
         <div class="f"><label>Ship Date <span style="font-size:10px;color:var(--muted);font-weight:400">(synced from above)</span></label><input id="p_ship" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#F3F1EA;color:var(--muted)" readonly></div>
       </div>
 
@@ -1061,6 +1114,16 @@ table.dyn-board thead th.stk-dyn{z-index:35}
       <button class="btn" onclick="closeModal('ov-order')">Cancel</button>
       <button class="btn pri" id="save-order-btn" onclick="saveOrder()">Save order</button>
     </div>
+  </div>
+</div>
+
+
+<!-- ═══ MODAL: REPEAT ORDER HISTORY ═══ -->
+<div class="ov" id="ov-repeat-history" onclick="if(event.target===this)closeModal('ov-repeat-history')">
+  <div class="modal" style="max-width:420px">
+    <div class="m-h"><div><h3>&#x1F501; Repeat Order History</h3><div class="msub" id="rh-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-repeat-history')">Close</button></div>
+    <div class="m-b" id="rh-body"></div>
   </div>
 </div>
 
@@ -1455,7 +1518,7 @@ const STEPS = [
 const MILES = [
   {k:'yarn',n:'Yarn Inhouse'},{k:'pp',n:'PP Approval'},
   {k:'sew',n:'Sewing Item Inhouse'},{k:'pack',n:'Packing Item Inhouse'},
-  {k:'knit',n:'Knitting Start'},{k:'insp',n:'Final Inspection Date'},{k:'ship',n:'Shipment'}
+  {k:'insp',n:'Final Inspection Date'},{k:'ship',n:'Shipment'}
 ];
 
 function getSteps(division) {
@@ -2068,9 +2131,13 @@ function renderDashboard() {
   if (can('inbox') && S.alerts && S.alerts.length) {
     alertHtml = '<div class="alert-cards"><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">Shipment alerts — ' + S.alerts.length + ' unresolved</div>' +
       S.alerts.map(function(a) {
-        if (a.alert_type === 'pp_late') {
+        // Generic "TNA-linked approval came in late" alert — covers pp_late, labdip_late,
+        // fit_late, fri_late, etc. (see the late-check in apvDoResult / APV_TYPE_CONFIG)
+        var apvLateType = a.alert_type && a.alert_type.slice(-5) === '_late' ? a.alert_type.slice(0,-5) : null;
+        if (apvLateType && APV_TYPE_CONFIG[apvLateType]) {
           const merchPP = S.users.find(function(u){return u.id===a.merchant_id;});
-          return '<div class="alert-card pp_late"><div class="alert-icon">&#x23F0;</div><div class="alert-body"><div class="alert-title">' + a.style + ' \u00b7 ' + a.buyer + (merchPP?' \u00b7 '+merchPP.name:'') + '</div><div class="alert-detail">PP approval came in <strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + ' late</strong> vs TNA plan</div></div>' + (isMA?'<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + a.id + '\')">Dismiss</button>':'') + '</div>';
+          const apvLabel = APV_TYPE_CONFIG[apvLateType].label;
+          return '<div class="alert-card pp_late"><div class="alert-icon">&#x23F0;</div><div class="alert-body"><div class="alert-title">' + a.style + ' \u00b7 ' + a.buyer + (merchPP?' \u00b7 '+merchPP.name:'') + '</div><div class="alert-detail">' + apvLabel + ' approval came in <strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + ' late</strong> vs TNA plan</div></div>' + (isMA?'<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + a.id + '\')">Dismiss</button>':'') + '</div>';
         }
         const icon = a.alert_type === 'late' ? '⏰' : '⚠️';
         const merch2 = S.users.find(function(u){return u.id===a.merchant_id;});
@@ -2170,6 +2237,16 @@ function renderDashboard() {
 async function renderBoard(uid) {
   const merch = S.users.find(u => u.id === uid);
   if (!merch) { setView('dashboard'); return; }
+
+  // Preserve scroll position across in-place refreshes (e.g. after editing a cell).
+  // Only when re-rendering the SAME board that's already open — a fresh navigation
+  // to a different merchant should still land at the top.
+  const contentEl0 = $('content');
+  const isBoardRefresh = S._lastBoardUid === uid;
+  const savedTop = isBoardRefresh && contentEl0 ? contentEl0.scrollTop : 0;
+  const savedScroller0 = isBoardRefresh && contentEl0 ? contentEl0.querySelector('.scroller') : null;
+  const savedLeft = savedScroller0 ? savedScroller0.scrollLeft : 0;
+  S._lastBoardUid = uid;
 
   $('crumb').textContent = 'Merchandiser';
   $('page-title').textContent = merch.name;
@@ -2276,7 +2353,7 @@ async function renderBoard(uid) {
     var open = localStorage.getItem(sk) !== '0';
     var bQty = bOrders.reduce(function(s,o){ return s+(o.qty||0); }, 0);
     var bVal = bOrders.reduce(function(s,o){ return s+(o.qty||0)*(o.fob||0); }, 0);
-    allHtml += '<div style="margin-bottom:16px">'
+    allHtml += '<div style="margin-bottom:12px">'
       + '<div class="buyer-section-hdr" data-sk="' + sk + '" onclick="toggleBuyerSection(this.dataset.sk)">'
       + '<div style="display:flex;align-items:center;gap:10px">'
       + '<span style="font-family:var(--serif);font-size:16px;font-weight:600">' + b.name + '</span>'
@@ -2291,7 +2368,7 @@ async function renderBoard(uid) {
   if (otherOrders.length) {
     var sk2 = 'bbs_' + uid + '_other';
     var open2 = localStorage.getItem(sk2) !== '0';
-    allHtml += '<div style="margin-bottom:16px">'
+    allHtml += '<div style="margin-bottom:12px">'
       + '<div class="buyer-section-hdr" data-sk="' + sk2 + '" onclick="toggleBuyerSection(this.dataset.sk)">'
       + '<div style="display:flex;align-items:center;gap:10px">'
       + '<span style="font-family:var(--serif);font-size:16px;font-weight:600">Other</span>'
@@ -2305,6 +2382,16 @@ async function renderBoard(uid) {
   $('content').innerHTML = notesHtml + allHtml
     + (!canEdit ? '<div class="sub2" style="margin-top:-10px;padding-bottom:4px">View only.</div>' : '');
   requestAnimationFrame(applyStickyHeaderOffsets);
+
+  if (isBoardRefresh) {
+    requestAnimationFrame(function () {
+      const c = $('content');
+      if (!c) return;
+      c.scrollTop = savedTop;
+      const s = c.querySelector('.scroller');
+      if (s) s.scrollLeft = savedLeft;
+    });
+  }
 }
 
 // Fully self-contained table builder — computes everything it needs from its own params
@@ -2329,19 +2416,6 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     {k:'hangtag', n:'Hang tag'}, {k:'main_label', n:'Main label'}, {k:'care_label', n:'Care label'},
     {k:'hanger', n:'Hanger'}, {k:'sewing_thread', n:'Sewing thread'}, {k:'other', n:'Other'},
   ];
-
-  function apvChip(sum, type, ordId, div2, canUpd, planDate) {
-    const rounds = (sum.ap[type] || []).sort(function(a,b){return a.round-b.round;});
-    const latest = rounds[rounds.length - 1];
-    const oc = "event.stopPropagation();openApvFlow('" + ordId + "','" + type + "','" + div2 + "')";
-    const approved = latest && latest.approved_on;
-    const tnaWarn = planDate && !approved && daysTo(planDate) < 0 ? ' <span style="color:var(--red);font-size:9px">\u26a0</span>' : '';
-    if (!latest) return '<button class="apv-chip not-sent" onclick="' + oc + '">Not submitted' + tnaWarn + '</button>';
-    if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">Approved<br><span style="font-weight:400;font-size:9.5px">' + short(latest.approved_on) + '</span></button>';
-    if (latest.rejected_on) return '<button class="apv-chip rejected" onclick="' + oc + '">Rejected<br><span style="font-weight:400;font-size:9.5px">' + short(latest.rejected_on) + '</span>' + tnaWarn + '</button>';
-    if (latest.submitted_on) return '<button class="apv-chip submitted" onclick="' + oc + '">Submitted<br><span style="font-weight:400;font-size:9.5px">' + short(latest.submitted_on) + '</span>' + tnaWarn + '</button>';
-    return '<button class="apv-chip not-sent" onclick="' + oc + '">Round ' + latest.round + tnaWarn + '</button>';
-  }
 
   function accChip(sum, ordId, canUpd) {
     const acc = sum.acc || {};
@@ -2414,10 +2488,10 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     const ms = missedMiles(o), dl = daysTo(o.ship_date);
     const sum = sums[o.id] || {bk:0, rc:0, ap:{}, acc:{}};
 
-    const ldChip = apvChip(sum, 'labdip',  o.id, division, isMerchant, o.plan_yarn);
-    const ftChip = apvChip(sum, 'fit',     o.id, division, isMerchant, o.plan_sew);
-    const ppChip = apvChip(sum, 'pp',      o.id, division, isMerchant, o.plan_pp);
-    const ssChip = apvChip(sum, 'sizeset', o.id, division, isMerchant, o.plan_knit);
+    const ldChip = apvChip(sum, 'labdip',  o.id, division, isMerchant, o.plan_yarn) + '<div class="apv-date-line">' + (o.plan_yarn ? 'TNA: '+short(o.plan_yarn) : 'No TNA date') + '</div>';
+    const ftChip = apvChip(sum, 'fit',     o.id, division, isMerchant, o.plan_sew) + '<div class="apv-date-line">' + (o.plan_sew ? 'TNA: '+short(o.plan_sew) : 'No TNA date') + '</div>';
+    const ppChip = apvChip(sum, 'pp',      o.id, division, isMerchant, o.plan_pp) + '<div class="apv-date-line">' + (o.plan_pp ? 'TNA: '+short(o.plan_pp) : 'No TNA date') + '</div>';
+    const ssChip = apvChip(sum, 'sizeset', o.id, division, isMerchant, null);
     const acChip = accChip(sum, o.id, isMerchant);
 
     const totalBk = sum.bk, totalRc = sum.rc, bal = totalBk - totalRc;
@@ -2425,9 +2499,9 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
       ? '<div class="row"><span class="k">Bkd</span><span class="v">' + fmt(totalBk) + '</span></div>'
         + '<div class="row"><span class="k">Rcvd</span><span class="v ' + (totalRc>=totalBk?'ok':'') + '">' + fmt(totalRc) + '</span></div>'
         + '<div class="row"><span class="k">Bal</span><span class="v ' + (bal>0?'bad':bal===0&&totalBk>0?'ok':'') + '">' + fmt(bal) + '</span></div>'
-      : '<div style="color:var(--muted);font-size:10px;padding:2px 0">No booking</div>';
+      : '<div style="color:var(--muted);font-size:8.5px;padding:2px 0">No booking</div>';
 
-    const dlSpan = dl==null ? '\u2014' : dl<0 ? '<span class="chip bad" style="font-size:10px">'+dl+'</span>' : dl<=5 ? '<span class="chip warn" style="font-size:10px">'+dl+'</span>' : dl;
+    const dlSpan = dl==null ? '\u2014' : dl<0 ? '<span class="chip bad" style="font-size:8.5px">'+dl+'</span>' : dl<=5 ? '<span class="chip warn" style="font-size:8.5px">'+dl+'</span>' : dl;
 
     const remCell = canEdit
       ? '<input class="rem-in" style="width:100%" value="' + (o.remarks||'').replace(/"/g,'&quot;') + '" placeholder="Note\u2026" onchange="setRemark(\'' + o.id + '\',this.value)">'
@@ -2443,21 +2517,21 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
       return '<td class="' + (extraClass||'') + frozenClass(it) + wrapCls + '" style="' + style + '">' + innerHtml + '</td>';
     }
 
-    if (itemByKey['_style']) cellsByKey['_style'] = singleTd('_style', 'stk-anchor', '<span class="flag ' + (ms.length?'on':'') + '">\u200b</span><span class="sty">' + o.style + '</span><div class="sub2" style="margin-left:10px;font-size:10px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div>', 'cursor:pointer;');
-    if (itemByKey['_serial']) cellsByKey['_serial'] = singleTd('_serial', 'num', String(rowIdx+1), 'color:var(--muted);font-size:11px;');
-    if (itemByKey['_confirm_date']) cellsByKey['_confirm_date'] = singleTd('_confirm_date', '', (o.confirm_date?short(o.confirm_date):'\u2014'), 'font-size:10.5px;');
-    if (itemByKey['_attachments']) cellsByKey['_attachments'] = singleTd('_attachments', '', '<button class="btn sm ghost" style="font-size:10px;padding:2px 8px" onclick="event.stopPropagation();toast(\'Attachments coming soon\')">&#x1F4CE; 0</button>');
+    if (itemByKey['_style']) cellsByKey['_style'] = singleTd('_style', 'stk-anchor', '<span class="flag ' + (ms.length?'on':'') + '">\u200b</span><span class="sty">' + o.style + '</span>' + (o.is_repeat ? '<span class="repeat-badge" onclick="event.stopPropagation();openRepeatHistoryModal(\'' + o.id + '\')" title="Repeat order — view history">&#x1F501;</span>' : '') + '<div class="sub2" style="margin-left:10px;font-size:8.5px">' + (ms.length ? ms.length+'x late' : pctPacked(o)+'% packed') + '</div>', 'cursor:pointer;');
+    if (itemByKey['_serial']) cellsByKey['_serial'] = singleTd('_serial', 'num', String(rowIdx+1), 'color:var(--muted);font-size:9.5px;');
+    if (itemByKey['_confirm_date']) cellsByKey['_confirm_date'] = singleTd('_confirm_date', '', (o.confirm_date?short(o.confirm_date):'\u2014'), 'font-size:9px;');
+    if (itemByKey['_attachments']) cellsByKey['_attachments'] = singleTd('_attachments', '', '<button class="btn sm ghost" style="font-size:8.5px;padding:2px 8px" onclick="event.stopPropagation();toast(\'Attachments coming soon\')">&#x1F4CE; 0</button>');
     if (itemByKey['_photo']) cellsByKey['_photo'] = singleTd('_photo', '', (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(\'' + getStyleImage(uid,o.style) + '\',\'' + o.style + '\',\'' + uid + '\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\'' + o.style + '\',\'' + uid + '\')">[+] Photo</button>' : '--')), 'text-align:center;');
-    if (itemByKey['_po']) cellsByKey['_po'] = singleTd('_po', '', (o.po_number||'\u2014'), 'font-size:11px;font-family:var(--mono);color:var(--muted);');
+    if (itemByKey['_po']) cellsByKey['_po'] = singleTd('_po', '', (o.po_number||'\u2014'), 'font-size:9.5px;font-family:var(--mono);color:var(--muted);');
     if (itemByKey['_buyer']) cellsByKey['_buyer'] = singleTd('_buyer', '', o.buyer);
-    if (itemByKey['_house']) cellsByKey['_house'] = singleTd('_house', '', (o.house||'\u2014'), 'font-size:10.5px;');
-    if (itemByKey['_gauge']) cellsByKey['_gauge'] = singleTd('_gauge', '', (fmtGauge(o.gauge)||'\u2014'), 'font-size:10.5px;');
-    if (itemByKey['_colour']) cellsByKey['_colour'] = singleTd('_colour', '', (o.color||'\u2014'), 'font-size:10.5px;');
-    if (itemByKey['_composition']) cellsByKey['_composition'] = singleTd('_composition', '', (o.comp||'\u2014'), 'font-size:10.5px;');
+    if (itemByKey['_house']) cellsByKey['_house'] = singleTd('_house', '', (o.house||'\u2014'), 'font-size:9px;');
+    if (itemByKey['_gauge']) cellsByKey['_gauge'] = singleTd('_gauge', '', (fmtGauge(o.gauge)||'\u2014'), 'font-size:9px;');
+    if (itemByKey['_colour']) cellsByKey['_colour'] = singleTd('_colour', '', (o.color||'\u2014'), 'font-size:9px;');
+    if (itemByKey['_composition']) cellsByKey['_composition'] = singleTd('_composition', '', (o.comp||'\u2014'), 'font-size:9px;');
     if (itemByKey['_qty']) cellsByKey['_qty'] = singleTd('_qty', 'num', fmt(o.qty));
-    if (itemByKey['_fob']) cellsByKey['_fob'] = singleTd('_fob', 'num', (o.fob||0).toFixed(2));
+    if (itemByKey['_fob']) cellsByKey['_fob'] = singleTd('_fob', 'num', '$' + (o.fob||0).toFixed(2));
     if (itemByKey['_value']) cellsByKey['_value'] = singleTd('_value', 'num', money((o.qty||0)*(o.fob||0)));
-    if (itemByKey['_ship']) cellsByKey['_ship'] = singleTd('_ship', '', short(o.ship_date), 'font-size:10.5px;');
+    if (itemByKey['_ship']) cellsByKey['_ship'] = singleTd('_ship', '', short(o.ship_date), 'font-size:9px;');
     if (itemByKey['_days']) cellsByKey['_days'] = singleTd('_days', 'num', dlSpan);
     if (itemByKey['_yarn']) {
       var yarnHtml = yarnInner + (canEdit ? '<button class="mat-add-btn" onclick="event.stopPropagation();openMaterialModal(\'' + o.id + '\',\'' + division + '\')">+ Booking</button>' : '');
@@ -2472,8 +2546,8 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
       cellsByKey['_approvals'] =
           '<td class="apv-col' + apFrozenCls + '" style="width:108px;min-width:108px;max-width:108px;' + apFrozenStyle + '">' + ldChip + '</td>'
         + '<td class="apv-col" style="width:108px;min-width:108px;max-width:108px">' + ftChip + '</td>'
-        + '<td class="apv-col" style="width:108px;min-width:108px;max-width:108px">' + ppChip + '</td>'
-        + '<td class="apv-col" style="width:108px;min-width:108px;max-width:108px">' + ssChip + '</td>';
+        + '<td class="apv-col" style="width:108px;min-width:108px;max-width:108px">' + ssChip + '</td>'
+        + '<td class="apv-col" style="width:108px;min-width:108px;max-width:108px">' + ppChip + '</td>';
     }
 
     if (itemByKey['_production']) {
@@ -2485,9 +2559,9 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
         const pct = o.qty ? Math.min(100, 100*v/o.qty) : 0;
         var cls = idx === 0 ? prFrozenCls : '';
         var stl = 'width:90px;min-width:90px;max-width:90px;' + (idx === 0 ? prFrozenStyle : '');
-        if (full && canEdit) return '<td class="' + cls + '" style="text-align:center;' + stl + '"><button class="ok-chip" style="font-size:10px;padding:2px 8px" onclick="event.stopPropagation();openEditQty(\'' + o.id + '\',\'' + s.k + '\',' + v + ',' + o.qty + ',\'' + s.n + '\')">&#x2713; OK</button></td>';
+        if (full && canEdit) return '<td class="' + cls + '" style="text-align:center;' + stl + '"><button class="ok-chip" style="font-size:8.5px;padding:2px 8px" onclick="event.stopPropagation();openEditQty(\'' + o.id + '\',\'' + s.k + '\',' + v + ',' + o.qty + ',\'' + s.n + '\')">&#x2713; OK</button></td>';
         return '<td class="' + cls + '" style="' + stl + '"><div class="cell"><span class="bar" style="width:38px"><i style="width:' + pct + '%"></i></span>'
-          + (canEdit ? '<input class="qtyin" type="number" min="0" max="' + o.qty + '" value="' + v + '" style="width:56px" onchange="setProd(\'' + o.id + '\',\'' + s.k + '\',this.value)">' : '<span style="font-family:var(--mono);font-size:11px">' + fmt(v) + '</span>')
+          + (canEdit ? '<input class="qtyin" type="number" min="0" max="' + o.qty + '" value="' + v + '" style="width:56px" onchange="setProd(\'' + o.id + '\',\'' + s.k + '\',this.value)">' : '<span style="font-family:var(--mono);font-size:9.5px">' + fmt(v) + '</span>')
           + '</div></td>';
       }).join('');
     }
@@ -2509,7 +2583,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
       + '<button class="btn sm" onclick="event.stopPropagation();openTNA(\'' + o.id + '\',\'' + division + '\')">TNA' + (ms.length ? ' <span style="color:var(--red)">&#9679;</span>' : '') + '</button>'
       + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();editOrder(\'' + o.id + '\')">Edit</button>' : '')
       + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();openPackingList(\'' + o.id + '\')">Pack List</button>' : '')
-      + (canEdit ? ' <button class="btn sm danger" style="padding:2px 6px;font-size:10px" onclick="event.stopPropagation();openDeleteOrder(\'' + o.id + '\',\'' + o.style + '\',\'' + o.buyer + '\')">&#x2715;</button>' : '')
+      + (canEdit ? ' <button class="btn sm danger" style="padding:2px 6px;font-size:8.5px" onclick="event.stopPropagation();openDeleteOrder(\'' + o.id + '\',\'' + o.style + '\',\'' + o.buyer + '\')">&#x2715;</button>' : '')
       + '</td></tr>';
   }).join('');
 
@@ -2521,38 +2595,40 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     var wStr = 'width:' + w + 'px;min-width:' + w + 'px;max-width:' + w + 'px;';
     var fStyle = frozenStyle(item);
     var fClass = frozenClass(item);
+    var lbl = (item.cfg && item.cfg.label) || null; // buyer-specific display-name override
 
-    if (key === '_style') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Style Number</th>';
-    else if (key === '_photo') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Photo</th>';
-    else if (key === '_po') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">PO</th>';
-    else if (key === '_serial') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">#</th>';
-    else if (key === '_confirm_date') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Order Confirmed Date</th>';
-    else if (key === '_attachments') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Files</th>';
-    else if (key === '_buyer') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Buyer</th>';
-    else if (key === '_house') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">House</th>';
-    else if (key === '_gauge') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Gauge</th>';
-    else if (key === '_colour') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Colour</th>';
-    else if (key === '_composition') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Composition</th>';
-    else if (key === '_qty') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Qty</th>';
-    else if (key === '_fob') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">FOB</th>';
-    else if (key === '_value') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Value</th>';
-    else if (key === '_ship') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Ship</th>';
-    else if (key === '_days') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Days</th>';
-    else if (key === '_yarn') topRow += '<th class="grp' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + matLabel + '<br>(' + unit + ')</th>';
-    else if (key === '_accessories') topRow += '<th class="grp' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Accessories</th>';
+    if (key === '_style') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Style Number') + '</th>';
+    else if (key === '_photo') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Photo') + '</th>';
+    else if (key === '_po') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'PO') + '</th>';
+    else if (key === '_serial') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'#') + '</th>';
+    else if (key === '_confirm_date') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Order Confirmed Date') + '</th>';
+    else if (key === '_attachments') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Files') + '</th>';
+    else if (key === '_buyer') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Buyer') + '</th>';
+    else if (key === '_house') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'House') + '</th>';
+    else if (key === '_gauge') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Gauge') + '</th>';
+    else if (key === '_colour') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Colour') + '</th>';
+    else if (key === '_composition') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Composition') + '</th>';
+    else if (key === '_qty') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Quantity') + '</th>';
+    else if (key === '_fob') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'FOB') + '</th>';
+    else if (key === '_value') topRow += '<th class="num wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Total Value') + '</th>';
+    else if (key === '_ship') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Ship Date') + '</th>';
+    else if (key === '_days') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Days') + '</th>';
+    else if (key === '_yarn') topRow += '<th class="grp' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||(matLabel + '<br>(' + unit + ')')) + '</th>';
+    else if (key === '_accessories') topRow += '<th class="grp' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Accessories') + '</th>';
     else if (key === '_approvals') {
-      topRow += '<th class="grp' + fClass + '" style="width:432px;min-width:432px;max-width:432px;' + fStyle + '" colspan="4">Approvals</th>';
-      bottomRow += '<th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">Lab Dip</th><th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">Fit</th><th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">PP</th><th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">Size Set</th>';
+      topRow += '<th class="grp' + fClass + '" style="width:432px;min-width:432px;max-width:432px;' + fStyle + '" colspan="4">' + (lbl||'Approvals') + '</th>';
+      bottomRow += '<th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">Lab Dip</th><th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">Fit</th><th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">Size Set</th><th class="grp" style="width:108px;min-width:108px;max-width:108px;font-size:9px">PP</th>';
     }
     else if (key === '_production') {
-      topRow += '<th class="grp' + fClass + '" style="width:' + (VSTEPS.length*90) + 'px;min-width:' + (VSTEPS.length*90) + 'px;max-width:' + (VSTEPS.length*90) + 'px;' + fStyle + '" colspan="' + VSTEPS.length + '">Production</th>';
+      topRow += '<th class="grp' + fClass + '" style="width:' + (VSTEPS.length*90) + 'px;min-width:' + (VSTEPS.length*90) + 'px;max-width:' + (VSTEPS.length*90) + 'px;' + fStyle + '" colspan="' + VSTEPS.length + '">' + (lbl||'Production') + '</th>';
       bottomRow += VSTEPS.map(function(s){return '<th class="grp" style="width:90px;min-width:90px;max-width:90px;font-size:9px">'+s.n+'</th>';}).join('');
     }
-    else if (key === '_balance') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Bal</th>';
-    else if (key === '_notes') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">Notes</th>';
+    else if (key === '_balance') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Bal') + '</th>';
+    else if (key === '_notes') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Notes') + '</th>';
     else {
       var mf = getFieldByKey(key);
-      topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + ';font-size:9.5px" rowspan="2">' + (mf?mf.name:key) + '</th>';
+      var mfWrapCls = (mf && mf.wrap) ? ' wrap2' : '';
+      topRow += '<th class="' + mfWrapCls + fClass + '" style="' + wStr + fStyle + ';font-size:9.5px" rowspan="2">' + (lbl||(mf?mf.name:key)) + '</th>';
     }
   });
   topRow += '<th rowspan="2" style="width:180px;min-width:180px"></th>';
@@ -2631,7 +2707,18 @@ async function openOrder(mid) {
   $('ord-sub').textContent = 'For ' + (m ? m.name : '');
   $('ord-err').style.display = 'none';
   ['o_house','o_buyer','o_style','o_gauge','o_qty','o_fob',
-   'o_po','o_confirm_date','p_yarn','p_pp','p_sew','p_pack','p_knit','p_insp','p_ship'].forEach(id => { const el=$(id); if(el) el.value=''; });
+   'o_po','o_confirm_date','p_yarn','p_pp','p_sew','p_pack','p_insp','p_ship'].forEach(id => { const el=$(id); if(el) el.value=''; });
+  // A prior edit session may have greyed these out — a brand new order is never locked
+  ['o_ship_date','p_yarn','p_pp','p_sew','p_pack','p_insp'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.disabled = false;
+    el.style.background = '#FCFBF7';
+    el.style.color = 'var(--ink)';
+    el.style.cursor = '';
+  });
+  const shipLinkReset = $('o_ship_request_link'); if (shipLinkReset) { shipLinkReset.style.display='none'; shipLinkReset.innerHTML=''; }
+  const tnaNoteReset = $('o_tna_lock_note'); if (tnaNoteReset) tnaNoteReset.style.display = 'none';
   $('o_total').value = '';
   var prev=$('order-img-preview');if(prev){prev.src='';prev.style.display='none';}
   var ph=$('order-img-placeholder');if(ph)ph.style.display='block';
@@ -2672,6 +2759,35 @@ async function saveOrder() {
     $('ord-err').textContent = 'Style number and order quantity are required.';
     $('ord-err').style.display = 'block'; return;
   }
+  var isRepeat = (document.querySelector('input[name="o_repeat"]:checked')||{}).value === 'yes';
+  var repeatHistoryJSON = null;
+  if (isRepeat) {
+    var prevStyle = ($('o_repeat_style').value||'').trim();
+    if (!prevStyle) {
+      $('ord-err').textContent = 'Previous style number is required for a repeat order.';
+      $('ord-err').style.display = 'block';
+      $('o_repeat_style').focus();
+      return;
+    }
+    var newEntry = {
+      prev_style: prevStyle,
+      season: ($('o_repeat_season').value||'').trim() || null,
+      price: $('o_repeat_price').value ? Number($('o_repeat_price').value) : null,
+      qty: $('o_repeat_qty').value ? Number($('o_repeat_qty').value) : null,
+      recorded_at: new Date().toISOString()
+    };
+    var priorHistory = [];
+    if (_editOrderId) {
+      var existingOrd = S.boardCache[S.view] ? S.boardCache[S.view].find(function(x){return x.id===_editOrderId;}) : null;
+      if (existingOrd && existingOrd.repeat_history) {
+        try { priorHistory = JSON.parse(existingOrd.repeat_history) || []; } catch(e) { priorHistory = []; }
+      }
+    }
+    // Editing the same repeat entry just updates it rather than duplicating
+    if (priorHistory.length) { priorHistory[0] = newEntry; } else { priorHistory = [newEntry]; }
+    repeatHistoryJSON = JSON.stringify(priorHistory);
+  }
+  $('ord-err').style.display = 'none';
   $('save-order-btn').disabled = true;
   $('save-order-btn').textContent = _editOrderId ? 'Saving\u2026' : 'Saving\u2026';
 
@@ -2695,9 +2811,11 @@ async function saveOrder() {
     compositions_json: JSON.stringify(_orderComps),
     contains_recycled: (document.querySelector('input[name="o_recycled"]:checked')||{}).value === 'yes',
     needs_tc: _needsTC,
+    is_repeat: isRepeat,
+    repeat_history: repeatHistoryJSON,
     plan_yarn: $('p_yarn').value||null, plan_pp: $('p_pp').value||null,
     plan_sew: $('p_sew')&&$('p_sew').value||null, plan_pack: $('p_pack')&&$('p_pack').value||null,
-    plan_knit: $('p_knit').value||null, plan_insp: $('p_insp').value||null,
+    plan_insp: $('p_insp').value||null,
     plan_ship: shipDateVal,
     updated_by: S.user.name, updated_at: new Date().toISOString()
   };
@@ -2748,9 +2866,10 @@ async function editOrder(orderId) {
   $('ord-sub').textContent = 'Editing ' + o.style;
   $('ord-err').style.display = 'none';
 
-  // Check if shipment date is locked (fit approved OR order 5+ days old) for merchants
-  var isMgmtRole = S.user.role === 'management';
-  var shipLocked = !isMgmtRole && isTNALocked(orderId, o.merchant_id);
+  // Check if shipment date / TNA plan dates are locked (fit approved, order 5+ days old,
+  // or order shipped) for merchants — mirrors the lock logic in the TNA pill exactly.
+  var bypassLock = S.user.role === 'management' || S.user.role === 'admin';
+  var shipLocked = !bypassLock && isTNALocked(orderId, o.merchant_id);
   var shipInput = $('o_ship_date');
   var shipLinkEl = $('o_ship_request_link');
   if (shipInput) {
@@ -2770,6 +2889,19 @@ async function editOrder(orderId) {
       shipLinkEl.innerHTML = '';
     }
   }
+
+  // TNA Plan Dates — same lock, so this form can never edit around the TNA pill's rules
+  var tnaPlanLocked = shipLocked;
+  var tnaNote = $('o_tna_lock_note');
+  if (tnaNote) tnaNote.style.display = tnaPlanLocked ? 'block' : 'none';
+  ['p_yarn','p_pp','p_sew','p_pack','p_insp'].forEach(function(id){
+    var el = $(id);
+    if (!el) return;
+    el.disabled = tnaPlanLocked;
+    el.style.background = tnaPlanLocked ? '#F3F1EA' : '#FCFBF7';
+    el.style.color = tnaPlanLocked ? 'var(--muted)' : 'var(--ink)';
+    el.style.cursor = tnaPlanLocked ? 'not-allowed' : '';
+  });
 
   $('o_style').value = o.style || '';
   $('o_house').value = o.house || '';
@@ -2794,11 +2926,27 @@ async function editOrder(orderId) {
   if (o.contains_recycled) finalizeTC();
   else { var d0 = $('o_tc_display'); if (d0) d0.style.display = 'none'; }
 
+  // Restore repeat-order info
+  var repeatVal = o.is_repeat ? 'yes' : 'no';
+  document.getElementsByName('o_repeat').forEach(function(r){ r.checked = (r.value === repeatVal); });
+  var rf0 = $('o_repeat_fields');
+  if (o.is_repeat) {
+    if (rf0) rf0.style.display = 'block';
+    var histEntry = null;
+    try { var h0 = o.repeat_history ? JSON.parse(o.repeat_history) : []; histEntry = h0[0] || null; } catch(e) { histEntry = null; }
+    if ($('o_repeat_style')) $('o_repeat_style').value = histEntry ? (histEntry.prev_style||'') : '';
+    if ($('o_repeat_season')) $('o_repeat_season').value = histEntry ? (histEntry.season||'') : '';
+    if ($('o_repeat_price')) $('o_repeat_price').value = histEntry && histEntry.price!=null ? histEntry.price : '';
+    if ($('o_repeat_qty')) $('o_repeat_qty').value = histEntry && histEntry.qty!=null ? histEntry.qty : '';
+  } else {
+    if (rf0) rf0.style.display = 'none';
+    ['o_repeat_style','o_repeat_season','o_repeat_price','o_repeat_qty'].forEach(function(id){ var el=$(id); if(el) el.value=''; });
+  }
+
   $('p_yarn').value = o.plan_yarn || '';
   $('p_pp').value = o.plan_pp || '';
   if ($('p_sew')) $('p_sew').value = o.plan_sew || '';
   if ($('p_pack')) $('p_pack').value = o.plan_pack || '';
-  $('p_knit').value = o.plan_knit || '';
   $('p_insp').value = o.plan_insp || '';
   $('p_ship').value = o.plan_ship || o.ship_date || '';
 
@@ -2866,13 +3014,13 @@ function openTNA(ordId, division) {
   const ms = missedMiles(o), dl = daysTo(o.ship_date);
   const boardSums=(S.boardSummaries[o.merchant_id]||{})[o.id]||{ap:{}};
   const fitApproved=(boardSums.ap.fit||[]).some(function(r){return r.approved_on;});
-  const isMerchant=actsAsMerchant(o.merchant_id), isMgmt=S.user.role==='management';
-  const orderAgeDays = o.created_at ? Math.floor((Date.now() - new Date(o.created_at).getTime()) / 86400000) : 999;
-  const tnaLocked=(fitApproved || orderAgeDays >= 5)&&!isMgmt;
+  const isMerchant=actsAsMerchant(o.merchant_id), isMgmt=S.user.role==='management', isAdmin=S.user.role==='admin';
+  const isShipped = o.stage === 'shipped';
+  const tnaLocked=isTNALocked(ordId, o.merchant_id)&&!isMgmt&&!isAdmin;
   const pendingFields=S.tnaRequests.filter(function(r){return r.order_id===ordId&&r.status==='pending';}).map(function(r){return r.field_name;});
   $('tna-title').textContent='TNA \u2014 '+o.style+(tnaLocked?' \uD83D\uDD12':'');
   $('tna-sub').textContent=o.buyer+' \u00b7 '+o.house+' \u00b7 '+fmt(o.qty)+' pcs \u00b7 ships '+short(o.ship_date);
-  var lockBanner=tnaLocked?'<div style="background:var(--amber-soft);border:1px solid #F6D860;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12.5px">&#x1F512; <strong>TNA Locked</strong> \u2014 Fit approved. Plan dates require HOD/Manager approval to change.</div>':'';
+  var lockBanner=tnaLocked?('<div style="background:var(--amber-soft);border:1px solid #F6D860;border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12.5px">&#x1F512; <strong>TNA Locked</strong> \u2014 '+(isShipped?'Order has shipped. Dates are view-only.':'Fit approved. Plan dates require HOD/Manager approval to change.')+'</div>'):'';
   var rows=VMILES.map(function(x){
     var p=o['plan_'+x.k],a=o['act_'+x.k];
     var delay='\u2014',st='<span class="chip run">No plan</span>',cls='';
@@ -2880,10 +3028,17 @@ function openTNA(ordId, division) {
     var hasPend=pendingFields.includes(x.k==='ship'?'ship_date':('plan_'+x.k));
     var planCell;
     var reqFieldKey = x.k === 'ship' ? 'ship_date' : ('plan_'+x.k);
-    if(tnaLocked&&isMerchant){planCell=(p?'<span style="font-family:var(--mono);font-size:12px">'+short(p)+'</span> ':'')+(hasPend?'<span class="chip warn" style="font-size:10px;padding:1px 6px">Pending review</span>':'<button class="tna-lock" onclick="openTNARequestForm(\''+o.id+'\',\''+reqFieldKey+'\',\''+x.n+'\','+(p?'\''+p+'\'':'null')+')">&#x1F512; Request change</button>');}
-    else if(!tnaLocked&&(isMerchant||isMgmt)){planCell='<input type="date" value="'+(p||'')+'" style="padding:3px 7px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12.5px;color:var(--ink)" onchange="setPlanDate(\''+o.id+'\',\'plan_'+x.k+'\',this.value,\''+division+'\''+')">';}
+    if(tnaLocked&&isMerchant){planCell=(p?'<span style="font-family:var(--mono);font-size:12px">'+short(p)+'</span> ':'')+(hasPend||isShipped?(hasPend?'<span class="chip warn" style="font-size:10px;padding:1px 6px">Pending review</span>':''):'<button class="tna-lock" onclick="openTNARequestForm(\''+o.id+'\',\''+reqFieldKey+'\',\''+x.n+'\','+(p?'\''+p+'\'':'null')+')">&#x1F512; Request change</button>');}
+    else if(!tnaLocked&&(isMerchant||isMgmt||isAdmin)){planCell='<input type="date" value="'+(p||'')+'" style="padding:3px 7px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12.5px;color:var(--ink)" onchange="setPlanDate(\''+o.id+'\',\'plan_'+x.k+'\',this.value,\''+division+'\''+')">';}
     else{planCell=short(p);}
-    var actCell=(isMerchant||isMgmt)?'<input type="date" value="'+(a||'')+'" style="padding:3px 7px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12.5px;color:var(--ink)" onchange="setAct(\''+o.id+'\',\''+x.k+'\',this.value,\''+division+'\')">':short(a);
+    var actCell;
+    if (tnaLocked && isMerchant) {
+      actCell = a ? '<span style="font-family:var(--mono);font-size:12px">'+short(a)+'</span>' : '<span style="color:var(--muted)">&#x2014;</span>';
+    } else if (!tnaLocked && (isMerchant||isMgmt||isAdmin)) {
+      actCell = '<input type="date" value="'+(a||'')+'" style="padding:3px 7px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12.5px;color:var(--ink)" onchange="setAct(\''+o.id+'\',\''+x.k+'\',this.value,\''+division+'\')">';
+    } else {
+      actCell = short(a);
+    }
     var daysLeftCell;
     if (a) { daysLeftCell = '<span style="color:var(--green);font-size:11px;font-weight:600">&#x2713; Done</span>'; }
     else if (p) {
@@ -3068,35 +3223,24 @@ async function toggleRowExpand(ordId, division) {
     + (totalBk ? '<div class="exp-summary"><span>Booked: <span class="sv">' + fmt(totalBk) + '</span></span><span>Rcvd: <span class="sv ' + (totalRc>=totalBk?'ok':'') + '">' + fmt(totalRc) + '</span></span><span>Bal: <span class="sv ' + (bal>0?'bad':bal===0?'ok':'') + '">' + fmt(bal) + '</span></span></div>' : '')
     + '</div>';
 
-  // Panel 2: Approvals
-  function apvSec(type, label) {
-    var rounds = apData.filter(function(a){return a.type===type;}).sort(function(a,b){return a.round-b.round;});
-    var nextR = rounds.length ? Math.max.apply(null,rounds.map(function(r){return r.round;}))+1 : 1;
-    var html = '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between">' + label
-      + (canEdit ? '<button class="btn sm" style="padding:1px 7px;font-size:10px" onclick="addApvRound(\''+ordId+'\',\''+type+'\',\''+division+'\')">+R'+nextR+'</button>' : '') + '</div>';
-    if (!rounds.length) { html += '<div style="font-size:11px;color:var(--muted)">None yet</div>'; }
-    rounds.forEach(function(r){
-      var st = r.approved_on ? '<span class="chip ok" style="font-size:10px;padding:1px 6px">Done</span>'
-        : r.submitted_on ? '<span class="chip warn" style="font-size:10px;padding:1px 6px">Pending</span>'
-        : '<span class="chip run" style="font-size:10px;padding:1px 6px">Open</span>';
-      html += '<div class="exp-apv-row"><span class="exp-apv-lbl">R'+r.round+'</span>'
-        + (canEdit ? '<input class="exp-apv-date" type="date" value="'+(r.submitted_on||'')+'" title="Submitted" onchange="updApv(\''+r.id+'\',\'submitted_on\',this.value,\''+ordId+'\',\''+division+'\')">'
-          + '<input class="exp-apv-date" type="date" value="'+(r.approved_on||'')+'" title="Approved" onchange="updApv(\''+r.id+'\',\'approved_on\',this.value,\''+ordId+'\',\''+division+'\')">'
-          : '<span style="font-size:11px;font-family:var(--mono)">' + short(r.submitted_on) + '</span><span style="font-size:11px;font-family:var(--mono);margin-left:6px">' + short(r.approved_on) + '</span>')
-        + st + '</div>';
-    });
-    return html + '</div>';
-  }
+  // Panel 2: Approvals — one shared chip system for every approval type.
+  // Add a new type to APV_TYPE_CONFIG and it appears here automatically — nothing
+  // in this panel needs to change.
+  var apvHTML = '<div class="exp-panel"><div class="exp-panel-title">Approvals</div><div class="exp-apv-grid">'
+    + Object.keys(APV_TYPE_CONFIG).map(function(type) {
+        var cfg = APV_TYPE_CONFIG[type];
+        var planDate = cfg.planKey ? o[cfg.planKey] : (cfg.planFieldKey ? getFieldValue(ordId, cfg.planFieldKey) : null);
+        var sumForType = { ap: {} };
+        sumForType.ap[type] = apData.filter(function(a){ return a.type === type; });
+        return '<div class="exp-apv-item"><div class="exp-apv-item-lbl">' + cfg.label + '</div>' + apvChip(sumForType, type, ordId, division, canEdit, planDate) + '</div>';
+      }).join('')
+    + '</div></div>';
 
-  var apvHTML = '<div class="exp-panel">'
-    + '<div class="exp-panel-title">Approvals</div>'
-    + apvSec('labdip','Lab Dip')
-    + apvSec('fit','Fit')
-    + apvSec('pp','PP')
-    + '</div>';
-
-  // Panel 3: TNA
-  var tnaHTML = '<div class="exp-panel"><div class="exp-panel-title">TNA — Plan vs Actual</div>'
+  // Panel 3: TNA — read-only display of plan vs actual; editing only happens through
+  // the TNA pill/modal (same lock rules as everywhere else — see isTNALocked)
+  var tnaBypass = S.user.role === 'management' || S.user.role === 'admin';
+  var tnaRowsLocked = !tnaBypass && isTNALocked(ordId, o.merchant_id);
+  var tnaHTML = '<div class="exp-panel"><div class="exp-panel-title">TNA — Plan vs Actual' + (tnaRowsLocked ? ' <span style="font-weight:400;font-size:9.5px;color:var(--muted)">(locked — use the TNA pill)</span>' : '') + '</div>'
     + VMILES.map(function(x){
       var p = o['plan_'+x.k], a = o['act_'+x.k];
       var delay = '', stCls = '';
@@ -3104,7 +3248,7 @@ async function toggleRowExpand(ordId, division) {
       else if (p && !a) { var dd2=daysTo(p); if(dd2<0) delay='<span style="font-size:10px;color:var(--red)">+'+(-dd2)+'d</span>'; }
       return '<div class="exp-tna-row"><div class="exp-tna-lbl">' + x.n + '</div>'
         + '<div class="exp-tna-plan">' + short(p) + '</div>'
-        + '<div class="exp-tna-actual">' + (canEdit
+        + '<div class="exp-tna-actual">' + (canEdit && !tnaRowsLocked
           ? '<input class="exp-tna-inp" type="date" value="'+(a||'')+'" onchange="setActExp(\''+o.id+'\',\''+x.k+'\',this.value,\''+div+'\')">'
           : '<span style="font-family:var(--mono);font-size:11px">' + short(a) + '</span>')
         + '</div>' + delay + '</div>';
@@ -3381,8 +3525,39 @@ var _ldOrdId = null, _ldDiv = null;
 
 // ─── APPROVAL FLOW MODAL ───
 var S_apv = { ordId: null, type: null, division: null, rounds: [], step: null };
-var APV_LABELS = { labdip: 'Lab Dip', sizeset: 'Size Set', fit: 'Fit', pp: 'PP Approval' };
-var APV_PLAN_KEY = { labdip: 'plan_yarn', sizeset: 'plan_knit', fit: 'plan_sew', pp: 'plan_pp' };
+var APV_TYPE_CONFIG = {
+  labdip:      { label: 'Lab Dip',        planKey: 'plan_yarn' },
+  fit:         { label: 'Fit',            planKey: 'plan_sew' },
+  sizeset:     { label: 'Size Set' },
+  pp:          { label: 'PP Approval',    planKey: 'plan_pp' },
+  ppt:         { label: 'Pre-Production Test', manualDate: true },
+  inline:      { label: 'Inline Inspection',   manualDate: true },
+  lock_sample: { label: 'Lock Sample',    manualDate: true },
+  final_insp:  { label: 'Final Inspection', planKey: 'plan_insp' },
+  spudi_status:{ label: 'Spudi Status' }
+};
+var APV_LABELS = { labdip: 'Lab Dip', sizeset: 'Size Set', fit: 'Fit', pp: 'PP Approval' }; // kept for back-compat
+var APV_PLAN_KEY = { labdip: 'plan_yarn', fit: 'plan_sew', pp: 'plan_pp' }; // kept for back-compat
+
+// The ONE chip renderer every approval column uses — fixed (Lab Dip/Fit/PP/Size Set),
+// custom Column-Manager columns (PPT/Inline/FRI/Lock Sample), and the row-expansion
+// panel all call this. Add a new approval type by adding one entry to APV_TYPE_CONFIG
+// (and, if it should be its own column, one entry to MASTER_FIELDS) — nothing here
+// needs to change.
+function apvChip(sum, type, ordId, div2, canUpd, planDate) {
+  const rounds = ((sum && sum.ap && sum.ap[type]) || []).slice().sort(function(a,b){return (a.round||0)-(b.round||0);});
+  const latest = rounds[rounds.length - 1];
+  const oc = "event.stopPropagation();openApvFlow('" + ordId + "','" + type + "','" + div2 + "')";
+  const approved = latest && latest.approved_on;
+  const tnaWarn = planDate && !approved && daysTo(planDate) < 0
+    ? ' <span title="Past TNA date" style="background:#fff;color:#DC2626;border-radius:50%;padding:0 4px;font-size:9px;font-weight:900;box-shadow:0 1px 2px rgba(0,0,0,.25)">!</span>'
+    : '';
+  if (!latest) return '<button class="apv-chip not-sent" onclick="' + oc + '">Not submitted' + tnaWarn + '</button>';
+  if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">&#x2713; Approved<br><span style="font-weight:400;font-size:9.5px">' + short(latest.approved_on) + '</span></button>';
+  if (latest.rejected_on) return '<button class="apv-chip rejected" onclick="' + oc + '">&#x2717; Rejected<br><span style="font-weight:400;font-size:9.5px">' + short(latest.rejected_on) + '</span>' + tnaWarn + '</button>';
+  if (latest.submitted_on) return '<button class="apv-chip submitted" onclick="' + oc + '">&#x23F3; Submitted<br><span style="font-weight:400;font-size:9.5px">' + short(latest.submitted_on) + '</span>' + tnaWarn + '</button>';
+  return '<button class="apv-chip not-sent" onclick="' + oc + '">Round ' + latest.round + tnaWarn + '</button>';
+}
 
 async function openApvFlow(ordId, type, division) {
   try {
@@ -3390,7 +3565,7 @@ async function openApvFlow(ordId, type, division) {
     S_apv.type = type;
     S_apv.division = division || 'sweater';
     S_apv.step = null;
-    var label = APV_LABELS[type] || type;
+    var label = (APV_TYPE_CONFIG[type]&&APV_TYPE_CONFIG[type].label) || APV_LABELS[type] || type;
     // Search all board caches
     var o = null;
     Object.keys(S.boardCache).forEach(function(mid){
@@ -3429,8 +3604,9 @@ function renderApvModal() {
     if (!o) o = (S.boardCache[mid]||[]).find(function(x){return x.id===S_apv.ordId;});
   });
   o = o || {};
-  var planKey = APV_PLAN_KEY[S_apv.type];
-  var planDate = o[planKey];
+  var apvCfg = APV_TYPE_CONFIG[S_apv.type] || {};
+  var planKey = apvCfg.planKey || APV_PLAN_KEY[S_apv.type];
+  var planDate = planKey ? o[planKey] : (apvCfg.planFieldKey ? getFieldValue(S_apv.ordId, apvCfg.planFieldKey) : null);
   var dl = planDate ? daysTo(planDate) : null;
   var pc = dl===null?'#73706A':dl<0?'var(--red)':dl<=7?'var(--amber)':'var(--green)';
   var pb = dl===null?'#F7F5EF':dl<0?'var(--red-soft)':dl<=7?'var(--amber-soft)':'var(--green-soft)';
@@ -3539,11 +3715,8 @@ async function apvDoSubmit() {
   toast('Submission recorded', 'ok-t');
   await reloadSummaries(S.view);
   renderBoard(S.view);
-  // Reload rounds and refresh modal
-  var res = await db.from('approvals').select('*').eq('order_id', S_apv.ordId).eq('type', S_apv.type).order('round');
-  S_apv.rounds = res.data || [];
-  S_apv.step = 'outcome';
-  renderApvModal();
+  if (S.view === 'laying-goods') renderLayingGoods();
+  closeModal('ov-apv-flow');
 }
 
 async function apvDoResult(outcome) {
@@ -3556,29 +3729,33 @@ async function apvDoResult(outcome) {
   var { error } = await db.from('approvals').update(upd).eq('id', latest.id);
   if (error) { toast('Error saving', 'err'); return; }
 
-  // If this is a PP approval and it came in AFTER the TNA plan date, notify managers/seniors
-  if (outcome === 'approve' && S_apv.type === 'pp') {
+  // If this is a TNA-linked approval type and it came in AFTER the TNA plan date,
+  // notify managers/seniors — covers Lab Dip, Fit, PP, FRI, and any future type with
+  // a planKey/planFieldKey in APV_TYPE_CONFIG (not just PP as before).
+  var apvCfgLate = APV_TYPE_CONFIG[S_apv.type] || {};
+  if (outcome === 'approve' && (apvCfgLate.planKey || apvCfgLate.planFieldKey)) {
     var ord = null;
     Object.keys(S.boardCache).forEach(function(m){ if(!ord) ord=(S.boardCache[m]||[]).find(function(x){return x.id===S_apv.ordId;}); });
-    if (ord && ord.plan_pp && date > ord.plan_pp) {
-      var daysLatePP = Math.round((new Date(date) - new Date(ord.plan_pp)) / 86400000);
-      await db.from('shipment_alerts').insert({
-        order_id: ord.id, style: ord.style, buyer: ord.buyer, merchant_id: ord.merchant_id,
-        alert_type: 'pp_late', days_late: daysLatePP,
-        shipped_qty: null, short_qty: null, value_lost: null
-      });
-      await loadAlerts();
-      renderRail();
+    if (ord) {
+      var planDateLate = apvCfgLate.planKey ? ord[apvCfgLate.planKey] : getFieldValue(S_apv.ordId, apvCfgLate.planFieldKey);
+      if (planDateLate && date > planDateLate) {
+        var daysLateApv = Math.round((new Date(date) - new Date(planDateLate)) / 86400000);
+        await db.from('shipment_alerts').insert({
+          order_id: ord.id, style: ord.style, buyer: ord.buyer, merchant_id: ord.merchant_id,
+          alert_type: S_apv.type + '_late', days_late: daysLateApv,
+          shipped_qty: null, short_qty: null, value_lost: null
+        });
+        await loadAlerts();
+        renderRail();
+      }
     }
   }
 
   toast(outcome === 'approve' ? 'Approved!' : 'Rejection recorded', outcome === 'approve' ? 'ok-t' : '');
   await reloadSummaries(S.view);
   renderBoard(S.view);
-  var res = await db.from('approvals').select('*').eq('order_id', S_apv.ordId).eq('type', S_apv.type).order('round');
-  S_apv.rounds = res.data || [];
-  S_apv.step = outcome === 'approve' ? 'done' : 'submit';
-  renderApvModal();
+  if (S.view === 'laying-goods') renderLayingGoods();
+  closeModal('ov-apv-flow');
 }
 
 
@@ -3589,7 +3766,8 @@ function isTNALocked(ordId, merchantId) {
   var o = null;
   Object.keys(S.boardCache).forEach(function(m){ if(!o) o=(S.boardCache[m]||[]).find(function(x){return x.id===ordId;}); });
   const orderAgeDays = (o && o.created_at) ? Math.floor((Date.now() - new Date(o.created_at).getTime()) / 86400000) : 0;
-  return fitApproved || orderAgeDays >= 5;
+  const isShipped = o && o.stage === 'shipped';
+  return fitApproved || orderAgeDays >= 5 || isShipped;
 }
 
 var _tnareq = { ordId: null, field: null, label: null, current: null };
@@ -5650,21 +5828,21 @@ var PROD_FLOOR_OPTIONS = ['MT','Banga','JM'];
 
 // === FIXED BLOCK DEFINITIONS (hardcoded structural columns) ===
 var FIXED_BLOCKS = [
-  { key:'_serial',       name:'#',            width:40,  mandatory:false },
+  { key:'_serial',       name:'#',            width:40,  mandatory:false, defaultHidden:true },
   { key:'_style',       name:'Style Number', width:130, wrap:true, mandatory:true  },
   { key:'_photo',       name:'Photo',        width:66,  mandatory:false },
   { key:'_po',          name:'PO',           width:90,  mandatory:false },
-  { key:'_confirm_date',name:'Order Confirmed Date', width:100, mandatory:false },
+  { key:'_confirm_date',name:'Order Confirmed Date', width:85,  wrap:true, mandatory:false },
   { key:'_attachments', name:'Attachments',  width:100, mandatory:false },
   { key:'_buyer',       name:'Buyer',        width:95,  mandatory:false },
   { key:'_house',       name:'House',        width:80,  wrap:true, mandatory:false },
   { key:'_gauge',       name:'Gauge',        width:58,  mandatory:false },
   { key:'_colour',      name:'Colour',       width:78,  wrap:true, mandatory:false },
   { key:'_composition', name:'Composition',  width:88,  wrap:true, mandatory:false },
-  { key:'_qty',         name:'Qty',          width:72,  mandatory:false },
-  { key:'_fob',         name:'FOB',          width:48,  mandatory:false },
-  { key:'_value',       name:'Value',        width:96,  mandatory:false },
-  { key:'_ship',        name:'Ship Date',    width:75,  mandatory:false },
+  { key:'_qty',         name:'Quantity',     width:72,  mandatory:false },
+  { key:'_fob',         name:'FOB',          width:66,  mandatory:false },
+  { key:'_value',       name:'Total Value',  width:96,  wrap:true, mandatory:false },
+  { key:'_ship',        name:'Ship Date',    width:78,  wrap:true, mandatory:false },
   { key:'_days',        name:'Days',         width:52,  mandatory:false },
   { key:'_yarn',        name:'Yarn / Fabric',width:130, mandatory:false },
   { key:'_accessories', name:'Accessories',  width:110, mandatory:false },
@@ -5701,24 +5879,23 @@ function isFixedKey(key) {
 var MASTER_FIELDS = [
   // ── LIVE ORDERS FIELDS ──────────────────────────────────────────────────
   { key:'country',       name:'Country',        type:'dropdown', options:WORLD_COUNTRIES_LIST, width:135, defLoc:{live:true,laying:false,shipped:false} },
-  { key:'season',         name:'Season',         type:'text',     defLoc:{live:true,laying:false,shipped:false} },
-  { key:'department',     name:'Department',     type:'text',     defLoc:{live:true,laying:false,shipped:false} },
+  { key:'season',         name:'Season',         type:'text',     width:70, defLoc:{live:true,laying:false,shipped:false} },
+  { key:'department',     name:'Department',     type:'text',     width:100, defLoc:{live:true,laying:false,shipped:false} },
   { key:'article_no',     name:'Article Number', type:'text',     defLoc:{live:true,laying:false,shipped:false} },
   { key:'avg_weight',     name:'Average Weight', type:'special_weight', defLoc:{live:true,laying:false,shipped:false} },
-  { key:'lid',            name:'LID',            type:'date',     defLoc:{live:true,laying:false,shipped:false} },
-  { key:'lrd',            name:'LRD',            type:'date',     defLoc:{live:true,laying:false,shipped:false} },
   { key:'internal_pp',    name:'Internal PP Meeting', type:'date', defLoc:{live:true,laying:false,shipped:false} },
   { key:'buyer_pp',       name:'Buyer PP Meeting',    type:'date', defLoc:{live:true,laying:false,shipped:false} },
   { key:'khata_sign',     name:'Khata Sign Date',     type:'date', defLoc:{live:true,laying:false,shipped:false} },
   { key:'prod_floor',     name:'Production Floor',    type:'special_floor', defLoc:{live:true,laying:false,shipped:false} },
   { key:'knit_start',     name:'Knitting Start Date', type:'date', defLoc:{live:true,laying:false,shipped:false} },
-  { key:'inline_insp',    name:'Inline Inspection', type:'date',  defLoc:{live:true,laying:false,shipped:false} },
-  { key:'spudi',          name:'Spudi',           type:'date',    defLoc:{live:true,laying:false,shipped:false} },
+  { key:'inline_insp',    name:'Inline Inspection', type:'special_approval', approvalType:'inline', defLoc:{live:true,laying:false,shipped:false} },
+  { key:'pre_prod_test',  name:'Pre-Production Test', type:'special_approval', approvalType:'ppt', defaultHidden:true, defLoc:{live:true,laying:false,shipped:false} },
+  { key:'lock_sample',    name:'Lock Sample',     type:'special_approval', approvalType:'lock_sample', defaultHidden:true, defLoc:{live:true,laying:false,shipped:false} },
 
   // ── LAYING GOODS FIELDS ─────────────────────────────────────────────────
-  { key:'spudi_collect',  name:'Spudi Test Sample Collect', type:'date', defLoc:{live:false,laying:true,shipped:false} },
-  { key:'spudi_status',   name:'Spudi Test Sample Status',  type:'dropdown', options:['Passed','Failed','Pending'], defLoc:{live:false,laying:true,shipped:false} },
-  { key:'fri_offer',      name:'FRI Offer Date', type:'date', defLoc:{live:false,laying:true,shipped:false} },
+  { key:'final_insp',     name:'Final Inspection', type:'special_approval', approvalType:'final_insp', wrap:true, width:110, defLoc:{live:false,laying:true,shipped:false} },
+  { key:'spudi_status',   name:'Spudi Status',    type:'special_approval', approvalType:'spudi_status', wrap:true, width:100, defLoc:{live:false,laying:true,shipped:false} },
+  { key:'inspection_type',name:'Inspection Type', type:'dropdown', options:['Self','Buyer','Third-Party'], defLoc:{live:false,laying:true,shipped:false} },
   { key:'delay',          name:'Delay',          type:'special_delay', defLoc:{live:false,laying:true,shipped:false} },
   { key:'carton_qty',     name:'Carton Quantity',type:'number', defLoc:{live:false,laying:true,shipped:false} },
   { key:'net_weight',     name:'Net Weight (kgs)',type:'number', defLoc:{live:false,laying:true,shipped:false} },
@@ -5729,9 +5906,9 @@ var MASTER_FIELDS = [
   { key:'hand_over',      name:'Hand Over Date', type:'date', defLoc:{live:false,laying:true,shipped:false} },
 
   // ── MULTI-MODULE FIELDS ─────────────────────────────────────────────────
-  { key:'sales_contract', name:'Sales Contract No', type:'text_memory', defLoc:{live:true,laying:true,shipped:true} },
-  { key:'lc_no',          name:'LC No',          type:'text_memory', width:170, defLoc:{live:true,laying:true,shipped:true} },
-  { key:'lc_status',      name:'LC Received Status', type:'dropdown', options:['Received','Pending','Not Required'], defLoc:{live:true,laying:true,shipped:true} },
+  { key:'sales_contract', name:'Sales Contract No', type:'text_memory', width:147, defLoc:{live:true,laying:true,shipped:true} },
+  { key:'lc_no',          name:'LC No',          type:'text_memory', width:145, defLoc:{live:true,laying:true,shipped:true} },
+  { key:'lc_status',      name:'LC Received Status', type:'dropdown', width:110, options:['Received','Pending','Not Required'], defLoc:{live:true,laying:true,shipped:true} },
 ];
 
 
@@ -5777,15 +5954,15 @@ function getBuyerFieldConfig(buyerId, fieldKey) {
     var fb = getFixedBlockByKey(fieldKey);
     if (!fb) return null;
     return {
-      buyer_id: buyerId, field_key: fieldKey, visible: true,
-      in_live: true, in_laying: false, in_shipped: false,
+      buyer_id: buyerId, field_key: fieldKey, visible: !fb.defaultHidden,
+      in_live: !fb.defaultHidden, in_laying: false, in_shipped: false,
       col_order: getDefaultColOrder(fieldKey)
     };
   }
   var master = getFieldByKey(fieldKey);
   if (!master) return null;
   return {
-    buyer_id: buyerId, field_key: fieldKey, visible: true,
+    buyer_id: buyerId, field_key: fieldKey, visible: !master.defaultHidden,
     in_live: !!master.defLoc.live, in_laying: !!master.defLoc.laying, in_shipped: !!master.defLoc.shipped,
     col_order: getDefaultColOrder(fieldKey)
   };
@@ -5859,6 +6036,7 @@ async function saveFieldValue(orderId, fieldKey, value) {
 
 // === COLUMN MANAGER ===
 var _cmTab = 'global';
+var _cmItems = []; // current buyer's column list, kept for the search box
 
 async function openColumnManagerHub() {
   await loadBuyers();
@@ -5936,9 +6114,11 @@ async function renderBuyerColumnTable(buyerId) {
     var liveToggle = '<button class="cm-toggle ' + (cfg.in_live?'on':'') + '" data-bid="' + buyerId + '" data-key="' + item.key + '" data-field="in_live" onclick="cmToggle(this)"' + (isMandatory?' disabled title="Style always shows in Live"':'') + '></button>';
     var layingToggle = '<button class="cm-toggle ' + (cfg.in_laying?'on':'') + '" data-bid="' + buyerId + '" data-key="' + item.key + '" data-field="in_laying" onclick="cmToggle(this)"></button>';
     var shippedToggle = '<button class="cm-toggle ' + (cfg.in_shipped?'on':'') + '" data-bid="' + buyerId + '" data-key="' + item.key + '" data-field="in_shipped" onclick="cmToggle(this)"></button>';
+    var labelInput = '<input class="cm-label-input" type="text" placeholder="' + name.replace(/"/g,'&quot;') + '" value="' + (cfg.label||'').replace(/"/g,'&quot;') + '" data-bid="' + buyerId + '" data-key="' + item.key + '" onchange="cmSetLabel(this)" style="width:100%;max-width:130px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#FCFBF7;font-size:12px;color:var(--ink)">';
 
     return '<tr data-key="' + item.key + '" style="' + (isFrozen?'background:var(--accent-soft)':'') + '">'
       + '<td>' + (isFrozen ? '<span title="Frozen" style="margin-right:6px">&#x1F9CA;</span>' : '') + '<div class="cm-field-name">' + name + '</div><div class="cm-field-type">' + typeLabel + '</div></td>'
+      + '<td>' + labelInput + '</td>'
       + '<td class="center">' + visToggle + '</td>'
       + '<td class="center">' + liveToggle + '</td>'
       + '<td class="center">' + layingToggle + '</td>'
@@ -5952,14 +6132,71 @@ async function renderBuyerColumnTable(buyerId) {
 
   var buyer = S.buyers.find(function(b){ return b.id===buyerId; });
   var maxFreeze = items.length;
-  $('cm-body').innerHTML = '<div style="padding:12px 16px 8px;font-size:12px;color:var(--muted)">Configuring columns for <strong>' + (buyer?buyer.name:'') + '</strong>. Changes save instantly. Fixed columns and custom fields share one order &mdash; reorder freely.</div>'
+  _cmItems = items;
+  $('cm-body').innerHTML = '<div style="padding:12px 16px 8px;font-size:12px;color:var(--muted)">Configuring columns for <strong>' + (buyer?buyer.name:'') + '</strong>. Changes save instantly. Fixed columns and custom fields share one order &mdash; reorder freely. Leave <strong>Display name</strong> blank to use the default.</div>'
+    + '<div style="padding:0 16px 10px;position:relative">'
+    + '<input type="text" id="cm-search-input" placeholder="&#x1F50D; Search columns&hellip;" autocomplete="off" oninput="cmSearchFields(this.value)" onkeydown="if(event.key===\'Escape\')cmClearSearch()" onblur="setTimeout(cmClearSearch,180)" style="width:280px;max-width:100%;padding:8px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:13px;background:#FCFBF7;color:var(--ink)">'
+    + '<div id="cm-search-suggestions" class="cm-search-suggestions" style="display:none"></div>'
+    + '</div>'
     + '<div style="padding:0 16px 14px;display:flex;align-items:center;gap:10px">'
     + '<span style="font-size:12px;font-weight:600;color:var(--ink)">&#x1F9CA; Freeze first</span>'
     + '<input type="number" min="1" max="' + maxFreeze + '" value="' + freezeCount + '" id="cm-freeze-input" data-bid="' + buyerId + '" onchange="cmSetFreeze(this)" style="width:60px;padding:5px 8px;border:1.5px solid var(--line);border-radius:7px;text-align:center;font-size:13px;font-weight:600">'
     + '<span style="font-size:12px;color:var(--muted)">columns (from the left, in the order below). Style is always included.</span>'
     + '</div>'
-    + '<table class="cm-table"><thead><tr><th>Column</th><th class="center">Show</th><th class="center">Live</th><th class="center">Laying</th><th class="center">Shipped</th><th class="center">Order</th></tr></thead>'
+    + '<table class="cm-table"><thead><tr><th>Column</th><th>Display name</th><th class="center">Show</th><th class="center">Live</th><th class="center">Laying</th><th class="center">Shipped</th><th class="center">Order</th></tr></thead>'
     + '<tbody>' + rows + '</tbody></table>';
+}
+
+function cmSearchFields(query) {
+  var box = $('cm-search-suggestions');
+  if (!box) return;
+  var q = query.trim().toLowerCase();
+  if (!q) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  var matches = _cmItems.filter(function(item) {
+    var name = item.isFixed ? item.block.name : item.master.name;
+    var custom = (item.cfg && item.cfg.label) || '';
+    return name.toLowerCase().indexOf(q) !== -1 || custom.toLowerCase().indexOf(q) !== -1;
+  }).slice(0, 8);
+  if (!matches.length) {
+    box.innerHTML = '<div class="cm-search-empty">No columns match "' + query.replace(/</g,'&lt;') + '"</div>';
+    box.style.display = 'block';
+    return;
+  }
+  box.innerHTML = matches.map(function(item) {
+    var name = item.isFixed ? item.block.name : item.master.name;
+    var custom = (item.cfg && item.cfg.label) || '';
+    return '<div class="cm-search-item" onclick="cmJumpToField(\'' + item.key + '\')">'
+      + '<span class="cm-search-item-name">' + name + '</span>'
+      + (custom ? '<span class="cm-search-item-custom">shown as "' + custom.replace(/</g,'&lt;') + '"</span>' : '')
+      + '</div>';
+  }).join('');
+  box.style.display = 'block';
+}
+
+function cmClearSearch() {
+  var inp = $('cm-search-input'); if (inp) inp.value = '';
+  var box = $('cm-search-suggestions'); if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+}
+
+function cmJumpToField(key) {
+  cmClearSearch();
+  var row = document.querySelector('.cm-table tr[data-key="' + key + '"]');
+  if (!row) return;
+  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  row.classList.add('cm-row-flash');
+  setTimeout(function(){ row.classList.remove('cm-row-flash'); }, 1600);
+}
+
+async function cmSetLabel(input) {
+  var buyerId = input.dataset.bid, key = input.dataset.key;
+  var val = input.value.trim();
+  var cfg = getBuyerFieldConfig(buyerId, key);
+  var updated = Object.assign({}, cfg, { buyer_id: buyerId, field_key: key, label: val || null });
+  var res = await db.from('buyer_field_visibility').upsert(updated, { onConflict: 'buyer_id,field_key' });
+  if (res.error) { toast('Error: ' + res.error.message, 'err'); return; }
+  if (!S.fieldVisibility[buyerId]) S.fieldVisibility[buyerId] = {};
+  S.fieldVisibility[buyerId][key] = updated;
+  if (S.view && S.boardCache[S.view]) renderBoard(S.view);
 }
 
 async function cmSetFreeze(input) {
@@ -6012,9 +6249,11 @@ async function cmReorder(btn) {
 function renderFieldCell(field, orderId, canEdit) {
   var val = getFieldValue(orderId, field.key);
   if (field.type === 'text') {
+    var upperStyle = field.key === 'season' ? ' style="text-transform:uppercase"' : '';
+    var maxLenAttr = field.key === 'season' ? ' maxlength="5"' : '';
     return canEdit
-      ? '<input class="cf-input" data-oid="' + orderId + '" data-key="' + field.key + '" value="' + (val||'').replace(/"/g,'&quot;') + '" onchange="onFieldInputChange(this)">'
-      : '<span>' + (val||'&mdash;') + '</span>';
+      ? '<input class="cf-input" data-oid="' + orderId + '" data-key="' + field.key + '" value="' + (val||'').replace(/"/g,'&quot;') + '" onchange="onFieldInputChange(this)"' + upperStyle + maxLenAttr + '>'
+      : '<span' + upperStyle + '>' + (val||'&mdash;') + '</span>';
   }
   if (field.type === 'text_memory') {
     var dlId = 'dl_' + field.key;
@@ -6052,14 +6291,46 @@ function renderFieldCell(field, orderId, canEdit) {
   if (field.type === 'special_delay') {
     return renderDelayCell(orderId);
   }
+  if (field.type === 'special_approval') {
+    return renderApprovalFieldCell(field, orderId);
+  }
   return '<span>&mdash;</span>';
+}
+
+function renderApprovalFieldCell(field, orderId) {
+  var o = findOrderAnywhere(orderId);
+  if (!o) return '<span>&mdash;</span>';
+  var apvType = field.approvalType;
+  var cfg = APV_TYPE_CONFIG[apvType] || {};
+  var sum = (S.boardSummaries[o.merchant_id]||{})[orderId] || {ap:{}};
+  var merch = S.users.find(function(u){return u.id===o.merchant_id;});
+  var division = merch ? (merch.division||'sweater') : 'sweater';
+  var canUpd = actsAsMerchant(o.merchant_id) || S.user.role==='admin' || S.user.role==='manager';
+  var planDate = cfg.planKey ? o[cfg.planKey] : (cfg.planFieldKey ? getFieldValue(orderId, cfg.planFieldKey) : null);
+  var chip = apvChip(sum, apvType, orderId, division, canUpd, planDate);
+  var dateHtml = '';
+  if (cfg.planKey || cfg.planFieldKey) {
+    // TNA-linked: date is set elsewhere (New Order form / that field) — shown here read-only for reference
+    dateHtml = '<div class="apv-date-line">' + (planDate ? 'TNA: ' + short(planDate) : 'No TNA date') + '</div>';
+  } else if (cfg.manualDate) {
+    // Not tied to TNA — merchant records the reference date directly in this column
+    var manualKey = 'apv_manual_' + apvType + '_date';
+    var manualVal = getFieldValue(orderId, manualKey);
+    dateHtml = canUpd
+      ? '<input type="date" class="apv-manual-date" value="' + (manualVal||'') + '" data-oid="' + orderId + '" data-key="' + manualKey + '" onclick="event.stopPropagation()" onchange="event.stopPropagation();onFieldInputChange(this)">'
+      : '<div class="apv-date-line">' + (manualVal ? short(manualVal) : 'No date') + '</div>';
+  }
+  return '<div style="display:flex;flex-direction:column;align-items:stretch;width:100%">' + chip + dateHtml + '</div>';
 }
 
 function renderDelayCell(orderId) {
   var o = findOrderAnywhere(orderId);
   if (!o) return '<span>&mdash;</span>';
   var planFRI = o.plan_ship;
-  var actualOffer = getFieldValue(orderId, 'fri_offer');
+  var sum = (S.boardSummaries[o.merchant_id]||{})[orderId] || {ap:{}};
+  var rounds = (sum.ap['final_insp']||[]).slice().sort(function(a,b){return (a.round||0)-(b.round||0);});
+  var latest = rounds[rounds.length-1];
+  var actualOffer = latest ? (latest.submitted_on || latest.approved_on) : null;
   if (!planFRI || !actualOffer) return '<span style="color:var(--muted);font-size:11px">--</span>';
   var diff = Math.round((toDate(actualOffer) - toDate(planFRI)) / 86400000);
   var color = diff <= 0 ? 'var(--green)' : 'var(--red)';
@@ -6079,11 +6350,11 @@ function findOrderAnywhere(orderId) {
 
 async function onFieldInputChange(el) {
   var orderId = el.dataset.oid, key = el.dataset.key, val = el.value;
-  await saveFieldValue(orderId, key, val);
-  // Refresh delay cells if fri_offer changed
-  if (key === 'fri_offer') {
-    if (S.view === 'laying-goods') renderLayingGoods();
+  if (key === 'season' && val) {
+    val = val.toUpperCase();
+    el.value = val;
   }
+  await saveFieldValue(orderId, key, val);
 }
 
 // Build header cells for a set of fields
@@ -6327,6 +6598,42 @@ function resetOrderFormExtras() {
   var radios = document.getElementsByName('o_recycled');
   radios.forEach(function(r){ r.checked = (r.value === 'no'); });
   var shipDate = $('o_ship_date'); if (shipDate) shipDate.value = '';
+  var repRadios = document.getElementsByName('o_repeat');
+  repRadios.forEach(function(r){ r.checked = (r.value === 'no'); });
+  var rf = $('o_repeat_fields'); if (rf) rf.style.display = 'none';
+  ['o_repeat_style','o_repeat_season','o_repeat_price','o_repeat_qty'].forEach(function(id){ var el=$(id); if(el) el.value=''; });
+}
+
+function openRepeatHistoryModal(orderId) {
+  var o = null;
+  Object.keys(S.boardCache).forEach(function(mid){ if(!o) o=(S.boardCache[mid]||[]).find(function(x){return x.id===orderId;}); });
+  if (!o) o = S.archive.find(function(x){return x.id===orderId;});
+  if (!o) return;
+  var hist = [];
+  try { hist = o.repeat_history ? JSON.parse(o.repeat_history) : []; } catch(e) { hist = []; }
+  $('rh-sub').textContent = 'Current style: ' + o.style;
+  if (!hist.length) {
+    $('rh-body').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No repeat history recorded for this order.</div>';
+  } else {
+    $('rh-body').innerHTML = hist.map(function(h){
+      return '<div class="rh-card">'
+        + '<div class="rh-card-hdr"><div class="rh-card-icon">&#x1F501;</div><span class="rh-card-style">' + (h.prev_style||'\u2014') + '</span></div>'
+        + '<div class="rh-grid">'
+        + '<div><div class="rh-lbl">Season</div><div class="rh-val">' + (h.season||'\u2014') + '</div></div>'
+        + '<div><div class="rh-lbl">Quantity</div><div class="rh-val">' + (h.qty!=null?fmt(h.qty)+' pcs':'\u2014') + '</div></div>'
+        + '<div><div class="rh-lbl">Price (FOB)</div><div class="rh-val">' + (h.price!=null?'$'+Number(h.price).toFixed(2):'\u2014') + '</div></div>'
+        + '<div><div class="rh-lbl">Recorded</div><div class="rh-val">' + (h.recorded_at?short(h.recorded_at.slice(0,10)):'\u2014') + '</div></div>'
+        + '</div></div>';
+    }).join('');
+  }
+  openModal('ov-repeat-history');
+}
+
+function onRepeatChange(radio) {
+  var rf = $('o_repeat_fields');
+  if (!rf) return;
+  rf.style.display = radio.value === 'yes' ? 'block' : 'none';
+  if (radio.value === 'yes') { var s=$('o_repeat_style'); if (s) s.focus(); }
 }
 
 // === JUNIOR MERCHANDISER ASSIGNMENT MODULE ===
