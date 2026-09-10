@@ -226,6 +226,9 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 #toast.show{opacity:1;transform:none}
 #toast.err{background:var(--red)}
 #toast.ok-t{background:var(--green)}
+.toast-undo-btn{margin-left:10px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);
+  color:#fff;padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:700;cursor:pointer}
+.toast-undo-btn:hover{background:rgba(255,255,255,.3)}
 
 /* Loading */
 .spin{display:inline-block;width:18px;height:18px;border:2px solid var(--line);
@@ -412,7 +415,17 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .exp-row td.stk{background-color:#FAFAF7!important;z-index:20}
 [data-theme="dark"] .exp-row td{background:#1E1D1F!important}
 [data-theme="dark"] .exp-row td.stk{background-color:#1E1D1F!important}
-.exp-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;min-height:160px}
+.exp-inner{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;min-height:160px}
+.exp-activity-list{max-height:280px;overflow-y:auto}
+.exp-activity-row{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #F0EDE4}
+.exp-activity-row:last-child{border-bottom:none}
+.exp-activity-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0}
+.exp-activity-line{font-size:11.5px}
+.exp-activity-detail{font-size:10.5px;color:var(--muted);margin-top:1px}
+.exp-activity-time{font-size:9.5px;color:var(--muted);margin-top:2px;font-style:italic}
+.ccs-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px}
+.ccs-row:hover{background:var(--accent-soft)}
+.ccs-row input{width:16px;height:16px;cursor:pointer}
 .exp-panel{padding:14px 16px;border-right:1px solid var(--line)}
 .exp-panel:last-child{border-right:none}
 .exp-panel-title{font-size:10px;letter-spacing:.09em;text-transform:uppercase;
@@ -969,7 +982,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-09-09 WF-5.4-ROWCOMPACT</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-09-10 WF-5.6</p>
   </div>
 </div>
 
@@ -1004,7 +1017,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">v2026-09-09 WF-5.4-ROWCOMPACT</div>
+  <div id="ver-stamp">v2026-09-10 WF-5.6</div>
 </div>
 
 
@@ -1408,6 +1421,17 @@ table.dyn-board thead th.stk-dyn{z-index:35}
   </div>
 </div>
 
+<!-- === COPY COLUMN SETUP MODAL === -->
+<div class="ov" id="ov-copy-column-setup" onclick="if(event.target===this)closeModal('ov-copy-column-setup')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Copy Column Setup</h3><div class="msub" id="ccs-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-copy-column-setup')">Close</button></div>
+    <div class="m-b"><div id="ccs-body" style="max-height:340px;overflow-y:auto"></div>
+      <button class="btn pri" id="ccs-apply-btn" style="width:100%;margin-top:14px" onclick="applyCopyColumnSetup()">Copy setup</button>
+    </div>
+  </div>
+</div>
+
 <!-- === AVERAGE WEIGHT MODAL === -->
 <div class="ov" id="ov-avg-weight" onclick="if(event.target===this)closeModal('ov-avg-weight')">
   <div class="modal slim">
@@ -1645,6 +1669,19 @@ function missedMiles(o) {
     return a ? toDate(a) > toDate(p) : daysTo(p) < 0;
   });
 }
+// Proactive companion to missedMiles: milestones due within the next 3 days that
+// haven't been submitted yet — catches problems BEFORE they become a miss/alert,
+// rather than only after.
+function atRiskMiles(o) {
+  return MILES.filter(m => {
+    const p = o['plan_' + m.k];
+    if (!p) return false;
+    const a = o['act_' + m.k];
+    if (a) return false; // already actioned
+    const d = daysTo(p);
+    return d >= 0 && d <= 3;
+  });
+}
 function pctPacked(o) {
   return o.qty > 0 ? Math.round(100 * (o.prod_packing || 0) / o.qty) : 0;
 }
@@ -1657,6 +1694,26 @@ function toast(msg, type = '') {
   t.className = 'show' + (type ? ' ' + type : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.className = '', 2800);
+}
+
+// Toast with an inline Undo action — used for inline edits that save instantly
+// in the background with no confirmation step, so a mistyped value has a brief
+// window to be caught before it's forgotten.
+var _undoAction = null;
+function toastUndo(msg, undoFn, seconds) {
+  seconds = seconds || 6;
+  _undoAction = undoFn;
+  const t = $('toast');
+  t.innerHTML = msg + ' <button class="toast-undo-btn" onclick="runUndo()">Undo</button>';
+  t.className = 'show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; _undoAction = null; }, seconds * 1000);
+}
+function runUndo() {
+  if (_undoAction) { var fn = _undoAction; _undoAction = null; fn(); }
+  const t = $('toast');
+  t.className = '';
+  clearTimeout(toastTimer);
 }
 
 // ─── Modal ───
@@ -1948,6 +2005,16 @@ async function cleanOldArchive() {
   await db.from('orders').delete().eq('shipped', true).lt('shipped_on', cutStr);
 }
 
+// ─── ACTIVITY LOG ───
+// Fire-and-forget — logging must never slow down or block the actual save.
+function logActivity(orderId, action, detail) {
+  if (!orderId) return;
+  db.from('order_activity').insert({
+    order_id: orderId, actor_name: S.user.name, actor_role: S.user.role,
+    action: action, detail: detail || null, created_at: new Date().toISOString()
+  }).then(function(res){ if (res.error) console.error('logActivity error:', res.error); });
+}
+
 // ─── LOCAL ORDER CACHE PATCHING ───
 // Keeps S.orders / S.boardCache / S.archive in sync WITHOUT a network refetch,
 // so edits can be optimistic (show instantly, save quietly in the background)
@@ -2207,6 +2274,34 @@ function renderDashboard() {
       <div class="n">USD shipped this year</div></div>
   </div>`;
 
+  const atRisk = live.filter(o => atRiskMiles(o).length);
+
+  // At-risk widget — milestones due within 3 days with nothing submitted yet.
+  // This is deliberately placed above TNA misses: it's the "catch it before it
+  // becomes a miss" view, not the "already missed" view.
+  html += `<div class="card">
+    <div class="card-h"><h3>&#x26A0;&#xFE0F; At risk — due within 3 days</h3><span class="note">Milestones coming up with no actual entered yet</span></div>
+    ${atRisk.length ? `<div class="scroller"><table>
+      <thead><tr>
+        ${S.user.role !== 'merchant' ? '<th>Merchandiser</th>' : ''}
+        <th>Buyer</th><th>Style</th><th class="num">Order qty</th>
+        <th>Shipment</th><th>Due soon</th><th class="num">Days left</th><th></th>
+      </tr></thead>
+      <tbody>${atRisk.map(o => {
+        const rm = atRiskMiles(o);
+        const merch = S.users.find(u => u.id === o.merchant_id);
+        return `<tr>
+          ${S.user.role !== 'merchant' ? `<td>${merch ? merch.name : '—'}</td>` : ''}
+          <td>${o.buyer}</td><td class="sty">${o.style}</td>
+          <td class="num">${fmt(o.qty)}</td><td>${short(o.ship_date)}</td>
+          <td>${rm.map(x => x.n + ' (' + daysTo(o['plan_'+x.k]) + 'd)').join(', ')}</td>
+          <td class="num" style="color:var(--amber,#B45309);font-weight:700">${Math.min.apply(null, rm.map(x=>daysTo(o['plan_'+x.k])))}</td>
+          <td><button class="btn sm" onclick="openTNA('${o.id}')">TNA</button></td>
+        </tr>`;
+      }).join('')}</tbody></table></div>`
+    : `<div class="empty"><h4>Nothing due soon</h4><div>No upcoming milestones in the next 3 days.</div></div>`}
+  </div>`;
+
   // TNA miss table
   html += `<div class="card">
     <div class="card-h"><h3>TNA misses</h3><span class="note">Milestones past their plan date with no actual entered</span></div>
@@ -2385,8 +2480,9 @@ async function renderBoard(uid) {
     else otherOrders.push(o);
   });
   myBuyers.forEach(function(b){
-    grouped[b.id].sort(function(a,b2){ return (a.confirm_date||'9999') < (b2.confirm_date||'9999') ? -1 : 1; });
+    grouped[b.id] = sortOrdersByStyleAndShip(grouped[b.id]);
   });
+  otherOrders = sortOrdersByStyleAndShip(otherOrders);
 
   var allHtml = '';
   myBuyers.forEach(function(b) {
@@ -2624,9 +2720,13 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
       + '<td style="white-space:nowrap;width:180px;min-width:180px">'
       + '<button class="btn sm" onclick="event.stopPropagation();openTNA(\'' + o.id + '\',\'' + division + '\')">TNA' + (ms.length ? ' <span style="color:var(--red)">&#9679;</span>' : '') + '</button>'
       + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();editOrder(\'' + o.id + '\')">Edit</button>' : '')
+      + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();duplicateOrder(\'' + o.id + '\')" title="Duplicate this order">Duplicate</button>' : '')
       + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();openPackingList(\'' + o.id + '\')">Pack List</button>' : '')
       + (canEdit ? ' <button class="btn sm danger" style="padding:2px 6px;font-size:8.5px" onclick="event.stopPropagation();openDeleteOrder(\'' + o.id + '\',\'' + o.style + '\',\'' + o.buyer + '\')">&#x2715;</button>' : '')
-      + '</td></tr>';
+      + '</td></tr>'
+      + (o.id === S.expandedRow
+        ? '<tr class="exp-row"><td colspan="' + (visItems.length + 1) + '"><div class="exp-inner" id="exp-' + o.id + '"><div class="exp-loading">Loading&hellip;</div></div></td></tr>'
+        : '');
   }).join('');
 
   // ── Build two-row header — same width/sticky logic as data cells ──
@@ -2737,6 +2837,29 @@ function renderArchive() {
 
 // ─── ORDER ACTIONS ───
 let orderForMerchant = null;
+
+// ─── DUPLICATE ORDER ───
+// Pre-fills a new order with everything from an existing one EXCEPT style, PO,
+// quantity, and dates — those are exactly the fields that actually change on a
+// repeat/rebooked order, so the merchant only has to type the things that differ.
+async function duplicateOrder(ordId) {
+  var o = findOrderAnywhere(ordId);
+  if (!o) { toast('Order not found', 'err'); return; }
+  await openOrder(o.merchant_id);
+  document.querySelector('#ov-order h3').textContent = 'New order (duplicated from ' + o.style + ')';
+  if ($('o_house')) $('o_house').value = o.house || '';
+  if ($('o_buyer') && o.buyer_id) $('o_buyer').value = o.buyer_id;
+  if ($('o_gauge')) $('o_gauge').value = o.gauge || '';
+  if ($('o_fob')) $('o_fob').value = o.fob || '';
+  try { _orderColors = o.colours_json ? JSON.parse(o.colours_json) : []; } catch(e) { _orderColors = []; }
+  try { _orderComps = o.compositions_json ? JSON.parse(o.compositions_json) : []; } catch(e) { _orderComps = []; }
+  renderColourTags();
+  renderCompTags();
+  var recycledVal = o.contains_recycled ? 'yes' : 'no';
+  document.getElementsByName('o_recycled').forEach(function(r){ r.checked = (r.value === recycledVal); });
+  if (o.contains_recycled) { _needsTC = !!o.needs_tc; finalizeTC(); }
+  toast('Duplicated \u2014 just fill in the new style, PO, quantity and dates', 'ok-t');
+}
 
 async function openOrder(mid) {
   _editOrderId = null;
@@ -2884,6 +3007,7 @@ async function saveOrder() {
     }
     closeModal('ov-order');
     toast(_editOrderId ? 'Order updated' : 'Order added', 'ok-t');
+    if (_editOrderId) logActivity(_editOrderId, 'Order details edited', styleVal ? ('Style ' + styleVal) : null);
     _editOrderId = null;
     delete S.boardCache[orderForMerchant];
     await loadDashOrders();
@@ -3024,9 +3148,10 @@ async function editOrder(orderId) {
 }
 
 
-async function setProd(ordId, key, val) {
+async function setProd(ordId, key, val, isUndo) {
   const o = S.orders.find(x => x.id === ordId) || findOrderAnywhere(ordId);
   if (!o) return;
+  const oldVal = o[key] || 0;
   const clamped = Math.max(0, Math.min(o.qty || 0, Number(val) || 0));
   const patch = { id: ordId, [key]: clamped, updated_at: new Date().toISOString(), updated_by: S.user.name };
 
@@ -3034,6 +3159,7 @@ async function setProd(ordId, key, val) {
   // no reload, no skeleton, no lost scroll position.
   upsertLocalOrder(Object.assign({}, o, patch));
   render();
+  logActivity(ordId, 'Production updated', key + ': ' + oldVal + ' \u2192 ' + clamped);
 
   const { error } = await db.from('orders').update({
     [key]: clamped, updated_at: new Date().toISOString(), updated_by: S.user.name
@@ -3044,6 +3170,9 @@ async function setProd(ordId, key, val) {
     render();
   } else {
     db.from('users').update({ updated_at: new Date().toISOString() }).eq('id', S.user.id);
+    if (!isUndo && oldVal !== clamped) {
+      toastUndo(key + ' set to ' + clamped, function(){ setProd(ordId, key, oldVal, true); });
+    }
   }
 }
 
@@ -3104,14 +3233,16 @@ function openTNA(ordId, division) {
   openModal('ov-tna');
 }
 
-async function setPlanDate(ordId, field, val, division) {
+async function setPlanDate(ordId, field, val, division, isUndo) {
   const o = S.orders.find(x => x.id === ordId) || findOrderAnywhere(ordId);
+  const oldVal = o ? (o[field] || null) : null;
   const patch = { id: ordId, [field]: val || null, updated_at: new Date().toISOString(), updated_by: S.user.name };
 
   // Optimistic: update locally and re-render immediately; save happens in the background.
   if (o) upsertLocalOrder(Object.assign({}, o, patch));
   render();
   openTNA(ordId, division);
+  logActivity(ordId, 'TNA plan date updated', field + ' set to ' + (val || 'cleared'));
 
   const { error } = await db.from('orders').update({ [field]: val||null, updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', ordId);
   if (error) {
@@ -3121,12 +3252,16 @@ async function setPlanDate(ordId, field, val, division) {
     openTNA(ordId, division);
   } else {
     await loadDashOrders();
+    if (!isUndo && oldVal !== (val||null)) {
+      toastUndo(field + ' updated', function(){ setPlanDate(ordId, field, oldVal, division, true); });
+    }
   }
 }
 
 
-async function setAct(ordId, mKey, val, division, skipModalRefresh) {
+async function setAct(ordId, mKey, val, division, skipModalRefresh, isUndo) {
   const o = S.orders.find(x => x.id === ordId) || findOrderAnywhere(ordId);
+  const oldVal = o ? (o['act_' + mKey] || null) : null;
   const patch = { id: ordId, ['act_' + mKey]: val || null, updated_at: new Date().toISOString(), updated_by: S.user.name };
 
   // Optimistic: update locally and re-render immediately; the save itself happens
@@ -3136,6 +3271,7 @@ async function setAct(ordId, mKey, val, division, skipModalRefresh) {
   if (o) upsertLocalOrder(Object.assign({}, o, patch));
   if (!skipModalRefresh) openTNA(ordId, division);
   render();
+  logActivity(ordId, 'TNA actual date updated', mKey + ' actual set to ' + (val || 'cleared'));
 
   const { error } = await db.from('orders').update({
     ['act_' + mKey]: val || null,
@@ -3149,6 +3285,9 @@ async function setAct(ordId, mKey, val, division, skipModalRefresh) {
     render();
   } else {
     db.from('users').update({ updated_at: new Date().toISOString() }).eq('id', S.user.id);
+    if (!isUndo && oldVal !== (val||null)) {
+      toastUndo(mKey + ' actual date updated', function(){ setAct(ordId, mKey, oldVal, division, skipModalRefresh, true); });
+    }
   }
 }
 
@@ -3243,12 +3382,13 @@ async function toggleRowExpand(ordId, division) {
 // after any inline edit inside it (bookings, receipts, approvals, TNA actuals).
 async function refreshExpandedRow(ordId, division) {
   // Load detail data
-  const [bk, rc, ap] = await Promise.all([
+  const [bk, rc, ap, act] = await Promise.all([
     db.from('yarn_bookings').select('*').eq('order_id', ordId).order('booked_on'),
     db.from('yarn_receipts').select('*').eq('order_id', ordId).order('received_on'),
     db.from('approvals').select('*').eq('order_id', ordId).order('round'),
+    db.from('order_activity').select('*').eq('order_id', ordId).order('created_at', { ascending: false }).limit(30),
   ]);
-  S.expandedData = { bookings: bk.data || [], receipts: rc.data || [], approvals: ap.data || [] };
+  S.expandedData = { bookings: bk.data || [], receipts: rc.data || [], approvals: ap.data || [], activity: act.data || [] };
 
   const container = document.getElementById('exp-' + ordId);
   if (!container) return;
@@ -3339,7 +3479,30 @@ async function refreshExpandedRow(ordId, division) {
     }).join('')
     + '</div>';
 
-  container.innerHTML = matHTML + apvHTML + tnaHTML;
+  container.innerHTML = matHTML + apvHTML + tnaHTML + activityHTML(S.expandedData.activity);
+}
+
+function activityHTML(entries) {
+  var rows = entries.length ? entries.map(function(e){
+    return '<div class="exp-activity-row">'
+      + '<div class="exp-activity-dot"></div>'
+      + '<div class="exp-activity-body">'
+      + '<div class="exp-activity-line"><strong>' + e.actor_name + '</strong> &middot; ' + e.action + '</div>'
+      + (e.detail ? '<div class="exp-activity-detail">' + e.detail + '</div>' : '')
+      + '<div class="exp-activity-time">' + relTime(e.created_at) + '</div>'
+      + '</div></div>';
+  }).join('') : '<div style="color:var(--muted);font-size:11px;padding:6px 0">No activity recorded yet</div>';
+  return '<div class="exp-panel"><div class="exp-panel-title">Activity</div><div class="exp-activity-list">' + rows + '</div></div>';
+}
+
+function relTime(iso) {
+  if (!iso) return '';
+  var diff = Math.round((Date.now() - new Date(iso).getTime()) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return short(iso.slice(0,10));
 }
 
 function toggleExpForm(id) {
@@ -3795,6 +3958,7 @@ async function apvDoSubmit() {
   });
   if (error) { toast('Error saving', 'err'); return; }
   toast('Submission recorded', 'ok-t');
+  logActivity(S_apv.ordId, 'Approval submitted', (APV_TYPE_CONFIG[S_apv.type]||{}).label + ' — round ' + nextRound + ' submitted');
   await reloadSummaries(S.view);
   renderBoard(S.view);
   if (S.view === 'laying-goods') renderLayingGoods();
@@ -3834,6 +3998,7 @@ async function apvDoResult(outcome) {
   }
 
   toast(outcome === 'approve' ? 'Approved!' : 'Rejection recorded', outcome === 'approve' ? 'ok-t' : '');
+  logActivity(S_apv.ordId, outcome === 'approve' ? 'Approval accepted' : 'Approval rejected', (APV_TYPE_CONFIG[S_apv.type]||{}).label + ' on ' + date);
   await reloadSummaries(S.view);
   renderBoard(S.view);
   if (S.view === 'laying-goods') renderLayingGoods();
@@ -3886,7 +4051,9 @@ async function submitTNARequest() {
 
     const payload = {
       order_id: _tnareq.ordId,
-      merchant_id: S.user.id,
+      merchant_id: o.merchant_id || S.user.id, // the order's actual owning merchant — NOT necessarily whoever is submitting (a JM can submit on a merchant's behalf)
+      requested_by: S.user.id,
+      requested_by_name: S.user.name,
       field_name: _tnareq.field,
       field_label: _tnareq.label,
       current_val: _tnareq.current || null,
@@ -3906,6 +4073,7 @@ async function submitTNARequest() {
     await loadTNARequests();
     renderRail();
     toast('Request submitted — awaiting HOD/Manager approval');
+    logActivity(_tnareq.ordId, 'TNA change requested', _tnareq.label + ': ' + (_tnareq.current||'none') + ' \u2192 ' + proposed);
   } catch(err) {
     console.error('submitTNARequest exception:', err);
     toast('Unexpected error — check console', 'err');
@@ -3935,10 +4103,12 @@ function renderRequestsView() {
   $('content').innerHTML = '<div class="card" style="padding:16px 20px">'
     + pending.map(function(r) {
         const merch = S.users.find(function(u){ return u.id === r.merchant_id; });
+        const submittedByJM = r.requested_by && r.requested_by !== r.merchant_id;
+        const whoLine = (merch ? merch.name : 'Unknown') + (submittedByJM && r.requested_by_name ? ' &middot; requested by <strong style="color:#DB2777">' + r.requested_by_name + '</strong> (JM)' : '');
         return '<div class="req-card pending">'
           + '<div class="req-card-header"><div class="req-card-title">' + r.style + ' &mdash; ' + r.buyer + '</div>'
           + '<span class="chip warn" style="font-size:10px">Pending</span></div>'
-          + '<div class="req-card-meta">' + (merch ? merch.name : 'Unknown') + ' &middot; ' + new Date(r.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + '</div>'
+          + '<div class="req-card-meta">' + whoLine + ' &middot; ' + new Date(r.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + '</div>'
           + '<div class="req-card-change"><span class="lbl" style="font-size:11px;color:var(--muted);width:110px;flex-shrink:0">' + r.field_label + '</span><span class="from">' + short(r.current_val) + '</span><span class="arrow">&rarr;</span><span class="to">' + short(r.proposed_val) + '</span></div>'
           + '<div class="req-card-reason">"' + r.reason + '"</div>'
           + '<div class="req-card-actions">'
@@ -3976,6 +4146,7 @@ async function reviewRequest(reqId, decision, ordId, fieldName, proposedVal) {
   }
 
   toast(decision === 'approved' ? 'Approved — TNA updated automatically' : 'Request rejected', decision==='approved'?'ok-t':'');
+  logActivity(ordId, decision === 'approved' ? 'TNA request approved' : 'TNA request rejected', fieldName + (decision==='approved' ? ' \u2192 ' + proposedVal : ''));
   await loadTNARequests();
   await loadDashOrders();
   renderRail();
@@ -3986,41 +4157,55 @@ async function reviewRequest(reqId, decision, ordId, fieldName, proposedVal) {
 function renderMyRequests() {
   $('crumb').textContent = 'My Requests';
   $('page-title').textContent = 'My TNA Requests';
-  $('page-sub').innerHTML = 'Status of your change requests';
+  $('page-sub').innerHTML = S.user.role === 'jm' ? 'Status of TNA change requests for your assigned merchants' : 'Status of your change requests';
   $('stamp').innerHTML = '';
   $('act-row').innerHTML = '';
 
-  if (!S.tnaRequests.length) {
+  const visible = S.tnaRequests.filter(function(r){ return !isDismissedByMe(r); });
+  if (!visible.length) {
     $('content').innerHTML = '<div class="card"><div class="empty"><h4>No requests</h4><div>When you request a TNA date change, it will appear here.</div></div></div>';
     return;
   }
 
   $('content').innerHTML = '<div class="card" style="padding:16px 20px">'
-    + S.tnaRequests.map(function(r) {
+    + visible.map(function(r) {
         const cls = r.status === 'approved' ? 'approved' : r.status === 'rejected' ? 'rejected' : 'pending';
         const badge = r.status === 'approved'
           ? '<span class="chip ok" style="font-size:10px">Approved</span>'
           : r.status === 'rejected'
           ? '<span class="chip bad" style="font-size:10px">Rejected</span>'
           : '<span class="chip warn" style="font-size:10px">Pending review</span>';
+        const byLine = r.requested_by_name ? (r.requested_by === S.user.id ? 'You' : r.requested_by_name) : null;
         return '<div class="req-card ' + cls + '">'
           + '<div class="req-card-header"><div class="req-card-title">' + r.style + ' &mdash; ' + r.buyer + '</div>' + badge + '</div>'
-          + '<div class="req-card-meta">' + r.field_label + ' &middot; ' + new Date(r.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + '</div>'
+          + '<div class="req-card-meta">' + r.field_label + ' &middot; ' + new Date(r.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + (byLine ? ' &middot; requested by <strong>' + byLine + '</strong>' : '') + '</div>'
           + '<div class="req-card-change"><span class="from">' + short(r.current_val) + '</span><span class="arrow">&rarr;</span><span class="to">' + short(r.proposed_val) + '</span></div>'
           + '<div class="req-card-reason">"' + r.reason + '"</div>'
           + (r.status === 'approved' ? '<div style="font-size:12px;color:var(--green);margin-bottom:8px">&#x2713; TNA date updated automatically on ' + new Date(r.reviewed_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + '</div>' : '')
           + (r.status === 'rejected' ? '<div style="font-size:12px;color:var(--red);margin-bottom:8px">&#x2717; Rejected by ' + r.reviewed_by + '</div>' : '')
-          + (r.status !== 'pending' ? '<button class="btn sm ghost" onclick="deleteMyRequest(\'' + r.id + '\')">Remove</button>' : '<button class="btn sm danger" onclick="cancelRequest(\'' + r.id + '\')">Cancel request</button>')
+          + (r.status !== 'pending' ? '<button class="btn sm ghost" onclick="deleteMyRequest(\'' + r.id + '\')">Remove</button>' : ((r.requested_by ? r.requested_by===S.user.id : r.merchant_id===S.user.id) ? '<button class="btn sm danger" onclick="cancelRequest(\'' + r.id + '\')">Cancel request</button>' : ''))
           + '</div>';
       }).join('')
     + '</div>';
 }
 
 async function deleteMyRequest(reqId) {
-  await db.from('tna_requests').delete().eq('id', reqId);
+  // Personal dismiss, not a shared delete — the other party (merchant or JM) on this
+  // request still needs to see it in their own list, so we only hide it for whoever
+  // clicked Remove, tracked as a list of user ids on the row itself.
+  var req = S.tnaRequests.find(function(r){ return r.id === reqId; });
+  var dismissed = [];
+  try { dismissed = req && req.dismissed_by ? JSON.parse(req.dismissed_by) : []; } catch(e) { dismissed = []; }
+  if (!dismissed.includes(S.user.id)) dismissed.push(S.user.id);
+  await db.from('tna_requests').update({ dismissed_by: JSON.stringify(dismissed) }).eq('id', reqId);
   await loadTNARequests();
   renderRail();
   renderMyRequests();
+}
+
+function isDismissedByMe(r) {
+  if (!r.dismissed_by) return false;
+  try { return (JSON.parse(r.dismissed_by) || []).includes(S.user.id); } catch(e) { return false; }
 }
 
 async function cancelRequest(reqId) {
@@ -5065,9 +5250,12 @@ function renderRail() {
     var ib=pr+al;
     html+=ni('requests','&#x1F4EC;','Inbox',ib,ib>0);
   }
-  if(isMerchant){
-    var unr=(S.tnaRequests||[]).filter(function(r2){return r2.status!=='pending'&&!r2.merchant_seen;}).length;
-    html+=ni('my-requests','&#x1F4CB;','My Requests',unr||(S.tnaRequests||[]).length,unr>0);
+  if(isMerchant || isJM){
+    var visReqs = (S.tnaRequests||[]).filter(function(r2){ return !isDismissedByMe(r2); });
+    var unr = isJM
+      ? visReqs.filter(function(r2){ return r2.status!=='pending' && r2.requested_by===S.user.id && !r2.requester_seen; }).length
+      : visReqs.filter(function(r2){return r2.status!=='pending'&&!r2.merchant_seen;}).length;
+    html+=ni('my-requests','&#x1F4CB;','My Requests',unr||visReqs.length,unr>0);
   }
   if(isAdmin){
     html+='<div class="rail-sep"></div>';
@@ -5096,9 +5284,24 @@ async function loadTNARequests() {
     var newResolved = S.tnaRequests.filter(function(req){ return req.status!=='pending'&&!req.merchant_seen; });
     if (newResolved.length) {
       newResolved.forEach(function(req){
-        toast((req.status==='approved'?'\u2713 TNA updated: ':'\u2717 Rejected: ') + req.field_label, req.status==='approved'?'ok-t':'err');
+        var who = req.requested_by && req.requested_by !== S.user.id && req.requested_by_name ? (' (requested by ' + req.requested_by_name + ')') : '';
+        toast((req.status==='approved'?'\u2713 TNA updated: ':'\u2717 Rejected: ') + req.field_label + who, req.status==='approved'?'ok-t':'err');
       });
       await db.from('tna_requests').update({ merchant_seen: true }).in('id', newResolved.map(function(req){ return req.id; }));
+    }
+  } else if (r === 'jm') {
+    // A JM sees the same request list as any merchant they're assigned to — same
+    // information, but each person's own "have I seen this resolved" state is
+    // tracked separately (requester_seen) so both get notified independently.
+    if (!S.myJMMerchants || !S.myJMMerchants.length) { S.tnaRequests = []; return; }
+    var res4 = await db.from('tna_requests').select('*').in('merchant_id', S.myJMMerchants).order('created_at', { ascending: false });
+    S.tnaRequests = res4.data || [];
+    var newResolvedJM = S.tnaRequests.filter(function(req){ return req.status!=='pending' && req.requested_by===S.user.id && !req.requester_seen; });
+    if (newResolvedJM.length) {
+      newResolvedJM.forEach(function(req){
+        toast((req.status==='approved'?'\u2713 TNA updated: ':'\u2717 Rejected: ') + req.field_label, req.status==='approved'?'ok-t':'err');
+      });
+      await db.from('tna_requests').update({ requester_seen: true }).in('id', newResolvedJM.map(function(req){ return req.id; }));
     }
   } else if (r === 'admin' || r === 'hod') {
     var res2 = await db.from('tna_requests').select('*').eq('status','pending').order('created_at', { ascending: false });
@@ -6216,9 +6419,12 @@ async function renderBuyerColumnTable(buyerId) {
   var maxFreeze = items.length;
   _cmItems = items;
   $('cm-body').innerHTML = '<div style="padding:12px 16px 8px;font-size:12px;color:var(--muted)">Configuring columns for <strong>' + (buyer?buyer.name:'') + '</strong>. Changes save instantly. Fixed columns and custom fields share one order &mdash; reorder freely. Leave <strong>Display name</strong> blank to use the default.</div>'
-    + '<div style="padding:0 16px 10px;position:relative">'
+    + '<div style="padding:0 16px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+    + '<div style="position:relative">'
     + '<input type="text" id="cm-search-input" placeholder="&#x1F50D; Search columns&hellip;" autocomplete="off" oninput="cmSearchFields(this.value)" onkeydown="if(event.key===\'Escape\')cmClearSearch()" onblur="setTimeout(cmClearSearch,180)" style="width:280px;max-width:100%;padding:8px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:13px;background:#FCFBF7;color:var(--ink)">'
     + '<div id="cm-search-suggestions" class="cm-search-suggestions" style="display:none"></div>'
+    + '</div>'
+    + '<button class="btn sm" onclick="openCopyColumnSetup(\'' + buyerId + '\')">&#x1F4CB; Copy this setup to other buyers&hellip;</button>'
     + '</div>'
     + '<div style="padding:0 16px 14px;display:flex;align-items:center;gap:10px">'
     + '<span style="font-size:12px;font-weight:600;color:var(--ink)">&#x1F9CA; Freeze first</span>'
@@ -6227,6 +6433,41 @@ async function renderBuyerColumnTable(buyerId) {
     + '</div>'
     + '<table class="cm-table"><thead><tr><th>Column</th><th>Display name</th><th class="center">Show</th><th class="center">Live</th><th class="center">Laying</th><th class="center">Shipped</th><th class="center">Order</th></tr></thead>'
     + '<tbody>' + rows + '</tbody></table>';
+}
+
+// ─── COPY COLUMN SETUP TO OTHER BUYERS ───
+var _ccsSourceBuyer = null;
+function openCopyColumnSetup(buyerId) {
+  _ccsSourceBuyer = buyerId;
+  var srcBuyer = S.buyers.find(function(b){ return b.id === buyerId; });
+  var others = S.buyers.filter(function(b){ return b.id !== buyerId; }).sort(function(a,b){ return a.name.localeCompare(b.name); });
+  $('ccs-sub').textContent = 'Copy ' + (srcBuyer?srcBuyer.name:'this buyer') + '\u2019s column setup (visibility, order, display names, freeze count) onto:';
+  $('ccs-body').innerHTML = others.length
+    ? others.map(function(b){
+        return '<label class="ccs-row"><input type="checkbox" class="ccs-check" value="' + b.id + '"> <span>' + b.name + '</span></label>';
+      }).join('')
+    : '<div style="color:var(--muted);font-size:13px;padding:10px 0">No other buyers to copy to.</div>';
+  openModal('ov-copy-column-setup');
+}
+async function applyCopyColumnSetup() {
+  var checked = Array.prototype.slice.call(document.querySelectorAll('.ccs-check:checked')).map(function(cb){ return cb.value; });
+  if (!checked.length) { toast('Select at least one buyer', 'err'); return; }
+  var sourceItems = getUnifiedOrderedItems(_ccsSourceBuyer);
+  var btn = $('ccs-apply-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Copying\u2026'; }
+  for (var t = 0; t < checked.length; t++) {
+    var targetId = checked[t];
+    for (var i = 0; i < sourceItems.length; i++) {
+      var item = sourceItems[i];
+      var cfgCopy = Object.assign({}, item.cfg, { buyer_id: targetId, field_key: item.key });
+      delete cfgCopy.id; // let the target row keep/create its own primary key
+      await db.from('buyer_field_visibility').upsert(cfgCopy, { onConflict: 'buyer_id,field_key' });
+    }
+    delete S.fieldVisibility[targetId]; // force a fresh read next time that buyer's board renders
+  }
+  if (btn) { btn.disabled = false; btn.textContent = 'Copy setup'; }
+  toast('Column setup copied to ' + checked.length + ' buyer' + (checked.length>1?'s':''), 'ok-t');
+  closeModal('ov-copy-column-setup');
 }
 
 function cmSearchFields(query) {
@@ -6418,6 +6659,37 @@ function renderDelayCell(orderId) {
   var color = diff <= 0 ? 'var(--green)' : 'var(--red)';
   var sign = diff > 0 ? '+' : '';
   return '<span style="color:' + color + ';font-weight:700;font-family:var(--mono);font-size:12px">' + sign + diff + 'd</span>';
+}
+
+// Board display order: POs sharing a style stay grouped together, and groups (plus
+// orders within a group) are ordered by ship date — earliest first. A style with no
+// ship date sorts last. Ties fall back to created_at then id so the order never
+// drifts between refreshes.
+function sortOrdersByStyleAndShip(list) {
+  var styleMinShip = {};
+  list.forEach(function(o) {
+    var key = o.style || '';
+    var sd = o.ship_date || '9999-12-31';
+    if (!styleMinShip[key] || sd < styleMinShip[key]) styleMinShip[key] = sd;
+  });
+  return list.slice().sort(function(a, b) {
+    var ga = styleMinShip[a.style || ''] || '9999-12-31';
+    var gb = styleMinShip[b.style || ''] || '9999-12-31';
+    if (ga < gb) return -1;
+    if (ga > gb) return 1;
+    var sa = a.style || '', sb = b.style || '';
+    if (sa < sb) return -1;
+    if (sa > sb) return 1;
+    var da = a.ship_date || '9999-12-31', db2 = b.ship_date || '9999-12-31';
+    if (da < db2) return -1;
+    if (da > db2) return 1;
+    var ca = a.created_at || '', cb = b.created_at || '';
+    if (ca < cb) return -1;
+    if (ca > cb) return 1;
+    if (a.id < b.id) return -1;
+    if (a.id > b.id) return 1;
+    return 0;
+  });
 }
 
 function findOrderAnywhere(orderId) {
