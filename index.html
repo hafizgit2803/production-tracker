@@ -410,12 +410,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 [data-theme="dark"] .ok-chip{background:#0E2018;border-color:#166534}
 [data-theme="dark"] .ok-chip:hover{background:#14532D}
 
-/* Expanded inline row */
-.exp-row td{padding:0!important;background:#FAFAF7!important;border-bottom:2px solid var(--accent)!important}
-.exp-row td.stk{background-color:#FAFAF7!important;z-index:20}
-[data-theme="dark"] .exp-row td{background:#1E1D1F!important}
-[data-theme="dark"] .exp-row td.stk{background-color:#1E1D1F!important}
-.exp-inner{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;min-height:160px}
+/* Activity modal */
 .exp-activity-list{max-height:280px;overflow-y:auto}
 .exp-activity-row{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #F0EDE4}
 .exp-activity-row:last-child{border-bottom:none}
@@ -426,43 +421,7 @@ table.tna-t td.early-c{color:var(--green);font-weight:600}
 .ccs-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px}
 .ccs-row:hover{background:var(--accent-soft)}
 .ccs-row input{width:16px;height:16px;cursor:pointer}
-.exp-panel{padding:14px 16px;border-right:1px solid var(--line)}
-.exp-panel:last-child{border-right:none}
-.exp-panel-title{font-size:10px;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--muted);font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.exp-mini-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:6px}
-.exp-mini-table td{padding:4px 6px;border-bottom:1px solid #F0EDE4;vertical-align:middle}
-.exp-mini-table td:last-child{text-align:right;font-family:var(--mono)}
-.exp-tna-row{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;border-bottom:1px solid #F0EDE4}
-.exp-tna-row:last-child{border:none}
-.exp-tna-lbl{width:110px;flex-shrink:0;color:var(--muted);font-size:11px}
-.exp-tna-plan{width:68px;font-family:var(--mono);font-size:11px;flex-shrink:0}
-.exp-tna-actual{flex:1}
-.exp-tna-inp{padding:2px 6px;border:1px solid var(--line);border-radius:5px;
-  background:#FCFBF7;font-size:11px;width:108px;color:var(--ink)}
-.exp-tna-inp:focus{outline:none;border-color:var(--accent)}
-.exp-add-form{display:none;padding:6px 0 2px}
-.exp-add-form.open{display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap}
-.exp-add-form input{padding:4px 7px;border:1px solid var(--line);border-radius:6px;
-  background:#FCFBF7;font-size:12px;color:var(--ink)}
-.exp-add-form input:focus{outline:none;border-color:var(--accent)}
-.exp-summary{display:flex;gap:12px;padding:6px 0;font-size:12px}
-.exp-summary .sv{font-weight:600;font-family:var(--mono)}
-.exp-summary .sv.bad{color:var(--red)}
-.exp-summary .sv.ok{color:var(--green)}
-.exp-apv-row{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;border-bottom:1px solid #F0EDE4}
-.exp-apv-grid{display:flex;flex-wrap:wrap;gap:10px}
-.exp-apv-item{width:104px}
-.exp-apv-item-lbl{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
-.exp-apv-row:last-child{border:none}
-.exp-apv-lbl{width:54px;flex-shrink:0;font-weight:600;font-size:11px;color:var(--muted)}
-.exp-apv-date{padding:2px 6px;border:1px solid var(--line);border-radius:5px;
-  background:#FCFBF7;font-size:11px;width:108px;color:var(--ink)}
-.exp-apv-date:focus{outline:none;border-color:var(--accent)}
 .exp-loading{padding:20px;text-align:center;color:var(--muted);font-size:12px}
-[data-theme="dark"] .exp-mini-table td{border-color:var(--line)}
-[data-theme="dark"] .exp-tna-inp,[data-theme="dark"] .exp-apv-date,[data-theme="dark"] .exp-add-form input{background:#2A2828;border-color:var(--line);color:var(--ink)}
-[data-theme="dark"] .exp-tna-row,[data-theme="dark"] .exp-apv-row{border-color:var(--line)}
 
 /* Edit qty modal */
 .eq-step{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
@@ -982,7 +941,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-09-10 WF-5.6</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">v2026-09-10 WF-6.1</p>
   </div>
 </div>
 
@@ -1017,7 +976,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">v2026-09-10 WF-5.6</div>
+  <div id="ver-stamp">v2026-09-10 WF-6.1</div>
 </div>
 
 
@@ -1421,6 +1380,15 @@ table.dyn-board thead th.stk-dyn{z-index:35}
   </div>
 </div>
 
+<!-- === ACTIVITY MODAL === -->
+<div class="ov" id="ov-activity" onclick="if(event.target===this)closeModal('ov-activity')">
+  <div class="modal slim">
+    <div class="m-h"><div><h3 id="act-modal-title">Activity</h3><div class="msub" id="act-modal-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-activity')">Close</button></div>
+    <div class="m-b"><div id="act-modal-body" class="exp-activity-list" style="max-height:420px"></div></div>
+  </div>
+</div>
+
 <!-- === COPY COLUMN SETUP MODAL === -->
 <div class="ov" id="ov-copy-column-setup" onclick="if(event.target===this)closeModal('ov-copy-column-setup')">
   <div class="modal slim">
@@ -1578,8 +1546,6 @@ const S = {
   channel: null,
   detail: { orderId: null, order: null, bookings: [], receipts: [], approvals: [], tab: 'details', division: 'sweater' },
   alerts: [],
-  expandedRow: null,
-  expandedData: null,
   boardSummaries: {},
   tnaRequests: [],
   myAssignments: [],
@@ -1688,6 +1654,13 @@ function pctPacked(o) {
 
 // ─── Toast ───
 let toastTimer;
+// Safe to embed free-text (style numbers, buyer/user names) inside a single-quoted
+// JS string literal within an onclick="..." attribute — an apostrophe in a buyer
+// name (e.g. "Macy's") would otherwise break the generated attribute outright.
+function jsAttrEsc(s) {
+  return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
 function toast(msg, type = '') {
   const t = $('toast');
   t.textContent = msg;
@@ -2659,7 +2632,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     if (itemByKey['_serial']) cellsByKey['_serial'] = singleTd('_serial', 'num', String(rowIdx+1), 'color:var(--muted);font-size:9.5px;');
     if (itemByKey['_confirm_date']) cellsByKey['_confirm_date'] = singleTd('_confirm_date', '', (o.confirm_date?short(o.confirm_date):'\u2014'), 'font-size:9px;');
     if (itemByKey['_attachments']) cellsByKey['_attachments'] = singleTd('_attachments', '', '<button class="btn sm ghost" style="font-size:8.5px;padding:2px 8px" onclick="event.stopPropagation();toast(\'Attachments coming soon\')">&#x1F4CE; 0</button>');
-    if (itemByKey['_photo']) cellsByKey['_photo'] = singleTd('_photo', '', (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(\'' + getStyleImage(uid,o.style) + '\',\'' + o.style + '\',\'' + uid + '\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\'' + o.style + '\',\'' + uid + '\')">[+] Photo</button>' : '--')), 'text-align:center;');
+    if (itemByKey['_photo']) cellsByKey['_photo'] = singleTd('_photo', '', (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(\'' + jsAttrEsc(getStyleImage(uid,o.style)) + '\',\'' + jsAttrEsc(o.style) + '\',\'' + uid + '\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\'' + jsAttrEsc(o.style) + '\',\'' + uid + '\')">[+] Photo</button>' : '--')), 'text-align:center;');
     if (itemByKey['_po']) cellsByKey['_po'] = singleTd('_po', '', (o.po_number||'\u2014'), 'font-size:9.5px;font-family:var(--mono);color:var(--muted);');
     if (itemByKey['_buyer']) cellsByKey['_buyer'] = singleTd('_buyer', '', o.buyer);
     if (itemByKey['_house']) cellsByKey['_house'] = singleTd('_house', '', (o.house||'\u2014'), 'font-size:9px;');
@@ -2715,18 +2688,15 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
 
     var rowCells = visItems.map(function(item){ return cellsByKey[item.key] || ''; }).join('');
 
-    return '<tr class="' + rowClass(o) + '" onclick="if(!event.target.closest(\'button,input,a,select\'))toggleRowExpand(\'' + o.id + '\',\'' + division + '\')">'
+    return '<tr class="' + rowClass(o) + '">'
       + rowCells
-      + '<td style="white-space:nowrap;width:180px;min-width:180px">'
+      + '<td style="white-space:nowrap;width:190px;min-width:190px">'
       + '<button class="btn sm" onclick="event.stopPropagation();openTNA(\'' + o.id + '\',\'' + division + '\')">TNA' + (ms.length ? ' <span style="color:var(--red)">&#9679;</span>' : '') + '</button>'
       + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();editOrder(\'' + o.id + '\')">Edit</button>' : '')
-      + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();duplicateOrder(\'' + o.id + '\')" title="Duplicate this order">Duplicate</button>' : '')
       + (canEdit ? ' <button class="btn sm" onclick="event.stopPropagation();openPackingList(\'' + o.id + '\')">Pack List</button>' : '')
-      + (canEdit ? ' <button class="btn sm danger" style="padding:2px 6px;font-size:8.5px" onclick="event.stopPropagation();openDeleteOrder(\'' + o.id + '\',\'' + o.style + '\',\'' + o.buyer + '\')">&#x2715;</button>' : '')
-      + '</td></tr>'
-      + (o.id === S.expandedRow
-        ? '<tr class="exp-row"><td colspan="' + (visItems.length + 1) + '"><div class="exp-inner" id="exp-' + o.id + '"><div class="exp-loading">Loading&hellip;</div></div></td></tr>'
-        : '');
+      + ' <button class="btn sm" onclick="event.stopPropagation();openActivityModal(\'' + o.id + '\')" title="Activity history">&#x1F4DC;</button>'
+      + (canEdit ? ' <button class="btn sm danger" style="padding:2px 6px;font-size:8.5px" onclick="event.stopPropagation();openDeleteOrder(\'' + o.id + '\',\'' + jsAttrEsc(o.style) + '\',\'' + jsAttrEsc(o.buyer) + '\')">&#x2715;</button>' : '')
+      + '</td></tr>';
   }).join('');
 
   // ── Build two-row header — same width/sticky logic as data cells ──
@@ -2773,7 +2743,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
       topRow += '<th class="' + mfWrapCls + fClass + '" style="' + wStr + fStyle + ';font-size:9.5px" rowspan="2">' + (lbl||(mf?mf.name:key)) + '</th>';
     }
   });
-  topRow += '<th rowspan="2" style="width:180px;min-width:180px"></th>';
+  topRow += '<th rowspan="2" style="width:190px;min-width:190px"></th>';
 
   return '<div class="card"><div class="scroller dyn-scroller"><table class="dyn-board">'
     + '<thead><tr>' + topRow + '</tr><tr>' + bottomRow + '</tr></thead>'
@@ -2837,29 +2807,6 @@ function renderArchive() {
 
 // ─── ORDER ACTIONS ───
 let orderForMerchant = null;
-
-// ─── DUPLICATE ORDER ───
-// Pre-fills a new order with everything from an existing one EXCEPT style, PO,
-// quantity, and dates — those are exactly the fields that actually change on a
-// repeat/rebooked order, so the merchant only has to type the things that differ.
-async function duplicateOrder(ordId) {
-  var o = findOrderAnywhere(ordId);
-  if (!o) { toast('Order not found', 'err'); return; }
-  await openOrder(o.merchant_id);
-  document.querySelector('#ov-order h3').textContent = 'New order (duplicated from ' + o.style + ')';
-  if ($('o_house')) $('o_house').value = o.house || '';
-  if ($('o_buyer') && o.buyer_id) $('o_buyer').value = o.buyer_id;
-  if ($('o_gauge')) $('o_gauge').value = o.gauge || '';
-  if ($('o_fob')) $('o_fob').value = o.fob || '';
-  try { _orderColors = o.colours_json ? JSON.parse(o.colours_json) : []; } catch(e) { _orderColors = []; }
-  try { _orderComps = o.compositions_json ? JSON.parse(o.compositions_json) : []; } catch(e) { _orderComps = []; }
-  renderColourTags();
-  renderCompTags();
-  var recycledVal = o.contains_recycled ? 'yes' : 'no';
-  document.getElementsByName('o_recycled').forEach(function(r){ r.checked = (r.value === recycledVal); });
-  if (o.contains_recycled) { _needsTC = !!o.needs_tc; finalizeTC(); }
-  toast('Duplicated \u2014 just fill in the new style, PO, quantity and dates', 'ok-t');
-}
 
 async function openOrder(mid) {
   _editOrderId = null;
@@ -3364,122 +3311,14 @@ function showShipResult(o, qty, date, isLate, isShort, daysLate, shortQty, value
 }
 
 // ─── EXPANDABLE ROWS ───
-async function toggleRowExpand(ordId, division) {
-  if (S.expandedRow === ordId) {
-    S.expandedRow = null;
-    S.expandedData = null;
-    renderBoard(S.view);
-    return;
-  }
-  S.expandedRow = ordId;
-  S.expandedData = null;
-  renderBoard(S.view); // show skeleton first
-  await refreshExpandedRow(ordId, division);
-}
-
-// Reloads and re-renders an already-open expanded row's panels IN PLACE —
-// unlike toggleRowExpand, this never closes the panel, so it's safe to call
-// after any inline edit inside it (bookings, receipts, approvals, TNA actuals).
-async function refreshExpandedRow(ordId, division) {
-  // Load detail data
-  const [bk, rc, ap, act] = await Promise.all([
-    db.from('yarn_bookings').select('*').eq('order_id', ordId).order('booked_on'),
-    db.from('yarn_receipts').select('*').eq('order_id', ordId).order('received_on'),
-    db.from('approvals').select('*').eq('order_id', ordId).order('round'),
-    db.from('order_activity').select('*').eq('order_id', ordId).order('created_at', { ascending: false }).limit(30),
-  ]);
-  S.expandedData = { bookings: bk.data || [], receipts: rc.data || [], approvals: ap.data || [], activity: act.data || [] };
-
-  const container = document.getElementById('exp-' + ordId);
-  if (!container) return;
-
-  const merch = S.users.find(u => u.id === S.view);
-  const div = division || (merch ? merch.division : 'sweater') || 'sweater';
-  const unit = div === 'knit' ? 'kgs' : 'lbs';
-  const matLabel = div === 'knit' ? 'Fabric' : 'Yarn';
-  const canEdit = S.user.role === 'management' || S.user.id === S.view;
-  const VMILES = getMiles(div);
-  const bkData = S.expandedData.bookings;
-  const rcData = S.expandedData.receipts;
-  const apData = S.expandedData.approvals;
-  const totalBk = bkData.reduce(function(s,x){return s+(x.qty||0);},0);
-  const totalRc = rcData.reduce(function(s,x){return s+(x.qty||0);},0);
-  const bal = totalBk - totalRc;
-
-  // Get the order from board cache
-  const o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;}) || {};
-  const today0 = new Date().toISOString().slice(0,10);
-
-  // Panel 1: Material
-  var bkRows = bkData.length ? bkData.map(function(b){
-    return '<tr><td>' + short(b.booked_on) + '</td><td>' + (b.supplier||'—') + '</td><td style="text-align:right;font-family:var(--mono)">' + fmt(b.qty) + '</td>'
-      + (canEdit ? '<td><button class="btn sm danger" style="padding:1px 6px" onclick="delBk(\''+b.id+'\',\''+ordId+'\',\''+division+'\')">×</button></td>' : '') + '</tr>';
-  }).join('') : '<tr><td colspan="4" style="color:var(--muted);font-size:11px">No bookings yet</td></tr>';
-
-  var rcRows = rcData.length ? rcData.map(function(r,i){
-    var run=rcData.slice(0,i+1).reduce(function(s,x){return s+(x.qty||0);},0);
-    return '<tr><td>' + short(r.received_on) + '</td><td style="text-align:right;font-family:var(--mono)">' + fmt(r.qty) + '</td><td style="text-align:right;font-family:var(--mono);color:var(--muted)">' + fmt(run) + '</td>'
-      + (canEdit ? '<td><button class="btn sm danger" style="padding:1px 6px" onclick="delRc(\''+r.id+'\',\''+ordId+'\',\''+division+'\')">×</button></td>' : '') + '</tr>';
-  }).join('') : '<tr><td colspan="4" style="color:var(--muted);font-size:11px">No receipts yet</td></tr>';
-
-  var matHTML = '<div class="exp-panel">'
-    + '<div class="exp-panel-title">' + matLabel + ' bookings (' + unit + ')'
-    + (canEdit ? ' <button class="btn sm pri" style="padding:2px 8px;font-size:11px" onclick="toggleExpForm(\'bk-form-'+ordId+'\')">+ Booking</button>' : '')
-    + '</div>'
-    + '<table class="exp-mini-table"><thead><tr><th>Date</th><th>Supplier</th><th style="text-align:right">Qty</th>' + (canEdit?'<th></th>':'') + '</tr></thead><tbody>' + bkRows + '</tbody></table>'
-    + (canEdit ? '<div id="bk-form-' + ordId + '" class="exp-add-form">'
-      + '<input type="date" id="bkd-'+ordId+'" value="'+today0+'" style="width:112px">'
-      + '<input type="text" id="bks-'+ordId+'" placeholder="Supplier" style="width:120px">'
-      + '<input type="number" id="bkq-'+ordId+'" placeholder="Qty" style="width:80px">'
-      + '<button class="btn sm pri" onclick="saveBk(\''+ordId+'\',\''+division+'\')">Save</button>'
-      + '<button class="btn sm ghost" onclick="toggleExpForm(\'bk-form-'+ordId+'\')">Cancel</button>'
-      + '</div>' : '')
-    + '<div style="font-size:11px;color:var(--muted);margin-top:8px;border-top:1px solid var(--line);padding-top:6px">' + matLabel + ' received'
-    + (canEdit ? ' <button class="btn sm" style="padding:1px 6px;font-size:11px;margin-left:4px" onclick="toggleExpForm(\'rc-form-'+ordId+'\')">+ Receipt</button>' : '')
-    + '</div>'
-    + '<table class="exp-mini-table"><thead><tr><th>Date</th><th style="text-align:right">Qty</th><th style="text-align:right">Total</th>' + (canEdit?'<th></th>':'') + '</tr></thead><tbody>' + rcRows + '</tbody></table>'
-    + (canEdit ? '<div id="rc-form-' + ordId + '" class="exp-add-form">'
-      + '<input type="date" id="rcd-'+ordId+'" value="'+today0+'" style="width:112px">'
-      + '<input type="number" id="rcq-'+ordId+'" placeholder="Qty" style="width:100px">'
-      + '<button class="btn sm pri" onclick="saveRc(\''+ordId+'\',\''+division+'\')">Save</button>'
-      + '<button class="btn sm ghost" onclick="toggleExpForm(\'rc-form-'+ordId+'\')">Cancel</button>'
-      + '</div>' : '')
-    + (totalBk ? '<div class="exp-summary"><span>Booked: <span class="sv">' + fmt(totalBk) + '</span></span><span>Rcvd: <span class="sv ' + (totalRc>=totalBk?'ok':'') + '">' + fmt(totalRc) + '</span></span><span>Bal: <span class="sv ' + (bal>0?'bad':bal===0?'ok':'') + '">' + fmt(bal) + '</span></span></div>' : '')
-    + '</div>';
-
-  // Panel 2: Approvals — one shared chip system for every approval type.
-  // Add a new type to APV_TYPE_CONFIG and it appears here automatically — nothing
-  // in this panel needs to change.
-  var apvHTML = '<div class="exp-panel"><div class="exp-panel-title">Approvals</div><div class="exp-apv-grid">'
-    + Object.keys(APV_TYPE_CONFIG).map(function(type) {
-        var cfg = APV_TYPE_CONFIG[type];
-        var planDate = cfg.planKey ? o[cfg.planKey] : (cfg.planFieldKey ? getFieldValue(ordId, cfg.planFieldKey) : null);
-        var sumForType = { ap: {} };
-        sumForType.ap[type] = apData.filter(function(a){ return a.type === type; });
-        return '<div class="exp-apv-item"><div class="exp-apv-item-lbl">' + cfg.label + '</div>' + apvChip(sumForType, type, ordId, division, canEdit, planDate) + '</div>';
-      }).join('')
-    + '</div></div>';
-
-  // Panel 3: TNA — read-only display of plan vs actual; editing only happens through
-  // the TNA pill/modal (same lock rules as everywhere else — see isTNALocked)
-  var tnaBypass = S.user.role === 'management' || S.user.role === 'admin';
-  var tnaRowsLocked = !tnaBypass && isTNALocked(ordId, o.merchant_id);
-  var tnaHTML = '<div class="exp-panel"><div class="exp-panel-title">TNA — Plan vs Actual' + (tnaRowsLocked ? ' <span style="font-weight:400;font-size:9.5px;color:var(--muted)">(locked — use the TNA pill)</span>' : '') + '</div>'
-    + VMILES.map(function(x){
-      var p = o['plan_'+x.k], a = o['act_'+x.k];
-      var delay = '', stCls = '';
-      if (p && a) { var dd=Math.round((toDate(a)-toDate(p))/86400000); delay=dd>0?'<span style="font-size:10px;color:var(--red)">+'+dd+'d</span>':'<span style="font-size:10px;color:var(--green)">✓</span>'; }
-      else if (p && !a) { var dd2=daysTo(p); if(dd2<0) delay='<span style="font-size:10px;color:var(--red)">+'+(-dd2)+'d</span>'; }
-      return '<div class="exp-tna-row"><div class="exp-tna-lbl">' + x.n + '</div>'
-        + '<div class="exp-tna-plan">' + short(p) + '</div>'
-        + '<div class="exp-tna-actual">' + (canEdit && !tnaRowsLocked
-          ? '<input class="exp-tna-inp" type="date" value="'+(a||'')+'" onchange="setActExp(\''+o.id+'\',\''+x.k+'\',this.value,\''+div+'\')">'
-          : '<span style="font-family:var(--mono);font-size:11px">' + short(a) + '</span>')
-        + '</div>' + delay + '</div>';
-    }).join('')
-    + '</div>';
-
-  container.innerHTML = matHTML + apvHTML + tnaHTML + activityHTML(S.expandedData.activity);
+async function openActivityModal(ordId) {
+  var o = findOrderAnywhere(ordId);
+  $('act-modal-title').textContent = 'Activity — ' + (o?o.style:'');
+  $('act-modal-sub').textContent = (o?o.buyer:'') || '';
+  $('act-modal-body').innerHTML = '<div class="exp-loading">Loading...</div>';
+  openModal('ov-activity');
+  var res = await db.from('order_activity').select('*').eq('order_id', ordId).order('created_at', { ascending: false }).limit(50);
+  $('act-modal-body').innerHTML = activityHTML(res.data || []);
 }
 
 function activityHTML(entries) {
@@ -3491,8 +3330,8 @@ function activityHTML(entries) {
       + (e.detail ? '<div class="exp-activity-detail">' + e.detail + '</div>' : '')
       + '<div class="exp-activity-time">' + relTime(e.created_at) + '</div>'
       + '</div></div>';
-  }).join('') : '<div style="color:var(--muted);font-size:11px;padding:6px 0">No activity recorded yet</div>';
-  return '<div class="exp-panel"><div class="exp-panel-title">Activity</div><div class="exp-activity-list">' + rows + '</div></div>';
+  }).join('') : '<div style="color:var(--muted);font-size:12px;padding:10px 0">No activity recorded yet</div>';
+  return rows;
 }
 
 function relTime(iso) {
@@ -3505,56 +3344,6 @@ function relTime(iso) {
   return short(iso.slice(0,10));
 }
 
-function toggleExpForm(id) {
-  var el = document.getElementById(id);
-  if (el) el.classList.toggle('open');
-}
-
-// Inline booking/receipt/approval helpers (reuse existing fns but refresh inline)
-async function saveBk(ordId, division) {
-  var dt=document.getElementById('bkd-'+ordId).value;
-  var sup=document.getElementById('bks-'+ordId).value.trim();
-  var qty=parseFloat(document.getElementById('bkq-'+ordId).value)||0;
-  if (!dt||!qty){toast('Date and quantity required','err');return;}
-  await db.from('yarn_bookings').insert({order_id:ordId,booked_on:dt,qty:qty,supplier:sup});
-  await refreshExpandedRow(ordId, division);
-}
-async function delBk(id, ordId, division) {
-  if (!confirm('Remove?')) return;
-  await db.from('yarn_bookings').delete().eq('id',id);
-  await refreshExpandedRow(ordId, division);
-}
-async function saveRc(ordId, division) {
-  var dt=document.getElementById('rcd-'+ordId).value;
-  var qty=parseFloat(document.getElementById('rcq-'+ordId).value)||0;
-  if (!dt||!qty){toast('Date and quantity required','err');return;}
-  await db.from('yarn_receipts').insert({order_id:ordId,received_on:dt,qty:qty});
-  await refreshExpandedRow(ordId, division);
-}
-async function delRc(id, ordId, division) {
-  if (!confirm('Remove?')) return;
-  await db.from('yarn_receipts').delete().eq('id',id);
-  await refreshExpandedRow(ordId, division);
-}
-async function addApvRound(ordId, type, division) {
-  var existing=(S.expandedData&&S.expandedData.approvals||[]).filter(function(a){return a.type===type;});
-  var nextR=existing.length?Math.max.apply(null,existing.map(function(r){return r.round;}))+1:1;
-  await db.from('approvals').insert({order_id:ordId,type:type,round:nextR});
-  await refreshExpandedRow(ordId, division);
-}
-async function updApv(id, field, val, ordId, division) {
-  var obj={}; obj[field]=val||null;
-  await db.from('approvals').update(obj).eq('id',id);
-  S.expandedData = null; // force reload
-  await refreshExpandedRow(ordId, division);
-}
-async function setActExp(ordId, mKey, val, div) {
-  await setAct(ordId, mKey, val, div, true);
-  // Refresh the expanded row's own TNA panel (setAct already re-rendered the board)
-  if (S.expandedRow === ordId) {
-    await refreshExpandedRow(ordId, div);
-  }
-}
 
 // ─── EDIT COMPLETED QTY ───
 var _eqTarget = {ordId:null, key:null, orderQty:0};
@@ -3818,7 +3607,6 @@ async function openApvFlow(ordId, type, division) {
     });
     o = o || {};
     if (!$('apvf-title')) { console.error('apvf-title missing'); toast('Modal not found — refresh page', 'err'); return; }
-    console.log('openApvFlow type:', type, 'ordId:', ordId);
     $('apvf-title').textContent = label;
     $('apvf-sub').textContent = (o.style||'') + (o.buyer ? ' — ' + o.buyer : '') + (o.qty ? ' · ' + fmt(o.qty) + ' pcs' : '');
     var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
@@ -6453,6 +6241,7 @@ async function applyCopyColumnSetup() {
   var checked = Array.prototype.slice.call(document.querySelectorAll('.ccs-check:checked')).map(function(cb){ return cb.value; });
   if (!checked.length) { toast('Select at least one buyer', 'err'); return; }
   var sourceItems = getUnifiedOrderedItems(_ccsSourceBuyer);
+  var sourceFreeze = getBuyerFreezeCount(_ccsSourceBuyer);
   var btn = $('ccs-apply-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Copying\u2026'; }
   for (var t = 0; t < checked.length; t++) {
@@ -6463,6 +6252,7 @@ async function applyCopyColumnSetup() {
       delete cfgCopy.id; // let the target row keep/create its own primary key
       await db.from('buyer_field_visibility').upsert(cfgCopy, { onConflict: 'buyer_id,field_key' });
     }
+    await setBuyerFreezeCount(targetId, sourceFreeze); // the modal promises this too — don't leave it out
     delete S.fieldVisibility[targetId]; // force a fresh read next time that buyer's board renders
   }
   if (btn) { btn.disabled = false; btn.textContent = 'Copy setup'; }
