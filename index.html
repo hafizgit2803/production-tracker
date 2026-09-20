@@ -760,18 +760,20 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 [data-theme="dark"] .attach-pill{background:#4A3826;color:#E8C4A0;border-color:#5A4530}
 [data-theme="dark"] .attach-pill:not(.has-val){background:#2E2C28;color:#A8A399;border-color:#443F35}
 
-.yarn-pill{position:relative;height:36px;border-radius:8px;background:var(--panel);
-  border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;width:100%}
+.yarn-pill{position:relative;height:18px;border-radius:6px;background:var(--panel);
+  border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;width:100%;
+  box-shadow:0 1px 2px rgba(20,18,15,.05);transition:border-color .15s,box-shadow .15s}
+.yarn-pill:hover{border-color:#D8D2C4;box-shadow:0 2px 5px rgba(20,18,15,.09)}
 .yarn-pill-fill{position:absolute;left:0;top:0;bottom:0;transition:width .2s ease}
 .yarn-pill.empty .yarn-pill-fill{background:transparent}
 .yarn-pill.partial .yarn-pill-fill{background:#F6D186}
 .yarn-pill.complete .yarn-pill-fill{background:#86EFAC}
-.yarn-pill.no-booking{background:#EFECE3;border-color:#DCD7C9}
+.yarn-pill.no-booking{background:#EFECE3;border-color:#DCD7C9;box-shadow:none}
 .yarn-pill.no-booking .yarn-pill-label{color:#8A8574;font-weight:600}
 [data-theme="dark"] .yarn-pill.no-booking{background:#2E2C28;border-color:#443F35}
 [data-theme="dark"] .yarn-pill.no-booking .yarn-pill-label{color:#A8A399}
 .yarn-pill-label{position:relative;z-index:1;font-size:9.5px;font-weight:700;color:var(--ink);
-  padding:0 4px;white-space:nowrap;text-align:center}
+  padding:0 4px;white-space:nowrap;text-align:center;line-height:1}
 
 /* Yarn modal */
 .yarn-overall-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
@@ -1345,7 +1347,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:21</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:22</p>
   </div>
 </div>
 
@@ -1385,7 +1387,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:21</div>
+  <div id="ver-stamp">Version:26-09-17:22</div>
 </div>
 
 
@@ -10045,7 +10047,7 @@ var MASTER_FIELDS = [
   // ── LIVE ORDERS FIELDS ──────────────────────────────────────────────────
   { key:'country',       name:'Country',        type:'dropdown', options:WORLD_COUNTRIES_LIST, width:134, defLoc:{live:true,laying:false,shipped:false} },
   { key:'season',         name:'Season',         type:'text',     width:70, defLoc:{live:true,laying:false,shipped:false} },
-  { key:'department',     name:'Department',     type:'text',     width:100, defLoc:{live:true,laying:false,shipped:false} },
+  { key:'department',     name:'Department',     type:'text',     width:80,  defLoc:{live:true,laying:false,shipped:false} },
   { key:'article_no',     name:'Article Number', type:'text',     defLoc:{live:true,laying:false,shipped:false} },
   { key:'avg_weight',     name:'Average Weight', type:'special_weight', width:74, wrap:true, defLoc:{live:true,laying:false,shipped:false} },
   { key:'internal_pp',    name:'Internal PP Meeting', type:'date', width:96, wrap:true, defLoc:{live:true,laying:false,shipped:false} },
