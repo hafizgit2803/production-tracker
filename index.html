@@ -1363,7 +1363,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:25</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:26</p>
   </div>
 </div>
 
@@ -1403,7 +1403,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:25</div>
+  <div id="ver-stamp">Version:26-09-17:26</div>
 </div>
 
 
@@ -2154,6 +2154,24 @@ table.dyn-board thead th.stk-dyn{z-index:35}
 
 <!-- Toast -->
 <div id="toast"></div>
+
+<!-- === PERSISTENT SAVE-ERROR DIALOG ===
+     Unlike a toast (auto-dismisses in 2.8s), this stays on screen until the
+     user closes it — a database error message needs to actually be read and
+     reported, not glimpsed for under three seconds. -->
+<div class="ov" id="ov-save-error" onclick="if(event.target===this)closeSaveError()">
+  <div class="modal slim">
+    <div class="m-h"><div><h3 style="color:var(--red)">Save Failed</h3><div class="msub">This did NOT save. The exact reason from the database is below.</div></div>
+      <button class="btn" onclick="closeSaveError()">Close</button></div>
+    <div class="m-b">
+      <div style="background:var(--red-soft);border:1px solid #FECACA;border-radius:9px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;color:var(--red);word-break:break-word;white-space:pre-line" id="save-error-text"></div>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="copySaveError()">Copy error text</button>
+      <button class="btn pri" onclick="closeSaveError()">Close</button>
+    </div>
+  </div>
+</div>
 <div id="floating-tip"></div>
 
 <script>
@@ -2446,6 +2464,19 @@ function jsAttrEsc(s) {
 // Safe to embed free-text inside HTML attribute values (title="...") or text content.
 function htmlEsc(s) {
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// A save failure that matters (a booking, a receipt) gets this instead of a
+// toast — the message needs to survive long enough to actually read and
+// relay, not vanish in 2.8 seconds like everything else.
+function showSaveError(message) {
+  $('save-error-text').textContent = message;
+  openModal('ov-save-error');
+}
+function closeSaveError() { closeModal('ov-save-error'); }
+function copySaveError() {
+  var txt = $('save-error-text').textContent;
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ toast('Copied'); }).catch(function(){});
 }
 
 function toast(msg, type = '') {
@@ -5790,12 +5821,21 @@ async function saveNewBooking() {
   // toast still said "Booking added" and the modal just re-rendered showing
   // nothing new, because nothing new actually existed. A silent failure and a
   // real success looked identical. Now they don't.
-  if (ybRes.error) { toast('Booking NOT saved \u2014 ' + ybRes.error.message, 'err'); return; }
+  if (ybRes.error) { showSaveError('Yarn booking NOT saved.\n\nDatabase said:\n' + ybRes.error.message); return; }
   toast('Booking added', 'ok-t');
-  await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
-  await reloadSummaries(_yarnMerchantId);
-  renderBoard(S.view);
-  await renderMaterialModalBody();
+  try {
+    // The write already succeeded at this point — anything that goes wrong
+    // from here on is a display problem, not a lost booking. Distinguished
+    // clearly so "saved but the screen didn't update" is never confused with
+    // "nothing was saved."
+    await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
+    await reloadSummaries(_yarnMerchantId);
+    renderBoard(S.view);
+    await renderMaterialModalBody();
+  } catch (e) {
+    console.error('post-save refresh failed:', e);
+    showSaveError('The booking WAS saved to the database. The screen just failed to refresh automatically \u2014 close this and reopen the modal, or refresh the page, to see it.\n\nTechnical detail: ' + (e && e.message ? e.message : String(e)));
+  }
 }
 
 async function deleteBooking(id) {
@@ -5833,7 +5873,7 @@ async function saveNewReceipt(bookingId) {
   var qty = parseFloat($('yb-new-rc-qty-'+bookingId).value) || 0;
   if (!date || !qty) { toast('Date and quantity required', 'err'); return; }
   const yrRes = await db.from('yarn_receipts').insert({ booking_id: bookingId, received_on: date, qty: qty, created_by: S.user.name });
-  if (yrRes.error) { toast('Receipt NOT saved \u2014 ' + yrRes.error.message, 'err'); return; }
+  if (yrRes.error) { showSaveError('Yarn receipt NOT saved.\n\nDatabase said:\n' + yrRes.error.message); return; }
   toast('Inhouse recorded', 'ok-t');
   await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
   await reloadSummaries(_yarnMerchantId);
@@ -7231,12 +7271,17 @@ async function saveNewAccessoryBooking() {
     pi_number: pi || null, lc_number: lc || null,
     created_by: S.user.name
   });
-  if (abRes.error) { toast('Booking NOT saved \u2014 ' + abRes.error.message, 'err'); return; }
+  if (abRes.error) { showSaveError('Accessory booking NOT saved.\n\nDatabase said:\n' + abRes.error.message); return; }
   toast('Booking added', 'ok-t');
-  await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory);
-  await reloadSummaries(_accMerchantId);
-  renderBoard(S.view);
-  await renderAccessoryModalBody();
+  try {
+    await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory);
+    await reloadSummaries(_accMerchantId);
+    renderBoard(S.view);
+    await renderAccessoryModalBody();
+  } catch (e) {
+    console.error('post-save refresh failed:', e);
+    showSaveError('The booking WAS saved to the database. The screen just failed to refresh automatically \u2014 close this and reopen the modal, or refresh the page, to see it.\n\nTechnical detail: ' + (e && e.message ? e.message : String(e)));
+  }
 }
 
 async function deleteAccessoryBooking(id) {
@@ -7276,7 +7321,7 @@ async function saveNewAccessoryReceipt(bookingId) {
   var qty = qtyRaw === '' ? null : (parseFloat(qtyRaw) || 0);
   if (!date) { toast('Date is required', 'err'); return; }
   const arRes = await db.from('accessory_receipts').insert({ booking_id: bookingId, received_on: date, qty: qty, created_by: S.user.name });
-  if (arRes.error) { toast('Receipt NOT saved \u2014 ' + arRes.error.message, 'err'); return; }
+  if (arRes.error) { showSaveError('Accessory receipt NOT saved.\n\nDatabase said:\n' + arRes.error.message); return; }
   toast('Inhouse recorded', 'ok-t');
   await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory);
   await reloadSummaries(_accMerchantId);
