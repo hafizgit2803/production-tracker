@@ -1299,8 +1299,29 @@ table.dyn-board td.col-yarn,table.dyn-board td .cell{white-space:normal}
    this component must never grow to match its row's height, regardless of
    what else is going on elsewhere in that row. */
 table.dyn-board .yarn-pill{height:13px!important;min-height:13px!important;max-height:13px!important}
+/* An .apv-chip label is allowed to wrap onto two lines by default (fine
+   inside a modal), but inside a board cell that would silently grow the
+   WHOLE row to match — every other short-content column in that row (PO,
+   Quantity, etc.) then shows dead vertical space, since plain cells are
+   vertically centred. Truncating instead of wrapping here keeps the row
+   height driven by real content, not by a narrow column running out of room
+   for its label. */
+/* An .apv-chip label now wraps onto a second line if the column is too
+   narrow for it, rather than truncating with an ellipsis — the number stays
+   fully visible either way. This is safe now that every board cell aligns to
+   the top (below): a wrapped label growing its row no longer leaves dead
+   centred space in short single-line neighbours like PO or Quantity, so
+   there's no real downside to letting it wrap instead of hiding part of it. */
+table.dyn-board td .apv-chip{white-space:normal;word-break:break-word}
 table.dyn-board td.wrap2,table.dyn-board th.wrap2{white-space:normal;line-height:1.15;overflow:visible}
 table.dyn-board th{white-space:normal;line-height:1.15}
+/* Plain cells default to vertical-align:middle, so when some OTHER column in
+   the row needs more height (a wrapped label, a stacked chip+date box), a
+   short single-line cell like PO or Quantity gets centred inside that taller
+   row — reading as a big empty gap above and below the value. Top-aligning
+   keeps the value pinned to the top instead, with any extra space simply
+   trailing below it, the way a spreadsheet behaves. */
+table.dyn-board td{vertical-align:top!important}
 /* A stray .card table th rule elsewhere forces overflow-wrap:break-word, which
    this board never turned off — it was leaking a mid-word split into every
    narrow wrapped header ("PRODUCTIO"/"N FLOOR") instead of breaking at the
@@ -1363,7 +1384,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:27</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:29</p>
   </div>
 </div>
 
@@ -1403,7 +1424,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:27</div>
+  <div id="ver-stamp">Version:26-09-17:29</div>
 </div>
 
 
@@ -3690,7 +3711,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     // up a different size or shape from them again.
     var cls = total === 0 ? 'not-sent' : received >= total ? 'approved' : 'submitted';
     var label = total === 0 ? 'No booking' : (received + ' / ' + total + ' items');
-    var inner = '<button type="button" class="apv-chip ' + cls + '">' + label + '</button>';
+    var inner = '<button type="button" class="apv-chip ' + cls + '" title="' + htmlEsc(label) + '">' + label + '</button>';
     return '<div onclick="event.stopPropagation();openAccessoryModal(\'' + ordId + '\',\'' + merchantId + '\',\'' + jsAttrEsc(style) + '\',\'sewing\')" style="cursor:pointer">' + inner + '</div>';
   }
 
@@ -3766,7 +3787,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     // in size or shape again.
     var yarnCls = totalBk === 0 ? 'not-sent' : totalRc >= totalBk ? 'approved' : 'submitted';
     var yarnLabel = totalBk === 0 ? 'No booking' : (fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + yarnUnitLabel);
-    const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '">' + yarnLabel + '</button>';
+    const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '" title="' + htmlEsc(yarnLabel) + '">' + yarnLabel + '</button>';
 
     // Days Left is one of the most-watched columns on the board, so it always
     // renders as a solid colour-coded pill (not plain text once healthy) and at
@@ -10094,7 +10115,7 @@ var FIXED_BLOCKS = [
   { key:'_days',        name:'Days Left',    width:70,  mandatory:false },
   { key:'_yarn',        name:'Yarn / Fabric',width:84,  mandatory:false },
   { key:'_attachment',  name:'Garment Attachment', width:95,  wrap:true, mandatory:false },
-  { key:'_accessories', name:'Accessories',  width:110, mandatory:false },
+  { key:'_accessories', name:'Accessories',  width:88,  mandatory:false },
   { key:'_approvals',   name:'Approvals (group)',   width:432, mandatory:false, isGroup:true },
   { key:'_production',  name:'Production (group)',  width:null, mandatory:false, isGroup:true },
   { key:'_notes',       name:'Notes',        width:100, wrap:true, mandatory:false },
