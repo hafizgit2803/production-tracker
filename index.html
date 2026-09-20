@@ -1345,7 +1345,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:20</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:21</p>
   </div>
 </div>
 
@@ -1385,7 +1385,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:20</div>
+  <div id="ver-stamp">Version:26-09-17:21</div>
 </div>
 
 
@@ -5755,12 +5755,18 @@ async function saveNewBooking() {
   var pi = $('yb-pi').value.trim();
   var lc = $('yb-lc').value.trim();
   if (!supplier || !comp || !date || !qty) { toast('Supplier, composition, date, and quantity are required', 'err'); return; }
-  await db.from('yarn_bookings').insert({
+  const ybRes = await db.from('yarn_bookings').insert({
     merchant_id: _yarnMerchantId, style: _yarnStyle, material_type: _yarnMaterialType,
     supplier: supplier, composition: comp, booked_on: date, qty: qty, price_per_lb: price,
     pi_number: pi || null, lc_number: lc || null,
     created_by: S.user.name
   });
+  // This used to go unchecked — if the insert failed for any reason (a column
+  // the database doesn't have yet, a permission rule blocking the write), the
+  // toast still said "Booking added" and the modal just re-rendered showing
+  // nothing new, because nothing new actually existed. A silent failure and a
+  // real success looked identical. Now they don't.
+  if (ybRes.error) { toast('Booking NOT saved \u2014 ' + ybRes.error.message, 'err'); return; }
   toast('Booking added', 'ok-t');
   await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
   await reloadSummaries(_yarnMerchantId);
@@ -5802,7 +5808,8 @@ async function saveNewReceipt(bookingId) {
   var date = $('yb-new-rc-date-'+bookingId).value;
   var qty = parseFloat($('yb-new-rc-qty-'+bookingId).value) || 0;
   if (!date || !qty) { toast('Date and quantity required', 'err'); return; }
-  await db.from('yarn_receipts').insert({ booking_id: bookingId, received_on: date, qty: qty, created_by: S.user.name });
+  const yrRes = await db.from('yarn_receipts').insert({ booking_id: bookingId, received_on: date, qty: qty, created_by: S.user.name });
+  if (yrRes.error) { toast('Receipt NOT saved \u2014 ' + yrRes.error.message, 'err'); return; }
   toast('Inhouse recorded', 'ok-t');
   await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
   await reloadSummaries(_yarnMerchantId);
@@ -7183,12 +7190,13 @@ async function saveNewAccessoryBooking() {
   var pi = $('ab-pi').value.trim();
   var lc = $('ab-lc').value.trim();
   if (!item || !date) { toast('Item and booking date are required', 'err'); return; }
-  await db.from('accessory_bookings').insert({
+  const abRes = await db.from('accessory_bookings').insert({
     merchant_id: _accMerchantId, style: _accStyle, category: _accCategory,
     item: item, supplier: supplier || null, booked_on: date, qty: qty,
     pi_number: pi || null, lc_number: lc || null,
     created_by: S.user.name
   });
+  if (abRes.error) { toast('Booking NOT saved \u2014 ' + abRes.error.message, 'err'); return; }
   toast('Booking added', 'ok-t');
   await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory);
   await reloadSummaries(_accMerchantId);
@@ -7232,7 +7240,8 @@ async function saveNewAccessoryReceipt(bookingId) {
   var qtyRaw = $('ab-new-rc-qty-'+bookingId).value.trim();
   var qty = qtyRaw === '' ? null : (parseFloat(qtyRaw) || 0);
   if (!date) { toast('Date is required', 'err'); return; }
-  await db.from('accessory_receipts').insert({ booking_id: bookingId, received_on: date, qty: qty, created_by: S.user.name });
+  const arRes = await db.from('accessory_receipts').insert({ booking_id: bookingId, received_on: date, qty: qty, created_by: S.user.name });
+  if (arRes.error) { toast('Receipt NOT saved \u2014 ' + arRes.error.message, 'err'); return; }
   toast('Inhouse recorded', 'ok-t');
   await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory);
   await reloadSummaries(_accMerchantId);
