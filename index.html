@@ -781,25 +781,54 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
   padding:0 4px;white-space:nowrap;text-align:center;line-height:1}
 
 /* Yarn modal */
-.yarn-overall-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.yarn-overall-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(20,18,15,.04)}
 .yarn-overall-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
 .yarn-overall-lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .yarn-overall-nums{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--ink)}
-.yarn-bar-track{height:14px;border-radius:8px;background:#EFECE3;overflow:hidden}
-.yarn-bar-track.sm{height:8px;margin-top:8px}
-[data-theme="dark"] .yarn-bar-track{background:#2A2828}
-.yarn-bar-fill{height:100%;border-radius:8px;transition:width .25s ease}
+.yarn-bar-track{height:10px;border-radius:6px;background:#EFECE3;overflow:hidden}
+.yarn-bar-track.sm{height:6px;margin-top:0}
+.yarn-bar-fill{height:100%;border-radius:6px;transition:width .25s ease}
 .yarn-bar-fill.empty{background:transparent}
 .yarn-bar-fill.partial{background:#F0B94D}
 .yarn-bar-fill.complete{background:var(--green)}
 
+/* Booking card — redesigned as a proper header bar (who/when, clearly
+   secondary to the item name above it) over a body holding progress and
+   receipts, instead of a flat stack where the supplier name (16px/800) read
+   louder than the item it belonged to. */
 .yarn-booking-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
-  padding:14px 16px;margin-bottom:12px}
-.yarn-booking-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.yarn-booking-supplier{font-size:16px;font-weight:800;color:var(--ink)}
-.yarn-booking-meta{font-size:13px;font-weight:600;color:var(--ink);margin-top:3px}
-.yarn-booking-nums{font-size:13px;font-weight:700;color:var(--ink);margin-top:6px;text-align:right}
-.yarn-x{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:2px 4px;flex-shrink:0}
+  overflow:hidden;margin-bottom:10px;box-shadow:0 1px 3px rgba(20,18,15,.04)}
+.yarn-booking-hdr{display:flex;justify-content:space-between;align-items:flex-start;
+  padding:11px 14px;background:#FBFAF6;border-bottom:1px solid var(--line);gap:8px}
+.yarn-booking-body{padding:12px 14px 14px}
+.yarn-booking-supplier{font-size:13.5px;font-weight:700;color:var(--ink)}
+.yarn-booking-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+.yarn-booking-nums-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.yarn-booking-nums-lbl{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.yarn-booking-nums{font-size:13px;font-weight:700;color:var(--ink);font-family:var(--mono)}
+.dev-icon-btn.yarn-x{width:26px;height:26px;flex-shrink:0}
+
+/* Receipts — a plain list of lines instead of a boxed mini-table with its own
+   repeated "Date / Quantity" header, which read as a spreadsheet dropped into
+   the middle of a card. */
+.yarn-receipts-list{margin-top:10px}
+.yarn-receipts-list-lbl{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px}
+.yarn-receipt-row{display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid #F0EDE4;font-size:12.5px}
+.yarn-receipt-row:last-of-type{border-bottom:none}
+.yarn-receipt-date{color:var(--ink);font-weight:600}
+.yarn-receipt-qty{font-family:var(--mono);color:var(--ink);font-weight:600}
+.yarn-x{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:2px 4px;flex-shrink:0;
+  border-radius:6px;transition:background .12s}
+.yarn-x:hover{background:var(--red-soft)}
+.yarn-receipts-empty{padding:8px 0;font-size:12px;color:var(--muted)}
+.yarn-add-inhouse-btn{display:inline-block;margin-top:10px;padding:5px 12px;border-radius:20px;
+  border:1.5px dashed var(--line);background:transparent;color:var(--muted);font-size:11.5px;font-weight:600;
+  cursor:pointer;transition:all .15s}
+.yarn-add-inhouse-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+[data-theme="dark"] .yarn-bar-track{background:#2A2828}
+
 /* Colour-wise approval cards (PP / Lab Dip) — deliberately much more compact
    than the yarn booking cards, since a style can have many colours and the
    modal needs to stay scannable without excessive scrolling. */
@@ -821,18 +850,6 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 [data-theme="dark"] .acc-pill.all-booked{background:#1A4A2A;color:#A8E0BC}
 [data-theme="dark"] .acc-pill.submitted{background:#1A3A4A;color:#A8CDE8}
 [data-theme="dark"] .acc-pill.approved{background:#134A28;color:#8AE0AA}
-.yarn-x:hover{opacity:.7}
-
-/* Inhouse entries — a plain read-only table. Once added, an entry can only be
-   removed, not edited in place, so the history stays a clean, trustworthy
-   record rather than something that quietly drifts. */
-.yarn-receipts-table{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.yarn-receipts-hdr{display:grid;grid-template-columns:1fr 1fr 32px;background:#F3F1EA;
-  padding:6px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
-[data-theme="dark"] .yarn-receipts-hdr{background:#252325}
-.yarn-receipt-row{display:grid;grid-template-columns:1fr 1fr 32px;align-items:center;
-  padding:8px 10px;border-top:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--ink)}
-.yarn-receipts-empty{padding:10px;font-size:12.5px;color:var(--muted);text-align:center}
 
 .yarn-form-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
   padding:16px;margin-bottom:14px}
@@ -1384,7 +1401,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:29</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:32</p>
   </div>
 </div>
 
@@ -1424,7 +1441,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:29</div>
+  <div id="ver-stamp">Version:26-09-17:32</div>
 </div>
 
 
@@ -5768,13 +5785,13 @@ async function renderMaterialModalBody() {
     var bPct = b.qty > 0 ? Math.min(100, Math.round((bReceived/b.qty)*100)) : 0;
     var receiptRows = myReceipts.map(function(r){
       return '<div class="yarn-receipt-row">'
-        + '<span>' + short(r.received_on) + '</span>'
-        + '<span>' + fmt(r.qty) + ' ' + _yarnUnit + '</span>'
-        + (canEdit ? '<button class="yarn-x" onclick="deleteReceipt(\''+r.id+'\')">&#x2715;</button>' : '<span></span>')
+        + '<span class="yarn-receipt-date">' + short(r.received_on) + '</span>'
+        + '<span class="yarn-receipt-qty">' + fmt(r.qty) + ' ' + _yarnUnit + '</span>'
+        + (canEdit ? '<button class="yarn-x" onclick="deleteReceipt(\'' + r.id + '\')">&#x2715;</button>' : '<span></span>')
         + '</div>';
     }).join('');
-    var receiptsTableHtml = '<div class="yarn-receipts-table">'
-      + '<div class="yarn-receipts-hdr"><span>Date</span><span>Quantity</span><span></span></div>'
+    var receiptsHtml = '<div class="yarn-receipts-list">'
+      + '<div class="yarn-receipts-list-lbl">Inhouse Entries</div>'
       + (receiptRows || '<div class="yarn-receipts-empty">No inhouse entries yet</div>')
       + '<div id="yarn-add-row-'+b.id+'"></div>'
       + '</div>';
@@ -5782,13 +5799,14 @@ async function renderMaterialModalBody() {
       + '<div class="yarn-booking-hdr">'
       + '<div><div class="yarn-booking-supplier">'+htmlEsc(b.supplier)+'</div>'
       + '<div class="yarn-booking-meta">'+htmlEsc(b.composition||'')+' \u00b7 '+short(b.booked_on)+(b.pi_number?' \u00b7 PI '+htmlEsc(b.pi_number):'')+(b.lc_number?' \u00b7 LC '+htmlEsc(b.lc_number):'')+(b.price_per_lb?' \u00b7 $'+Number(b.price_per_lb).toFixed(4)+'/lb \u00b7 Total $'+fmt(Math.round(b.qty*b.price_per_lb)):'')+'</div></div>'
-      + (canEdit ? '<button class="yarn-x" onclick="deleteBooking(\''+b.id+'\')">&#x1F5D1;</button>' : '')
+      + (canEdit ? '<button class="dev-icon-btn yarn-x" onclick="deleteBooking(\''+b.id+'\')" title="Remove booking">&#x1F5D1;</button>' : '')
       + '</div>'
+      + '<div class="yarn-booking-body">'
+      + '<div class="yarn-booking-nums-row"><div class="yarn-booking-nums-lbl">Received</div><div class="yarn-booking-nums">'+fmt(bReceived)+' / '+fmt(b.qty)+' '+_yarnUnit+'</div></div>'
       + '<div class="yarn-bar-track sm"><div class="yarn-bar-fill sm ' + yarnBarClass(bPct) + '" style="width:'+bPct+'%"></div></div>'
-      + '<div class="yarn-booking-nums">'+fmt(bReceived)+' / '+fmt(b.qty)+' '+_yarnUnit+'</div>'
-      + receiptsTableHtml
-      + (canEdit ? '<button class="btn sm ghost" style="margin-top:8px" onclick="addReceiptRow(\''+b.id+'\')">+ Add Inhouse</button>' : '')
-      + '</div>';
+      + receiptsHtml
+      + (canEdit ? '<button class="yarn-add-inhouse-btn" onclick="addReceiptRow(\''+b.id+'\')">+ Add Inhouse</button>' : '')
+      + '</div></div>';
   }).join('');
 
   $('mat-body').innerHTML = tabsHtml + overallHtml + addBtnHtml
@@ -7226,35 +7244,34 @@ function renderAccessoryItemCard(it, canEdit) {
       : (myReceipts.length ? 'Received' : 'Pending first receipt');
     var receiptRows = myReceipts.map(function(r){
       return '<div class="yarn-receipt-row">'
-        + '<span>' + short(r.received_on) + '</span>'
-        + '<span>' + (r.qty != null ? fmt(r.qty) + ' pcs' : '\u2014') + '</span>'
-        + (canEdit ? '<button class="yarn-x" onclick="deleteAccessoryReceipt(\''+r.id+'\')">&#x2715;</button>' : '<span></span>')
+        + '<span class="yarn-receipt-date">' + short(r.received_on) + '</span>'
+        + '<span class="yarn-receipt-qty">' + (r.qty != null ? fmt(r.qty) + ' pcs' : '\u2014') + '</span>'
+        + (canEdit ? '<button class="yarn-x" onclick="deleteAccessoryReceipt(\'' + r.id + '\')">&#x2715;</button>' : '<span></span>')
         + '</div>';
     }).join('');
-    var receiptsTableHtml = '<div class="yarn-receipts-table">'
-      + '<div class="yarn-receipts-hdr"><span>Date</span><span>Quantity</span><span></span></div>'
+    var receiptsHtml = '<div class="yarn-receipts-list">'
+      + '<div class="yarn-receipts-list-lbl">Inhouse Entries</div>'
       + (receiptRows || '<div class="yarn-receipts-empty">No inhouse entries yet</div>')
       + '<div id="acc-add-row-'+b.id+'"></div>'
       + '</div>';
     return '<div class="yarn-booking-card">'
       + '<div class="yarn-booking-hdr">'
-      + '<div><div class="yarn-booking-supplier">'+(b.supplier?htmlEsc(b.supplier):'<span style="color:var(--muted)">No supplier noted</span>')+'</div>'
+      + '<div><div class="yarn-booking-supplier">'+(b.supplier?htmlEsc(b.supplier):'<span style="color:var(--muted);font-weight:400">No supplier noted</span>')+'</div>'
       + '<div class="yarn-booking-meta">'+short(b.booked_on)+(b.pi_number?' \u00b7 PI '+htmlEsc(b.pi_number):'')+(b.lc_number?' \u00b7 LC '+htmlEsc(b.lc_number):'')+'</div></div>'
-      + (canEdit ? '<button class="yarn-x" onclick="deleteAccessoryBooking(\''+b.id+'\')">&#x1F5D1;</button>' : '')
+      + (canEdit ? '<button class="dev-icon-btn yarn-x" onclick="deleteAccessoryBooking(\''+b.id+'\')" title="Remove booking">&#x1F5D1;</button>' : '')
       + '</div>'
+      + '<div class="yarn-booking-body">'
+      + '<div class="yarn-booking-nums-row"><div class="yarn-booking-nums-lbl">Received</div><div class="yarn-booking-nums">'+numsHtml+'</div></div>'
       + '<div class="yarn-bar-track sm"><div class="yarn-bar-fill sm ' + yarnBarClass(bPct) + '" style="width:'+bPct+'%"></div></div>'
-      + '<div class="yarn-booking-nums">'+numsHtml+'</div>'
-      + receiptsTableHtml
-      + (canEdit ? '<button class="btn sm ghost" style="margin-top:8px" onclick="addAccessoryReceiptRow(\''+b.id+'\')">+ Add Inhouse</button>' : '')
-      + '</div>';
+      + receiptsHtml
+      + (canEdit ? '<button class="yarn-add-inhouse-btn" onclick="addAccessoryReceiptRow(\''+b.id+'\')">+ Add Inhouse</button>' : '')
+      + '</div></div>';
   }).join('');
 
-  return '<div style="margin-bottom:18px">'
-    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
-    + '<div style="font-weight:700;font-size:14px">'+htmlEsc(it.item)+'</div>'
-    + '<span class="chip ' + (badgeCls==='complete'?'ok':badgeCls==='partial'?'warn':'') + '" style="font-size:10px">'+badgeLabel+'</span>'
-    + '</div>'
-    + bookingCards
+  return '<div class="dev-opt-card' + (it.complete?' confirmed':'') + '" style="margin-bottom:14px">'
+    + '<div class="dev-opt-hdr"><div class="dev-opt-title">'+htmlEsc(it.item)+'</div>'
+    + '<span class="chip ' + (badgeCls==='complete'?'ok':badgeCls==='partial'?'warn':'') + '" style="font-size:10px">'+badgeLabel+'</span></div>'
+    + '<div class="dev-opt-body" style="padding-top:12px">' + bookingCards + '</div>'
     + '</div>';
 }
 
@@ -10101,7 +10118,7 @@ var FIXED_BLOCKS = [
   { key:'_serial',       name:'#',            width:40,  mandatory:false, defaultHidden:true },
   { key:'_style',       name:'Style Number', width:130, wrap:true, mandatory:true  },
   { key:'_photo',       name:'Photo',        width:66,  mandatory:false },
-  { key:'_po',          name:'PO',           width:90,  mandatory:false },
+  { key:'_po',          name:'PO',           width:75,  mandatory:false },
   { key:'_confirm_date',name:'Order Confirmed Date', width:85,  wrap:true, mandatory:false },
   { key:'_buyer',       name:'Buyer',        width:95,  mandatory:false },
   { key:'_house',       name:'House',        width:80,  wrap:true, mandatory:false },
