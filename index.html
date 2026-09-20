@@ -1363,7 +1363,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:26</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:27</p>
   </div>
 </div>
 
@@ -1403,7 +1403,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:26</div>
+  <div id="ver-stamp">Version:26-09-17:27</div>
 </div>
 
 
@@ -3685,11 +3685,12 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     var pack = sumObj.pack || {total:0, received:0};
     var total = sew.total + pack.total;
     var received = sew.received + pack.received;
-    var pct = total > 0 ? Math.min(100, Math.round((received/total)*100)) : 0;
-    var inner = total > 0
-      ? '<div class="yarn-pill ' + yarnBarClass(pct) + '"><div class="yarn-pill-fill" style="width:' + pct + '%"></div>'
-        + '<span class="yarn-pill-label">' + received + ' / ' + total + ' items</span></div>'
-      : '<div class="yarn-pill no-booking"><span class="yarn-pill-label">No booking</span></div>';
+    // Rebuilt on the exact same .apv-chip component the approval pills use —
+    // not a lookalike, the same class — so there is no way for this to end
+    // up a different size or shape from them again.
+    var cls = total === 0 ? 'not-sent' : received >= total ? 'approved' : 'submitted';
+    var label = total === 0 ? 'No booking' : (received + ' / ' + total + ' items');
+    var inner = '<button type="button" class="apv-chip ' + cls + '">' + label + '</button>';
     return '<div onclick="event.stopPropagation();openAccessoryModal(\'' + ordId + '\',\'' + merchantId + '\',\'' + jsAttrEsc(style) + '\',\'sewing\')" style="cursor:pointer">' + inner + '</div>';
   }
 
@@ -3760,10 +3761,12 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     const totalBk = sum.bk, totalRc = sum.rc;
     const yarnPct = totalBk > 0 ? Math.min(100, Math.round((totalRc/totalBk)*100)) : 0;
     const yarnUnitLabel = division === 'knit' ? 'kgs' : 'lbs';
-    const yarnInner = totalBk > 0
-      ? '<div class="yarn-pill ' + yarnBarClass(yarnPct) + '"><div class="yarn-pill-fill" style="width:' + yarnPct + '%"></div>'
-        + '<span class="yarn-pill-label">' + fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + yarnUnitLabel + '</span></div>'
-      : '<div class="yarn-pill no-booking"><span class="yarn-pill-label">No booking</span></div>';
+    // Same .apv-chip component as the approval pills and the accessories
+    // pill above — one shared component, so all three can never drift apart
+    // in size or shape again.
+    var yarnCls = totalBk === 0 ? 'not-sent' : totalRc >= totalBk ? 'approved' : 'submitted';
+    var yarnLabel = totalBk === 0 ? 'No booking' : (fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + yarnUnitLabel);
+    const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '">' + yarnLabel + '</button>';
 
     // Days Left is one of the most-watched columns on the board, so it always
     // renders as a solid colour-coded pill (not plain text once healthy) and at
