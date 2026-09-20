@@ -611,6 +611,11 @@ table.tna-t td.sty{font-weight:600}
   box-shadow:0 1px 2px rgba(0,0,0,.07)}
 button.apv-chip{font-family:inherit}
 .apv-chip:hover{transform:translateY(-1px);box-shadow:0 3px 9px rgba(0,0,0,.16)}
+/* Final Inspection's column is 15% narrower than the other approval columns —
+   its text shrinks by the same amount so it still fits cleanly, without
+   touching every other approval column that shares .apv-chip/.apv-date-line. */
+.apv-field-final_insp .apv-chip{font-size:7.5px}
+.apv-field-final_insp .apv-date-line{font-size:9.8px}
 .apv-chip.not-sent{background:#EDEBE1;color:#726E64;border-color:#DCD7C9}
 .apv-chip.submitted{background:#F59E0B;color:#fff;border-color:#D97706;box-shadow:0 1px 4px rgba(217,119,6,.4)}
 .apv-chip.approved{background:#16A34A;color:#fff;border-color:#15803D;box-shadow:0 1px 4px rgba(21,128,61,.4)}
@@ -760,7 +765,7 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 [data-theme="dark"] .attach-pill{background:#4A3826;color:#E8C4A0;border-color:#5A4530}
 [data-theme="dark"] .attach-pill:not(.has-val){background:#2E2C28;color:#A8A399;border-color:#443F35}
 
-.yarn-pill{position:relative;height:13px;border-radius:5px;background:var(--panel);
+.yarn-pill{position:relative;height:13px;min-height:13px;max-height:13px;flex-shrink:0;border-radius:5px;background:var(--panel);
   border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;width:100%;
   box-shadow:0 1px 2px rgba(20,18,15,.05);transition:border-color .15s,box-shadow .15s}
 .yarn-pill:hover{border-color:#D8D2C4;box-shadow:0 2px 5px rgba(20,18,15,.09)}
@@ -1289,6 +1294,11 @@ tbody tr.late td.stk-dyn{background-color:#FDECEA!important}
 table.dyn-board{table-layout:fixed}
 table.dyn-board th,table.dyn-board td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.dyn-board td.col-yarn,table.dyn-board td .cell{white-space:normal}
+/* Belt-and-suspenders: force the pill's compact height even against any other
+   selector that might otherwise win by being more specific or loading later —
+   this component must never grow to match its row's height, regardless of
+   what else is going on elsewhere in that row. */
+table.dyn-board .yarn-pill{height:13px!important;min-height:13px!important;max-height:13px!important}
 table.dyn-board td.wrap2,table.dyn-board th.wrap2{white-space:normal;line-height:1.15;overflow:visible}
 table.dyn-board th{white-space:normal;line-height:1.15}
 /* A stray .card table th rule elsewhere forces overflow-wrap:break-word, which
@@ -1353,7 +1363,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:23</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:25</p>
   </div>
 </div>
 
@@ -1393,7 +1403,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:23</div>
+  <div id="ver-stamp">Version:26-09-17:25</div>
 </div>
 
 
@@ -3757,7 +3767,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     if (itemByKey['_qty']) cellsByKey['_qty'] = singleTd('_qty', 'num', fmt(o.qty), 'font-weight:700;');
     if (itemByKey['_fob']) cellsByKey['_fob'] = singleTd('_fob', 'num', '$' + (o.fob||0).toFixed(2), 'font-weight:700;');
     if (itemByKey['_value']) cellsByKey['_value'] = singleTd('_value', 'num', money((o.qty||0)*(o.fob||0)), 'font-weight:700;');
-    if (itemByKey['_ship']) cellsByKey['_ship'] = singleTd('_ship', '', short(o.ship_date), 'font-size:12px;font-weight:700;');
+    if (itemByKey['_ship']) cellsByKey['_ship'] = singleTd('_ship', '', short(o.ship_date), 'font-size:11px;font-weight:700;');
     if (itemByKey['_days']) cellsByKey['_days'] = singleTd('_days', 'num', dlSpan);
     if (itemByKey['_yarn']) {
       var yarnHtml = '<div onclick="event.stopPropagation();openMaterialModal(\'' + o.id + '\',\'' + division + '\')" style="cursor:pointer">' + yarnInner + '</div>';
@@ -10032,7 +10042,7 @@ var FIXED_BLOCKS = [
   { key:'_qty',         name:'Quantity',     width:72,  mandatory:false },
   { key:'_fob',         name:'FOB',          width:66,  mandatory:false },
   { key:'_value',       name:'Total Value',  width:96,  wrap:true, mandatory:false },
-  { key:'_ship',        name:'Ship Date',    width:78,  wrap:true, mandatory:false },
+  { key:'_ship',        name:'Ship Date',    width:70,  wrap:true, mandatory:false },
   { key:'_days',        name:'Days Left',    width:70,  mandatory:false },
   { key:'_yarn',        name:'Yarn / Fabric',width:84,  mandatory:false },
   { key:'_attachment',  name:'Garment Attachment', width:95,  wrap:true, mandatory:false },
@@ -10083,7 +10093,7 @@ var MASTER_FIELDS = [
   { key:'lock_sample',    name:'Lock Sample',     type:'special_approval', approvalType:'lock_sample', defaultHidden:true, defLoc:{live:true,laying:false,shipped:false} },
 
   // ── LAYING GOODS FIELDS ─────────────────────────────────────────────────
-  { key:'final_insp',     name:'Final Inspection', type:'special_approval', approvalType:'final_insp', wrap:true, width:110, defLoc:{live:false,laying:true,shipped:false} },
+  { key:'final_insp',     name:'Final Inspection', type:'special_approval', approvalType:'final_insp', wrap:true, width:94,  defLoc:{live:false,laying:true,shipped:false} },
   { key:'spudi_status',   name:'Spudi Status',    type:'special_approval', approvalType:'spudi_status', wrap:true, width:100, defLoc:{live:false,laying:true,shipped:false} },
   { key:'inspection_type',name:'Inspection Type', type:'dropdown', options:['Self','Buyer','Third-Party'], defLoc:{live:false,laying:true,shipped:false} },
   { key:'delay',          name:'Delay',          type:'special_delay', defLoc:{live:false,laying:true,shipped:false} },
@@ -10557,7 +10567,7 @@ function renderApprovalFieldCell(field, orderId) {
       ? '<button type="button" class="apv-date-line-btn" onclick="event.stopPropagation();openSetApvDateModal(\'' + orderId + '\',\'' + manualKey + '\',\'' + jsAttrEsc(cfg.label||apvType) + '\')">' + dateBox + '</button>'
       : dateBox;
   }
-  return '<div style="display:flex;flex-direction:column;align-items:stretch;width:100%">' + chip + dateHtml + '</div>';
+  return '<div class="apv-field-wrap apv-field-' + field.key + '" style="display:flex;flex-direction:column;align-items:stretch;width:100%">' + chip + dateHtml + '</div>';
 }
 
 function renderDelayCell(orderId) {
