@@ -760,7 +760,7 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 [data-theme="dark"] .attach-pill{background:#4A3826;color:#E8C4A0;border-color:#5A4530}
 [data-theme="dark"] .attach-pill:not(.has-val){background:#2E2C28;color:#A8A399;border-color:#443F35}
 
-.yarn-pill{position:relative;height:18px;border-radius:6px;background:var(--panel);
+.yarn-pill{position:relative;height:13px;border-radius:5px;background:var(--panel);
   border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;width:100%;
   box-shadow:0 1px 2px rgba(20,18,15,.05);transition:border-color .15s,box-shadow .15s}
 .yarn-pill:hover{border-color:#D8D2C4;box-shadow:0 2px 5px rgba(20,18,15,.09)}
@@ -772,7 +772,7 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 .yarn-pill.no-booking .yarn-pill-label{color:#8A8574;font-weight:600}
 [data-theme="dark"] .yarn-pill.no-booking{background:#2E2C28;border-color:#443F35}
 [data-theme="dark"] .yarn-pill.no-booking .yarn-pill-label{color:#A8A399}
-.yarn-pill-label{position:relative;z-index:1;font-size:9.5px;font-weight:700;color:var(--ink);
+.yarn-pill-label{position:relative;z-index:1;font-size:9px;font-weight:700;color:var(--ink);
   padding:0 4px;white-space:nowrap;text-align:center;line-height:1}
 
 /* Yarn modal */
@@ -1318,6 +1318,12 @@ table.dyn-board thead th.stk-dyn{z-index:35}
   .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
   .rail,.act-row,.top,.no-print,#toast,#login-wrap{display:none!important}
   .main{height:auto!important;overflow:visible!important}
+  /* The board itself was never hidden here — only modals were toggled via
+     .ov.printing — so printing the TNA sheet, the outstanding-items list, or
+     any other modal-based print also printed the entire live board sitting
+     underneath it. This is the actual fix: the board's content is gone from
+     the page entirely while printing, regardless of which modal is open. */
+  #content{display:none!important}
   .content{overflow:visible!important;padding:0!important}
   /* Hide everything except the active print overlay */
   .ov{position:static!important;background:none!important;padding:0!important;
@@ -1347,7 +1353,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:22</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:23</p>
   </div>
 </div>
 
@@ -1387,7 +1393,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:22</div>
+  <div id="ver-stamp">Version:26-09-17:23</div>
 </div>
 
 
@@ -5354,9 +5360,15 @@ function renderPPColourCard(c) {
   }
 
   var historyHtml = '';
-  if (c.rounds.length > 1) {
-    historyHtml = '<details style="margin-top:5px"><summary style="font-size:10.5px;color:var(--muted);cursor:pointer">' + (c.rounds.length-1) + ' earlier round' + (c.rounds.length-1>1?'s':'') + '</summary>'
-      + c.rounds.slice(0,-1).map(function(r){
+  if (c.rounds.length >= 1) {
+    // Previously this only appeared once a colour had been through more than
+    // one round — so a colour approved cleanly on the first try had no history
+    // entry point at all, nothing to click. Now every colour gets one,
+    // including a single round, so "approved" always has a way to see when
+    // and how it got there, not just colours that were rejected first.
+    var roundWord = c.rounds.length === 1 ? '1 round' : c.rounds.length + ' rounds';
+    historyHtml = '<details style="margin-top:5px"><summary style="font-size:10.5px;color:var(--accent);cursor:pointer;font-weight:600">View history (' + roundWord + ')</summary>'
+      + c.rounds.slice().reverse().map(function(r){
           var parts = [];
           if (r.sent_to_supplier_on) parts.push('Sent to ' + (r.supplier_name?htmlEsc(r.supplier_name):'supplier') + ' ' + short(r.sent_to_supplier_on));
           if (r.submitted_on) parts.push('Submitted to buyer ' + short(r.submitted_on));
@@ -6366,21 +6378,33 @@ async function generateBulkTNAPrint() {
   var audienceLabel = _btnaAudience === 'planning' ? 'Planning Team' : 'Management';
 
   var headerCells = VMILES.map(function(x){ return '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817;white-space:nowrap">'+x.n+'</th>'; }).join('');
-  var bodyRows = orders.map(function(o) {
-    var photoUrl = getStyleImage(o.merchant_id, o.style);
-    var attachList = ((S.boardSummaries[o.merchant_id]||{})[o.id]||{}).attach || [];
-    var cells = VMILES.map(function(x){
-      var p = o['plan_' + x.k];
-      if (buffer && (x.k === 'insp' || x.k === 'ship')) p = shiftDate(p, buffer);
-      return '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-family:Georgia,serif;font-size:12.5px;white-space:nowrap">'+(p?short(p):'\u2014')+'</td>';
+  // Grouped by buyer, matching how the live board itself separates orders —
+  // this used to be one flat table with the buyer repeated on every row,
+  // which is what "not separated, all together" meant.
+  var byBuyer = {};
+  orders.forEach(function(o){ var b = o.buyer || 'Unspecified Buyer'; (byBuyer[b] = byBuyer[b] || []).push(o); });
+  var buyerNames = Object.keys(byBuyer).sort();
+  var colCount = 4 + VMILES.length; // Photo, Style, PO, Attachment + one per milestone
+  var bodyRows = buyerNames.map(function(buyerName) {
+    var group = byBuyer[buyerName];
+    var sectionHeader = '<tr><td colspan="' + colCount + '" style="padding:14px 10px 7px;font-family:Georgia,serif;font-size:13.5px;font-weight:700;color:#191817;background:#F7F5EF;border-bottom:2px solid #191817">'
+      + htmlEsc(buyerName) + ' <span style="font-family:-apple-system,sans-serif;font-weight:400;color:#73706A;font-size:11px">\u00b7 ' + group.length + ' order' + (group.length===1?'':'s') + '</span></td></tr>';
+    var groupRows = group.map(function(o) {
+      var photoUrl = getStyleImage(o.merchant_id, o.style);
+      var attachList = ((S.boardSummaries[o.merchant_id]||{})[o.id]||{}).attach || [];
+      var cells = VMILES.map(function(x){
+        var p = o['plan_' + x.k];
+        if (buffer && (x.k === 'insp' || x.k === 'ship')) p = shiftDate(p, buffer);
+        return '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-family:Georgia,serif;font-size:12.5px;white-space:nowrap">'+(p?short(p):'\u2014')+'</td>';
+      }).join('');
+      return '<tr>'
+        + '<td style="padding:6px 10px;border-bottom:1px solid #E5E2D9">'+(photoUrl?'<img src="'+photoUrl+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;display:block">':'')+'</td>'
+        + '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-weight:700;white-space:nowrap">'+o.style+'</td>'
+        + '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-size:12px;white-space:nowrap">'+(o.po_number||'\u2014')+'</td>'
+        + '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-size:12px;font-weight:700;max-width:140px;background:#FBEFE8">'+(attachList.length?attachList.join(', '):'<span style="font-weight:400;color:#A0A09A">\u2014</span>')+'</td>'
+        + cells + '</tr>';
     }).join('');
-    return '<tr>'
-      + '<td style="padding:6px 10px;border-bottom:1px solid #E5E2D9">'+(photoUrl?'<img src="'+photoUrl+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;display:block">':'')+'</td>'
-      + '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-weight:700;white-space:nowrap">'+o.style+'</td>'
-      + '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-size:12px;white-space:nowrap">'+(o.po_number||'\u2014')+'</td>'
-      + '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-size:12px;white-space:nowrap">'+o.buyer+'</td>'
-      + '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-size:12px;font-weight:700;max-width:140px;background:#FBEFE8">'+(attachList.length?attachList.join(', '):'<span style="font-weight:400;color:#A0A09A">\u2014</span>')+'</td>'
-      + cells + '</tr>';
+    return sectionHeader + groupRows;
   }).join('');
 
   $('btnapdf-sub').textContent = genDate + ' \u00b7 For: ' + audienceLabel + ' \u00b7 ' + orders.length + ' orders';
@@ -6396,7 +6420,6 @@ async function generateBulkTNAPrint() {
     + '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Photo</th>'
     + '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Style</th>'
     + '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">PO</th>'
-    + '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Buyer</th>'
     + '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Attachment</th>'
     + headerCells + '</tr></thead><tbody>' + bodyRows + '</tbody></table></div>'
     + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + S.user.name + ' \u00b7 ' + orders.length + ' orders</div>'
