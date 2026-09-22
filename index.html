@@ -719,6 +719,39 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 .dev-icon-btn{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
   border-radius:8px;border:1.5px solid var(--red-soft);background:var(--red-soft);color:var(--red);cursor:pointer;transition:all .15s}
 .dev-icon-btn:hover{background:var(--red);color:#fff}
+
+/* ── Development detail page — round 2 polish ── */
+.dev-head-photo{transition:transform .15s}
+.dev-head-photo:hover{transform:scale(1.03)}
+.dev-toolbar{display:flex;gap:8px;margin-bottom:14px}
+.dev-sample-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;
+  font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .15s}
+.dev-sample-badge:hover{transform:translateY(-1px)}
+.dev-ship-chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;
+  font-size:10.5px;font-weight:700;font-family:var(--mono);margin-left:8px;vertical-align:middle}
+.dev-ship-chip.ok{background:var(--green-soft);color:var(--green)}
+.dev-ship-chip.warn{background:var(--orange);color:#fff}
+.dev-ship-chip.crit{background:var(--red);color:#fff}
+.dev-attach-chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700}
+.dev-attach-chip.yes{background:var(--accent-soft);color:var(--accent)}
+.dev-attach-chip.no{background:#EFECE3;color:#8A8574}
+.dev-notes-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.dev-notes-input{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;
+  background:#FCFBF7;color:var(--ink);font-size:12.5px;font-family:inherit;resize:vertical;min-height:44px;box-sizing:border-box}
+.dev-notes-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.dev-notes-readonly{font-size:12.5px;color:var(--ink);line-height:1.5;white-space:pre-wrap}
+.dev-meta-trail{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
+  font-size:10.5px;color:var(--muted)}
+.dev-compare-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.dev-compare-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.dev-compare-table th{background:#FBFAF6;text-align:left;padding:10px 14px;font-size:9.5px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;
+  border-bottom:2px solid var(--line);white-space:nowrap}
+.dev-compare-table td{padding:10px 14px;border-bottom:1px solid #F0EDE4;white-space:nowrap}
+.dev-compare-table td.dev-compare-lbl{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;background:#FBFAF6}
+.dev-compare-table tr:last-child td{border-bottom:none}
+.dev-compare-table th.confirmed-col{background:var(--green-soft);color:var(--green)}
 .acc-tna-banner{margin-bottom:14px;padding:10px 14px;border-radius:9px;background:var(--accent-soft);
   color:var(--accent);font-size:15px;font-weight:800;font-family:var(--mono);line-height:1.4;
   text-align:center;border:1.5px solid #E8CFC2;box-sizing:border-box;letter-spacing:.2px}
@@ -1472,7 +1505,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:36</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:38</p>
   </div>
 </div>
 
@@ -1512,7 +1545,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:36</div>
+  <div id="ver-stamp">Version:26-09-17:38</div>
 </div>
 
 
@@ -7774,6 +7807,7 @@ async function restoreOrder(ordId) {
 // candidate compositions, per-composition gauge/weight) that a confirmed order
 // never needs once it exists, and vice versa (PO number, actual ship date).
 var _devOptionsCache = {}; // { developmentId: [options] }
+var _devCompareMode = false; // when true, show the side-by-side compare table instead of stacked cards
 var _devSamplesCache = {}; // { optionId: [sample rounds] }
 
 async function loadDevelopments() {
@@ -7868,10 +7902,12 @@ async function renderDevelopmentsPage() {
 
 function openDevelopmentDetail(devId) {
   S._devDetailId = devId;
+  _devCompareMode = false;
   renderDevelopmentDetail(devId);
 }
 function backToDevelopmentsList() {
   S._devDetailId = null;
+  _devCompareMode = false;
   renderDevelopmentsPage();
 }
 
@@ -7899,7 +7935,7 @@ async function renderDevelopmentDetail(devId) {
 
   var photo = getStyleImage(d.merchant_id, d.style);
   var head = '<div class="dev-head-card">'
-    + (photo ? '<img src="'+photo+'" class="dev-head-photo">' : '<div class="dev-head-photo-ph">&#x1F9F6;</div>')
+    + (photo ? '<img src="'+photo+'" class="dev-head-photo" onclick="openImageModal(\''+jsAttrEsc(photo)+'\',\''+jsAttrEsc(d.style)+'\',\''+d.merchant_id+'\')" title="Click to enlarge" style="cursor:pointer">' : '<div class="dev-head-photo-ph">&#x1F9F6;</div>')
     + '<div><div class="dev-head-title">' + htmlEsc(d.style) + '</div><div class="dev-head-sub">' + htmlEsc(d.buyer||'') + (d.season?' \u00b7 '+htmlEsc(d.season):'') + (d.buyer_pending ? ' <span class="dev-pending-tag" style="margin-left:6px">Buyer pending approval</span>' : '') + '</div></div>'
     + '</div>';
 
@@ -7909,53 +7945,136 @@ async function renderDevelopmentDetail(devId) {
     var esc = String(val).replace(/"/g,'&quot;');
     return '<input type="'+type+'" class="dev-field-input" value="'+esc+'" placeholder="'+(placeholder||'')+'" onchange="saveDevOptionField(\''+o.id+'\',\''+key+'\',this.value)">';
   }
-  function checkboxField(o, key) {
-    var checked = o[key] ? 'checked' : '';
-    return canEdit
-      ? '<div class="dev-checkbox-row"><input type="checkbox" '+checked+' onchange="saveDevOptionField(\''+o.id+'\',\''+key+'\',this.checked)"><span style="font-size:12.5px;color:var(--muted)">'+(o[key]?'Yes':'No')+'</span></div>'
-      : '<div class="dev-field-readonly">' + (o[key] ? 'Yes' : 'No') + '</div>';
+  function attachChip(o) {
+    if (canEdit) {
+      var checked = o.attachment_needed ? 'checked' : '';
+      return '<div class="dev-checkbox-row"><input type="checkbox" '+checked+' onchange="saveDevOptionField(\''+o.id+'\',\'attachment_needed\',this.checked)"><span style="font-size:12.5px;color:var(--muted)">'+(o.attachment_needed?'Yes':'No')+'</span></div>';
+    }
+    return '<span class="dev-attach-chip ' + (o.attachment_needed?'yes':'no') + '">' + (o.attachment_needed?'Yes':'No') + '</span>';
+  }
+  function shipDateField(o) {
+    var chip = '';
+    if (o.approx_ship_date) {
+      var days = daysTo(o.approx_ship_date);
+      var cls = days < 0 ? 'crit' : days <= 14 ? 'warn' : 'ok';
+      var label = days < 0 ? Math.abs(days) + 'd overdue' : days === 0 ? 'Today' : days + 'd away';
+      chip = '<span class="dev-ship-chip ' + cls + '">' + label + '</span>';
+    }
+    return field(o, 'approx_ship_date', 'date') + chip;
+  }
+  function metaTrail(o) {
+    var parts = [];
+    if (o.created_by) parts.push('Added by ' + htmlEsc(o.created_by) + (o.created_at ? ' on ' + short(o.created_at.slice(0,10)) : ''));
+    if (o.updated_by && o.updated_at && o.updated_at !== o.created_at) parts.push('Last updated by ' + htmlEsc(o.updated_by) + ' on ' + short(o.updated_at.slice(0,10)));
+    return parts.length ? '<div class="dev-meta-trail">' + parts.join(' \u00b7 ') + '</div>' : '';
   }
 
-  var optionCards = opts.map(function(o) {
-    var samples = _devSamplesCache[o.id] || [];
-    var latest = samples[samples.length-1];
-    var sampleLabel = !latest ? 'Not sent yet'
-      : latest.approved_on ? 'Approved'
-      : latest.rejected_on ? 'Rejected (Round '+latest.round+')'
-      : latest.sent_to_buyer_on ? 'With buyer, awaiting decision'
-      : latest.sent_to_sampling_on ? 'In sampling section'
-      : 'Round '+latest.round;
-    var sampleClass = !latest ? 'not-sent' : latest.approved_on ? 'approved' : latest.rejected_on ? 'rejected' : 'submitted';
-    var isConfirmed = o.status === 'confirmed';
-    return '<div class="dev-opt-card' + (isConfirmed?' confirmed':'') + '">'
-      + '<div class="dev-opt-hdr">'
-      + '<div class="dev-opt-title">' + htmlEsc(o.option_label) + (isConfirmed ? ' <span class="dev-confirmed-tag">&#x2713; Confirmed</span>' : '') + '</div>'
-      + '<div style="display:flex;gap:8px;align-items:center">'
-      + (isConfirmed && o.confirmed_order_ids ? '<button class="btn sm" onclick="viewConfirmedDevOrders(\''+o.id+'\')">View order(s)</button>' : '')
-      + (!isConfirmed && canEdit && !d.buyer_pending ? '<button class="btn sm pri" onclick="confirmDevelopmentOptionToOrder(\''+o.id+'\')" style="font-weight:600">Confirm Order</button>' : '')
-      + (!isConfirmed && d.buyer_pending ? '<button class="btn sm" disabled title="Waiting on admin to approve the new buyer" style="opacity:.5;cursor:not-allowed">Confirm Order</button>' : '')
-      + (canEdit ? '<button class="dev-icon-btn" onclick="deleteDevOption(\''+o.id+'\')" title="Remove this option">&#x1F5D1;</button>' : '')
-      + '</div></div>'
-      + '<div class="dev-opt-body"><div class="dev-grid">'
-      + '<div><label class="dv-lbl">Composition</label>' + field(o,'composition','text','e.g. 100% Cotton') + '</div>'
-      + '<div><label class="dv-lbl">Gauge</label>' + field(o,'gauge','text','e.g. 12GG') + '</div>'
-      + '<div><label class="dv-lbl">Avg Weight</label>' + field(o,'avg_weight','number') + '</div>'
-      + '<div><label class="dv-lbl">Colour</label>' + field(o,'colour','text') + '</div>'
-      + '<div><label class="dv-lbl">Quantity</label>' + field(o,'qty','number') + '</div>'
-      + '<div><label class="dv-lbl">Approx Ship Date</label>' + field(o,'approx_ship_date','date') + '</div>'
-      + '<div><label class="dv-lbl">Negotiable Price (FOB)</label>' + field(o,'negotiable_price','number') + '</div>'
-      + '<div><label class="dv-lbl">Attachment Needed</label>' + checkboxField(o,'attachment_needed') + '</div>'
-      + '</div></div>'
-      + '<div class="dev-sample-row">'
-      + '<label class="dv-lbl" style="margin:0">Development Sample</label>'
-      + '<button class="apv-chip ' + sampleClass + '" style="width:auto;display:inline-block;padding:5px 12px;border-radius:20px" onclick="openDevSampleModal(\''+o.id+'\')">' + sampleLabel + '</button>'
-      + '</div>'
-      + '</div>';
+  var toolbarHtml = '<div class="dev-toolbar">'
+    + (canEdit ? '<button class="btn sm pri" onclick="addDevOption(\''+devId+'\')">+ Add Option</button>' : '')
+    + (opts.length > 1 ? '<button class="btn sm" onclick="toggleDevCompareMode()">' + (_devCompareMode?'&#x2630; Card View':'&#x2194; Compare Options') + '</button>' : '')
+    + '</div>';
+
+  var bodyHtml;
+  if (_devCompareMode && opts.length > 1) {
+    bodyHtml = renderDevCompareTable(opts, canEdit, d);
+  } else {
+    bodyHtml = opts.map(function(o) {
+      var samples = _devSamplesCache[o.id] || [];
+      var latest = samples[samples.length-1];
+      var sampleLabel = !latest ? 'Not sent yet'
+        : latest.approved_on ? 'Approved'
+        : latest.rejected_on ? 'Rejected (Round '+latest.round+')'
+        : latest.sent_to_buyer_on ? 'With buyer, awaiting decision'
+        : latest.sent_to_sampling_on ? 'In sampling section'
+        : 'Round '+latest.round;
+      var sampleClass = !latest ? 'not-sent' : latest.approved_on ? 'approved' : latest.rejected_on ? 'rejected' : 'submitted';
+      var isConfirmed = o.status === 'confirmed';
+      return '<div class="dev-opt-card' + (isConfirmed?' confirmed':'') + '">'
+        + '<div class="dev-opt-hdr">'
+        + '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+        + '<div class="dev-opt-title">' + htmlEsc(o.option_label) + (isConfirmed ? ' <span class="dev-confirmed-tag">&#x2713; Confirmed</span>' : '') + '</div>'
+        // Sample status promoted up here, next to the title — it's the thing
+        // actually happening at this stage, not a footnote.
+        + '<button class="dev-sample-badge apv-chip ' + sampleClass + '" onclick="openDevSampleModal(\''+o.id+'\')" title="Development sample status">&#x1F9F5; ' + sampleLabel + '</button>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
+        + (isConfirmed && o.confirmed_order_ids ? '<button class="btn sm" onclick="viewConfirmedDevOrders(\''+o.id+'\')">View order(s)</button>' : '')
+        + (!isConfirmed && canEdit && !d.buyer_pending ? '<button class="btn sm pri" onclick="confirmDevelopmentOptionToOrder(\''+o.id+'\')" style="font-weight:600">Confirm Order</button>' : '')
+        + (!isConfirmed && d.buyer_pending ? '<button class="btn sm" disabled title="Waiting on admin to approve the new buyer" style="opacity:.5;cursor:not-allowed">Confirm Order</button>' : '')
+        + (canEdit ? '<button class="btn sm" onclick="duplicateDevOption(\''+o.id+'\')" title="Copy this option\u2019s values into a new option">&#x2398; Duplicate</button>' : '')
+        + (canEdit ? '<button class="dev-icon-btn" onclick="deleteDevOption(\''+o.id+'\')" title="Remove this option">&#x1F5D1;</button>' : '')
+        + '</div></div>'
+        + '<div class="dev-opt-body"><div class="dev-grid">'
+        + '<div><label class="dv-lbl">Composition</label>' + field(o,'composition','text','e.g. 100% Cotton') + '</div>'
+        + '<div><label class="dv-lbl">Gauge</label>' + field(o,'gauge','text','e.g. 12GG') + '</div>'
+        + '<div><label class="dv-lbl">Avg Weight</label>' + field(o,'avg_weight','number') + '</div>'
+        + '<div><label class="dv-lbl">Colour</label>' + field(o,'colour','text') + '</div>'
+        + '<div><label class="dv-lbl">Quantity</label>' + field(o,'qty','number') + '</div>'
+        + '<div><label class="dv-lbl">Approx Ship Date</label>' + shipDateField(o) + '</div>'
+        + '<div><label class="dv-lbl">Negotiable Price (FOB)</label>' + field(o,'negotiable_price','number') + '</div>'
+        + '<div><label class="dv-lbl">Attachment Needed</label>' + attachChip(o) + '</div>'
+        + '</div>'
+        + '<div class="dev-notes-wrap"><label class="dv-lbl">Notes</label>'
+        + (canEdit
+            ? '<textarea class="dev-notes-input" placeholder="Context, negotiation notes, buyer preference\u2026" onchange="saveDevOptionField(\''+o.id+'\',\'notes\',this.value)">'+htmlEsc(o.notes||'')+'</textarea>'
+            : '<div class="dev-notes-readonly">' + (o.notes ? htmlEsc(o.notes) : '<span style="color:var(--muted)">\u2014</span>') + '</div>')
+        + '</div>'
+        + metaTrail(o)
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  $('content').innerHTML = head + toolbarHtml + bodyHtml;
+}
+
+function toggleDevCompareMode() {
+  _devCompareMode = !_devCompareMode;
+  renderDevelopmentDetail(S._devDetailId);
+}
+
+function renderDevCompareTable(opts, canEdit, d) {
+  var rows = [
+    ['Status', function(o){ return o.status==='confirmed' ? '<span class="dev-confirmed-tag">&#x2713; Confirmed</span>' : '<span style="color:var(--muted)">Open</span>'; }],
+    ['Composition', function(o){ return htmlEsc(o.composition||'\u2014'); }],
+    ['Gauge', function(o){ return htmlEsc(o.gauge||'\u2014'); }],
+    ['Avg Weight', function(o){ return o.avg_weight!=null ? htmlEsc(String(o.avg_weight)) : '\u2014'; }],
+    ['Colour', function(o){ return htmlEsc(o.colour||'\u2014'); }],
+    ['Quantity', function(o){ return o.qty!=null ? fmt(o.qty) : '\u2014'; }],
+    ['Approx Ship Date', function(o){
+      if (!o.approx_ship_date) return '\u2014';
+      var days = daysTo(o.approx_ship_date);
+      var cls = days < 0 ? 'crit' : days <= 14 ? 'warn' : 'ok';
+      var label = days < 0 ? Math.abs(days) + 'd overdue' : days === 0 ? 'Today' : days + 'd away';
+      return short(o.approx_ship_date) + ' <span class="dev-ship-chip ' + cls + '">' + label + '</span>';
+    }],
+    ['Negotiable Price (FOB)', function(o){ return o.negotiable_price!=null ? fmt(o.negotiable_price) : '\u2014'; }],
+    ['Attachment Needed', function(o){ return '<span class="dev-attach-chip ' + (o.attachment_needed?'yes':'no') + '">' + (o.attachment_needed?'Yes':'No') + '</span>'; }],
+    ['Development Sample', function(o){
+      var samples = _devSamplesCache[o.id] || [];
+      var latest = samples[samples.length-1];
+      var label = !latest ? 'Not sent yet' : latest.approved_on ? 'Approved' : latest.rejected_on ? 'Rejected' : latest.sent_to_buyer_on ? 'With buyer' : latest.sent_to_sampling_on ? 'In sampling' : 'Round '+latest.round;
+      var cls = !latest ? 'not-sent' : latest.approved_on ? 'approved' : latest.rejected_on ? 'rejected' : 'submitted';
+      return '<button class="apv-chip ' + cls + '" style="width:auto;display:inline-block;padding:4px 10px;border-radius:20px" onclick="openDevSampleModal(\''+o.id+'\')">' + label + '</button>';
+    }],
+    ['Notes', function(o){ return o.notes ? '<span style="white-space:normal">'+htmlEsc(o.notes)+'</span>' : '\u2014'; }]
+  ];
+  var headerCells = opts.map(function(o){
+    return '<th class="' + (o.status==='confirmed'?'confirmed-col':'') + '">' + htmlEsc(o.option_label) + '</th>';
   }).join('');
-
-  var addOptionBtn = canEdit ? '<button class="dev-add-card" onclick="addDevOption(\''+devId+'\')">+ Add Option</button>' : '';
-
-  $('content').innerHTML = head + optionCards + addOptionBtn;
+  var bodyRows = rows.map(function(r){
+    var cells = opts.map(function(o){ return '<td>' + r[1](o) + '</td>'; }).join('');
+    return '<tr><td class="dev-compare-lbl">' + r[0] + '</td>' + cells + '</tr>';
+  }).join('');
+  var actionCells = opts.map(function(o){
+    var isConfirmed = o.status === 'confirmed';
+    return '<td>' + (isConfirmed && o.confirmed_order_ids ? '<button class="btn sm" onclick="viewConfirmedDevOrders(\''+o.id+'\')">View order(s)</button>'
+      : (!isConfirmed && canEdit && !d.buyer_pending ? '<button class="btn sm pri" onclick="confirmDevelopmentOptionToOrder(\''+o.id+'\')">Confirm Order</button>' : '')) + '</td>';
+  }).join('');
+  return '<div class="dev-compare-wrap"><table class="dev-compare-table">'
+    + '<thead><tr><th></th>' + headerCells + '</tr></thead>'
+    + '<tbody>' + bodyRows + '<tr><td class="dev-compare-lbl"></td>' + actionCells + '</tr></tbody>'
+    + '</table></div>';
 }
 
 async function openNewDevelopmentModal() {
@@ -8085,11 +8204,38 @@ async function saveDevOptionField(optionId, key, value) {
   if (!mid || !can('edit', mid)) { toast('You don\u2019t have permission to do this', 'err'); return; }
   var payload = {};
   payload[key] = value === '' ? null : value;
+  payload.updated_at = new Date().toISOString();
+  payload.updated_by = S.user.name;
   const { error } = await db.from('development_options').update(payload).eq('id', optionId);
   if (error) { toast('Error saving', 'err'); return; }
   Object.keys(_devOptionsCache).forEach(function(devId){
-    (_devOptionsCache[devId]||[]).forEach(function(o){ if (o.id===optionId) o[key] = payload[key]; });
+    (_devOptionsCache[devId]||[]).forEach(function(o){ if (o.id===optionId) Object.assign(o, payload); });
   });
+}
+
+async function duplicateDevOption(optionId) {
+  var devId = S._devDetailId;
+  var d = S.developments.find(function(x){ return x.id === devId; });
+  if (!d || !can('edit', d.merchant_id)) { toast('You don\u2019t have permission to do this', 'err'); return; }
+  var opts = _devOptionsCache[devId] || [];
+  var src = opts.find(function(o){ return o.id === optionId; });
+  if (!src) return;
+  var maxN = 0;
+  opts.forEach(function(o){ var m = /(\d+)\s*$/.exec(o.option_label||''); if (m) maxN = Math.max(maxN, parseInt(m[1],10)); });
+  // Copies the field values as a starting point — deliberately NOT the status,
+  // confirmed_order_ids, or sample history, since those describe what actually
+  // happened to THIS specific option, not a template to carry forward.
+  var res = await db.from('development_options').insert({
+    development_id: devId, option_label: 'Option ' + (maxN+1), sort_order: opts.length,
+    composition: src.composition, gauge: src.gauge, avg_weight: src.avg_weight,
+    colour: src.colour, qty: src.qty, approx_ship_date: src.approx_ship_date,
+    negotiable_price: src.negotiable_price, attachment_needed: src.attachment_needed,
+    notes: src.notes,
+    created_by: S.user.name
+  }).select().single();
+  if (res.error) { toast('Error duplicating option', 'err'); return; }
+  toast('Duplicated as ' + res.data.option_label, 'ok-t');
+  renderDevelopmentDetail(devId);
 }
 
 async function addDevOption(devId) {
