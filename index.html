@@ -668,6 +668,15 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
   box-shadow:0 1px 3px rgba(201,100,66,.15)}
 .ybm-sub{display:block;font-size:10.5px;font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none;line-height:1.3}
 .ybm-opt.active .ybm-sub{color:var(--accent);opacity:.8}
+/* Compact variant — sits directly on the merchant's row in the admin list, no
+   click required to find it (the earlier version lived only inside the Edit
+   panel, one extra click deep, and wasn't obvious enough). */
+.ybm-toggle-sm{display:inline-flex;border:1.5px solid var(--line);border-radius:20px;overflow:hidden}
+.ybm-opt-sm{padding:3px 11px;font-size:10.5px;font-weight:700;border:none;background:var(--panel);
+  color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.ybm-opt-sm:not(:last-child){border-right:1.5px solid var(--line)}
+.ybm-opt-sm:hover{color:var(--ink)}
+.ybm-opt-sm.active{background:var(--accent);color:#fff}
 
 /* ── Developments module ── */
 .dev-head-card{display:flex;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);
@@ -1415,7 +1424,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:33</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:34</p>
   </div>
 </div>
 
@@ -1455,7 +1464,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:33</div>
+  <div id="ver-stamp">Version:26-09-17:34</div>
 </div>
 
 
@@ -2205,6 +2214,24 @@ table.dyn-board thead th.stk-dyn{z-index:35}
 <datalist id="dl_attachment"></datalist>
 
 <!-- Toast -->
+<!-- === REPLY TO MERCHANT (from an alert) === -->
+<div class="ov" id="ov-alert-reply" onclick="if(event.target===this)closeAlertReply()">
+  <div class="modal slim">
+    <div class="m-h"><div><h3>Reply to Merchant</h3><div class="msub" id="ar-sub"></div></div>
+      <button class="btn" onclick="closeAlertReply()">Cancel</button></div>
+    <div class="m-b">
+      <div class="f" style="margin-bottom:10px"><label>Subject</label>
+        <input id="ar-subject" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+      <div class="f"><label>Message</label>
+        <textarea id="ar-body" rows="5" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;resize:vertical;font-size:13.5px;line-height:1.5" placeholder="Type your reply\u2026"></textarea></div>
+    </div>
+    <div class="m-f">
+      <button class="btn" onclick="closeAlertReply()">Cancel</button>
+      <button class="btn pri" id="ar-send-btn" onclick="sendAlertReply()">Send</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <!-- === PERSISTENT SAVE-ERROR DIALOG ===
@@ -2873,7 +2900,14 @@ async function loadAlerts() {
     q = q.in('alert_type', ['labdip_supplier_late', 'tna_after_ship']).in('merchant_id', myIds);
   }
   const { data: ad } = await q;
-  S.alerts = ad || [];
+  // Per-user layer: an alert dismissed by one senior stays live for every
+  // other senior until they each dismiss it themselves — see dismissAlert().
+  var myDismissedIds = [];
+  try {
+    const dRes = await db.from('alert_dismissals').select('alert_id').eq('user_id', S.user.id);
+    myDismissedIds = (dRes.data || []).map(function(r){ return r.alert_id; });
+  } catch (e) { /* best-effort — never block the inbox on this */ }
+  S.alerts = (ad || []).filter(function(a){ return myDismissedIds.indexOf(a.id) === -1; });
 }
 
 // A TNA plan or actual date that falls after the order's own ship date is
@@ -7007,29 +7041,39 @@ function getMyVisibleRequests() {
 
 function buildAlertCardsHTML() {
   if (!S.alerts || !S.alerts.length) return '';
-  const isMA = S.user.role === 'management';
-  const canDismiss = isMA || ['merchant','jm'].includes(S.user.role);
+  // Widened to every senior role — this used to be management-only, which
+  // meant an admin or HOD looking at the same shared alert had no way to
+  // dismiss it themselves at all.
+  const isSenior = ['admin','management','hod','manager','audit'].includes(S.user.role);
+  const canDismiss = isSenior || ['merchant','jm'].includes(S.user.role);
+  // Replying only makes sense senior-to-merchant — a merchant replying to
+  // their own alert about their own order has no one to send it to.
+  const canReply = isSenior;
+  function actionButtons(alertId) {
+    return (canReply ? '<button class="btn sm no-print" onclick="openAlertReply(\'' + alertId + '\')">Reply</button>' : '')
+      + (canDismiss ? '<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + alertId + '\')">Dismiss</button>' : '');
+  }
   return S.alerts.map(function(a) {
     if (a.alert_type === 'labdip_supplier_late') {
       const merchLD = S.users.find(function(u){return u.id===a.merchant_id;});
-      return '<div class="alert-card pp_late"><div class="alert-icon">&#x1F9EA;</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' \u00b7 ' + htmlEsc(a.colour||'') + ' \u00b7 ' + htmlEsc(a.buyer||'') + (merchLD?' \u00b7 '+htmlEsc(merchLD.name):'') + '</div><div class="alert-detail">Lab Dip still with ' + htmlEsc(a.supplier_name||'supplier') + (a.sent_to_supplier_on?' since '+short(a.sent_to_supplier_on):'') + ' \u2014 <strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + '</strong>, not yet submitted to buyer</div></div>' + (canDismiss?'<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + a.id + '\')">Dismiss</button>':'') + '</div>';
+      return '<div class="alert-card pp_late"><div class="alert-icon">&#x1F9EA;</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' \u00b7 ' + htmlEsc(a.colour||'') + ' \u00b7 ' + htmlEsc(a.buyer||'') + (merchLD?' \u00b7 '+htmlEsc(merchLD.name):'') + '</div><div class="alert-detail">Lab Dip still with ' + htmlEsc(a.supplier_name||'supplier') + (a.sent_to_supplier_on?' since '+short(a.sent_to_supplier_on):'') + ' \u2014 <strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + '</strong>, not yet submitted to buyer</div></div>' + actionButtons(a.id) + '</div>';
     }
     if (a.alert_type === 'tna_after_ship') {
       const merchTNA = S.users.find(function(u){return u.id===a.merchant_id;});
-      return '<div class="alert-card pp_late"><div class="alert-icon">&#x1F4C5;</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' \u00b7 ' + htmlEsc(a.buyer||'') + (merchTNA?' \u00b7 '+htmlEsc(merchTNA.name):'') + '</div><div class="alert-detail">TNA date falls after the ship date \u2014 <strong>' + htmlEsc(a.detail||'') + '</strong></div></div>' + (canDismiss?'<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + a.id + '\')">Dismiss</button>':'') + '</div>';
+      return '<div class="alert-card pp_late"><div class="alert-icon">&#x1F4C5;</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' \u00b7 ' + htmlEsc(a.buyer||'') + (merchTNA?' \u00b7 '+htmlEsc(merchTNA.name):'') + '</div><div class="alert-detail">TNA date falls after the ship date \u2014 <strong>' + htmlEsc(a.detail||'') + '</strong></div></div>' + actionButtons(a.id) + '</div>';
     }
     var apvLateType = a.alert_type && a.alert_type.slice(-5) === '_late' ? a.alert_type.slice(0,-5) : null;
     if (apvLateType && APV_TYPE_CONFIG[apvLateType]) {
       const merchPP = S.users.find(function(u){return u.id===a.merchant_id;});
       const apvLabel = APV_TYPE_CONFIG[apvLateType].label;
-      return '<div class="alert-card pp_late"><div class="alert-icon">&#x23F0;</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' \u00b7 ' + htmlEsc(a.buyer||'') + (merchPP?' \u00b7 '+htmlEsc(merchPP.name):'') + '</div><div class="alert-detail">' + apvLabel + ' approval came in <strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + ' late</strong> vs TNA plan</div></div>' + (canDismiss?'<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + a.id + '\')">Dismiss</button>':'') + '</div>';
+      return '<div class="alert-card pp_late"><div class="alert-icon">&#x23F0;</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' \u00b7 ' + htmlEsc(a.buyer||'') + (merchPP?' \u00b7 '+htmlEsc(merchPP.name):'') + '</div><div class="alert-detail">' + apvLabel + ' approval came in <strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + ' late</strong> vs TNA plan</div></div>' + actionButtons(a.id) + '</div>';
     }
     const icon = a.alert_type === 'late' ? '⏰' : '⚠️';
     const merch2 = S.users.find(function(u){return u.id===a.merchant_id;});
     let detail = '';
     if (a.alert_type === 'short' || a.alert_type === 'both') detail += '<strong>' + fmt(a.short_qty) + ' pcs short</strong> — value lost: ' + money(a.value_lost) + ' ';
     if (a.alert_type === 'late' || a.alert_type === 'both') detail += '<strong>' + a.days_late + ' day' + (a.days_late>1?'s':'') + ' late</strong>';
-    return '<div class="alert-card ' + a.alert_type + '"><div class="alert-icon">' + icon + '</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' · ' + htmlEsc(a.buyer||'') + (merch2?' · '+htmlEsc(merch2.name):'') + '</div><div class="alert-detail">Shipped ' + fmt(a.shipped_qty) + ' pcs · ' + detail + '</div></div>' + (canDismiss?'<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + a.id + '\')">Dismiss</button>':'') + '</div>';
+    return '<div class="alert-card ' + a.alert_type + '"><div class="alert-icon">' + icon + '</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' · ' + htmlEsc(a.buyer||'') + (merch2?' · '+htmlEsc(merch2.name):'') + '</div><div class="alert-detail">Shipped ' + fmt(a.shipped_qty) + ' pcs · ' + detail + '</div></div>' + actionButtons(a.id) + '</div>';
   }).join('');
 }
 
@@ -8256,6 +8300,14 @@ function renderAdminList() {
       + '<input type="password" value="' + safePwd + '" readonly class="adm-inp" style="padding:4px 32px 4px 9px;font-size:12px;background:#F3F4F6;cursor:default;font-family:var(--mono)">'
       + '<button class="pwd-eye" tabindex="-1" onmousedown="showPwdEl(this,true)" onmouseup="showPwdEl(this,false)" onmouseleave="showPwdEl(this,false)">&#x1F441;</button>'
       + '</div></div>'
+      + (m.role==='merchant' ? (
+          '<div style="margin-top:8px;display:flex;align-items:center;gap:8px">'
+          + '<span style="font-size:10.5px;color:var(--muted);font-weight:600;flex-shrink:0">Yarn Booking</span>'
+          + '<div class="ybm-toggle-sm" data-uid="' + m.id + '">'
+          + '<button class="ybm-opt-sm' + ((m.yarn_booking_mode||'style')==='style'?' active':'') + '" onclick="event.stopPropagation();setYarnBookingMode(\'' + m.id + '\',\'style\')" title="One shared booking pool for every PO">Style-wise</button>'
+          + '<button class="ybm-opt-sm' + (m.yarn_booking_mode==='po'?' active':'') + '" onclick="event.stopPropagation();setYarnBookingMode(\'' + m.id + '\',\'po\')" title="Each PO booked and tracked separately">PO-wise</button>'
+          + '</div></div>'
+        ) : '')
       + '</div>'
       + '<div class="adm-user-actions">'
       + '<button class="btn sm' + (isEdit?' pri':'') + '" data-uid="' + m.id + '" onclick="editUser(this.dataset.uid)">' + (isEdit?'Done':'Edit') + '</button>'
@@ -8278,14 +8330,6 @@ function renderAdminList() {
           return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
         }).join('')
       + '</select></div>'
-      + (m.role==='merchant' ? (
-          '<div class="adm-field">'
-          + '<label class="adm-lbl">Yarn Booking Mode</label>'
-          + '<div class="ybm-toggle" data-uid="' + m.id + '">'
-          + '<button class="ybm-opt' + ((m.yarn_booking_mode||'style')==='style'?' active':'') + '" onclick="setYarnBookingMode(\'' + m.id + '\',\'style\')">Style-wise<span class="ybm-sub">One shared booking pool for every PO</span></button>'
-          + '<button class="ybm-opt' + (m.yarn_booking_mode==='po'?' active':'') + '" onclick="setYarnBookingMode(\'' + m.id + '\',\'po\')">PO-wise<span class="ybm-sub">Each PO booked and tracked separately</span></button>'
-          + '</div></div>'
-        ) : '')
       + '<div class="adm-field adm-field-btn">'
       + '<button class="btn pri adm-save-btn" data-uid="' + m.id + '" onclick="saveEditUser(this.dataset.uid)">Save</button>'
       + '</div></div>';
@@ -8558,8 +8602,55 @@ async function updateApproval(id, field, val) {
 }
 
 // --- ALERTS ---
+// ─── REPLY TO MERCHANT (from an alert) ───
+// Reuses the same messages table and threading the regular inbox already
+// uses, so a reply sent from an alert just shows up as a normal message
+// thread in the merchant's inbox — no separate reply system to maintain.
+var _alertReplyTarget = null;
+function openAlertReply(alertId) {
+  var a = (S.alerts||[]).find(function(x){ return x.id === alertId; });
+  if (!a) return;
+  var merch = S.users.find(function(u){ return u.id === a.merchant_id; });
+  if (!merch) { toast('Could not find that merchant', 'err'); return; }
+  _alertReplyTarget = { alertId: alertId, merchantId: merch.id };
+  $('ar-sub').textContent = 'To ' + merch.name;
+  $('ar-subject').value = 'Re: ' + (a.style||'').toUpperCase() + (a.buyer?' \u2014 '+a.buyer:'');
+  $('ar-body').value = '';
+  openModal('ov-alert-reply');
+  setTimeout(function(){ var el = $('ar-body'); if (el) el.focus(); }, 60);
+}
+function closeAlertReply() { closeModal('ov-alert-reply'); _alertReplyTarget = null; }
+async function sendAlertReply() {
+  if (!_alertReplyTarget) return;
+  var body = $('ar-body').value.trim();
+  if (!body) { toast('Write something first', 'err'); return; }
+  var subject = $('ar-subject').value.trim();
+  var recipient = S.users.find(function(u){ return u.id === _alertReplyTarget.merchantId; });
+  var threadId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + '-' + Math.random().toString(36).slice(2));
+  $('ar-send-btn').disabled = true; $('ar-send-btn').textContent = 'Sending\u2026';
+  var res = await db.from('messages').insert({
+    id: threadId, thread_id: threadId, parent_id: null,
+    sender_id: S.user.id, sender_name: S.user.name,
+    recipient_id: _alertReplyTarget.merchantId, recipient_name: recipient ? recipient.name : '',
+    subject: subject || null, body: body,
+    created_at: new Date().toISOString()
+  });
+  $('ar-send-btn').disabled = false; $('ar-send-btn').textContent = 'Send';
+  if (res.error) { toast('Could not send \u2014 ' + res.error.message, 'err'); return; }
+  toast('Sent to ' + (recipient?recipient.name:'merchant'), 'ok-t');
+  closeAlertReply();
+}
+
+
 async function dismissAlert(alertId) {
-  await db.from('shipment_alerts').update({dismissed:true,dismissed_by:S.user.name,dismissed_at:new Date().toISOString()}).eq('id',alertId);
+  // Personal, not global — this used to set a single shared flag on the
+  // alert row, which hid it for EVERY senior the moment any one of them
+  // dismissed it. Now each senior gets their own dismissal record, so the
+  // alert only disappears from the person who actually dismissed it; anyone
+  // else it was shown to keeps seeing it until they dismiss it themselves.
+  const { error } = await db.from('alert_dismissals')
+    .upsert({ alert_id: alertId, user_id: S.user.id, dismissed_at: new Date().toISOString() }, { onConflict: 'alert_id,user_id' });
+  if (error) { toast('Could not dismiss \u2014 ' + error.message, 'err'); return; }
   await loadAlerts();
   if (S.view==='dashboard') renderDashboard();
   else if (S.view==='inbox') renderInbox();
