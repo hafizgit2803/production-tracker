@@ -1424,7 +1424,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:34</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:35</p>
   </div>
 </div>
 
@@ -1464,7 +1464,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:34</div>
+  <div id="ver-stamp">Version:26-09-17:35</div>
 </div>
 
 
@@ -1949,18 +1949,6 @@ table.dyn-board thead th.stk-dyn{z-index:35}
 </div>
 
 <!-- ═══ MODAL: CONFIRM UNSHIP ═══ -->
-<div class="ov" id="ov-unship" onclick="if(event.target===this)closeModal('ov-unship')">
-  <div class="modal slim">
-    <div class="m-h"><div><h3>Restore to live?</h3><div class="msub" id="unship-sub"></div></div></div>
-    <div class="m-b">
-      <p style="color:var(--muted);font-size:13px">This order will be moved back to live orders and the shipment record will be cleared.</p>
-    </div>
-    <div class="m-f">
-      <button class="btn" data-close="ov-unship">Cancel</button>
-      <button class="btn pri" onclick="confirmUnship()">Yes, restore to live</button>
-    </div>
-  </div>
-</div>
 
 <!-- ═══ MODAL: ASSIGN MERCHANTS ═══ -->
 <div class="ov" id="ov-assign" onclick="if(event.target===this)closeModal('ov-assign')">
@@ -4073,7 +4061,7 @@ function renderArchive() {
       <td>${short(o.shipped_on)}</td>
       <td class="sub2">Expires ${exp.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</td>
       <td class="sub2">${o.remarks||'—'}</td>
-      <td><button class="btn sm" onclick="openUnship('${o.id}','${o.style}')">&#x21b6; Restore</button></td>
+      <td><button class="btn sm" onclick="undoToLaying('${o.id}')">&#x21b6; Restore</button></td>
     </tr>`;
   }).join('');
 
@@ -8116,28 +8104,12 @@ async function finalizeDevConfirm(optionId, orderIds) {
 }
 
 // ─── UNSHIP ORDER ───
-var _unshipOrdId = null;
-function openUnship(ordId, style) {
-  _unshipOrdId = ordId;
-  $('unship-sub').textContent = style + ' — restore to live orders';
-  openModal('ov-unship');
-}
-async function confirmUnship() {
-  if (!_unshipOrdId) return;
-  const { error } = await db.from('orders').update({
-    shipped: false, shipped_on: null, shipped_qty: null, updated_at: new Date().toISOString()
-  }).eq('id', _unshipOrdId);
-  if (error) { toast('Error restoring order', 'err'); return; }
-  // Remove shipment alert
-  await db.from('shipment_alerts').delete().eq('order_id', _unshipOrdId);
-  closeModal('ov-unship');
-  S.archiveLoaded = false;
-  S.archive = S.archive.filter(function(o){return o.id!==_unshipOrdId;});
-  await loadDashOrders();
-  _unshipOrdId = null;
-  toast('Order restored to live orders');
-  renderShippedPage();
-}
+// This used to jump straight back to Live, skipping Laying Goods — both wrong
+// per the intended flow (Shipped restores one step back, to Laying) and
+// broken (it never updated `stage`, so the order got stuck invisible in every
+// view once "restored"). undoToLaying() below is the real, correct, working
+// path — this whole block is dead code now that the Shipped page's Restore
+// button calls that instead.
 
 // ─── REFRESH ───
 async function refreshPage() {
