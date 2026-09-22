@@ -655,6 +655,20 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 [data-theme="dark"] table.dyn-board th.days-left-hdr{background:#2A2724}
 .dv-lbl{display:block;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:3px}
 
+/* Yarn Booking Mode — a real segmented toggle, not a checkbox, since this is
+   a meaningful behavioural switch a merchant will live with, not a minor
+   on/off setting. */
+.ybm-toggle{display:flex;gap:8px;margin-top:4px}
+.ybm-opt{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+  padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);
+  cursor:pointer;text-align:left;font-family:inherit;transition:all .15s}
+.ybm-opt{font-size:13px;font-weight:700;color:var(--ink)}
+.ybm-opt:hover{border-color:#D8D2C4;box-shadow:0 2px 6px rgba(20,18,15,.06)}
+.ybm-opt.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);
+  box-shadow:0 1px 3px rgba(201,100,66,.15)}
+.ybm-sub{display:block;font-size:10.5px;font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none;line-height:1.3}
+.ybm-opt.active .ybm-sub{color:var(--accent);opacity:.8}
+
 /* ── Developments module ── */
 .dev-head-card{display:flex;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);
   border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(20,18,15,.04)}
@@ -1401,7 +1415,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:32</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:33</p>
   </div>
 </div>
 
@@ -1441,7 +1455,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:32</div>
+  <div id="ver-stamp">Version:26-09-17:33</div>
 </div>
 
 
@@ -3001,7 +3015,9 @@ async function loadYarnSummaryByOrder(merchantId, orders) {
   var result = {};
   orders.forEach(function(o){ result[o.id] = { bk: 0, rc: 0 }; });
   if (!styles.length) return result;
-  const bkRes = await db.from('yarn_bookings').select('id,style,qty').eq('merchant_id', merchantId).eq('material_type', 'yarn').in('style', styles);
+  // po_number pulled in too — a PO-wise merchant needs each order's total
+  // computed from its own bookings, not lumped into one style-wide figure.
+  const bkRes = await db.from('yarn_bookings').select('id,style,qty,po_number').eq('merchant_id', merchantId).eq('material_type', 'yarn').in('style', styles);
   var bookings = bkRes.data || [];
   var bookingIds = bookings.map(function(b){ return b.id; });
   var receivedByBooking = {};
@@ -3009,8 +3025,15 @@ async function loadYarnSummaryByOrder(merchantId, orders) {
     const rcRes = await db.from('yarn_receipts').select('booking_id,qty').in('booking_id', bookingIds);
     (rcRes.data || []).forEach(function(r){ receivedByBooking[r.booking_id] = (receivedByBooking[r.booking_id]||0) + (r.qty||0); });
   }
+  var merch = userById(merchantId);
+  var isPoWise = merch && merch.yarn_booking_mode === 'po';
+  // Grouped by style for the (default, far more common) style-wide case, so
+  // that path stays exactly as cheap as it always was — one lookup per style,
+  // not per order. PO-wise only does the extra per-order work when it's
+  // actually needed.
   var totalsByStyle = {};
   bookings.forEach(function(b){
+    if (b.po_number) return; // handled per-order below, not lumped in here
     var s = (b.style||'').toUpperCase();
     if (!totalsByStyle[s]) totalsByStyle[s] = { bk: 0, rc: 0 };
     totalsByStyle[s].bk += (b.qty||0);
@@ -3018,7 +3041,19 @@ async function loadYarnSummaryByOrder(merchantId, orders) {
   });
   orders.forEach(function(o){
     var s = (o.style||'').toUpperCase();
-    if (totalsByStyle[s]) result[o.id] = totalsByStyle[s];
+    var base = totalsByStyle[s] || { bk: 0, rc: 0 };
+    if (isPoWise && o.po_number) {
+      var mine = { bk: base.bk, rc: base.rc };
+      bookings.forEach(function(b){
+        if ((b.style||'').toUpperCase() === s && b.po_number === o.po_number) {
+          mine.bk += (b.qty||0);
+          mine.rc += (receivedByBooking[b.id]||0);
+        }
+      });
+      result[o.id] = mine;
+    } else {
+      result[o.id] = base;
+    }
   });
   return result;
 }
@@ -5100,6 +5135,7 @@ function downloadPDF() {
 // yarn is purchased once for a style regardless of how many POs it ships
 // under. Every PO sharing that style mirrors the exact same booking data.
 var _yarnMerchantId = null, _yarnStyle = null, _yarnUnit = 'lbs', _yarnCompositions = [];
+var _yarnPoNumber = null; // null = style-wide (shared); set = this booking belongs to one PO only
 var _yarnHasAttachment = false, _yarnMaterialType = 'yarn';
 var _accOrderId = null, _accMerchantId = null, _accStyle = null, _accCategory = 'sewing';
 
@@ -5733,7 +5769,16 @@ async function openMaterialModal(ordId, division) {
   _yarnMaterialType = 'yarn';
   const label = division === 'knit' ? 'Fabric' : 'Yarn';
   $('mat-title').textContent = label + ' Booking \u2014 ' + _yarnStyle;
-  $('mat-sub').textContent = 'Shared across every PO of this style';
+  // PO-wise merchants book and track each PO on its own clock. A shared
+  // (style-wide) booking still counts toward every PO underneath it — see
+  // the query in renderMaterialModalBody — but a new booking made here gets
+  // tagged to this PO specifically, not merged into the shared pool.
+  var merch = userById(_yarnMerchantId);
+  var isPoWise = merch && merch.yarn_booking_mode === 'po';
+  _yarnPoNumber = isPoWise ? (o.po_number || null) : null;
+  $('mat-sub').textContent = isPoWise
+    ? ('For PO ' + (o.po_number || '\u2014') + ' \u2014 plus any style-wide booking already shared across every PO')
+    : 'Shared across every PO of this style';
   $('mat-body').innerHTML = '<div class="exp-loading">Loading\u2026</div>';
   openModal('ov-material');
   // Attachment fabric booking only applies to styles actually flagged as
@@ -5756,7 +5801,17 @@ async function renderMaterialModalBody() {
       + '<button class="inbox-tab-btn' + (_yarnMaterialType==='attachment_fabric'?' active':'') + '" onclick="switchYarnMaterialType(\'attachment_fabric\')">Attachment Fabric</button>'
       + '</div>';
   }
-  const bkRes = await db.from('yarn_bookings').select('*').eq('merchant_id', _yarnMerchantId).eq('style', _yarnStyle).eq('material_type', _yarnMaterialType).order('booked_on');
+  const bkQ = db.from('yarn_bookings').select('*').eq('merchant_id', _yarnMerchantId).eq('style', _yarnStyle).eq('material_type', _yarnMaterialType);
+  // Style-wide (shared) bookings always count. A PO-specific booking only
+  // counts toward the PO it's tagged to — never toward a different PO, and
+  // never silently merged into "every PO" just because a merchant used to be
+  // in style-wide mode. Switching a merchant's mode later doesn't delete or
+  // reinterpret anything already entered; it only changes what a NEW booking
+  // gets tagged with going forward. PO-wise mode only applies to yarn itself
+  // — attachment fabric stays shared regardless, since that wasn't part of
+  // what was asked for.
+  var scopeToPo = _yarnPoNumber && _yarnMaterialType === 'yarn';
+  const bkRes = await (scopeToPo ? bkQ.or('po_number.is.null,po_number.eq.' + _yarnPoNumber) : bkQ.is('po_number', null)).order('booked_on');
   const bookings = bkRes.data || [];
   const bookingIds = bookings.map(function(b){ return b.id; });
   var receipts = [];
@@ -5771,7 +5826,7 @@ async function renderMaterialModalBody() {
   const materialLabel = _yarnMaterialType === 'attachment_fabric' ? 'Attachment Fabric' : 'Yarn';
 
   var overallHtml = '<div class="yarn-overall-card">'
-    + '<div class="yarn-overall-top"><div class="yarn-overall-lbl">' + materialLabel + ' \u2014 Total Progress</div><div class="yarn-overall-nums">' + fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + _yarnUnit + '</div></div>'
+    + '<div class="yarn-overall-top"><div class="yarn-overall-lbl">' + materialLabel + (scopeToPo?' \u2014 This PO':' \u2014 Total Progress') + '</div><div class="yarn-overall-nums">' + fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + _yarnUnit + '</div></div>'
     + '<div class="yarn-bar-track"><div class="yarn-bar-fill ' + yarnBarClass(pct) + '" style="width:' + pct + '%"></div></div>'
     + '</div>';
 
@@ -5797,7 +5852,7 @@ async function renderMaterialModalBody() {
       + '</div>';
     return '<div class="yarn-booking-card">'
       + '<div class="yarn-booking-hdr">'
-      + '<div><div class="yarn-booking-supplier">'+htmlEsc(b.supplier)+'</div>'
+      + '<div><div class="yarn-booking-supplier">'+htmlEsc(b.supplier)+(scopeToPo ? (b.po_number ? ' <span class="chip" style="font-size:8.5px;background:var(--accent-soft);color:var(--accent);vertical-align:middle">This PO</span>' : ' <span class="chip" style="font-size:8.5px;background:#EDEBE1;color:#726E64;vertical-align:middle">Shared</span>') : '')+'</div>'
       + '<div class="yarn-booking-meta">'+htmlEsc(b.composition||'')+' \u00b7 '+short(b.booked_on)+(b.pi_number?' \u00b7 PI '+htmlEsc(b.pi_number):'')+(b.lc_number?' \u00b7 LC '+htmlEsc(b.lc_number):'')+(b.price_per_lb?' \u00b7 $'+Number(b.price_per_lb).toFixed(4)+'/lb \u00b7 Total $'+fmt(Math.round(b.qty*b.price_per_lb)):'')+'</div></div>'
       + (canEdit ? '<button class="dev-icon-btn yarn-x" onclick="deleteBooking(\''+b.id+'\')" title="Remove booking">&#x1F5D1;</button>' : '')
       + '</div>'
@@ -5856,6 +5911,11 @@ async function saveNewBooking() {
     merchant_id: _yarnMerchantId, style: _yarnStyle, material_type: _yarnMaterialType,
     supplier: supplier, composition: comp, booked_on: date, qty: qty, price_per_lb: price,
     pi_number: pi || null, lc_number: lc || null,
+    // Only tagged to a specific PO when this merchant is in PO-wise mode AND
+    // we're booking actual yarn (not attachment fabric, which stays shared
+    // regardless of mode). Every other case stays null = shared, exactly
+    // matching how every booking has always worked.
+    po_number: (_yarnPoNumber && _yarnMaterialType === 'yarn') ? _yarnPoNumber : null,
     created_by: S.user.name
   });
   // This used to go unchecked — if the insert failed for any reason (a column
@@ -5870,7 +5930,7 @@ async function saveNewBooking() {
     // from here on is a display problem, not a lost booking. Distinguished
     // clearly so "saved but the screen didn't update" is never confused with
     // "nothing was saved."
-    await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
+    await recomputeYarnActual(_yarnMerchantId, _yarnStyle, _yarnMaterialType==='yarn' ? _yarnPoNumber : null);
     await reloadSummaries(_yarnMerchantId);
     renderBoard(S.view);
     await renderMaterialModalBody();
@@ -5891,7 +5951,7 @@ async function deleteBooking(id) {
   await db.from('yarn_receipts').delete().eq('booking_id', id);
   await db.from('yarn_bookings').delete().eq('id', id);
   toast('Booking deleted', 'ok-t');
-  await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
+  await recomputeYarnActual(_yarnMerchantId, _yarnStyle, _yarnMaterialType==='yarn' ? _yarnPoNumber : null);
   await reloadSummaries(_yarnMerchantId);
   renderBoard(S.view);
   await renderMaterialModalBody();
@@ -5917,7 +5977,7 @@ async function saveNewReceipt(bookingId) {
   const yrRes = await db.from('yarn_receipts').insert({ booking_id: bookingId, received_on: date, qty: qty, created_by: S.user.name });
   if (yrRes.error) { showSaveError('Yarn receipt NOT saved.\n\nDatabase said:\n' + yrRes.error.message); return; }
   toast('Inhouse recorded', 'ok-t');
-  await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
+  await recomputeYarnActual(_yarnMerchantId, _yarnStyle, _yarnMaterialType==='yarn' ? _yarnPoNumber : null);
   await reloadSummaries(_yarnMerchantId);
   renderBoard(S.view);
   await renderMaterialModalBody();
@@ -5927,7 +5987,7 @@ async function deleteReceipt(id) {
   if (!confirm('Remove this inhouse entry?')) return;
   await db.from('yarn_receipts').delete().eq('id', id);
   toast('Removed', 'ok-t');
-  await recomputeYarnActual(_yarnMerchantId, _yarnStyle);
+  await recomputeYarnActual(_yarnMerchantId, _yarnStyle, _yarnMaterialType==='yarn' ? _yarnPoNumber : null);
   await reloadSummaries(_yarnMerchantId);
   renderBoard(S.view);
   await renderMaterialModalBody();
@@ -6029,12 +6089,21 @@ async function backfillTNAApprovalLinks() {
 // order — and if a later booking pushes the required total back up past
 // what's already been received, this correctly clears every linked PO's date
 // again rather than leaving a stale "done" date behind.
-async function recomputeYarnActual(merchantId, style) {
+async function recomputeYarnActual(merchantId, style, poNumber) {
   var upper = (style || '').toUpperCase();
   // Only the 'yarn' material type drives the TNA Yarn Inhouse milestone —
   // attachment fabric is tracked the same way but is a separate material
   // serving a different purpose, so it never contributes to this total.
-  const bkRes = await db.from('yarn_bookings').select('id,qty').eq('merchant_id', merchantId).eq('style', upper).eq('material_type', 'yarn');
+  //
+  // poNumber is the PO-wise branch: when given, this counts only the shared
+  // (style-wide) bookings PLUS bookings tagged to that one PO, and stamps
+  // the TNA date on only that one order — the whole point of PO-wise mode is
+  // that two POs of the same style can finish on genuinely different days.
+  // When omitted (style-wide mode, the default), behaviour is byte-for-byte
+  // what it always was: every booking under the style counts, and every
+  // order sharing that style gets stamped together.
+  const bkQ = db.from('yarn_bookings').select('id,qty').eq('merchant_id', merchantId).eq('style', upper).eq('material_type', 'yarn');
+  const bkRes = await (poNumber ? bkQ.or('po_number.is.null,po_number.eq.' + poNumber) : bkQ.is('po_number', null));
   var bookings = bkRes.data || [];
   var totalBooked = bookings.reduce(function(s,b){ return s + (b.qty||0); }, 0);
   var bookingIds = bookings.map(function(b){ return b.id; });
@@ -6043,7 +6112,7 @@ async function recomputeYarnActual(merchantId, style) {
     const rcRes = await db.from('yarn_receipts').select('received_on,qty').in('booking_id', bookingIds);
     var receipts = rcRes.data || [];
     var totalReceived = receipts.reduce(function(s,r){ return s + (r.qty||0); }, 0);
-    if (totalReceived >= totalBooked) { // only triggers once the style is genuinely 100% inhoused
+    if (totalReceived >= totalBooked) { // only triggers once genuinely 100% inhoused
       var sorted = receipts.slice().sort(function(a,b){ return (a.received_on||'') < (b.received_on||'') ? -1 : (a.received_on||'') > (b.received_on||'') ? 1 : 0; });
       var running = 0;
       for (var i = 0; i < sorted.length; i++) {
@@ -6052,7 +6121,10 @@ async function recomputeYarnActual(merchantId, style) {
       }
     }
   }
-  var orders = (S.boardCache[merchantId] || []).filter(function(o){ return (o.style||'').toUpperCase() === upper; });
+  var orders = (S.boardCache[merchantId] || []).filter(function(o){
+    if ((o.style||'').toUpperCase() !== upper) return false;
+    return poNumber ? o.po_number === poNumber : true;
+  });
   for (var j = 0; j < orders.length; j++) {
     await setMilestoneActual(orders[j].id, 'yarn', completedOn);
   }
@@ -8206,12 +8278,33 @@ function renderAdminList() {
           return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>';
         }).join('')
       + '</select></div>'
+      + (m.role==='merchant' ? (
+          '<div class="adm-field">'
+          + '<label class="adm-lbl">Yarn Booking Mode</label>'
+          + '<div class="ybm-toggle" data-uid="' + m.id + '">'
+          + '<button class="ybm-opt' + ((m.yarn_booking_mode||'style')==='style'?' active':'') + '" onclick="setYarnBookingMode(\'' + m.id + '\',\'style\')">Style-wise<span class="ybm-sub">One shared booking pool for every PO</span></button>'
+          + '<button class="ybm-opt' + (m.yarn_booking_mode==='po'?' active':'') + '" onclick="setYarnBookingMode(\'' + m.id + '\',\'po\')">PO-wise<span class="ybm-sub">Each PO booked and tracked separately</span></button>'
+          + '</div></div>'
+        ) : '')
       + '<div class="adm-field adm-field-btn">'
       + '<button class="btn pri adm-save-btn" data-uid="' + m.id + '" onclick="saveEditUser(this.dataset.uid)">Save</button>'
       + '</div></div>';
 
     return mainRow + editPanel;
   }).join('');
+}
+
+// Instant-apply, deliberately separate from the main Save button — a toggle
+// like this shouldn't be silently lost if someone edits the name/password and
+// forgets to hit Save afterward.
+async function setYarnBookingMode(uid, mode) {
+  if (S.user.role !== 'admin') { toast('Only admin can change this', 'err'); return; }
+  const { error } = await db.from('users').update({ yarn_booking_mode: mode }).eq('id', uid);
+  if (error) { toast('Error saving: ' + error.message, 'err'); return; }
+  var u = S.users.find(function(x){ return x.id === uid; });
+  if (u) u.yarn_booking_mode = mode;
+  toast((mode==='po'?'PO-wise':'Style-wise') + ' \u2014 saved');
+  renderAdminList();
 }
 
 async function saveEditUser(uid) {
