@@ -534,21 +534,19 @@ table.tna-t td.sty{font-weight:600}
   background:rgba(40,38,38,.62);border-color:rgba(255,255,255,.12);color:#F2F0EB;
   box-shadow:0 10px 34px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}
 
-/* Notes chip — liquid-glass style, matching the tooltip's aesthetic */
+/* Notes chip on the board — deliberately flat. It used to be liquid glass
+   (backdrop-filter blur + will-change), which made every row's chip its own
+   GPU layer re-blurring whatever sat behind it on every scroll: one per order,
+   so big boards lagged. The glass look stays in the Notes modal itself. */
 .notes-chip{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:4px 10px;
   border-radius:14px;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis;color:var(--muted);
-  background:rgba(255,255,255,.55);backdrop-filter:blur(10px) saturate(180%);
-  -webkit-backdrop-filter:blur(10px) saturate(180%);
-  border:1px solid rgba(255,255,255,.6);
-  box-shadow:0 2px 8px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.5);
-  transition:transform .12s ease,box-shadow .12s ease;
-  will-change:transform;transform:translateZ(0)}
-.notes-chip:hover{transform:translateY(-1px) translateZ(0);box-shadow:0 4px 14px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.6)}
-.notes-chip.has-val{color:var(--accent);background:rgba(232,207,194,.45);border-color:rgba(232,207,194,.8)}
-[data-theme="dark"] .notes-chip{background:rgba(50,48,48,.5);border-color:rgba(255,255,255,.1);color:var(--muted);
-  box-shadow:0 2px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05)}
-[data-theme="dark"] .notes-chip.has-val{background:rgba(90,67,53,.5);color:#E8B4A0;border-color:rgba(90,67,53,.9)}
+  background:#F6F4EE;border:1px solid #E6E1D6;
+  transition:border-color .12s ease,background .12s ease}
+.notes-chip:hover{border-color:#D4CCBC;background:#FBFAF6}
+.notes-chip.has-val{color:var(--accent);background:#F7E8E0;border-color:#E8CFC2}
+[data-theme="dark"] .notes-chip{background:#2E2C2A;border-color:#45413B;color:var(--muted)}
+[data-theme="dark"] .notes-chip.has-val{background:#3F3029;color:#E8B4A0;border-color:#5A4335}
 
 /* Order notes modal */
 .notes-textarea{width:100%;min-height:320px;box-sizing:border-box;padding:14px 16px;
@@ -722,6 +720,49 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 
 /* ── Development detail page — round 2 polish ── */
 .dev-head-photo{transition:transform .15s}
+/* In-app confirm */
+#ov-app-confirm{z-index:10000;align-items:center}
+.app-confirm{max-width:420px}
+.acf-msg{font-size:13.5px;line-height:1.55;color:var(--ink);white-space:pre-line}
+.btn.danger-solid{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+.btn.danger-solid:hover{filter:brightness(.93)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* Floating sideways scrollbar (see updateFloatingScrollbar) */
+.float-hscroll{position:fixed;left:0;top:0;width:0;height:16px;overflow-x:scroll;overflow-y:hidden;
+  z-index:40;display:none;background:rgba(247,245,239,.94);border-top:1px solid var(--line);
+  box-shadow:0 -3px 10px rgba(20,18,15,.07);border-radius:6px 6px 0 0;
+  scrollbar-width:auto;scrollbar-color:#B9B0A0 transparent}
+.float-hscroll.on{display:block}
+.float-hscroll-inner{height:1px}
+.float-hscroll::-webkit-scrollbar{height:12px}
+.float-hscroll::-webkit-scrollbar-track{background:transparent}
+.float-hscroll::-webkit-scrollbar-thumb{background:#B9B0A0;border-radius:8px;border:2px solid rgba(247,245,239,.94)}
+.float-hscroll::-webkit-scrollbar-thumb:hover{background:#9C927F}
+[data-theme="dark"] .float-hscroll{background:rgba(37,35,37,.94);scrollbar-color:#6B645A transparent}
+[data-theme="dark"] .float-hscroll::-webkit-scrollbar-thumb{background:#6B645A;border-color:rgba(37,35,37,.94)}
+@media print{.float-hscroll{display:none!important}}
+/* Lightbox */
+.lb-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:16px;gap:10px}
+.lb-top{width:min(92vw,1200px);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lb-title{color:#fff;font-size:13px;opacity:.7;letter-spacing:.05em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-zoom{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.lb-zbtn{min-width:34px;height:32px;padding:0 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.1);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.lb-zbtn:hover{background:rgba(255,255,255,.22)}
+.lb-fit{font-size:12.5px}
+.lb-pct{min-width:48px;text-align:center;color:#fff;font-size:12.5px;font-weight:700;font-family:var(--mono)}
+.lb-stage{width:min(92vw,1200px);height:74vh;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  cursor:zoom-in;touch-action:none;user-select:none;border-radius:12px}
+.lb-stage.zoomed{cursor:grab}
+.lb-stage.zoomed:active{cursor:grabbing}
+.lb-stage img{max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transform-origin:center center;will-change:transform;pointer-events:none}
+.lb-hint{color:#fff;opacity:.45;font-size:11.5px}
+.lb-actions{display:flex;gap:10px}
+.lb-btn{padding:7px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-family:inherit}
+.lb-btn.lb-danger{border-color:rgba(255,80,80,.5);background:rgba(200,0,0,.2);color:#ff9999}
 .dev-head-photo:hover{transform:scale(1.03)}
 .dev-toolbar{display:flex;gap:8px;margin-bottom:14px}
 .dev-sample-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;
@@ -896,6 +937,11 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
   .acc-col-checklist,.acc-col-booking,.acc-col-inhouse{flex:none;border-right:none;border-bottom:1px solid var(--line);max-height:280px}}
 .acc-col-hdr{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
   font-weight:700;margin-bottom:10px}
+.acc-tab-count{display:inline-block;margin-left:5px;padding:0 6px;border-radius:10px;background:#EFECE3;
+  font-size:10.5px;font-weight:700;color:var(--muted);font-family:var(--mono)}
+.inbox-tab-btn.active .acc-tab-count{background:var(--accent-soft);color:var(--accent)}
+.acc-split-line{display:flex;gap:18px;margin-top:8px;font-size:11.5px;color:var(--muted)}
+.acc-split-line b{color:var(--ink);font-family:var(--mono)}
 .acc-col-empty{font-size:12.5px;color:var(--muted);padding:24px 0;text-align:center}
 
 .acc-check-row{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:8px;
@@ -921,7 +967,7 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 .acc-booking-card:hover{border-color:#D8D2C4;box-shadow:0 2px 6px rgba(20,18,15,.06)}
 .acc-booking-card.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
 .acc-booking-date{font-size:15px;font-weight:800;color:var(--ink);font-family:var(--mono);
-  margin-bottom:8px;padding-right:26px}
+  margin-bottom:8px;padding-right:96px}
 .acc-booking-tag{display:inline-block;margin-left:6px;font-size:8px;font-weight:800;padding:1px 6px;
   border-radius:20px;vertical-align:middle;letter-spacing:.02em}
 .acc-booking-tag.shared{background:#EDEBE1;color:#726E64}
@@ -929,7 +975,13 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 .acc-booking-nums{font-size:13px;font-weight:700;color:var(--ink);margin-top:7px}
 .acc-booking-supplier{font-size:10.5px;color:var(--muted);margin-top:6px;font-weight:500}
 .acc-booking-pilc{font-size:8.5px;color:#B5AFA0;margin-top:2px}
-.acc-booking-del{position:absolute;top:8px;right:8px;width:22px;height:22px}
+.acc-booking-actions{position:absolute;top:8px;right:8px}
+.acc-booking-actions .dev-icon-btn{width:22px;height:22px}
+.booking-hdr-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.booking-edit-btn{padding:3px 9px;border-radius:6px;border:1.5px solid var(--line);background:var(--panel);
+  color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .12s}
+.booking-edit-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.booking-edit-card{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 
 [data-theme="dark"] .yarn-bar-track{background:#2A2828}
 
@@ -1505,7 +1557,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:38</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:42</p>
   </div>
 </div>
 
@@ -1544,8 +1596,9 @@ table.dyn-board thead th.stk-dyn{z-index:35}
       <div class="act-row" id="act-row"></div>
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
+    <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:38</div>
+  <div id="ver-stamp">Version:26-09-17:42</div>
 </div>
 
 
@@ -2283,6 +2336,27 @@ table.dyn-board thead th.stk-dyn{z-index:35}
 <datalist id="dl_attachment"></datalist>
 
 <!-- Toast -->
+<!-- === IN-APP CONFIRM (replaces the browser's confirm() popup everywhere) === -->
+<div class="ov" id="ov-app-confirm" onclick="if(event.target===this)_appConfirmAnswer(false)">
+  <div class="modal slim app-confirm">
+    <div class="m-h"><div><h3 id="acf-title">Are you sure?</h3></div></div>
+    <div class="m-b"><div class="acf-msg" id="acf-msg"></div></div>
+    <div class="m-f">
+      <button class="btn" id="acf-cancel" onclick="_appConfirmAnswer(false)">Cancel</button>
+      <button class="btn pri" id="acf-ok" onclick="_appConfirmAnswer(true)">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- === IN-APP REPORT PREVIEW (replaces the old pop-up browser window) === -->
+<div class="ov" id="ov-report-preview" onclick="if(event.target===this)closeReportPreview()">
+  <div class="modal" style="max-width:1400px;width:96vw;height:90vh;display:flex;flex-direction:column">
+    <div class="m-h" style="flex-shrink:0"><div><h3 id="rp-title">Report</h3><div class="msub">Preview — use Print to save as PDF or print</div></div>
+      <div style="display:flex;gap:8px"><button class="btn pri" onclick="printReportPreview()">&#x1F5A8; Print / Save PDF</button><button class="btn" onclick="closeReportPreview()">Close</button></div></div>
+    <iframe id="rp-frame" title="Report preview" style="flex:1;width:100%;border:0;background:#fff;border-radius:0 0 14px 14px"></iframe>
+  </div>
+</div>
+
 <!-- === REPLY TO MERCHANT (from an alert) === -->
 <div class="ov" id="ov-alert-reply" onclick="if(event.target===this)closeAlertReply()">
   <div class="modal slim">
@@ -2612,6 +2686,62 @@ function jsAttrEsc(s) {
 // Safe to embed free-text inside HTML attribute values (title="...") or text content.
 function htmlEsc(s) {
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── IN-APP CONFIRM ───
+// Every "are you sure?" in the app goes through this — never the browser's own
+// confirm() popup, which looks foreign, can't be styled, and some browsers let
+// users silence entirely ("prevent this page from creating more dialogs"),
+// after which every confirm() silently returns false and the button just
+// stops working. Returns a Promise<boolean>. Calls made while one is already
+// open are queued, never stacked.
+//   await appConfirm('Remove this booking?', { title:'Remove booking', okText:'Remove', danger:true })
+var _appConfirmQueue = [], _appConfirmActive = null;
+function appConfirm(message, opts) {
+  opts = opts || {};
+  return new Promise(function(resolve){
+    _appConfirmQueue.push({ message: message, opts: opts, resolve: resolve });
+    if (!_appConfirmActive) _appConfirmNext();
+  });
+}
+function _appConfirmNext() {
+  _appConfirmActive = _appConfirmQueue.shift() || null;
+  if (!_appConfirmActive) return;
+  var o = _appConfirmActive.opts;
+  $('acf-title').textContent = o.title || 'Are you sure?';
+  $('acf-msg').textContent = _appConfirmActive.message; // text, never HTML — messages include style names etc.
+  var ok = $('acf-ok');
+  ok.textContent = o.okText || 'OK';
+  ok.className = 'btn ' + (o.danger ? 'danger-solid' : 'pri');
+  $('acf-cancel').textContent = o.cancelText || 'Cancel';
+  openModal('ov-app-confirm');
+  // Destructive: focus lands on Cancel so a stray Enter can't delete anything.
+  setTimeout(function(){ (o.danger ? $('acf-cancel') : ok).focus(); }, 30);
+}
+function _appConfirmAnswer(yes) {
+  if (!_appConfirmActive) return;
+  var done = _appConfirmActive;
+  closeModal('ov-app-confirm');
+  _appConfirmActive = null;
+  done.resolve(!!yes);
+  setTimeout(_appConfirmNext, 120);
+}
+document.addEventListener('keydown', function(e){
+  if (!_appConfirmActive) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); _appConfirmAnswer(false); }
+  else if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'acf-ok') { e.preventDefault(); _appConfirmAnswer(true); }
+}, true);
+
+// ─── IN-APP REPORT PREVIEW ───
+function openReportPreview(title, html) {
+  $('rp-title').textContent = title || 'Report';
+  $('rp-frame').srcdoc = html;
+  openModal('ov-report-preview');
+}
+function closeReportPreview() { closeModal('ov-report-preview'); $('rp-frame').srcdoc = ''; }
+function printReportPreview() {
+  var f = $('rp-frame');
+  try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Could not open the print dialog', 'err'); }
 }
 
 // A save failure that matters (a booking, a receipt) gets this instead of a
@@ -3460,6 +3590,7 @@ function setView(v) {
     return;
   }
   S.view = v;
+  var _c = document.getElementById('content'); if (_c) delete _c.dataset.page;
   try { sessionStorage.setItem('pt_last_view', v); } catch(e) { /* private browsing etc — not critical */ }
   renderRail();
   if (v === 'dashboard') renderDashboard();
@@ -3709,14 +3840,17 @@ async function renderBoard(uid, skipDataReload) {
   const merch = S.users.find(u => u.id === uid);
   if (!merch) { setView('dashboard'); return; }
 
-  // Preserve scroll position across in-place refreshes (e.g. after editing a cell).
-  // Only when re-rendering the SAME board that's already open — a fresh navigation
-  // to a different merchant should still land at the top.
-  const contentEl0 = $('content');
+  // Scroll position is no longer captured here. It used to be read at the
+  // START of every render, which broke in two ways: only the first buyer's
+  // table had its sideways scroll saved (every other buyer section snapped
+  // back to the left edge), and one edit fires two overlapping renders — your
+  // own save plus the realtime echo — so the second could start just after the
+  // first had rebuilt the tables, read their fresh left-edge position, and
+  // "restore" that. Position now lives in _boardScroll, which only real user
+  // scrolling updates (see the listener below renderBoard), so no render can
+  // ever overwrite it with a mid-rebuild value.
   const isBoardRefresh = S._lastBoardUid === uid;
-  const savedTop = isBoardRefresh && contentEl0 ? contentEl0.scrollTop : 0;
-  const savedScroller0 = isBoardRefresh && contentEl0 ? contentEl0.querySelector('.scroller') : null;
-  const savedLeft = savedScroller0 ? savedScroller0.scrollLeft : 0;
+  if (!isBoardRefresh) delete _boardScroll[uid]; // fresh navigation to a different board still lands at the top
   S._lastBoardUid = uid;
 
   $('crumb').textContent = 'Merchandiser';
@@ -3823,19 +3957,165 @@ async function renderBoard(uid, skipDataReload) {
       + '</div></div>';
   }
 
+  // A render that started for a board the user has since navigated away from
+  // must not paint over whatever they're looking at now.
+  if (S.view !== uid) return;
+  var focusSnap = snapshotBoardFocus();
+  _scrollRestoring = true; // the rebuild itself may clamp scrollTop — don't record that as a user scroll
   $('content').innerHTML = allHtml
     + (!canEdit ? '<div class="sub2" style="margin-top:-10px;padding-bottom:4px">View only.</div>' : '');
-  requestAnimationFrame(applyStickyHeaderOffsets);
+  restoreBoardScroll(uid);
+  restoreBoardFocus(focusSnap);
+  requestAnimationFrame(function(){
+    applyStickyHeaderOffsets();
+    // Once more after layout settles (sticky offsets, fonts) — then resume recording.
+    restoreBoardScroll(uid);
+    setTimeout(function(){ _scrollRestoring = false; }, 60);
+  });
+}
 
-  if (isBoardRefresh) {
-    requestAnimationFrame(function () {
-      const c = $('content');
-      if (!c) return;
-      c.scrollTop = savedTop;
-      const s = c.querySelector('.scroller');
-      if (s) s.scrollLeft = savedLeft;
-    });
+// ─── PAGE SCROLL MEMORY (Laying Goods, Development detail) ───
+// Simpler pages that rebuild all of #content after an edit. The page key is
+// stamped onto #content after each render so a snapshot is only reapplied to
+// the SAME page — opening a different development, or arriving from another
+// view, still starts at the top.
+function capturePageScroll(pageKey) {
+  var c = $('content');
+  if (!c || c.dataset.page !== pageKey) return null;
+  return { key: pageKey, top: c.scrollTop, lefts: Array.prototype.map.call(c.querySelectorAll('.scroller'), function(x){ return x.scrollLeft; }) };
+}
+function finishPageRender(pageKey, snap) {
+  var c = $('content');
+  if (!c) return;
+  c.dataset.page = pageKey;
+  if (!snap || snap.key !== pageKey) return;
+  c.scrollTop = snap.top;
+  c.querySelectorAll('.scroller').forEach(function(x, i){ if (snap.lefts[i]) x.scrollLeft = snap.lefts[i]; });
+}
+
+// ─── FLOATING SIDEWAYS SCROLLBAR ───
+// A wide table's own sideways scrollbar sits at its very bottom — with many
+// POs that's far below the rows being looked at. This bar is pinned to the
+// bottom of the screen instead, matched to the position and width of the
+// table crossing the bottom edge, and moves that table sideways. It hides as
+// soon as the table's own scrollbar is on screen (nothing to replace then),
+// and when no table is wider than the screen.
+var _fhsTarget = null, _fhsPending = false;
+function scheduleFloatingScrollbar() {
+  if (_fhsPending) return;
+  _fhsPending = true;
+  requestAnimationFrame(function(){ _fhsPending = false; updateFloatingScrollbar(); });
+}
+function updateFloatingScrollbar() {
+  var bar = document.getElementById('float-hscroll');
+  var c = document.getElementById('content');
+  if (!bar || !c) return;
+  var cr = c.getBoundingClientRect();
+  var viewBottom = cr.bottom;
+  var target = null;
+  c.querySelectorAll('.scroller').forEach(function(s){
+    if (target) return;
+    if (s.scrollWidth <= s.clientWidth + 1) return;       // not wider than the screen
+    if (!s.offsetParent) return;
+    var r = s.getBoundingClientRect();
+    var top = r.top, bottom = r.bottom;
+    // A collapsed buyer section hides its table by squashing its wrapper to
+    // zero height — the table itself still reports its full size, so clip it
+    // to what the wrapper actually shows.
+    var sec = s.closest('[id^="sec-"]');
+    if (sec) {
+      var sr = sec.getBoundingClientRect();
+      if (sr.height < 20) return;
+      top = Math.max(top, sr.top); bottom = Math.min(bottom, sr.bottom);
+    }
+    // The table crosses the bottom of the screen with a decent slice visible,
+    // and its own scrollbar is still out of sight below.
+    if (top < viewBottom - 80 && bottom > viewBottom + 2) target = s;
+  });
+  if (!target) {
+    if (bar.classList.contains('on')) bar.classList.remove('on');
+    _fhsTarget = null;
+    return;
   }
+  var tr = target.getBoundingClientRect();
+  bar.classList.add('on'); // shown first, so its real height is known when placing it
+  bar.style.left = tr.left + 'px';
+  bar.style.width = target.clientWidth + 'px';
+  bar.style.top = (viewBottom - bar.offsetHeight) + 'px';
+  bar.firstChild.style.width = target.scrollWidth + 'px';
+  _fhsTarget = target;
+  if (Math.abs(bar.scrollLeft - target.scrollLeft) > 1) bar.scrollLeft = target.scrollLeft;
+}
+(function initFloatingScrollbar(){
+  var bar = document.getElementById('float-hscroll');
+  var c = document.getElementById('content');
+  if (!bar || !c) return;
+  // Bar dragged → move the table.
+  // Each side only writes when the two differ, so the echo from the other side
+  // is a no-op and they can't ping-pong.
+  bar.addEventListener('scroll', function(){
+    if (_fhsTarget && Math.abs(_fhsTarget.scrollLeft - bar.scrollLeft) > 1) _fhsTarget.scrollLeft = bar.scrollLeft;
+  });
+  // Any scroll (page up/down, or a table moved by trackpad / Shift+wheel) →
+  // re-pick the table and keep the bar's thumb in step with it.
+  document.addEventListener('scroll', function(e){
+    if (e.target === bar) return;
+    if (_fhsTarget && e.target === _fhsTarget && bar.classList.contains('on')) {
+      if (Math.abs(bar.scrollLeft - _fhsTarget.scrollLeft) > 1) bar.scrollLeft = _fhsTarget.scrollLeft;
+      return;
+    }
+    scheduleFloatingScrollbar();
+  }, true);
+  window.addEventListener('resize', scheduleFloatingScrollbar);
+  // Page re-renders, buyer sections opening/closing, sidebar collapsing.
+  new MutationObserver(scheduleFloatingScrollbar).observe(c, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+  c.addEventListener('transitionend', scheduleFloatingScrollbar, true);
+  var rail = document.querySelector('.rail');
+  if (rail) rail.addEventListener('transitionend', scheduleFloatingScrollbar);
+  scheduleFloatingScrollbar();
+})();
+
+// ─── BOARD SCROLL + FOCUS MEMORY ───
+// uid -> { top: vertical scroll of #content, lefts: { 'sec-<buyer key>': sideways scroll of that buyer's table } }
+var _boardScroll = {};
+var _scrollRestoring = false;
+document.addEventListener('scroll', function(e) {
+  if (_scrollRestoring) return;
+  var uid = S._lastBoardUid;
+  if (!uid || S.view !== uid) return;
+  var c = document.getElementById('content');
+  if (!c) return;
+  var t = e.target;
+  var rec = _boardScroll[uid] || (_boardScroll[uid] = { top: 0, lefts: {} });
+  if (t === c) { rec.top = c.scrollTop; return; }
+  if (t && t.classList && t.classList.contains('scroller') && c.contains(t)) {
+    var sec = t.closest('[id^="sec-"]');
+    rec.lefts[sec ? sec.id : '_default'] = t.scrollLeft;
+  }
+}, true); // capture phase — scroll events don't bubble, so this is the only way to hear every table's
+function restoreBoardScroll(uid) {
+  var rec = _boardScroll[uid];
+  var c = $('content');
+  if (!rec || !c) return;
+  c.scrollTop = rec.top;
+  c.querySelectorAll('.scroller').forEach(function(s) {
+    var sec = s.closest('[id^="sec-"]');
+    var left = rec.lefts[sec ? sec.id : '_default'];
+    if (left) s.scrollLeft = left;
+  });
+}
+// If the cursor was in a board input (a date, a production figure) when a
+// re-render landed, put it back in the same field rather than dropping it.
+function snapshotBoardFocus() {
+  var a = document.activeElement, c = $('content');
+  if (!a || !c || !c.contains(a) || !a.dataset) return null;
+  if (!a.dataset.oid || !a.dataset.key) return null;
+  return { oid: a.dataset.oid, key: a.dataset.key };
+}
+function restoreBoardFocus(snap) {
+  if (!snap) return;
+  var el = $('content').querySelector('[data-oid="' + snap.oid + '"][data-key="' + snap.key + '"]');
+  if (el && typeof el.focus === 'function') { try { el.focus({ preventScroll: true }); } catch (e) {} }
 }
 
 // Fully self-contained table builder — computes everything it needs from its own params
@@ -3968,9 +4248,9 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     if (itemByKey['_serial']) cellsByKey['_serial'] = singleTd('_serial', 'num', String(rowIdx+1), 'color:var(--muted);font-size:9.5px;');
     if (itemByKey['_confirm_date']) cellsByKey['_confirm_date'] = singleTd('_confirm_date', '', (o.confirm_date?short(o.confirm_date):'\u2014'), 'font-size:12px;font-weight:700;');
     if (itemByKey['_photo']) cellsByKey['_photo'] = singleTd('_photo', '', (getStyleImage(uid,o.style) ? '<img class="style-thumb" src="'+getStyleImage(uid,o.style)+'" onclick="event.stopPropagation();openImageModal(\'' + jsAttrEsc(getStyleImage(uid,o.style)) + '\',\'' + jsAttrEsc(o.style) + '\',\'' + uid + '\')" title="Click to view">' : (canEdit ? '<button class="photo-add-pill" onclick="event.stopPropagation();openStyleImageModal(\'' + jsAttrEsc(o.style) + '\',\'' + uid + '\')">[+] Photo</button>' : '--')), 'text-align:center;');
-    if (itemByKey['_po']) cellsByKey['_po'] = singleTd('_po', '', (o.po_number||'\u2014'), 'font-size:11.5px;font-weight:700;font-family:var(--mono);color:var(--ink);');
-    if (itemByKey['_buyer']) cellsByKey['_buyer'] = singleTd('_buyer', '', o.buyer);
-    if (itemByKey['_house']) cellsByKey['_house'] = singleTd('_house', '', (o.house||'\u2014'), 'font-size:9px;');
+    if (itemByKey['_po']) cellsByKey['_po'] = singleTd('_po', '', (o.po_number||'\u2014'), 'font-size:12.7px;font-weight:700;font-family:var(--mono);color:var(--ink);word-break:break-word;');
+    if (itemByKey['_buyer']) cellsByKey['_buyer'] = singleTd('_buyer', '', o.buyer, 'font-size:12.7px;font-weight:700;color:var(--ink);word-break:break-word;');
+    if (itemByKey['_house']) cellsByKey['_house'] = singleTd('_house', '', (o.house||'\u2014'), 'font-size:9.9px;font-weight:700;color:var(--ink);word-break:break-word;');
     if (itemByKey['_gauge']) cellsByKey['_gauge'] = singleTd('_gauge', '', (fmtGauge(o.gauge)||'\u2014'), 'font-size:9.9px;font-weight:700;');
     if (itemByKey['_colour']) cellsByKey['_colour'] = singleTd('_colour', '', (o.color||'\u2014'), 'font-size:9.45px;font-weight:700;');
     if (itemByKey['_composition']) cellsByKey['_composition'] = singleTd('_composition', '', (o.comp||'\u2014'), 'font-size:9.45px;font-weight:700;');
@@ -4060,10 +4340,10 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
 
     if (key === '_style') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Style Number') + '</th>';
     else if (key === '_photo') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Photo') + '</th>';
-    else if (key === '_po') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'PO') + '</th>';
+    else if (key === '_po') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'PO') + '</th>';
     else if (key === '_serial') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'#') + '</th>';
     else if (key === '_confirm_date') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Order Confirmed Date') + '</th>';
-    else if (key === '_buyer') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Buyer') + '</th>';
+    else if (key === '_buyer') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Buyer') + '</th>';
     else if (key === '_house') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'House') + '</th>';
     else if (key === '_gauge') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Gauge') + '</th>';
     else if (key === '_colour') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Colour') + '</th>';
@@ -4115,6 +4395,8 @@ async function renderShippedPage() {
     $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading archive…</div>';
     await loadArchiveData();
   }
+  await ensureStyleImagesFor(S.archive);
+  if (S.view !== 'shipped' && S.view !== 'archive') return;
   renderArchive();
 }
 
@@ -4134,6 +4416,7 @@ function renderArchive() {
     const exp = new Date(o.shipped_on);
     exp.setFullYear(exp.getFullYear() + 2);
     return `<tr id="row-${o.id}">
+      <td style="text-align:center">${styleThumbHtml(o)}</td>
       <td class="sty">${o.style}</td>
       <td>${merch ? merch.name : '—'}</td>
       <td>${o.buyer}</td><td>${o.house}</td>
@@ -4147,7 +4430,7 @@ function renderArchive() {
   }).join('');
 
   $('content').innerHTML = `<div class="card"><div class="scroller"><table>
-    <thead><tr><th>Style</th><th>Merchandiser</th><th>Buyer</th><th>Buying house</th>
+    <thead><tr><th></th><th>Style</th><th>Merchandiser</th><th>Buyer</th><th>Buying house</th>
       <th class="num">Qty</th><th class="num">Value</th><th>Shipped</th><th>Auto-expires</th><th>Remarks</th><th></th></tr></thead>
     <tbody>${rows}</tbody>
   </table></div></div>`;
@@ -5222,13 +5505,11 @@ function downloadPDF() {
     + '<div class="footer"><span>Shahana Group Production Tracker</span><span>Confidential — Internal use only</span></div>'
     + '</body></html>';
 
-  var win = window.open('', '_blank', 'width=1200,height=800');
-  if (!win) { toast('Pop-up blocked — allow pop-ups for PDF download', 'err'); return; }
-  win.document.write(html);
-  win.document.close();
-  setTimeout(function(){ win.focus(); win.print(); }, 600);
+  // Shown inside the app, not in a separate pop-up window (which browsers
+  // block by default). Its own A3-landscape print styles still apply, since
+  // the report prints from its own frame.
   closeModal('ov-print');
-  toast('PDF window opened — save as PDF in print dialog');
+  openReportPreview('Production Status Report', html);
 }
 
 
@@ -5239,12 +5520,16 @@ function downloadPDF() {
 // under. Every PO sharing that style mirrors the exact same booking data.
 var _yarnMerchantId = null, _yarnStyle = null, _yarnUnit = 'lbs', _yarnCompositions = [];
 var _yarnPoNumber = null; // null = style-wide (shared); set = this booking belongs to one PO only
+var _yarnEditingId = null; // booking currently open in the inline Edit form
+var _yarnBookingsShown = []; // bookings on screen, so Edit can prefill without another fetch
 var _yarnHasAttachment = false, _yarnMaterialType = 'yarn';
 var _accOrderId = null, _accMerchantId = null, _accStyle = null, _accCategory = 'sewing';
 var _accPoNumber = null; // PO-wise mode context, mirrors _yarnPoNumber exactly
 var _accCheckItems = []; // this style/category's checklist — the source of truth for completion
 var _accSelectedItem = null; // selected checklist item name, in the middle column
 var _accSelectedBookingId = null; // selected booking within that item, in the right column
+var _accEditingId = null; // booking currently open in the inline Edit form
+var _accBookingsShown = []; // bookings in the middle column, so Edit can prefill without another fetch
 
 // ─── PP APPROVAL — style-wide, tracked per colour ───
 // Every colour entered on any PO of a style gets its own independent approval
@@ -5763,7 +6048,7 @@ async function ppcUndoSource(colour) {
   if (!_ppcCanEdit) { toast('You don\u2019t have permission to do this', 'err'); return; }
   var cEntry = _ppcColourData.find(function(x){return x.colour===colour;});
   if (!cEntry || !cEntry.latest) return;
-  if (!confirm('Undo sending this colour to the supplier?')) return;
+  if (!(await appConfirm('Undo sending this colour to the supplier?', {title:'Undo send to supplier', okText:'Undo'}))) return;
   await db.from('pp_colour_approvals').delete().eq('id', cEntry.latest.id);
   await clearLabDipSupplierAlerts(_ppcMerchantId, _ppcStyle, colour);
   toast('Reverted', 'ok-t');
@@ -5804,7 +6089,7 @@ async function ppcConfirmResult(colour) {
 // round never had an outcome in the first place.
 async function ppcUndoSubmit(colour) {
   if (!_ppcCanEdit) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Undo this submission? It will go back to not submitted.')) return;
+  if (!(await appConfirm('Undo this submission? It will go back to not submitted.', {title:'Undo submission', okText:'Undo'}))) return;
   var cEntry = _ppcColourData.find(function(x){return x.colour===colour;});
   if (!cEntry || !cEntry.latest) return;
   await db.from('pp_colour_approvals').delete().eq('id', cEntry.latest.id);
@@ -5849,7 +6134,7 @@ async function ppcBulkResult() {
 
 async function ppcUndo(colour) {
   if (!_ppcCanEdit) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Undo this colour\u2019s approval? It will go back to awaiting a decision.')) return;
+  if (!(await appConfirm('Undo this colour\u2019s approval? It will go back to awaiting a decision.', {title:'Undo approval', okText:'Undo'}))) return;
   var cEntry = _ppcColourData.find(function(x){return x.colour===colour;});
   if (!cEntry || !cEntry.latest) return;
   await db.from('pp_colour_approvals').update({approved_on:null}).eq('id', cEntry.latest.id);
@@ -5874,6 +6159,7 @@ async function openMaterialModal(ordId, division) {
   _yarnMerchantId = o.merchant_id; _yarnStyle = (o.style||'').toUpperCase();
   _yarnUnit = division === 'knit' ? 'kgs' : 'lbs';
   _yarnMaterialType = 'yarn';
+  _yarnEditingId = null;
   const label = division === 'knit' ? 'Fabric' : 'Yarn';
   $('mat-title').textContent = label + ' Booking \u2014 ' + _yarnStyle;
   // PO-wise merchants book and track each PO on its own clock. A shared
@@ -5897,6 +6183,7 @@ async function openMaterialModal(ordId, division) {
 
 function switchYarnMaterialType(type) {
   _yarnMaterialType = type;
+  _yarnEditingId = null;
   renderMaterialModalBody();
 }
 
@@ -5941,7 +6228,9 @@ async function renderMaterialModalBody() {
 
   _yarnCompositions = getStyleCompositions(_yarnMerchantId, _yarnStyle);
 
+  _yarnBookingsShown = bookings;
   var bookingCards = bookings.map(function(b){
+    if (canEdit && _yarnEditingId === b.id) return renderYarnBookingEditForm(b);
     var myReceipts = receipts.filter(function(r){ return r.booking_id === b.id; });
     var bReceived = myReceipts.reduce(function(s,r){return s+(r.qty||0);},0);
     var bPct = b.qty > 0 ? Math.min(100, Math.round((bReceived/b.qty)*100)) : 0;
@@ -5961,7 +6250,7 @@ async function renderMaterialModalBody() {
       + '<div class="yarn-booking-hdr">'
       + '<div><div class="yarn-booking-supplier">'+htmlEsc(b.supplier)+(scopeToPo ? (b.po_number ? ' <span class="chip" style="font-size:8.5px;background:var(--accent-soft);color:var(--accent);vertical-align:middle">This PO</span>' : ' <span class="chip" style="font-size:8.5px;background:#EDEBE1;color:#726E64;vertical-align:middle">Shared</span>') : '')+'</div>'
       + '<div class="yarn-booking-meta">'+htmlEsc(b.composition||'')+' \u00b7 '+short(b.booked_on)+(b.pi_number?' \u00b7 PI '+htmlEsc(b.pi_number):'')+(b.lc_number?' \u00b7 LC '+htmlEsc(b.lc_number):'')+(b.price_per_lb?' \u00b7 $'+Number(b.price_per_lb).toFixed(4)+'/lb \u00b7 Total $'+fmt(Math.round(b.qty*b.price_per_lb)):'')+'</div></div>'
-      + (canEdit ? '<button class="dev-icon-btn yarn-x" onclick="deleteBooking(\''+b.id+'\')" title="Remove booking">&#x1F5D1;</button>' : '')
+      + (canEdit ? '<div class="booking-hdr-actions"><button class="booking-edit-btn" onclick="startEditYarnBooking(\''+b.id+'\')" title="Edit booking">&#x270E; Edit</button><button class="dev-icon-btn yarn-x" onclick="deleteBooking(\''+b.id+'\')" title="Remove booking">&#x1F5D1;</button></div>' : '')
       + '</div>'
       + '<div class="yarn-booking-body">'
       + '<div class="yarn-booking-nums-row"><div class="yarn-booking-nums-lbl">Received</div><div class="yarn-booking-nums">'+fmt(bReceived)+' / '+fmt(b.qty)+' '+_yarnUnit+'</div></div>'
@@ -6047,6 +6336,65 @@ async function saveNewBooking() {
   }
 }
 
+// ─── EDIT YARN BOOKING ───
+function startEditYarnBooking(id) {
+  if (!can('edit', _yarnMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
+  _yarnEditingId = id;
+  var f = $('yarn-add-booking-form'); if (f) f.innerHTML = ''; // one form open at a time
+  renderMaterialModalBody();
+}
+function cancelEditYarnBooking() { _yarnEditingId = null; renderMaterialModalBody(); }
+function renderYarnBookingEditForm(b) {
+  var comps = (_yarnCompositions || []).slice();
+  if (b.composition && comps.indexOf(b.composition) === -1) comps.unshift(b.composition); // never lose the saved value
+  var compOpts = comps.map(function(c){ return '<option value="'+htmlEsc(c)+'"'+(c===b.composition?' selected':'')+'>'+htmlEsc(c)+'</option>'; }).join('');
+  function v(x){ return x == null ? '' : htmlEsc(String(x)); }
+  return '<div class="yarn-form-card booking-edit-card">'
+    + '<div class="yarn-form-title">Edit Booking</div>'
+    + '<div class="yarn-form-grid">'
+    + '<div class="f"><label>Supplier <span style="color:var(--red)">*</span></label><input id="ybe-supplier" value="'+v(b.supplier)+'"></div>'
+    + '<div class="f"><label>Composition <span style="color:var(--red)">*</span></label><select id="ybe-composition">'+compOpts+'</select></div>'
+    + '<div class="f"><label>Booking Date <span style="color:var(--red)">*</span></label><input type="date" id="ybe-date" value="'+v(b.booked_on)+'"></div>'
+    + '<div class="f"><label>Quantity ('+_yarnUnit+') <span style="color:var(--red)">*</span></label><input type="number" step="0.01" id="ybe-qty" value="'+v(b.qty)+'"></div>'
+    + '<div class="f"><label>Price (USD/lb)</label><input type="number" step="0.0001" id="ybe-price" value="'+v(b.price_per_lb)+'" placeholder="optional"></div>'
+    + '<div class="f"><label>PI Number</label><input id="ybe-pi" value="'+v(b.pi_number)+'" placeholder="optional"></div>'
+    + '<div class="f"><label>LC Number</label><input id="ybe-lc" value="'+v(b.lc_number)+'" placeholder="optional"></div>'
+    + '</div>'
+    + '<div style="display:flex;gap:8px;margin-top:10px">'
+    + '<button class="btn" onclick="cancelEditYarnBooking()">Cancel</button>'
+    + '<button class="btn pri" onclick="saveEditYarnBooking(\''+b.id+'\')">Save Changes</button>'
+    + '</div></div>';
+}
+async function saveEditYarnBooking(id) {
+  if (!can('edit', _yarnMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
+  var b = _yarnBookingsShown.find(function(x){ return x.id === id; });
+  if (!b) { toast('That booking is no longer on screen \u2014 reopen the modal', 'err'); return; }
+  var supplier = $('ybe-supplier').value.trim();
+  var comp = $('ybe-composition').value;
+  var date = $('ybe-date').value;
+  var qty = parseFloat($('ybe-qty').value) || 0;
+  var price = parseFloat($('ybe-price').value); if (isNaN(price)) price = null;
+  if (!supplier || !comp || !date || !qty) { toast('Supplier, composition, date, and quantity are required', 'err'); return; }
+  // Only the booking's own details — never merchant, style, material type or
+  // PO tag, which decide which pool the booking counts toward.
+  var patch = { supplier: supplier, composition: comp, booked_on: date, qty: qty, price_per_lb: price,
+    pi_number: $('ybe-pi').value.trim() || null, lc_number: $('ybe-lc').value.trim() || null };
+  const res = await db.from('yarn_bookings').update(patch).eq('id', id);
+  if (res.error) { showSaveError('Booking changes NOT saved.\n\nDatabase said:\n' + res.error.message); return; }
+  _yarnEditingId = null;
+  toast('Booking updated', 'ok-t');
+  try {
+    // A quantity change can complete (or un-complete) the style's yarn, so the
+    // TNA Yarn Inhouse date is recalculated exactly as for a new booking.
+    await recomputeYarnActual(_yarnMerchantId, _yarnStyle, _yarnMaterialType==='yarn' ? _yarnPoNumber : null);
+    await reloadSummaries(_yarnMerchantId);
+    renderBoard(S.view);
+    await renderMaterialModalBody();
+  } catch (e) {
+    showSaveError('The changes WERE saved. The screen just failed to refresh \u2014 reopen the modal to see them.\n\nTechnical detail: ' + (e && e.message ? e.message : String(e)));
+  }
+}
+
 async function deleteBooking(id) {
   if (!can('edit', _yarnMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
   var rcRes = await db.from('yarn_receipts').select('id').eq('booking_id', id);
@@ -6054,7 +6402,7 @@ async function deleteBooking(id) {
   var msg = hasReceipts
     ? 'This booking has inhouse entries recorded against it. Deleting it will also delete those entries. Continue?'
     : 'Delete this booking?';
-  if (!confirm(msg)) return;
+  if (!(await appConfirm(msg, {title:'Remove booking', okText:'Remove', danger:true}))) return;
   await db.from('yarn_receipts').delete().eq('booking_id', id);
   await db.from('yarn_bookings').delete().eq('id', id);
   toast('Booking deleted', 'ok-t');
@@ -6091,7 +6439,7 @@ async function saveNewReceipt(bookingId) {
 }
 async function deleteReceipt(id) {
   if (!can('edit', _yarnMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Remove this inhouse entry?')) return;
+  if (!(await appConfirm('Remove this inhouse entry?', {title:'Remove inhouse entry', okText:'Remove', danger:true}))) return;
   await db.from('yarn_receipts').delete().eq('id', id);
   toast('Removed', 'ok-t');
   await recomputeYarnActual(_yarnMerchantId, _yarnStyle, _yarnMaterialType==='yarn' ? _yarnPoNumber : null);
@@ -6159,7 +6507,7 @@ var APV_TO_MILES = { final_insp: 'insp' }; // PP now runs through the style-wide
 // submit/approve/reject/undo, so there's nothing left to backfill for it.
 async function backfillTNAApprovalLinks() {
   if (S.user.role !== 'admin') { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Sync TNA actual dates from approval history?\n\nThis only fills in a BLANK Final Inspection actual date from already-approved rounds. It will never overwrite a date that\'s already set.\n\n(PP is handled automatically by its own colour-wise approval system and doesn\'t need this.)')) return;
+  if (!(await appConfirm('Sync TNA actual dates from approval history?\n\nThis only fills in a BLANK Final Inspection actual date from already-approved rounds. It will never overwrite a date that\'s already set.\n\n(PP is handled automatically by its own colour-wise approval system and doesn\'t need this.)', {title:'Sync TNA dates', okText:'Sync'}))) return;
   toast('Scanning approvals\u2026');
   var res = await db.from('approvals').select('*').eq('type', 'final_insp').not('approved_on', 'is', null);
   var approvals = res.data || [];
@@ -6517,7 +6865,7 @@ async function apvDoResult(outcome) {
 // ones already exist on top of it isn't a coherent single action.
 async function apvUndoLatest() {
   if (!can('edit', S_apv.merchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Undo this outcome? It will go back to awaiting a decision.')) return;
+  if (!(await appConfirm('Undo this outcome? It will go back to awaiting a decision.', {title:'Undo outcome', okText:'Undo'}))) return;
   var latest = S_apv.rounds[S_apv.rounds.length - 1];
   if (!latest) return;
   var wasApproved = !!latest.approved_on;
@@ -7244,7 +7592,7 @@ function isDismissedByMe(r) {
 }
 
 async function cancelRequest(reqId) {
-  if (!confirm('Cancel this request?')) return;
+  if (!(await appConfirm('Cancel this request?', {title:'Cancel request', okText:'Cancel request', cancelText:'Keep it', danger:true}))) return;
   await db.from('tna_requests').delete().eq('id', reqId);
   await loadTNARequests();
   renderRail();
@@ -7325,7 +7673,17 @@ async function loadAccessorySummaryByOrder(merchantId, orders, category) {
     receipts = rcRes.data || [];
   }
   var receivedByBooking = {};
-  receipts.forEach(function(r){ receivedByBooking[r.booking_id] = (receivedByBooking[r.booking_id]||0) + (r.qty||0); });
+  // Counted separately from the quantity sum: a booking made WITHOUT a
+  // quantity (typical for packing items — carton, poly, shipping mark) is
+  // complete as soon as it has any inhouse entry, and those entries usually
+  // have no quantity either. Summing qty alone gave 0 for them, so they could
+  // never show as received on the board, even though the modal (which checks
+  // "has any entry") correctly said they were.
+  var receiptCountByBooking = {};
+  receipts.forEach(function(r){
+    receivedByBooking[r.booking_id] = (receivedByBooking[r.booking_id]||0) + (r.qty||0);
+    receiptCountByBooking[r.booking_id] = (receiptCountByBooking[r.booking_id]||0) + 1;
+  });
 
   function computeFor(styleBookings, styleKey) {
     var items = checklistByStyle[styleKey] && checklistByStyle[styleKey].length
@@ -7341,7 +7699,7 @@ async function loadAccessorySummaryByOrder(merchantId, orders, category) {
         var totalReceived = itemBookings.reduce(function(s,b){ return s+(receivedByBooking[b.id]||0); }, 0);
         if (totalBooked > 0 && totalReceived >= totalBooked) received++;
       } else {
-        var anyReceived = itemBookings.some(function(b){ return (receivedByBooking[b.id]||0) > 0; });
+        var anyReceived = itemBookings.some(function(b){ return (receiptCountByBooking[b.id]||0) > 0; });
         if (anyReceived) received++;
       }
     });
@@ -7418,13 +7776,13 @@ async function openAccessoryModal(ordId, merchantId, style, category) {
     : 'Shared across every PO of this style';
   $('acc-body').innerHTML = '<div class="exp-loading">Loading\u2026</div>';
   openModal('ov-accessory');
-  _accSelectedItem = null; _accSelectedBookingId = null;
+  _accSelectedItem = null; _accSelectedBookingId = null; _accEditingId = null;
   await renderAccessoryModalBody();
 }
 
 function switchAccessoryCategory(category) {
   _accCategory = category;
-  _accSelectedItem = null; _accSelectedBookingId = null;
+  _accSelectedItem = null; _accSelectedBookingId = null; _accEditingId = null;
   renderAccessoryModalBody();
 }
 
@@ -7434,10 +7792,6 @@ async function renderAccessoryModalBody() {
   // flight could otherwise let the slower, older request paint over the newer one.
   var myToken = ++_accRenderToken;
   var order = findOrderAnywhere(_accOrderId) || {};
-  var tabsHtml = '<div class="inbox-tabs" style="margin-bottom:14px">'
-    + '<button class="inbox-tab-btn' + (_accCategory==='sewing'?' active':'') + '" onclick="switchAccessoryCategory(\'sewing\')">Sewing</button>'
-    + '<button class="inbox-tab-btn' + (_accCategory==='packing'?' active':'') + '" onclick="switchAccessoryCategory(\'packing\')">Packing</button>'
-    + '</div>';
 
   var planDate = _accCategory === 'sewing' ? order.plan_sew : order.plan_pack;
   var actDate = _accCategory === 'sewing' ? order.act_sew : order.act_pack;
@@ -7446,19 +7800,36 @@ async function renderAccessoryModalBody() {
     + (actDate ? ' &nbsp;&middot;&nbsp; Actual: '+short(actDate) : '')
     + '</div>';
 
-  var itemData = await getAccessoryItemData(_accMerchantId, _accStyle, _accCategory, _accPoNumber);
-  _accCheckItems = await loadAccessoryChecklist(_accMerchantId, _accStyle, _accCategory);
+  // Both categories are fetched every time: the top progress bar now combines
+  // Sewing + Packing into one figure (the same total the board pill shows),
+  // instead of only reflecting whichever tab happened to be open.
+  var otherCat = _accCategory === 'sewing' ? 'packing' : 'sewing';
+  var both = await Promise.all([
+    getAccessoryItemData(_accMerchantId, _accStyle, _accCategory, _accPoNumber),
+    getAccessoryItemData(_accMerchantId, _accStyle, otherCat, _accPoNumber),
+    loadAccessoryChecklist(_accMerchantId, _accStyle, _accCategory)
+  ]);
   if (myToken !== _accRenderToken) return; // a newer render started while this was loading
+  var itemData = both[0];
+  _accCheckItems = both[2];
   var canEdit = can('edit', _accMerchantId);
-  var catLabel = _accCategory === 'sewing' ? 'Sewing' : 'Packing';
-
-  var totalItems = itemData.length;
-  var completedItems = itemData.filter(function(it){ return it.complete; }).length;
+  var sewData = _accCategory === 'sewing' ? both[0] : both[1];
+  var packData = _accCategory === 'packing' ? both[0] : both[1];
+  function doneCount(list){ return list.filter(function(it){ return it.complete; }).length; }
+  var sewDone = doneCount(sewData), packDone = doneCount(packData);
+  var totalItems = sewData.length + packData.length;
+  var completedItems = sewDone + packDone;
   var pct = totalItems > 0 ? Math.min(100, Math.round((completedItems/totalItems)*100)) : 0;
 
+  var tabsHtml = '<div class="inbox-tabs" style="margin-bottom:14px">'
+    + '<button class="inbox-tab-btn' + (_accCategory==='sewing'?' active':'') + '" onclick="switchAccessoryCategory(\'sewing\')">Sewing <span class="acc-tab-count">' + sewDone + '/' + sewData.length + '</span></button>'
+    + '<button class="inbox-tab-btn' + (_accCategory==='packing'?' active':'') + '" onclick="switchAccessoryCategory(\'packing\')">Packing <span class="acc-tab-count">' + packDone + '/' + packData.length + '</span></button>'
+    + '</div>';
+
   var overallHtml = '<div class="yarn-overall-card">'
-    + '<div class="yarn-overall-top"><div class="yarn-overall-lbl">' + catLabel + ' \u2014 Items Complete</div><div class="yarn-overall-nums">' + completedItems + ' / ' + totalItems + ' items</div></div>'
+    + '<div class="yarn-overall-top"><div class="yarn-overall-lbl">All Accessories \u2014 Sewing + Packing</div><div class="yarn-overall-nums">' + completedItems + ' / ' + totalItems + ' items</div></div>'
     + '<div class="yarn-bar-track"><div class="yarn-bar-fill ' + yarnBarClass(pct) + '" style="width:' + pct + '%"></div></div>'
+    + '<div class="acc-split-line"><span>Sewing <b>' + sewDone + ' / ' + sewData.length + '</b></span><span>Packing <b>' + packDone + ' / ' + packData.length + '</b></span></div>'
     + '</div>';
 
   // Keep the selection valid across re-renders (e.g. after adding a booking),
@@ -7514,7 +7885,9 @@ function renderAccBookingColumn(selectedItemData, canEdit) {
   if (!selectedItemData) return '<div class="acc-col-hdr">Booking</div><div class="acc-col-empty">Select a checklist item on the left</div>';
   var it = selectedItemData;
   var addBtn = canEdit ? '<button class="btn sm pri" style="width:100%;margin-bottom:10px" onclick="openAddAccessoryBookingForm()">+ Add Booking</button>' : '';
+  _accBookingsShown = it.bookings;
   var cards = it.bookings.map(function(b) {
+    if (canEdit && _accEditingId === b.id) return renderAccBookingEditForm(b);
     var myReceipts = it.receipts.filter(function(r){ return r.booking_id === b.id; });
     var bReceived = myReceipts.reduce(function(s,r){ return s+(r.qty||0); }, 0);
     var hasQty = b.qty != null;
@@ -7523,7 +7896,7 @@ function renderAccBookingColumn(selectedItemData, canEdit) {
     var isSel = b.id === _accSelectedBookingId;
     var tagHtml = _accPoNumber ? (b.po_number ? '<span class="acc-booking-tag thispo">This PO</span>' : '<span class="acc-booking-tag shared">Shared</span>') : '';
     return '<div class="acc-booking-card' + (isSel?' selected':'') + '" onclick="selectAccessoryBooking(\'' + b.id + '\')">'
-      + (canEdit ? '<button class="dev-icon-btn yarn-x acc-booking-del" onclick="event.stopPropagation();deleteAccessoryBooking(\'' + b.id + '\')" title="Remove booking">&#x1F5D1;</button>' : '')
+      + (canEdit ? '<div class="booking-hdr-actions acc-booking-actions"><button class="booking-edit-btn" onclick="event.stopPropagation();startEditAccessoryBooking(\'' + b.id + '\')" title="Edit booking">&#x270E; Edit</button><button class="dev-icon-btn yarn-x" onclick="event.stopPropagation();deleteAccessoryBooking(\'' + b.id + '\')" title="Remove booking">&#x1F5D1;</button></div>' : '')
       + '<div class="acc-booking-date">' + short(b.booked_on) + tagHtml + '</div>'
       + '<div class="yarn-bar-track"><div class="yarn-bar-fill ' + yarnBarClass(bPct) + '" style="width:'+bPct+'%"></div></div>'
       + '<div class="acc-booking-nums">' + numsHtml + '</div>'
@@ -7554,7 +7927,7 @@ function renderAccInhouseColumn(selectedItemData, canEdit) {
     + addBtn;
 }
 
-function selectAccessoryItem(item) { _accSelectedItem = item; _accSelectedBookingId = null; renderAccessoryModalBody(); }
+function selectAccessoryItem(item) { _accSelectedItem = item; _accSelectedBookingId = null; _accEditingId = null; renderAccessoryModalBody(); }
 function selectAccessoryBooking(id) { _accSelectedBookingId = id; renderAccessoryModalBody(); }
 
 async function addChecklistItem() {
@@ -7574,7 +7947,7 @@ async function addChecklistItem() {
 }
 async function removeChecklistItem(id) {
   if (!can('edit', _accMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Remove this item from the checklist? Any bookings already made for it are kept \u2014 only the checklist entry itself goes away.')) return;
+  if (!(await appConfirm('Remove this item from the checklist? Any bookings already made for it are kept \u2014 only the checklist entry itself goes away.', {title:'Remove from checklist', okText:'Remove', danger:true}))) return;
   await db.from('accessory_checklist_items').delete().eq('id', id);
   toast('Removed from checklist', 'ok-t');
   await renderAccessoryModalBody();
@@ -7645,6 +8018,53 @@ async function saveNewAccessoryBooking() {
   }
 }
 
+// ─── EDIT ACCESSORY BOOKING ───
+function startEditAccessoryBooking(id) {
+  if (!can('edit', _accMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
+  _accEditingId = id;
+  _accSelectedBookingId = id; // keep the right-hand Inhouse column on the booking being edited
+  renderAccessoryModalBody();
+}
+function cancelEditAccessoryBooking() { _accEditingId = null; renderAccessoryModalBody(); }
+function renderAccBookingEditForm(b) {
+  function v(x){ return x == null ? '' : htmlEsc(String(x)); }
+  return '<div class="yarn-form-card booking-edit-card">'
+    + '<div class="yarn-form-title">Edit Booking \u2014 ' + htmlEsc(b.item||'') + '</div>'
+    + '<div class="yarn-form-grid">'
+    + '<div class="f"><label>Booking Date <span style="color:var(--red)">*</span></label><input type="date" id="abe-date" value="'+v(b.booked_on)+'"></div>'
+    + '<div class="f"><label>Quantity</label><input type="number" step="0.01" id="abe-qty" value="'+v(b.qty)+'" placeholder="blank = complete on first receipt"></div>'
+    + '<div class="f"><label>Supplier</label><input id="abe-supplier" value="'+v(b.supplier)+'" placeholder="optional"></div>'
+    + '<div class="f"><label>PI / LC Number</label><input id="abe-pi" value="'+v(b.pi_number)+'" placeholder="PI (optional)" style="margin-bottom:5px"><input id="abe-lc" value="'+v(b.lc_number)+'" placeholder="LC (optional)"></div>'
+    + '</div>'
+    + '<div style="display:flex;gap:8px;margin-top:10px">'
+    + '<button class="btn" onclick="cancelEditAccessoryBooking()">Cancel</button>'
+    + '<button class="btn pri" onclick="saveEditAccessoryBooking(\''+b.id+'\')">Save Changes</button>'
+    + '</div></div>';
+}
+async function saveEditAccessoryBooking(id) {
+  if (!can('edit', _accMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
+  var b = _accBookingsShown.find(function(x){ return x.id === id; });
+  if (!b) { toast('That booking is no longer on screen \u2014 reopen the modal', 'err'); return; }
+  var date = $('abe-date').value;
+  if (!date) { toast('Booking date is required', 'err'); return; }
+  var qtyRaw = $('abe-qty').value.trim();
+  var patch = { booked_on: date, qty: qtyRaw === '' ? null : (parseFloat(qtyRaw) || 0),
+    supplier: $('abe-supplier').value.trim() || null,
+    pi_number: $('abe-pi').value.trim() || null, lc_number: $('abe-lc').value.trim() || null };
+  const res = await db.from('accessory_bookings').update(patch).eq('id', id);
+  if (res.error) { showSaveError('Booking changes NOT saved.\n\nDatabase said:\n' + res.error.message); return; }
+  _accEditingId = null;
+  toast('Booking updated', 'ok-t');
+  try {
+    await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory, _accPoNumber);
+    await reloadSummaries(_accMerchantId);
+    renderBoard(S.view);
+    await renderAccessoryModalBody();
+  } catch (e) {
+    showSaveError('The changes WERE saved. The screen just failed to refresh \u2014 reopen the modal to see them.\n\nTechnical detail: ' + (e && e.message ? e.message : String(e)));
+  }
+}
+
 async function deleteAccessoryBooking(id) {
   if (!can('edit', _accMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
   var rcRes = await db.from('accessory_receipts').select('id').eq('booking_id', id);
@@ -7652,7 +8072,7 @@ async function deleteAccessoryBooking(id) {
   var msg = hasReceipts
     ? 'This booking has inhouse entries recorded against it. Deleting it will also delete those entries. Continue?'
     : 'Delete this booking?';
-  if (!confirm(msg)) return;
+  if (!(await appConfirm(msg, {title:'Remove booking', okText:'Remove', danger:true}))) return;
   await db.from('accessory_receipts').delete().eq('booking_id', id);
   await db.from('accessory_bookings').delete().eq('id', id);
   toast('Booking deleted', 'ok-t');
@@ -7692,7 +8112,7 @@ async function saveNewAccessoryReceipt(bookingId) {
 
 async function deleteAccessoryReceipt(id) {
   if (!can('edit', _accMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Remove this inhouse entry?')) return;
+  if (!(await appConfirm('Remove this inhouse entry?', {title:'Remove inhouse entry', okText:'Remove', danger:true}))) return;
   await db.from('accessory_receipts').delete().eq('id', id);
   toast('Removed', 'ok-t');
   await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory, _accPoNumber);
@@ -7901,17 +8321,20 @@ async function renderDevelopmentsPage() {
 }
 
 function openDevelopmentDetail(devId) {
+  var _c = document.getElementById('content'); if (_c) delete _c.dataset.page; // fresh open lands at the top
   S._devDetailId = devId;
   _devCompareMode = false;
   renderDevelopmentDetail(devId);
 }
 function backToDevelopmentsList() {
+  var _c = document.getElementById('content'); if (_c) delete _c.dataset.page;
   S._devDetailId = null;
   _devCompareMode = false;
   renderDevelopmentsPage();
 }
 
 async function renderDevelopmentDetail(devId) {
+  var _scrollSnap = capturePageScroll('dev:' + devId);
   var d = S.developments.find(function(x){ return x.id === devId; });
   if (!d) { S._devDetailId = null; return renderDevelopmentsPage(); }
   var canEdit = can('edit', d.merchant_id);
@@ -7919,7 +8342,9 @@ async function renderDevelopmentDetail(devId) {
   $('page-sub').innerHTML = '<a href="#" onclick="event.preventDefault();backToDevelopmentsList()" style="color:var(--accent)">&larr; Developments</a> \u00b7 ' + htmlEsc(d.buyer||'') + (d.buyer_pending ? ' <span class="dev-pending-tag" style="margin-left:6px">Pending approval</span>' : '');
   $('stamp').innerHTML = ''; $('act-row').innerHTML = canEdit ? '<button class="btn sm danger" onclick="deleteDevelopment(\'' + d.id + '\')">&#x1F5D1; Delete style</button>' : '';
 
-  $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading options\u2026</div>';
+  // Only show the loading placeholder on a fresh open — on an in-place refresh
+  // it collapsed the page and threw you back to the top.
+  if (!_scrollSnap) $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading options\u2026</div>';
   var opts = await loadDevOptions(devId);
   // One query for all rounds across all options, not one per option. Style
   // images loaded here too, so the photo shows even when this page is opened
@@ -8025,7 +8450,9 @@ async function renderDevelopmentDetail(devId) {
     }).join('');
   }
 
+  if (S._devDetailId !== devId) return; // navigated away while loading
   $('content').innerHTML = head + toolbarHtml + bodyHtml;
+  finishPageRender('dev:' + devId, _scrollSnap);
 }
 
 function toggleDevCompareMode() {
@@ -8256,7 +8683,7 @@ async function addDevOption(devId) {
 async function deleteDevOption(optionId) {
   var mid = await devMerchantForOption(optionId);
   if (!mid || !can('edit', mid)) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Remove this option? This cannot be undone.')) return;
+  if (!(await appConfirm('Remove this option? This cannot be undone.', {title:'Remove option', okText:'Remove', danger:true}))) return;
   await db.from('development_options').delete().eq('id', optionId);
   // Drop it from the caches too, so nothing downstream reasons about a row
   // that no longer exists.
@@ -8270,7 +8697,7 @@ async function deleteDevOption(optionId) {
 async function deleteDevelopment(devId) {
   var d = S.developments.find(function(x){ return x.id===devId; });
   if (!d || !can('edit', d.merchant_id)) { toast('You don\u2019t have permission to do this', 'err'); return; }
-  if (!confirm('Delete the entire "' + d.style + '" development, including all its options and sample history? This cannot be undone.')) return;
+  if (!(await appConfirm('Delete the entire "' + d.style + '" development, including all its options and sample history? This cannot be undone.', {title:'Delete development', okText:'Delete', danger:true}))) return;
   await db.from('developments').delete().eq('id', devId);
   (_devOptionsCache[devId]||[]).forEach(function(o){ delete _devSamplesCache[o.id]; });
   delete _devOptionsCache[devId];
@@ -8694,7 +9121,7 @@ async function saveEditUser(uid) {
 
 async function deleteUser(uid) {
   var u = S.users.find(function(x){ return x.id===uid; });
-  if (!u || !confirm('Delete ' + u.name + '? This cannot be undone.')) return;
+  if (!u || !(await appConfirm('Delete ' + u.name + '? This cannot be undone.', {title:'Delete user', okText:'Delete', danger:true}))) return;
   var { error } = await db.from('users').delete().eq('id', uid);
   if (error) { toast('Error deleting user', 'err'); return; }
   toast(u.name + ' deleted');
@@ -8884,7 +9311,7 @@ async function saveBooking() {
 }
 
 async function odDeleteBooking(id) {
-  if (!confirm('Remove this booking?')) return;
+  if (!(await appConfirm('Remove this booking?', {title:'Remove booking', okText:'Remove', danger:true}))) return;
   await db.from('yarn_bookings').delete().eq('id',id);
   await loadOrderDetailData(S.detail.orderId); renderODContent();
 }
@@ -8898,7 +9325,7 @@ async function saveReceipt() {
 }
 
 async function odDeleteReceipt(id) {
-  if (!confirm('Remove this receipt?')) return;
+  if (!(await appConfirm('Remove this receipt?', {title:'Remove receipt', okText:'Remove', danger:true}))) return;
   await db.from('yarn_receipts').delete().eq('id',id);
   await loadOrderDetailData(S.detail.orderId); renderODContent();
 }
@@ -9287,7 +9714,7 @@ function handleProfileType() {
 }
 
 async function deleteMerchant(uid, name) {
-  if (!confirm(`Remove ${name}? Their orders and notes will also be deleted permanently.`)) return;
+  if (!(await appConfirm(`Remove ${name}? Their orders and notes will also be deleted permanently.`, {title:'Remove merchant', okText:'Remove', danger:true}))) return;
   const { error } = await db.from('users').delete().eq('id', uid);
   if (!error) {
     toast(`${name} removed`);
@@ -9478,7 +9905,9 @@ function renderRail() {
     html+='<div class="rail-sep"></div>';
     html+='<button class="ni'+(S.view==='admin'?' on':'')+'" onclick="setView(\'admin\')"><span class="av" style="font-size:12px">&#x2699;</span><span class="nm">Admin</span></button>';
   }
+  var railTop = rb.scrollTop; // every board edit re-renders the sidebar too — keep its scroll put
   rb.innerHTML=html;
+  rb.scrollTop = railTop;
 }
 
 function toggleSection(key){
@@ -9969,6 +10398,7 @@ async function confirmPackingList(){
 }
 
 async function renderLayingGoods(){
+  var _scrollSnap = capturePageScroll('laying');
   $('crumb').textContent='Laying Goods';
   $('page-title').textContent='Laying Goods';
   $('page-sub').innerHTML='';
@@ -9979,6 +10409,8 @@ async function renderLayingGoods(){
     await loadLayingGoods();
   }
   var goods=S.layingGoods||[];
+  await ensureStyleImagesFor(goods);
+  if (S.view !== 'laying-goods') return; // navigated away while photos loaded
   var isMerchant=S.user.role==='merchant';
   var filtered=goods.filter(function(o){
     if(_lgFilter==='awaiting') return !o.inspection_result;
@@ -10001,6 +10433,7 @@ async function renderLayingGoods(){
     });
   }
   $('content').innerHTML=html;
+  finishPageRender('laying', _scrollSnap);
 }
 
 function setLGFilter(f){_lgFilter=f;renderLayingGoods();}
@@ -10027,6 +10460,7 @@ function lgTable(orders,showM){
     var shortH=o.short_qty?'<span class="chip warn" style="font-size:10px;margin-left:4px">Short '+fmt(o.short_qty)+'</span>':'';
     var customCells = buildFieldDataCells(customFields, o.id, canAct);
     return '<tr id="row-'+o.id+'">'
+      +'<td style="text-align:center">'+styleThumbHtml(o)+'</td>'
       +'<td class="sty">'+o.style+(o.po_number?'<div style="font-size:10px;color:var(--muted);font-family:var(--mono)">'+o.po_number+'</div>':'')+'</td>'
       +'<td>'+(o.buyer||'--')+'</td>'
       +'<td class="num">'+fmt(o.packing_list_qty||o.qty)+shortH+'</td>'
@@ -10048,7 +10482,7 @@ function lgTable(orders,showM){
   }).join('');
   var customHeaders = buildFieldHeaderCells(customFields);
   return '<div class="card"><div class="scroller"><table>'
-    +'<thead><tr><th>Style/PO</th><th>Buyer</th><th class="num">PL Qty</th><th class="num">FOB</th><th class="num">Value</th><th class="num">CBM</th><th>Ship Date</th><th class="num">Days</th><th>FRI</th><th>Inspection</th><th>Mode</th><th></th>'+customHeaders+'<th></th></tr></thead>'
+    +'<thead><tr><th></th><th>Style/PO</th><th>Buyer</th><th class="num">PL Qty</th><th class="num">FOB</th><th class="num">Value</th><th class="num">CBM</th><th>Ship Date</th><th class="num">Days</th><th>FRI</th><th>Inspection</th><th>Mode</th><th></th>'+customHeaders+'<th></th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div></div>';
 }
 
@@ -10104,7 +10538,7 @@ function openLGDetails(ordId){
 }
 
 async function undoToLive(ordId){
-  if(!confirm('Move back to Live Orders?')) return;
+  if(!(await appConfirm('Move back to Live Orders?', {title:'Move back to Live Orders', okText:'Move back'}))) return;
   var res=await db.from('orders').update({stage:'live',packing_list_date:null,packing_list_qty:null,cbm:null,fri_date:null,inspection_result:null,shipment_mode:'sea',short_qty:null,updated_at:new Date().toISOString()}).eq('id',ordId);
   if(res.error){toast('Error','err');return;}
   S.layingGoods=(S.layingGoods||[]).filter(function(x){return x.id!==ordId;});
@@ -10117,7 +10551,7 @@ async function undoToLive(ordId){
 }
 
 async function undoToLaying(ordId){
-  if(!confirm('Move back to Laying Goods?')) return;
+  if(!(await appConfirm('Move back to Laying Goods?', {title:'Move back to Laying Goods', okText:'Move back'}))) return;
   var res=await db.from('orders').update({stage:'laying',shipped:false,shipped_on:null,shipped_qty:null,updated_at:new Date().toISOString()}).eq('id',ordId);
   if(res.error){toast('Error','err');return;}
   await db.from('shipment_alerts').delete().eq('order_id',ordId);
@@ -10215,6 +10649,7 @@ async function uploadStyleImage(merchantId, style, file) {
 
 async function loadStyleImages(merchantId) {
   var res=await db.from('style_images').select('style,image_url,storage_path').eq('merchant_id',merchantId);
+  if (!res.error && typeof _styleImagesLoadedFor !== 'undefined') _styleImagesLoadedFor[merchantId] = true;
   (res.data||[]).forEach(function(row){
     _styleImagesCache[merchantId+'_'+row.style]={url:row.image_url,path:row.storage_path||null};
   });
@@ -10225,31 +10660,142 @@ function getStyleImage(merchantId,style){
   return entry ? (entry.url||entry) : null;
 }
 
+// ─── IMAGE LIGHTBOX WITH ZOOM ───
+// One lightbox for every photo in the app (board, Development, Laying Goods,
+// Shipped). Zoom: scroll wheel or pinch (centred on the cursor/fingers),
+// double-click to zoom in / back to fit, − / + / Fit buttons, keys + − 0 Esc.
+// Drag to move around once zoomed in.
 function openImageModal(url, style, merchantId) {
-  var ex=document.getElementById('img-lightbox'); if(ex) ex.remove();
-  var canManage=merchantId&&(S.user.role==='admin'||S.user.id===merchantId);
-  var lb=document.createElement('div');
-  lb.id='img-lightbox';
-  lb.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  var btnStyle='padding:7px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid';
-  var inner='<div style="max-width:90vw;max-height:90vh;text-align:center">'
-    +'<div style="color:#fff;font-size:13px;margin-bottom:12px;opacity:.6;letter-spacing:.05em">'+style+'</div>'
-    +'<img src="'+url+'" id="lb-img" style="max-width:100%;max-height:75vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:block;margin:0 auto">'
-    +'<div style="display:flex;gap:10px;justify-content:center;margin-top:14px">'
-    +'<button id="lb-close" style="'+btnStyle+' rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff">Close</button>'
-    +(canManage?'<button id="lb-manage" style="'+btnStyle+' rgba(255,80,80,.5);background:rgba(200,0,0,.2);color:#ff9999">Manage / Delete</button>':'')
-    +'</div></div>';
-  lb.innerHTML=inner;
-  lb.onclick=function(e){if(e.target===lb)lb.remove();};
+  var ex = document.getElementById('img-lightbox'); if (ex && ex._close) ex._close(); else if (ex) ex.remove();
+  var canManage = merchantId && (S.user.role === 'admin' || S.user.id === merchantId);
+  var lb = document.createElement('div');
+  lb.id = 'img-lightbox';
+  lb.className = 'lb-ov';
+  lb.innerHTML = '<div class="lb-top">'
+    + '<div class="lb-title"></div>'
+    + '<div class="lb-zoom">'
+    + '<button type="button" class="lb-zbtn" id="lb-out" title="Zoom out (−)">−</button>'
+    + '<span class="lb-pct" id="lb-pct">100%</span>'
+    + '<button type="button" class="lb-zbtn" id="lb-in" title="Zoom in (+)">+</button>'
+    + '<button type="button" class="lb-zbtn lb-fit" id="lb-fit" title="Fit to screen (0)">Fit</button>'
+    + '</div></div>'
+    + '<div class="lb-stage" id="lb-stage"><img id="lb-img" draggable="false" alt=""></div>'
+    + '<div class="lb-hint">Scroll or pinch to zoom · drag to move · double-click to zoom in</div>'
+    + '<div class="lb-actions">'
+    + '<button type="button" class="lb-btn" id="lb-close">Close</button>'
+    + (canManage ? '<button type="button" class="lb-btn lb-danger" id="lb-manage">Manage / Delete</button>' : '')
+    + '</div>';
+  lb.querySelector('.lb-title').textContent = style || '';
   document.body.appendChild(lb);
-  document.getElementById('lb-img').onclick=function(e){e.stopPropagation();};
-  document.getElementById('lb-close').onclick=function(){lb.remove();};
-  if(canManage && document.getElementById('lb-manage')){
-    document.getElementById('lb-manage').onclick=function(){
-      lb.remove();
-      openStyleImageModal(style, merchantId);
-    };
+
+  var stage = lb.querySelector('#lb-stage'), img = lb.querySelector('#lb-img'), pctEl = lb.querySelector('#lb-pct');
+  img.src = url; // set as a property, never spliced into markup
+  var MIN = 1, MAX = 8;
+  var sc = 1, tx = 0, ty = 0;
+
+  function clampPan() {
+    // Keep the enlarged image covering the stage — no dragging it off into the void.
+    var sw = stage.clientWidth, sh = stage.clientHeight;
+    var iw = img.offsetWidth * sc, ih = img.offsetHeight * sc;
+    var mx = Math.max(0, (iw - sw) / 2), my = Math.max(0, (ih - sh) / 2);
+    tx = Math.max(-mx, Math.min(mx, tx));
+    ty = Math.max(-my, Math.min(my, ty));
   }
+  function apply() {
+    if (sc <= MIN + 0.001) { sc = MIN; tx = 0; ty = 0; }
+    clampPan();
+    img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + sc + ')';
+    pctEl.textContent = Math.round(sc * 100) + '%';
+    stage.classList.toggle('zoomed', sc > MIN);
+  }
+  // Zoom so the point under (cx, cy) — client coordinates — stays put on screen.
+  function zoomAt(newSc, cx, cy) {
+    newSc = Math.max(MIN, Math.min(MAX, newSc));
+    var r = stage.getBoundingClientRect();
+    var px = (cx == null ? r.left + r.width / 2 : cx) - (r.left + r.width / 2);
+    var py = (cy == null ? r.top + r.height / 2 : cy) - (r.top + r.height / 2);
+    var k = newSc / sc;
+    tx = px - (px - tx) * k;
+    ty = py - (py - ty) * k;
+    sc = newSc;
+    apply();
+  }
+
+  lb.querySelector('#lb-in').onclick = function(){ zoomAt(sc * 1.5); };
+  lb.querySelector('#lb-out').onclick = function(){ zoomAt(sc / 1.5); };
+  lb.querySelector('#lb-fit').onclick = function(){ zoomAt(MIN); };
+  stage.addEventListener('wheel', function(e){
+    e.preventDefault();
+    zoomAt(sc * Math.exp(-e.deltaY * 0.0018), e.clientX, e.clientY);
+  }, { passive: false });
+  stage.addEventListener('dblclick', function(e){
+    if (sc > MIN) zoomAt(MIN); else zoomAt(2.5, e.clientX, e.clientY);
+  });
+
+  // Pointer events cover mouse drag, one-finger pan and two-finger pinch.
+  var pts = {}, last = null, pinch = null;
+  stage.addEventListener('pointerdown', function(e){
+    pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+    var ids = Object.keys(pts);
+    if (ids.length === 2) {
+      var a = pts[ids[0]], b = pts[ids[1]];
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), sc: sc };
+      last = null;
+    } else { last = { x: e.clientX, y: e.clientY }; }
+  });
+  stage.addEventListener('pointermove', function(e){
+    if (!pts[e.pointerId]) return;
+    pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    var ids = Object.keys(pts);
+    if (ids.length === 2 && pinch) {
+      var a = pts[ids[0]], b = pts[ids[1]];
+      var d = Math.hypot(a.x - b.x, a.y - b.y);
+      zoomAt(pinch.sc * (d / pinch.d), (a.x + b.x) / 2, (a.y + b.y) / 2);
+    } else if (last && sc > MIN) {
+      tx += e.clientX - last.x; ty += e.clientY - last.y;
+      last = { x: e.clientX, y: e.clientY };
+      apply();
+    }
+  });
+  function endPtr(e){
+    delete pts[e.pointerId];
+    if (Object.keys(pts).length < 2) pinch = null;
+    last = Object.keys(pts).length === 1 ? pts[Object.keys(pts)[0]] : null;
+  }
+  stage.addEventListener('pointerup', endPtr);
+  stage.addEventListener('pointercancel', endPtr);
+
+  function onKey(e){
+    if (e.key === 'Escape') { close(); }
+    else if (e.key === '+' || e.key === '=') { zoomAt(sc * 1.5); }
+    else if (e.key === '-' || e.key === '_') { zoomAt(sc / 1.5); }
+    else if (e.key === '0') { zoomAt(MIN); }
+  }
+  function close(){ document.removeEventListener('keydown', onKey); window.removeEventListener('resize', apply); lb.remove(); }
+  lb._close = close;
+  document.addEventListener('keydown', onKey);
+  window.addEventListener('resize', apply);
+  lb.onclick = function(e){ if (e.target === lb) close(); };
+  lb.querySelector('#lb-close').onclick = close;
+  var mg = lb.querySelector('#lb-manage');
+  if (mg) mg.onclick = function(){ close(); openStyleImageModal(style, merchantId); };
+}
+
+// Style photos are cached per merchant. Laying Goods and Shipped list several
+// merchants' orders at once, so make sure each one's photos are loaded first.
+var _styleImagesLoadedFor = {};
+async function ensureStyleImagesFor(orders) {
+  var ids = (orders || []).map(function(o){ return o.merchant_id; })
+    .filter(function(v, i, a){ return v && a.indexOf(v) === i && !_styleImagesLoadedFor[v]; });
+  await Promise.all(ids.map(function(id){
+    return loadStyleImages(id).then(function(){ _styleImagesLoadedFor[id] = true; }).catch(function(){});
+  }));
+}
+function styleThumbHtml(o) {
+  var u = getStyleImage(o.merchant_id, o.style);
+  if (!u) return '<span style="color:var(--muted)">—</span>';
+  return '<img class="style-thumb" src="' + htmlEsc(u) + '" onclick="event.stopPropagation();openImageModal(\'' + jsAttrEsc(u) + '\',\'' + jsAttrEsc(o.style) + '\',\'' + o.merchant_id + '\')" title="Click to view">';
 }
 
 function handleOrderImageUpload(input) {
@@ -10339,7 +10885,7 @@ async function doSIUpload() {
 
 
 async function deleteStyleImage() {
-  if (!confirm('Delete photo for style ' + _siStyle + '? This affects all POs of this style.')) return;
+  if (!(await appConfirm('Delete photo for style ' + _siStyle + '? This affects all POs of this style.', {title:'Delete photo', okText:'Delete', danger:true}))) return;
   // Remove file from Supabase Storage using saved path
   var entry = _styleImagesCache[_siMerchId + '_' + _siStyle];
   var storagePath = entry && entry.path ? entry.path : null;
@@ -10571,7 +11117,7 @@ async function baApproveBuyerRequest(reqId) {
 }
 async function baRejectBuyerRequest(reqId) {
   if (S.user.role !== 'admin' && S.user.role !== 'management') { toast('Only admin can reject buyer requests', 'err'); return; }
-  if (!confirm('Reject this buyer request? The merchant will need to submit it again if they still want this buyer.')) return;
+  if (!(await appConfirm('Reject this buyer request? The merchant will need to submit it again if they still want this buyer.', {title:'Reject buyer request', okText:'Reject', danger:true}))) return;
   await db.from('buyer_requests').update({ status: 'rejected', reviewed_at: new Date().toISOString(), reviewed_by: S.user.name }).eq('id', reqId);
   _pendingBuyerRequests = _pendingBuyerRequests.filter(function(r){ return r.id !== reqId; });
   toast('Buyer request rejected');
@@ -10619,9 +11165,9 @@ var FIXED_BLOCKS = [
   { key:'_serial',       name:'#',            width:40,  mandatory:false, defaultHidden:true },
   { key:'_style',       name:'Style Number', width:130, wrap:true, mandatory:true  },
   { key:'_photo',       name:'Photo',        width:66,  mandatory:false },
-  { key:'_po',          name:'PO',           width:75,  mandatory:false },
+  { key:'_po',          name:'PO',           width:83,  wrap:true, mandatory:false },
   { key:'_confirm_date',name:'Order Confirmed Date', width:85,  wrap:true, mandatory:false },
-  { key:'_buyer',       name:'Buyer',        width:95,  mandatory:false },
+  { key:'_buyer',       name:'Buyer',        width:95,  wrap:true, mandatory:false },
   { key:'_house',       name:'House',        width:80,  wrap:true, mandatory:false },
   { key:'_gauge',       name:'Gauge',        width:58,  mandatory:false },
   { key:'_colour',      name:'Colour',       width:78,  wrap:true, mandatory:false },
