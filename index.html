@@ -733,6 +733,13 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
   box-shadow:0 -3px 10px rgba(20,18,15,.07);border-radius:6px 6px 0 0;
   scrollbar-width:auto;scrollbar-color:#B9B0A0 transparent}
 .float-hscroll.on{display:block}
+.float-thead{position:fixed;top:0;left:0;width:0;overflow:hidden;z-index:38;display:none;
+  margin:0!important;border:0!important;border-radius:0!important;background:var(--panel);
+  box-shadow:0 4px 10px -2px rgba(20,18,15,.18)}
+.float-thead.on{display:block}
+.float-thead table{margin:0}
+.float-thead thead th{position:static}
+.float-thead thead th.stk-dyn{position:sticky}
 .float-hscroll-inner{height:1px}
 .float-hscroll::-webkit-scrollbar{height:12px}
 .float-hscroll::-webkit-scrollbar-track{background:transparent}
@@ -740,7 +747,6 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 .float-hscroll::-webkit-scrollbar-thumb:hover{background:#9C927F}
 [data-theme="dark"] .float-hscroll{background:rgba(37,35,37,.94);scrollbar-color:#6B645A transparent}
 [data-theme="dark"] .float-hscroll::-webkit-scrollbar-thumb{background:#6B645A;border-color:rgba(37,35,37,.94)}
-@media print{.float-hscroll{display:none!important}}
 /* Lightbox */
 .lb-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:16px;gap:10px}
@@ -1517,28 +1523,40 @@ table.dyn-board thead th{position:sticky;z-index:25;background-color:#F7F5EF;top
 table.dyn-board thead th.stk-dyn{z-index:35}
 [data-theme="dark"] table.dyn-board thead th{background-color:#252325}
 
+/* ── PRINT ──
+   Works by exclusion, not by list: an app Print button (printOnly) marks one
+   window as the thing to print, and EVERYTHING else on the page is dropped —
+   so a floating element added later (sidebar arrow, version stamp, scrollbar,
+   tooltip, photo viewer) can never leak onto paper again. The old rules tried
+   to list every element to hide, and anything not on the list printed. */
 @media print{
-  html,body{height:auto}
-  .shell,#app{display:block!important;height:auto!important;overflow:visible!important}
-  .rail,.act-row,.top,.no-print,#toast,#login-wrap{display:none!important}
-  .main{height:auto!important;overflow:visible!important}
-  /* The board itself was never hidden here — only modals were toggled via
-     .ov.printing — so printing the TNA sheet, the outstanding-items list, or
-     any other modal-based print also printed the entire live board sitting
-     underneath it. This is the actual fix: the board's content is gone from
-     the page entirely while printing, regardless of which modal is open. */
-  #content{display:none!important}
-  .content{overflow:visible!important;padding:0!important}
-  /* Hide everything except the active print overlay */
-  .ov{position:static!important;background:none!important;padding:0!important;
-    display:none!important;overflow:visible!important}
-  .ov.printing{display:block!important}
-  .modal{box-shadow:none!important;border:0!important;max-width:100%!important;
-    border-radius:0!important;animation:none!important}
-  .m-f,.xbtn,.btn,.no-print{display:none!important}
-  body{font-size:11px;background:#fff}
+  html,body{height:auto!important;overflow:visible!important;background:#fff!important}
+  /* App chrome never prints, in any mode */
+  .sb-toggle,#ver-stamp,.float-hscroll,#floating-tip,#toast,.lb-ov,#login-wrap,.rail,.act-row,.no-print{display:none!important}
+
+  /* Mode A — an app Print button: only the chosen window prints */
+  body.print-isolated > *{display:none!important}
+  body.print-isolated > .ov.printing{display:block!important;position:static!important;inset:auto!important;
+    background:none!important;padding:0!important;overflow:visible!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .ov.printing .modal{box-shadow:none!important;border:0!important;max-width:100%!important;width:100%!important;margin:0!important;
+    max-height:none!important;height:auto!important;border-radius:0!important;animation:none!important;display:block!important;overflow:visible!important}
+  /* windows are capped at ~88% of the screen with their own scrollbar — on paper
+     that cut long TNA sheets off mid-page */
+  .ov.printing .m-b,.ov.printing [style*="overflow-y:auto"],.ov.printing [style*="max-height"]{max-height:none!important;overflow:visible!important;height:auto!important}
+  .ov.printing .m-f,.ov.printing .btn,.ov.printing .xbtn,.ov.printing .m-h button{display:none!important}
+
+  /* Mode B — the browser's own print (Ctrl+P) with no Print button involved:
+     print the page being viewed, without the app around it */
+  body:not(.print-isolated) .shell,body:not(.print-isolated) #app{display:block!important;height:auto!important;overflow:visible!important}
+  body:not(.print-isolated) .main{height:auto!important;overflow:visible!important}
+  body:not(.print-isolated) .top .crumb,body:not(.print-isolated) .top .stamp,body:not(.print-isolated) .top button{display:none!important}
+  body:not(.print-isolated) .content{overflow:visible!important;padding:0!important}
+  body:not(.print-isolated) .ov{display:none!important}
+  body:not(.print-isolated) .scroller{overflow:visible!important}
+
+  body{font-size:11px}
   td,th{white-space:normal}
-  @page{margin:2cm 2cm 2cm 2cm;size:A4 landscape}
+  @page{margin:12mm;size:A4 landscape}
 }
 </style>
 </head>
@@ -1557,7 +1575,7 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:43</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:44</p>
   </div>
 </div>
 
@@ -1597,8 +1615,9 @@ table.dyn-board thead th.stk-dyn{z-index:35}
     </div>
     <div class="content" id="content"><div class="loading"><span class="spin"></span> Loading&hellip;</div></div>
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
+    <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:43</div>
+  <div id="ver-stamp">Version:26-09-17:44</div>
 </div>
 
 
@@ -2732,13 +2751,92 @@ document.addEventListener('keydown', function(e){
   else if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'acf-ok') { e.preventDefault(); _appConfirmAnswer(true); }
 }, true);
 
+// ─── PRINT ONE WINDOW ───
+// Every app Print button goes through here. It marks the one window to print
+// and flags the page so the print stylesheet drops everything else — see the
+// PRINT block in the stylesheet.
+function printOnly(overlayId) {
+  var el = $(overlayId);
+  if (!el) return;
+  document.querySelectorAll('.ov.printing').forEach(function(o){ o.classList.remove('printing'); });
+  el.classList.add('printing');
+  document.body.classList.add('print-isolated');
+  function clean(){
+    el.classList.remove('printing');
+    document.body.classList.remove('print-isolated');
+    window.removeEventListener('afterprint', clean);
+  }
+  window.addEventListener('afterprint', clean);
+  window.print();
+}
+
+// The window on top right now, if any (highest z-index, then latest in the page).
+function topOpenOverlay() {
+  var best = null, bestZ = -1;
+  document.querySelectorAll('.ov.open').forEach(function(o){
+    var z = parseInt(getComputedStyle(o).zIndex, 10) || 0;
+    if (z >= bestZ) { best = o; bestZ = z; }
+  });
+  return best;
+}
+function isMerchantBoardView() {
+  return typeof S !== 'undefined' && S.user && S.users &&
+    S.users.some(function(u){ return u.id === S.view; });
+}
+// Ctrl/Cmd+P: print only what's relevant, never the whole app shell.
+//   report preview open  → print the report itself
+//   any window open      → print just that window
+//   on a merchant board  → the Production Status Report (grouped by buyer)
+//   anywhere else        → the page content (print CSS strips the chrome)
+document.addEventListener('keydown', function(e){
+  if (!(e.ctrlKey || e.metaKey) || e.altKey || (e.key !== 'p' && e.key !== 'P')) return;
+  var top = topOpenOverlay();
+  if (top && top.id === 'ov-app-confirm') return;
+  if (top && top.id === 'ov-report-preview') { e.preventDefault(); printReportPreview(); return; }
+  if (top) { e.preventDefault(); printOnly(top.id); return; }
+  if (isMerchantBoardView()) {
+    e.preventDefault();
+    openPrint(S.view); closeModal('ov-print');
+    if ($('pr-buyer')) $('pr-buyer').value = '';
+    downloadPDF();
+  }
+}, true);
+// Printing from the browser menu can't be intercepted, but it can still be
+// narrowed: if a window is open, print only that window.
+window.addEventListener('beforeprint', function(){
+  if (document.body.classList.contains('print-isolated')) return;
+  var top = topOpenOverlay();
+  if (!top) return;
+  top.classList.add('printing');
+  document.body.classList.add('print-isolated');
+  window.addEventListener('afterprint', function clean(){
+    top.classList.remove('printing');
+    document.body.classList.remove('print-isolated');
+    window.removeEventListener('afterprint', clean);
+  });
+});
+
 // ─── IN-APP REPORT PREVIEW ───
 function openReportPreview(title, html) {
   $('rp-title').textContent = title || 'Report';
-  $('rp-frame').srcdoc = html;
+  var f = $('rp-frame');
+  f.onload = function(){
+    // Ctrl+P / Esc while the report itself has focus
+    try {
+      f.contentDocument.addEventListener('keydown', function(e){
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) { e.preventDefault(); printReportPreview(); }
+        else if (e.key === 'Escape') { closeReportPreview(); }
+      });
+    } catch (err) {}
+  };
+  f.srcdoc = html;
   openModal('ov-report-preview');
 }
-function closeReportPreview() { closeModal('ov-report-preview'); $('rp-frame').srcdoc = ''; }
+function closeReportPreview() {
+  var f = $('rp-frame');
+  closeModal('ov-report-preview'); f.srcdoc = '';
+  try { f.blur(); window.focus(); } catch (e) {}
+}
 function printReportPreview() {
   var f = $('rp-frame');
   try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Could not open the print dialog', 'err'); }
@@ -4329,7 +4427,65 @@ var _fhsTarget = null, _fhsPending = false;
 function scheduleFloatingScrollbar() {
   if (_fhsPending) return;
   _fhsPending = true;
-  requestAnimationFrame(function(){ _fhsPending = false; updateFloatingScrollbar(); });
+  requestAnimationFrame(function(){ _fhsPending = false; updateFloatingScrollbar(); updateFloatingHeader(); });
+}
+
+// ─── FLOATING TABLE HEADER ───
+// Once a table's header row scrolls off the top, an exact copy of it is pinned
+// to the top of the screen, lined up with the table and moving sideways with
+// it. The copy lives in its own clipped box that is scrolled in step with the
+// table, so frozen (sticky-left) columns stay frozen in the copy too. Real
+// sticky headers can't do this here: each table sits in its own sideways-
+// scrolling box, and a browser pins a header only to its nearest scrolling
+// box — which never scrolls up or down.
+var _fthSrc = null, _fthScroller = null;
+function updateFloatingHeader() {
+  var box = document.getElementById('float-thead');
+  var c = document.getElementById('content');
+  if (!box || !c) return;
+  var topY = c.getBoundingClientRect().top;
+  var pick = null;
+  c.querySelectorAll('.scroller').forEach(function(s){
+    if (pick || !s.offsetParent) return;
+    var t = s.querySelector(':scope > table');
+    if (!t || !t.tHead) return;
+    var r = t.getBoundingClientRect();
+    var hh = t.tHead.getBoundingClientRect().height;
+    var bottom = r.bottom;
+    var sec = s.closest('[id^="sec-"]');
+    if (sec) { var sr = sec.getBoundingClientRect(); if (sr.height < 20) return; bottom = Math.min(bottom, sr.bottom); }
+    // header has gone above the top edge, and enough of the table is still showing
+    if (r.top < topY - 2 && bottom > topY + hh + 30) pick = { s: s, t: t };
+  });
+  if (!pick) {
+    if (box.classList.contains('on')) box.classList.remove('on');
+    _fthScroller = null;
+    return;
+  }
+  var w = pick.t.offsetWidth;
+  if (_fthSrc !== pick.t.tHead || box._w !== w) {
+    // (Re)build the copy: new table, a board re-render, or a width change.
+    var clone = pick.t.cloneNode(false);
+    clone.appendChild(pick.t.tHead.cloneNode(true));
+    clone.style.width = w + 'px';
+    clone.querySelectorAll('[id]').forEach(function(el){ el.removeAttribute('id'); });
+    // Pin every header cell to the real one's measured width, so the copy can't drift.
+    var realTh = pick.t.tHead.querySelectorAll('th'), copyTh = clone.querySelectorAll('th');
+    realTh.forEach(function(th, i){
+      var cw = th.getBoundingClientRect().width;
+      if (copyTh[i]) { copyTh[i].style.width = cw + 'px'; copyTh[i].style.minWidth = cw + 'px'; copyTh[i].style.maxWidth = cw + 'px'; }
+    });
+    box.innerHTML = '';
+    box.appendChild(clone);
+    _fthSrc = pick.t.tHead; box._w = w;
+  }
+  box.classList.add('on');
+  var sr2 = pick.s.getBoundingClientRect();
+  box.style.top = topY + 'px';
+  box.style.left = sr2.left + 'px';
+  box.style.width = pick.s.clientWidth + 'px';
+  if (box.scrollLeft !== pick.s.scrollLeft) box.scrollLeft = pick.s.scrollLeft;
+  _fthScroller = pick.s;
 }
 function updateFloatingScrollbar() {
   var bar = document.getElementById('float-hscroll');
@@ -4385,6 +4541,10 @@ function updateFloatingScrollbar() {
   // re-pick the table and keep the bar's thumb in step with it.
   document.addEventListener('scroll', function(e){
     if (e.target === bar) return;
+    if (_fthScroller && e.target === _fthScroller) {
+      var fb = document.getElementById('float-thead');
+      if (fb && fb.scrollLeft !== _fthScroller.scrollLeft) fb.scrollLeft = _fthScroller.scrollLeft;
+    }
     if (_fhsTarget && e.target === _fhsTarget && bar.classList.contains('on')) {
       if (Math.abs(bar.scrollLeft - _fhsTarget.scrollLeft) > 1) bar.scrollLeft = _fhsTarget.scrollLeft;
       return;
@@ -5755,25 +5915,44 @@ function downloadPDF() {
   const merch = S.users.find(function(u){return u.id===uid;});
   const div = merch ? (merch.division||'sweater') : 'sweater';
   const VSTEPS = getSteps(div);
-  const VMILES = getMiles(div);
+  const E = htmlEsc;
   const orders = (S.boardCache[uid]||S.orders.filter(function(o){return o.merchant_id===uid;}))
-    .filter(function(o){return !o.shipped&&(!buyer||o.buyer===buyer);})
-    .sort(function(a,b){return (daysTo(a.ship_date)||999)-(daysTo(b.ship_date)||999);});
+    .filter(function(o){return !o.shipped&&(!buyer||o.buyer===buyer);});
 
   const dateStr = today().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
   const buyerLabel = buyer || 'All buyers';
 
-  var tRows = orders.map(function(o){
+  // Grouped exactly like the live board: the merchant's buyers in board order,
+  // then anything without an assigned buyer under "Other", and within each
+  // buyer the board's own style-then-ship-date sort. It used to be one flat
+  // list sorted by ship date, so "All buyers" came out with buyers jumbled.
+  var groups = [];
+  var boardBuyers = getBuyersForMerchant(uid);
+  var byId = {}; boardBuyers.forEach(function(b){ byId[b.id] = { name: b.name, rows: [] }; groups.push(byId[b.id]); });
+  var other = { name: 'Other', rows: [] }, byName = {};
+  orders.forEach(function(o){
+    if (o.buyer_id && byId[o.buyer_id]) { byId[o.buyer_id].rows.push(o); return; }
+    var nm = o.buyer || 'Other';                  // buyer not assigned to this merchant any more: keep its name as its own group
+    if (!byName[nm]) { byName[nm] = { name: nm, rows: [] }; }
+    byName[nm].rows.push(o);
+  });
+  Object.keys(byName).sort().forEach(function(k){ groups.push(byName[k]); });
+  groups = groups.filter(function(g){ return g.rows.length; });
+  groups.forEach(function(g){ g.rows = sortOrdersByStyleAndShip(g.rows); });
+
+  var colCount = 14 + VSTEPS.length;
+  function sum(list, f){ return list.reduce(function(s,o){ return s + f(o); }, 0); }
+  function row(o){
     const ms = missedMiles(o);
     const dl = daysTo(o.ship_date);
     const rc = ms.length?'background:#FBE9E7':dl!=null&&dl<=5?'background:#FBEAE0':dl!=null&&dl<=10?'background:#FDF6E3':'';
     return '<tr style="' + rc + '">'
-      + '<td><strong>' + o.style + '</strong></td>'
-      + '<td>' + o.buyer + '</td>'
-      + '<td>' + (o.house||'') + '</td>'
-      + '<td>' + (o.gauge||'') + '</td>'
-      + '<td>' + (o.color||'') + '</td>'
-      + '<td>' + (o.comp||'') + '</td>'
+      + '<td><strong>' + E(o.style) + '</strong></td>'
+      + '<td>' + E(o.po_number||'') + '</td>'
+      + '<td>' + E(o.house||'') + '</td>'
+      + '<td>' + E(o.gauge||'') + '</td>'
+      + '<td>' + E(o.color||'') + '</td>'
+      + '<td>' + E(o.comp||'') + '</td>'
       + '<td style="text-align:right">' + fmt(o.qty) + '</td>'
       + '<td style="text-align:right">' + (o.fob||0).toFixed(2) + '</td>'
       + '<td style="text-align:right">' + money((o.qty||0)*(o.fob||0)) + '</td>'
@@ -5781,52 +5960,67 @@ function downloadPDF() {
       + '<td style="text-align:right;' + (dl!=null&&dl<=5?'color:#C05621;font-weight:700':'') + '">' + (dl!=null?dl:'') + '</td>'
       + VSTEPS.map(function(s){const v=o[s.k]||0;return '<td style="text-align:right">' + (v>=(o.qty||0)&&(o.qty||0)>0?'<strong style="color:#2F7A4F">OK</strong>':fmt(v)) + '</td>';}).join('')
       + '<td style="text-align:right;font-weight:600">' + fmt((o.qty||0)-(o.prod_packing||0)) + '</td>'
-      + '<td>' + (ms.length?'<span style="color:#C0392B;font-weight:600">'+ms.map(function(m){return m.n;}).join(', ')+'</span>':'On plan') + '</td>'
-      + '<td style="font-size:11px;color:#73706A">' + (o.remarks||'') + '</td>'
+      + '<td>' + (ms.length?'<span style="color:#C0392B;font-weight:600">'+E(ms.map(function(m){return m.n;}).join(', '))+'</span>':'On plan') + '</td>'
+      + '<td style="font-size:10px;color:#73706A">' + E(o.remarks||'') + '</td>'
       + '</tr>';
+  }
+  function totalsRow(label, list, cls){
+    return '<tr class="' + cls + '"><td colspan="6">' + label + '</td>'
+      + '<td style="text-align:right">' + fmt(sum(list,function(o){return o.qty||0;})) + '</td><td></td>'
+      + '<td style="text-align:right">' + money(sum(list,function(o){return (o.qty||0)*(o.fob||0);})) + '</td><td colspan="2"></td>'
+      + VSTEPS.map(function(){return '<td></td>';}).join('')
+      + '<td style="text-align:right">' + fmt(sum(list,function(o){return (o.qty||0)-(o.prod_packing||0);})) + '</td><td colspan="2"></td></tr>';
+  }
+  var thead = '<thead><tr><th>Style</th><th>PO</th><th>Buying House</th><th>Gauge</th><th>Colour</th><th>Composition</th>'
+    + '<th style="text-align:right">Order Qty</th><th style="text-align:right">FOB</th><th style="text-align:right">Value</th>'
+    + '<th>Ship Date</th><th style="text-align:right">Days</th>'
+    + VSTEPS.map(function(s){return '<th>'+E(s.n)+'</th>';}).join('')
+    + '<th style="text-align:right">Balance</th><th>TNA Status</th><th>Remarks</th></tr></thead>';
+  var sections = groups.map(function(g){
+    var late = g.rows.filter(function(o){ return missedMiles(o).length; }).length;
+    return '<section><div class="buyer"><h2>' + E(g.name) + '</h2><span>' + g.rows.length + ' order' + (g.rows.length===1?'':'s')
+      + ' · ' + fmt(sum(g.rows,function(o){return o.qty||0;})) + ' pcs'
+      + (late ? ' · <b style="color:#C0392B">' + late + ' behind TNA</b>' : '') + '</span></div>'
+      + '<table>' + thead + '<tbody>' + g.rows.map(row).join('') + '</tbody>'
+      + (groups.length > 1 ? '<tfoot>' + totalsRow(E(g.name) + ' subtotal', g.rows, 'sub') + '</tfoot>' : '')
+      + '</table></section>';
   }).join('');
-
-  var thSteps = VSTEPS.map(function(s){return '<th>'+s.n+'</th>';}).join('');
-  var totQty = orders.reduce(function(s,o){return s+(o.qty||0);},0);
-  var totBal = orders.reduce(function(s,o){return s+(o.qty||0)-(o.prod_packing||0);},0);
-  var totVal = orders.reduce(function(s,o){return s+(o.qty||0)*(o.fob||0);},0);
+  var grand = '<table class="grand"><tbody>' + totalsRow(groups.length > 1 ? 'GRAND TOTAL — all buyers' : 'TOTAL', orders, 'tot') + '</tbody></table>';
+  var totQty = sum(orders,function(o){return o.qty||0;}), totBal = sum(orders,function(o){return (o.qty||0)-(o.prod_packing||0);}), totVal = sum(orders,function(o){return (o.qty||0)*(o.fob||0);});
 
   var html = '<!DOCTYPE html><html><head><meta charset="utf-8">'
-    + '<title>Production Report — ' + (merch?merch.name:'') + '</title>'
+    + '<title>Production Report — ' + E(merch?merch.name:'') + '</title>'
     + '<style>'
+    + 'html{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     + 'body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:11px;color:#191817;margin:0;padding:20px}'
     + 'h1{font-family:Georgia,serif;font-size:22px;font-weight:600;margin:0 0 4px;letter-spacing:-.3px}'
     + '.meta{font-size:11px;color:#73706A;margin-bottom:16px}'
-    + '.kpis{display:flex;gap:16px;margin-bottom:18px;flex-wrap:wrap}'
+    + '.kpis{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}'
     + '.kpi{background:#F7F5EF;border:1px solid #E5E2D9;border-radius:8px;padding:10px 14px}'
     + '.kpi .k{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#73706A;font-weight:700}'
     + '.kpi .v{font-size:20px;font-weight:600;margin-top:2px}'
+    + 'section{margin-top:16px}'
+    + '.buyer{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid #191817;padding-bottom:4px;margin-bottom:0;break-after:avoid;page-break-after:avoid}'
+    + '.buyer h2{font-family:Georgia,serif;font-size:15px;font-weight:600;margin:0}.buyer span{font-size:10.5px;color:#73706A}'
     + 'table{border-collapse:collapse;width:100%;font-size:10.5px}'
+    + 'thead{display:table-header-group}tr{break-inside:avoid;page-break-inside:avoid}'
     + 'th{background:#F7F5EF;padding:6px 7px;text-align:left;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;border-bottom:1px solid #E5E2D9}'
     + 'td{padding:6px 7px;border-bottom:1px solid #F0EDE4;vertical-align:middle}'
-    + 'tfoot td{font-weight:700;border-top:2px solid #E5E2D9;background:#F7F5EF}'
+    + 'tr.sub td{font-weight:700;background:#FBFAF6;border-top:1.5px solid #E5E2D9}'
+    + 'table.grand{margin-top:14px}tr.tot td{font-weight:800;background:#F1EDE3;border-top:2px solid #191817;border-bottom:2px solid #191817}'
     + '.footer{margin-top:20px;font-size:10px;color:#A0A09A;border-top:1px solid #E5E2D9;padding-top:10px;display:flex;justify-content:space-between}'
-    + '@media print{body{padding:10px}@page{margin:1.5cm;size:A3 landscape}}'
+    + '@media print{body{padding:0}@page{margin:1.2cm;size:A3 landscape}}'
     + '</style></head><body>'
     + '<h1>Production Status Report</h1>'
-    + '<div class="meta">Shahana Group &nbsp;·&nbsp; ' + (merch?merch.name:'') + ' &nbsp;·&nbsp; ' + buyerLabel + ' &nbsp;·&nbsp; ' + dateStr + '</div>'
+    + '<div class="meta">Shahana Group &nbsp;·&nbsp; ' + E(merch?merch.name:'') + ' &nbsp;·&nbsp; ' + E(buyerLabel) + ' &nbsp;·&nbsp; ' + dateStr + '</div>'
     + '<div class="kpis">'
     + '<div class="kpi"><div class="k">Orders</div><div class="v">' + orders.length + '</div></div>'
+    + '<div class="kpi"><div class="k">Buyers</div><div class="v">' + groups.length + '</div></div>'
     + '<div class="kpi"><div class="k">Total qty</div><div class="v">' + fmt(totQty) + '</div></div>'
     + '<div class="kpi"><div class="k">Balance</div><div class="v">' + fmt(totBal) + '</div></div>'
     + '<div class="kpi"><div class="k">Value</div><div class="v">' + money(totVal) + '</div></div>'
     + '</div>'
-    + '<table>'
-    + '<thead><tr><th>Style</th><th>Buyer</th><th>Buying House</th><th>Gauge</th><th>Colour</th><th>Composition</th>'
-    + '<th style="text-align:right">Order Qty</th><th style="text-align:right">FOB</th><th style="text-align:right">Value</th>'
-    + '<th>Ship Date</th><th style="text-align:right">Days</th>'
-    + thSteps
-    + '<th style="text-align:right">Balance</th><th>TNA Status</th><th>Remarks</th></tr></thead>'
-    + '<tbody>' + tRows + '</tbody>'
-    + '<tfoot><tr><td colspan="6">TOTAL</td><td style="text-align:right">' + fmt(totQty) + '</td><td></td><td style="text-align:right">' + money(totVal) + '</td><td colspan="2"></td>'
-    + VSTEPS.map(function(){return '<td></td>';}).join('')
-    + '<td style="text-align:right">' + fmt(totBal) + '</td><td colspan="2"></td></tr></tfoot>'
-    + '</table>'
+    + (orders.length ? sections + grand : '<p style="color:#73706A;padding:30px 0">No live orders.</p>')
     + '<div class="footer"><span>Shahana Group Production Tracker</span><span>Confidential — Internal use only</span></div>'
     + '</body></html>';
 
@@ -7377,11 +7571,7 @@ function closeBulkTNAPrint() {
   $('ov-bulk-tna-print').classList.remove('printing');
   closeModal('ov-bulk-tna-print');
 }
-function printBulkTNADoc() {
-  document.querySelectorAll('.ov').forEach(function(o){ o.classList.remove('printing'); });
-  $('ov-bulk-tna-print').classList.add('printing');
-  window.print();
-}
+function printBulkTNADoc() { printOnly('ov-bulk-tna-print'); }
 
 // ─── TNA PRINT ───
 // Two audiences, one document layout. The "planning team" version shows the
@@ -7478,11 +7668,7 @@ function closeTNAPrint() {
   $('ov-tna-print').classList.remove('printing');
   closeModal('ov-tna-print');
 }
-function printTNADoc() {
-  document.querySelectorAll('.ov').forEach(function(o){ o.classList.remove('printing'); });
-  $('ov-tna-print').classList.add('printing');
-  window.print();
-}
+function printTNADoc() { printOnly('ov-tna-print'); }
 
 // ─── ORDER CHECKLIST ("what's left to do") ───
 // Every section below only appears if the buyer this order belongs to actually
@@ -7668,11 +7854,7 @@ function closeOrderChecklist() {
   $('ov-order-todo').classList.remove('printing');
   closeModal('ov-order-todo');
 }
-function printOrderChecklist() {
-  document.querySelectorAll('.ov').forEach(function(o){ o.classList.remove('printing'); });
-  $('ov-order-todo').classList.add('printing');
-  window.print();
-}
+function printOrderChecklist() { printOnly('ov-order-todo'); }
 
 function openTNARequestForm(ordId, fieldName, fieldLabel, currentVal) {
   _tnareq = { ordId: ordId, field: fieldName, label: fieldLabel, current: currentVal };
@@ -9869,13 +10051,7 @@ function closeDashPdf() {
   closeModal('ov-dash-pdf');
 }
 
-function printDashPdf() {
-  // Mark this overlay as the one to show during print
-  document.querySelectorAll('.ov').forEach(o => o.classList.remove('printing'));
-  $('ov-dash-pdf').classList.add('printing');
-  window.print();
-  setTimeout(() => $('ov-dash-pdf').classList.remove('printing'), 1000);
-}
+function printDashPdf() { printOnly('ov-dash-pdf'); }
 
 function renderDashPdf() {
   var live = S.orders;
