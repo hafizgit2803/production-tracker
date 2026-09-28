@@ -1685,7 +1685,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:49</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:50</p>
   </div>
 </div>
 
@@ -1727,7 +1727,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:49</div>
+  <div id="ver-stamp">Version:26-09-17:50</div>
 </div>
 
 
@@ -2470,7 +2470,11 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
 <div class="ov" id="ov-app-confirm" onclick="if(event.target===this)_appConfirmAnswer(false)">
   <div class="modal slim app-confirm">
     <div class="m-h"><div><h3 id="acf-title">Are you sure?</h3></div></div>
-    <div class="m-b"><div class="acf-msg" id="acf-msg"></div></div>
+    <div class="m-b"><div class="acf-msg" id="acf-msg"></div>
+      <div id="acf-type-wrap" style="display:none;margin-top:12px">
+        <label id="acf-type-lbl" style="display:block;font-size:12px;color:var(--muted);margin-bottom:5px"></label>
+        <input id="acf-type" type="text" autocomplete="off" spellcheck="false" style="width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:13px;letter-spacing:.05em;box-sizing:border-box">
+      </div></div>
     <div class="m-f">
       <button class="btn" id="acf-cancel" onclick="_appConfirmAnswer(false)">Cancel</button>
       <button class="btn pri" id="acf-ok" onclick="_appConfirmAnswer(true)">OK</button>
@@ -2839,6 +2843,10 @@ function appConfirm(message, opts) {
   });
 }
 function _appConfirmNext() {
+  // A confirmation opened straight after another (two-step deletes) is already
+  // active by the time the previous one's delayed "next" fires — that timer
+  // used to overwrite it with nothing, leaving a window whose buttons did nothing.
+  if (_appConfirmActive) return;
   _appConfirmActive = _appConfirmQueue.shift() || null;
   if (!_appConfirmActive) return;
   var o = _appConfirmActive.opts;
@@ -2848,12 +2856,29 @@ function _appConfirmNext() {
   ok.textContent = o.okText || 'OK';
   ok.className = 'btn ' + (o.danger ? 'danger-solid' : 'pri');
   $('acf-cancel').textContent = o.cancelText || 'Cancel';
+  // Optional type-to-confirm (used for permanent deletes): OK stays disabled
+  // until the exact word is typed.
+  var tw = $('acf-type-wrap'), ti = $('acf-type');
+  if (o.typeToConfirm) {
+    tw.style.display = 'block'; ti.value = '';
+    $('acf-type-lbl').textContent = 'Type ' + o.typeToConfirm + ' to confirm';
+    ok.disabled = true; ok.style.opacity = '.45';
+    ti.oninput = function(){ var m = ti.value.trim().toUpperCase() === String(o.typeToConfirm).toUpperCase(); ok.disabled = !m; ok.style.opacity = m ? '' : '.45'; };
+    ti.onkeydown = function(e){ if (e.key === 'Enter' && !ok.disabled) { e.preventDefault(); _appConfirmAnswer(true); } };
+  } else {
+    tw.style.display = 'none'; ti.oninput = null; ti.onkeydown = null;
+    ok.disabled = false; ok.style.opacity = '';
+  }
   openModal('ov-app-confirm');
   // Destructive: focus lands on Cancel so a stray Enter can't delete anything.
-  setTimeout(function(){ (o.danger ? $('acf-cancel') : ok).focus(); }, 30);
+  setTimeout(function(){ (o.typeToConfirm ? ti : (o.danger ? $('acf-cancel') : ok)).focus(); }, 30);
 }
 function _appConfirmAnswer(yes) {
   if (!_appConfirmActive) return;
+  // Type-to-confirm is checked against what was actually typed, not just the
+  // button state, so re-enabling the button can't skip it.
+  var _need = _appConfirmActive.opts && _appConfirmActive.opts.typeToConfirm;
+  if (yes && _need && ($('acf-type').value || '').trim().toUpperCase() !== String(_need).toUpperCase()) return;
   var done = _appConfirmActive;
   closeModal('ov-app-confirm');
   _appConfirmActive = null;
@@ -3130,48 +3155,32 @@ function buildMaterialReportHtml(meta, rows) {
   groups.sort(function(a,b){ return a.name.localeCompare(b.name); });
   groups.forEach(function(g){ g.rows.sort(function(a,b){ return (a.shipDate||'9999') < (b.shipDate||'9999') ? -1 : 1; }); });
 
-  // Two lines per category: "3 / 5 ▬▬▬" then its TNA.
+  // Basic report: just "received / needed" per accessory category.
   function accCell(a){
-    if (!a.total) return '<div class="l1 muted">no items</div>';
-    var st = a.complete ? 'done' : a.done ? 'prog' : 'none';
-    return '<div class="l1"><span class="num">' + a.done + '/' + a.total + '</span>' + bar(a.done / a.total * 100, a.late ? 'late' : st) + '</div>'
-      + '<div class="l2">' + tnaBit(a.plan, a.actual, a.late, true) + '</div>';
+    if (!a.total) return '<span class="muted">\u2014</span>';
+    var st = a.complete ? 'done' : a.late ? 'late' : a.done ? 'prog' : 'none';
+    return '<span class="cnt ' + st + '">' + a.done + ' / ' + a.total + '</span>';
   }
-  // Outstanding items flow inline, grouped per category, instead of one line
-  // each — keeps every row to about two printed lines.
-  function pendingCell(r){
-    var parts = [];
-    if (r.yarn.state === 'none') parts.push('<span class="tag y">' + E(matLabel) + '</span>not booked');
-    else if (r.yarn.state !== 'done') parts.push('<span class="tag y">' + E(matLabel) + '</span>' + n(r.yarn.balance) + ' ' + unit + ' to come');
-    function grp(list, tag){
-      if (!list.length) return;
-      parts.push('<span class="tag">' + tag + '</span>' + list.map(function(p){ return E(p.item) + (p.why === 'not booked' ? ' <em>(not booked)</em>' : ''); }).join(', '));
-    }
-    grp(r.acc.sewing.pending, 'Sew'); grp(r.acc.packing.pending, 'Pack');
-    if (!parts.length) return '<span class="clear">✓ Nothing outstanding</span>';
-    return '<div class="pend">' + parts.join('<span class="sep"></span>') + '</div>';
-  }
-
   var sections = groups.map(function(g){
     var body = g.rows.map(function(r){
       var y = r.yarn, st = ST[r.status];
       var dl = r.daysLeft, dlCls = dl == null ? '' : dl < 0 ? 'late' : dl <= 14 ? 'warn' : 'ok';
       var photo = meta.photoFor ? meta.photoFor(r) : null;
       var shr = y.sharedOnly ? '<span class="shr" title="Booked for the whole style, not this PO">all POs</span>' : '';
-      var supTxt = y.suppliers.length ? E(y.suppliers.join(', ')) + (y.lastReceipt ? ' · in ' + d(y.lastReceipt) : '') : '';
+      var supTxt = y.suppliers.length ? y.suppliers.map(E).join(', ') : '';
       return '<tr>'
         + '<td class="c-photo">' + (photo ? '<img src="' + E(photo) + '">' : '<div class="ph"></div>') + '</td>'
         + '<td class="c-style"><div class="sty"><span>' + E(r.style) + '</span><span class="qty">' + n(r.qty) + ' pcs</span></div>'
         +   '<div class="po">' + (r.pos.length ? 'PO ' + r.pos.map(E).join(', ') : 'No PO') + '</div></td>'
         + '<td class="c-ship"><div class="date">' + d(r.shipDate) + '</div>' + (dl != null ? '<span class="days ' + dlCls + '">' + (dl < 0 ? Math.abs(dl) + 'd late' : dl + 'd left') + '</span>' : '') + '</td>'
         + '<td class="c-yarn">' + (y.state === 'none'
-            ? '<div class="l1"><span class="nobook">Not booked</span></div><div class="l2">' + tnaBit(y.plan, y.actual, y.late) + '</div>'
-            : '<div class="l1"><span class="num">' + n(y.received) + '/' + n(y.booked) + ' ' + unit + '</span>' + bar(y.pct, y.late ? 'late' : y.state === 'done' ? 'done' : 'prog') + '<span class="pct">' + y.pct + '%</span>' + shr + '</div>'
-              + '<div class="l2">' + tnaBit(y.plan, y.actual, y.late) + (supTxt ? ' <span class="sup">· ' + supTxt + '</span>' : '') + '</div>')
+            ? '<span class="nobook">Not booked</span>'
+            : '<div class="l1"><span class="num">' + n(y.received) + ' / ' + n(y.booked) + ' ' + unit + '</span><span class="pct">' + y.pct + '%</span>' + shr + '</div>'
+              + bar(y.pct, y.late ? 'late' : y.state === 'done' ? 'done' : 'prog'))
         + '</td>'
+        + '<td class="c-sup">' + (supTxt || '<span class="muted">\u2014</span>') + '</td>'
         + '<td class="c-acc">' + accCell(r.acc.sewing) + '</td>'
         + '<td class="c-acc">' + accCell(r.acc.packing) + '</td>'
-        + '<td class="c-pend">' + pendingCell(r) + '</td>'
         + '<td class="c-status"><span class="st ' + st[1] + '">' + st[0] + '</span></td>'
         + '<td class="c-rem"><div class="line"></div><div class="line"></div></td>'
         + '</tr>';
@@ -3179,8 +3188,8 @@ function buildMaterialReportHtml(meta, rows) {
     var gl = g.rows.filter(function(r){ return r.status === 'late'; }).length;
     return '<section><div class="buyer"><h2>' + E(g.name) + '</h2><span>' + g.rows.length + (meta.poWise ? ' PO' : ' style') + (g.rows.length===1?'':'s')
       + (gl ? ' · <b class="red">' + gl + ' behind TNA</b>' : '') + '</span></div>'
-      + '<table><thead><tr><th class="c-photo"></th><th class="c-style">Style / PO</th><th class="c-ship">Ship</th><th class="c-yarn">' + E(matLabel) + '</th>'
-      + '<th class="c-acc">Sewing acc.</th><th class="c-acc">Packing acc.</th><th class="c-pend">Outstanding</th><th class="c-status">Status</th><th class="c-rem">Remarks</th></tr></thead>'
+      + '<table><thead><tr><th class="c-photo"></th><th class="c-style">Style / PO</th><th class="c-ship">Ship</th><th class="c-yarn">' + E(matLabel) + ' received / booked</th>'
+      + '<th class="c-sup">Supplier</th><th class="c-acc">Sewing acc.</th><th class="c-acc">Packing acc.</th><th class="c-status">Status</th><th class="c-rem">Remarks</th></tr></thead>'
       + '<tbody>' + body + '</tbody></table></section>';
   }).join('');
 
@@ -3210,7 +3219,11 @@ function buildMaterialReportHtml(meta, rows) {
     + 'td{padding:3px 5px;border-bottom:1px solid #ECE8DF;vertical-align:middle}'
     + 'tr{break-inside:avoid;page-break-inside:avoid}'
     + 'tbody tr:nth-child(even) td{background:#FAF8F3}'
-    + '.c-photo{width:30px;padding-right:0}.c-style{width:150px}.c-ship{width:62px}.c-yarn{width:196px;padding-right:9px}.c-acc{width:82px}.c-pend{width:auto}.c-status{width:70px}.c-rem{width:100px}'
+    + '.c-photo{width:30px;padding-right:0}.c-style{width:170px}.c-ship{width:66px}.c-yarn{width:172px;padding-right:10px}.c-sup{width:auto}.c-acc{width:80px;text-align:center;white-space:nowrap}.c-status{width:74px}.c-rem{width:150px}'
+    + 'td.c-sup{white-space:normal;word-break:break-word;overflow-wrap:anywhere;font-size:9px;font-weight:600;color:#3d3b37;line-height:1.3}'
+    + '.cnt{display:inline-block;min-width:34px;padding:1px 6px;border-radius:9px;font-family:ui-monospace,Consolas,monospace;font-weight:800;font-size:9.5px;text-align:center}'
+    + '.cnt.done{background:#E3F1E8;color:#2F7A4F}.cnt.prog{background:#FDF1D8;color:#8a5a0c}.cnt.late{background:#FBE3DF;color:#C0392B}.cnt.none{background:#EFECE3;color:#73706A}'
+    + 'td.c-yarn .bar{display:block;flex:none;width:100%;margin-top:3px}'
     + '.c-photo img,.c-photo .ph{width:24px;height:24px;border-radius:4px;display:block}.c-photo img{object-fit:cover}.c-photo .ph{background:#F0EDE4}'
     + '.sty{font-weight:800;font-size:10px;overflow-wrap:anywhere;letter-spacing:-.1px;display:flex;justify-content:space-between;gap:4px;align-items:baseline}.po{font-family:ui-monospace,Consolas,monospace;font-size:8.5px;color:#3d3b37;word-break:break-word}.qty{font-weight:600;font-size:8.5px;color:#73706A;white-space:nowrap}'
     + '.date{font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:9.5px}'
@@ -3241,7 +3254,7 @@ function buildMaterialReportHtml(meta, rows) {
     + '<span><span class="st prog">In progress</span>booked, still receiving</span>'
     + '<span><span class="st done">Complete</span>' + E(matLabel.toLowerCase()) + ' and every accessory in-house</span>'
     + '<span><span class="st none">Not booked</span>nothing booked yet</span>'
-    + '<span>Figures are received / booked · <b style="color:#C0392B">red TNA date</b> = passed and not in-house · ✓ = done</span>'
+    + '<span>Figures are received / booked (accessories: items in-house / items needed)</span>'
     + '</div>';
 
   return '<!doctype html><html><head><meta charset="utf-8"><title>' + E(matLabel) + ' & Accessories Status — ' + E(meta.merchantName) + '</title><style>' + css + '</style></head><body><div class="sheet">'
@@ -4009,7 +4022,27 @@ async function cleanOldArchive() {
   // Trash is a 60-day safety window, not permanent storage — anything sitting
   // there longer than that is purged for good, same as old shipped orders above.
   const trashCutoff = new Date(Date.now() - 60*86400000).toISOString();
-  await db.from('orders').delete().eq('stage', 'trash').lt('deleted_at', trashCutoff);
+  try {
+    var old = await db.from('orders').select('id').eq('stage', 'trash').lt('deleted_at', trashCutoff);
+    var ids = (old.data || []).map(function(r){ return r.id; });
+    if (ids.length) await purgeOrdersPermanently(ids);
+  } catch (e) { console.error('trash purge:', e); }
+}
+
+// Permanently removes orders AND the rows that belong only to them (alerts,
+// TNA requests, custom field values, approval rounds, per-order bookings,
+// history). Style-level data shared by other POs (yarn / accessory bookings
+// by style, colour approvals, photos) is left alone. Only ever called for
+// orders already in Trash. Returns true when the orders are gone.
+async function purgeOrdersPermanently(ids) {
+  if (!ids || !ids.length) return true;
+  var children = ['shipment_alerts','tna_requests','order_field_values','approvals','accessories','yarn_receipts','yarn_bookings','order_activity'];
+  for (var i = 0; i < children.length; i++) {
+    try { await db.from(children[i]).delete().in('order_id', ids); } catch (e) { /* table may not carry order_id — fine */ }
+  }
+  var res = await db.from('orders').delete().in('id', ids).eq('stage', 'trash');
+  if (res.error) { console.error('permanent delete:', res.error); return false; }
+  return true;
 }
 
 // ─── ACTIVITY LOG ───
@@ -5165,6 +5198,13 @@ function renderArchive() {
     });
   }
   $('content').innerHTML = html;
+}
+
+// Deleting from Laying Goods: same two-step protection as Shipped.
+function openDeleteLaying(ordId) {
+  var o = (S.layingGoods||[]).find(function(x){ return x.id === ordId; });
+  if (!o || !can('edit', o.merchant_id)) { toast('You don\u2019t have permission to do this', 'err'); return; }
+  openDeleteOrder(ordId, o.style + (o.po_number ? ' / ' + o.po_number : ''), o.buyer || '');
 }
 
 // Deleting a shipped order: two separate confirmations, then Trash (60 days,
@@ -8969,10 +9009,12 @@ async function confirmDeleteOrder() {
   var o = findOrderAnywhere(_deleteOrdId) || (S.archive||[]).find(function(x){ return x.id === _deleteOrdId; });
   if (!o || !can('edit', o.merchant_id)) { toast('You don\u2019t have permission to do this', 'err'); return; }
   var priorStage = o.stage || 'live';
-  if (priorStage === 'shipped') {
+  if (priorStage === 'shipped' || priorStage === 'laying') {
+    // Laying Goods and Shipped: a second, separate "are you sure" after the first warning.
     closeModal('ov-delete-order');
     var ordIdKeep = _deleteOrdId;
-    if (!(await appConfirm('Are you sure? ' + (o.style||'') + (o.po_number ? ' / ' + o.po_number : '') + ' will be removed from Shipped and kept in Trash for 60 days, where it can be restored.', {title:'Delete shipped order', okText:'Yes, move to Trash', danger:true}))) return;
+    var fromName = priorStage === 'shipped' ? 'Shipped' : 'Laying Goods';
+    if (!(await appConfirm('Are you sure? ' + (o.style||'') + (o.po_number ? ' / ' + o.po_number : '') + ' will be removed from ' + fromName + ' and kept in Trash for 60 days, where it can be restored back to ' + fromName + '.', {title:'Delete from ' + fromName, okText:'Yes, move to Trash', danger:true}))) return;
     _deleteOrdId = ordIdKeep;
   }
   const { error } = await db.from('orders').update({
@@ -9033,13 +9075,29 @@ async function renderTrashPage() {
       + '<td>' + htmlEsc(o.deleted_by||'\u2014') + '</td>'
       + '<td>' + (o.deleted_at ? short(o.deleted_at.slice(0,10)) : '\u2014') + '</td>'
       + '<td class="sub2">' + (purgeDate ? 'Gone for good ' + purgeDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '\u2014') + '</td>'
-      + '<td>' + (canRestore ? '<button class="btn sm" onclick="restoreOrder(\'' + o.id + '\')">&#x21b6; Restore</button>' : '') + '</td>'
+      + '<td style="white-space:nowrap">' + (canRestore ? '<button class="btn sm" onclick="restoreOrder(\'' + o.id + '\')">&#x21b6; Restore</button> '
+      +   '<button class="btn sm danger" onclick="deleteForever(\'' + o.id + '\')" title="Delete permanently \u2014 cannot be undone">&#x2716; Delete forever</button>' : '') + '</td>'
       + '</tr>';
   }).join('');
   $('content').innerHTML = '<div class="card"><div class="scroller"><table>'
     + '<thead><tr><th>Style / PO</th><th>Merchandiser</th><th>Came from</th><th>Buyer</th><th class="num">Qty</th>'
     + '<th>Deleted by</th><th>Deleted on</th><th>Purge date</th><th></th></tr></thead>'
     + '<tbody>' + rows + '</tbody></table></div></div>';
+}
+
+// Permanent delete from Trash — two separate steps: a warning, then typing
+// DELETE. Cannot be undone.
+async function deleteForever(ordId) {
+  var o = (S.trash||[]).find(function(x){ return x.id === ordId; });
+  if (!o || !can('edit', o.merchant_id)) { toast('You don\u2019t have permission to do this', 'err'); return; }
+  var label = (o.style||'') + (o.po_number ? ' / ' + o.po_number : '');
+  if (!(await appConfirm('Permanently delete ' + label + '?\n\nIt will be removed completely \u2014 order, production figures, TNA, approvals and its history. It can NOT be restored afterwards.', {title:'Delete forever', okText:'Continue', danger:true}))) return;
+  if (!(await appConfirm('Last check: ' + label + ' will be gone for good.', {title:'Delete forever \u2014 final step', okText:'Delete forever', danger:true, typeToConfirm:'DELETE'}))) return;
+  var ok = await purgeOrdersPermanently([ordId]);
+  if (!ok) { toast('Could not delete \u2014 check the connection and try again', 'err'); return; }
+  S.trash = (S.trash||[]).filter(function(x){ return x.id !== ordId; });
+  toast(label + ' deleted permanently');
+  renderTrashPage();
 }
 
 async function restoreOrder(ordId) {
@@ -11410,6 +11468,7 @@ function lgTable(orders,showM){
       +(canAct?'<button class="btn sm" data-uid="'+o.id+'" onclick="openLayingEdit(this.dataset.uid)">Edit</button> ':'')
       +(canAct?'<button class="btn sm danger" data-uid="'+o.id+'" onclick="undoToLive(this.dataset.uid)">Undo</button>':'')
       +(canAct?' <button class="btn sm pri" data-uid="'+o.id+'" onclick="openShipFromLaying(this.dataset.uid)">Ship</button>':'')
+      +(canAct?' <button class="btn sm danger" data-uid="'+o.id+'" onclick="openDeleteLaying(this.dataset.uid)" title="Move to Trash">&#x1F5D1; Delete</button>':'')
       +'</td></tr>';
   }).join('');
   var customHeaders = buildFieldHeaderCells(customFields);
