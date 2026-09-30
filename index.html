@@ -1685,7 +1685,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:50</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:52</p>
   </div>
 </div>
 
@@ -1727,7 +1727,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:50</div>
+  <div id="ver-stamp">Version:26-09-17:52</div>
 </div>
 
 
@@ -1809,14 +1809,16 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
       </div>
       <div class="grid3" style="margin-bottom:10px">
         <div class="f"><label>Department</label><input id="o_department" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)" placeholder="e.g. Ladies, Kids"></div>
-        <div class="f"><label>Average Weight <span style="font-size:10px;color:var(--muted);font-weight:400">(contract weight, lbs)</span></label><input id="o_avg_weight" type="number" step="0.01" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label><span id="o_avgw_lbl">Average Weight</span> <span id="o_avgw_unit" style="font-size:10px;color:var(--muted);font-weight:400">(contract weight, lbs)</span></label><input id="o_avg_weight" type="number" step="0.01" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
       </div>
 
       <div class="f" style="margin-bottom:10px"><label>Product Photo <span style="font-size:11px;color:var(--muted);font-weight:400">(optional - shared across all POs of this style)</span></label>
         <div class="img-upload-area" id="order-img-drop"><input type="file" id="o_image" accept="image/*" onchange="handleOrderImageUpload(this)"><div id="order-img-placeholder" style="font-size:13px;color:var(--muted)">&#x1F4F7; Click to upload product photo<br><span style="font-size:11px">Auto-compressed to under 200KB</span></div><img id="order-img-preview" class="img-upload-preview" alt="Preview"></div></div>
 
       <div class="grid3" style="margin-bottom:10px">
-        <div class="f"><label>Gauge <span style="color:var(--red)">*</span></label>
+        <div class="f"><label><span id="o_gauge_lbl">Gauge</span> <span style="color:var(--red)">*</span></label>
+          <input id="o_fabric_type" list="dl_fabric_type" placeholder="e.g. Single Jersey" oninput="syncFabricType(this.value)" style="display:none;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)">
+          <datalist id="dl_fabric_type"><option value="Single Jersey"><option value="Single Jersey Lycra"><option value="Rib 1x1"><option value="Rib 2x2"><option value="Interlock"><option value="Pique"><option value="Lacoste"><option value="French Terry"><option value="Fleece"><option value="Waffle"><option value="Jacquard"><option value="Mesh"></datalist>
           <select id="o_gauge" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)">
             <option value="">-- Select --</option>
             <option value="3GG">3GG</option><option value="5GG">5GG</option><option value="7GG">7GG</option>
@@ -1863,7 +1865,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
       <div class="card-h" style="padding:14px 0 10px;border-top:1px solid var(--line)"><h3 style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">TNA Plan Dates</h3></div>
       <div id="o_tna_lock_note" style="display:none;margin-bottom:10px;background:var(--amber-soft);border:1px solid #F6D860;border-radius:8px;padding:9px 12px;font-size:12.5px">&#x1F512; <strong>TNA Locked</strong> &mdash; these dates can no longer be edited here. Use the TNA pill on the order row to request a change.</div>
       <div class="grid3" style="margin-bottom:10px">
-        <div class="f"><label>Yarn Inhouse <span style="color:var(--red)">*</span></label><input id="p_yarn" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
+        <div class="f"><label><span id="p_yarn_lbl">Yarn Inhouse</span> <span style="color:var(--red)">*</span></label><input id="p_yarn" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
         <div class="f"><label>PP Approval <span style="color:var(--red)">*</span></label><input id="p_pp" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
         <div class="f"><label>Sewing Item Inhouse <span style="color:var(--red)">*</span></label><input id="p_sew" type="date" style="width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"></div>
       </div>
@@ -2558,16 +2560,53 @@ const MILES = [
   {k:'insp',n:'Final Inspection Date'},{k:'ship',n:'Shipment'}
 ];
 
+// Sweater: Knitting > Linking > Mending > Wash > Iron > Packing.
+// Knit (cut & sew): Cutting > Sewing > Iron > Packing — no mending or wash.
+// Knit reuses the first two stored columns (prod_knitting = cutting,
+// prod_linking = sewing), so no database change is needed.
 function getSteps(division) {
-  const k = division === 'knit';
+  if (division === 'knit') return [
+    {k:'prod_knitting', n:'Cutting'},
+    {k:'prod_linking',  n:'Sewing'},
+    {k:'prod_iron',     n:'Iron'},
+    {k:'prod_packing',  n:'Packing'}
+  ];
   return [
-    {k:'prod_knitting', n: k ? 'Cutting'  : 'Knitting'},
-    {k:'prod_linking',  n: k ? 'Sewing'   : 'Linking'},
+    {k:'prod_knitting', n:'Knitting'},
+    {k:'prod_linking',  n:'Linking'},
     {k:'prod_mending',  n:'Mending'},
     {k:'prod_wash',     n:'Wash'},
     {k:'prod_iron',     n:'Iron'},
     {k:'prod_packing',  n:'Packing'}
   ];
+}
+// Knit merchants: Gauge becomes "Type of Fabric" (free text with suggestions,
+// stored in the same gauge column) and Average Weight becomes GSM.
+function setOrderFormDivision(div, gaugeVal) {
+  var knit = div === 'knit', sel = $('o_gauge'), inp = $('o_fabric_type');
+  if (!sel || !inp) return;
+  $('o_gauge_lbl').textContent = knit ? 'Type of Fabric' : 'Gauge';
+  $('o_avgw_lbl').textContent = knit ? 'GSM' : 'Average Weight';
+  $('o_avgw_unit').textContent = knit ? '(fabric weight, g/m\u00b2)' : '(contract weight, lbs)';
+  sel.style.display = knit ? 'none' : '';
+  inp.style.display = knit ? '' : 'none';
+  sel.querySelectorAll('option[data-fabric]').forEach(function(op){ op.remove(); });
+  inp.value = knit ? (gaugeVal || '') : '';
+  if (knit) syncFabricType(inp.value);
+}
+function syncFabricType(v) {
+  var sel = $('o_gauge'); v = (v || '').trim();
+  sel.querySelectorAll('option[data-fabric]').forEach(function(op){ op.remove(); });
+  if (v) { var op = document.createElement('option'); op.value = v; op.textContent = v; op.setAttribute('data-fabric', '1'); sel.appendChild(op); }
+  sel.value = v;
+}
+function gaugeLabel(div) { return div === 'knit' ? 'Type of Fabric' : 'Gauge'; }
+function divisionOf(merchantId) { var m = userById(merchantId); return m ? (m.division || 'sweater') : 'sweater'; }
+// Column names that differ for knit merchants.
+function fieldNameFor(key, name, division) {
+  if (division === 'knit' && key === 'knit_start') return 'Sewing Start Date';
+  if (division === 'knit' && key === 'avg_weight') return 'GSM';
+  return name;
 }
 function yarnLabel(division) {
   return division === 'knit' ? 'Fabric Inhouse' : 'Yarn Inhouse';
@@ -3722,7 +3761,7 @@ async function checkTNAAfterShipAlerts(merchantId, orders) {
       var bad = [];
       TNA_SHIP_CHECK_FIELDS.forEach(function(f) {
         [[o[f.plan],'plan'], [o[f.act],'actual']].forEach(function(pair) {
-          if (pair[0] && new Date(pair[0]).getTime() > shipTime) bad.push(f.label + ' (' + pair[1] + ')');
+          if (pair[0] && new Date(pair[0]).getTime() > shipTime) bad.push((f.plan === 'plan_yarn' ? yarnLabel(divisionOf(merchantId)) : f.label) + ' (' + pair[1] + ')');
         });
       });
       if (bad.length) problems.push({ order: o, detail: bad.join(', ') });
@@ -4977,7 +5016,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     if (itemByKey['_po']) cellsByKey['_po'] = singleTd('_po', '', (o.po_number||'\u2014'), 'font-size:12.7px;font-weight:700;font-family:var(--mono);color:var(--ink);word-break:break-word;');
     if (itemByKey['_buyer']) cellsByKey['_buyer'] = singleTd('_buyer', '', o.buyer, 'font-size:12.7px;font-weight:700;color:var(--ink);word-break:break-word;');
     if (itemByKey['_house']) cellsByKey['_house'] = singleTd('_house', '', (o.house||'\u2014'), 'font-size:9.9px;font-weight:700;color:var(--ink);word-break:break-word;');
-    if (itemByKey['_gauge']) cellsByKey['_gauge'] = singleTd('_gauge', '', (fmtGauge(o.gauge)||'\u2014'), 'font-size:9.9px;font-weight:700;');
+    if (itemByKey['_gauge']) cellsByKey['_gauge'] = singleTd('_gauge', '', ((division==='knit' ? o.gauge : fmtGauge(o.gauge))||'\u2014'), 'font-size:9.9px;font-weight:700;');
     if (itemByKey['_colour']) cellsByKey['_colour'] = singleTd('_colour', '', (o.color||'\u2014'), 'font-size:9.9px;font-weight:700;');
     if (itemByKey['_composition']) cellsByKey['_composition'] = singleTd('_composition', '', (o.comp||'\u2014'), 'font-size:9.9px;font-weight:700;');
     if (itemByKey['_qty']) cellsByKey['_qty'] = singleTd('_qty', 'num', fmt(o.qty), 'font-weight:700;');
@@ -5073,7 +5112,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     else if (key === '_confirm_date') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Order Confirmed Date') + '</th>';
     else if (key === '_buyer') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Buyer') + '</th>';
     else if (key === '_house') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'House') + '</th>';
-    else if (key === '_gauge') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Gauge') + '</th>';
+    else if (key === '_gauge') topRow += '<th class="' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||gaugeLabel(division)) + '</th>';
     else if (key === '_colour') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Colour') + '</th>';
     else if (key === '_composition') topRow += '<th class="wrap2' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Composition') + '</th>';
     else if (key === '_qty') topRow += '<th class="num ' + fClass + '" style="' + wStr + fStyle + '" rowspan="2">' + (lbl||'Quantity') + '</th>';
@@ -5096,7 +5135,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     else {
       var mf = getFieldByKey(key);
       var mfWrapCls = (mf && mf.wrap) ? ' wrap2' : '';
-      topRow += '<th class="' + mfWrapCls + fClass + '" style="' + wStr + fStyle + ';font-size:9.5px" rowspan="2">' + (lbl||(mf?mf.name:key)) + '</th>';
+      topRow += '<th class="' + mfWrapCls + fClass + '" style="' + wStr + fStyle + ';font-size:9.5px" rowspan="2">' + (lbl||(mf?fieldNameFor(key, mf.name, division):key)) + '</th>';
     }
   });
   topRow += '<th rowspan="2" style="width:380px;min-width:380px"></th>';
@@ -5315,11 +5354,11 @@ async function saveMultiPOOrders() {
   if (!style) missing.push(['o_style', 'Style / SKU']);
   if (!$('o_confirm_date').value) missing.push(['o_confirm_date', 'Order Confirm Date']);
   if (!buyerVal) missing.push(['o_buyer', 'Buyer']);
-  if (!$('o_gauge').value) missing.push(['o_gauge', 'Gauge']);
+  if (!$('o_gauge').value) missing.push([divisionOf(orderForMerchant)==='knit' ? 'o_fabric_type' : 'o_gauge', gaugeLabel(divisionOf(orderForMerchant))]);
   if (!Number($('o_fob').value)) missing.push(['o_fob', 'FOB']);
   if (!_orderColors.length) missing.push(['o_color_new', 'Colours (add at least one)']);
   if (!_orderComps.length) missing.push(['o_comp_new', 'Composition (add at least one)']);
-  if (!$('p_yarn').value) missing.push(['p_yarn', 'TNA: Yarn Inhouse date']);
+  if (!$('p_yarn').value) missing.push(['p_yarn', 'TNA: ' + yarnLabel(divisionOf(orderForMerchant)) + ' date']);
   if (!$('p_pp').value) missing.push(['p_pp', 'TNA: PP Approval date']);
   if (!($('p_sew')&&$('p_sew').value)) missing.push(['p_sew', 'TNA: Sewing Item Inhouse date']);
   if (!($('p_pack')&&$('p_pack').value)) missing.push(['p_pack', 'TNA: Packing Item Inhouse date']);
@@ -5454,6 +5493,8 @@ async function openOrder(mid) {
   orderForMerchant = mid;
   const m = S.users.find(u => u.id === mid);
   $('ord-sub').textContent = 'For ' + (m ? m.name : '');
+  if ($('p_yarn_lbl')) $('p_yarn_lbl').textContent = yarnLabel(m ? (m.division||'sweater') : 'sweater');
+  setOrderFormDivision(m ? (m.division||'sweater') : 'sweater', '');
   $('ord-err').style.display = 'none';
   ['o_house','o_buyer','o_style','o_gauge','o_qty','o_fob',
    'o_po','o_confirm_date','p_yarn','p_pp','p_sew','p_pack','p_insp','p_ship',
@@ -5556,12 +5597,12 @@ async function saveOrder() {
   if (!$('o_confirm_date').value) missing.push(['o_confirm_date', 'Order Confirm Date']);
   if (!buyerVal) missing.push(['o_buyer', 'Buyer']);
   if (!($('o_ship_date')&&$('o_ship_date').value)) missing.push(['o_ship_date', 'Shipment Date']);
-  if (!$('o_gauge').value) missing.push(['o_gauge', 'Gauge']);
+  if (!$('o_gauge').value) missing.push([divisionOf(orderForMerchant)==='knit' ? 'o_fabric_type' : 'o_gauge', gaugeLabel(divisionOf(orderForMerchant))]);
   if (!qty) missing.push(['o_qty', 'Order Quantity']);
   if (!fobVal) missing.push(['o_fob', 'FOB']);
   if (!_orderColors.length) missing.push(['o_color_new', 'Colours (add at least one)']);
   if (!_orderComps.length) missing.push(['o_comp_new', 'Composition (add at least one)']);
-  if (!$('p_yarn').value) missing.push(['p_yarn', 'TNA: Yarn Inhouse date']);
+  if (!$('p_yarn').value) missing.push(['p_yarn', 'TNA: ' + yarnLabel(divisionOf(orderForMerchant)) + ' date']);
   if (!$('p_pp').value) missing.push(['p_pp', 'TNA: PP Approval date']);
   if (!($('p_sew')&&$('p_sew').value)) missing.push(['p_sew', 'TNA: Sewing Item Inhouse date']);
   if (!($('p_pack')&&$('p_pack').value)) missing.push(['p_pack', 'TNA: Packing Item Inhouse date']);
@@ -5720,6 +5761,7 @@ async function editOrder(orderId) {
   _editOrderId = orderId;
   _confirmingDevOptionId = null; // editing an existing order is never a development confirmation
   orderForMerchant = o.merchant_id;
+  if ($('p_yarn_lbl')) $('p_yarn_lbl').textContent = yarnLabel(divisionOf(o.merchant_id));
 
   $('ord-sub').textContent = 'Editing ' + o.style;
   $('ord-err').style.display = 'none';
@@ -5766,6 +5808,7 @@ async function editOrder(orderId) {
   $('o_style').value = o.style || '';
   $('o_house').value = o.house || '';
   $('o_gauge').value = o.gauge || '';
+  setOrderFormDivision(divisionOf(o.merchant_id), o.gauge || '');
   $('o_qty').value = o.qty || '';
   $('o_fob').value = o.fob || '';
   if ($('o_po')) $('o_po').value = o.po_number || '';
@@ -6310,7 +6353,7 @@ function downloadPDF() {
       + VSTEPS.map(function(){return '<td></td>';}).join('')
       + '<td style="text-align:right">' + fmt(sum(list,function(o){return (o.qty||0)-(o.prod_packing||0);})) + '</td><td colspan="2"></td></tr>';
   }
-  var thead = '<thead><tr><th>Style</th><th>PO</th><th>Buying House</th><th>Gauge</th><th>Colour</th><th>Composition</th>'
+  var thead = '<thead><tr><th>Style</th><th>PO</th><th>Buying House</th><th>' + gaugeLabel(div) + '</th><th>Colour</th><th>Composition</th>'
     + '<th style="text-align:right">Order Qty</th><th style="text-align:right">FOB</th><th style="text-align:right">Value</th>'
     + '<th>Ship Date</th><th style="text-align:right">Days</th>'
     + VSTEPS.map(function(s){return '<th>'+E(s.n)+'</th>';}).join('')
@@ -7049,7 +7092,7 @@ async function renderMaterialModalBody() {
   var tabsHtml = '';
   if (_yarnHasAttachment) {
     tabsHtml = '<div class="inbox-tabs" style="margin-bottom:14px">'
-      + '<button class="inbox-tab-btn' + (_yarnMaterialType==='yarn'?' active':'') + '" onclick="switchYarnMaterialType(\'yarn\')">Yarn</button>'
+      + '<button class="inbox-tab-btn' + (_yarnMaterialType==='yarn'?' active':'') + '" onclick="switchYarnMaterialType(\'yarn\')">' + (_yarnUnit==='kgs'?'Fabric':'Yarn') + '</button>'
       + '<button class="inbox-tab-btn' + (_yarnMaterialType==='attachment_fabric'?' active':'') + '" onclick="switchYarnMaterialType(\'attachment_fabric\')">Attachment Fabric</button>'
       + '</div>';
   }
@@ -7075,7 +7118,7 @@ async function renderMaterialModalBody() {
   const totalRc = receipts.reduce(function(s,r){return s+(r.qty||0);},0);
   const pct = totalBk > 0 ? Math.min(100, Math.round((totalRc/totalBk)*100)) : 0;
   const canEdit = can('edit', _yarnMerchantId);
-  const materialLabel = _yarnMaterialType === 'attachment_fabric' ? 'Attachment Fabric' : 'Yarn';
+  const materialLabel = _yarnMaterialType === 'attachment_fabric' ? 'Attachment Fabric' : (_yarnUnit==='kgs' ? 'Fabric' : 'Yarn');
 
   var overallHtml = '<div class="yarn-overall-card">'
     + '<div class="yarn-overall-top"><div class="yarn-overall-lbl">' + materialLabel + (scopeToPo?' \u2014 This PO':' \u2014 Total Progress') + '</div><div class="yarn-overall-nums">' + fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + _yarnUnit + '</div></div>'
@@ -7135,12 +7178,12 @@ function openAddBookingForm() {
     : '<option value="">No compositions found on this style\u2019s orders</option>';
   var today0 = todayStr();
   $('yarn-add-booking-form').innerHTML = '<div class="yarn-form-card">'
-    + '<div class="yarn-form-title">New ' + (_yarnMaterialType==='attachment_fabric'?'Attachment Fabric':'Yarn') + ' Booking</div>'
+    + '<div class="yarn-form-title">New ' + (_yarnMaterialType==='attachment_fabric'?'Attachment Fabric':(_yarnUnit==='kgs'?'Fabric':'Yarn')) + ' Booking</div>'
     + '<div class="yarn-form-grid">'
     + '<div class="f"><label>Supplier <span style="color:var(--red)">*</span></label><input id="yb-supplier" placeholder="Supplier name"></div>'
     + '<div class="f"><label>Composition <span style="color:var(--red)">*</span></label><select id="yb-composition">'+compOpts+'</select></div>'
     + '<div class="f"><label>Booking Date <span style="color:var(--red)">*</span></label><input type="date" id="yb-date" value="'+today0+'"></div>'
-    + '<div class="f"><label>Quantity (lbs) <span style="color:var(--red)">*</span></label><input type="number" step="0.01" id="yb-qty" placeholder="0"></div>'
+    + '<div class="f"><label>Quantity ('+_yarnUnit+') <span style="color:var(--red)">*</span></label><input type="number" step="0.01" id="yb-qty" placeholder="0"></div>'
     + '<div class="f"><label>Price (USD/lb)</label><input type="number" step="0.0001" id="yb-price" placeholder="optional"></div>'
     + '<div class="f"><label>PI Number</label><input id="yb-pi" placeholder="optional"></div>'
     + '<div class="f"><label>LC Number</label><input id="yb-lc" placeholder="optional"></div>'
@@ -10372,7 +10415,7 @@ function exportExcelRun() {
   const orders=(S.boardCache[uid]||S.orders.filter(function(o){return o.merchant_id===uid;}))
     .filter(function(o){return !o.shipped&&(!buyer||o.buyer===buyer);})
     .sort(function(a,b){return (daysTo(a.ship_date)||999)-(daysTo(b.ship_date)||999);});
-  const headers=['Style','Buyer','Buying House','Gauge','Colour','Composition','Order Qty','FOB','Total Value','Ship Date','Days Left'].concat(VSTEPS.map(function(s){return s.n;})).concat(['Balance','Status','Remarks']);
+  const headers=['Style','Buyer','Buying House',gaugeLabel(divisionOf(S.printTarget)),'Colour','Composition','Order Qty','FOB','Total Value','Ship Date','Days Left'].concat(VSTEPS.map(function(s){return s.n;})).concat(['Balance','Status','Remarks']);
   const rows=orders.map(function(o){
     const dl=daysTo(o.ship_date);
     const ms=missedMiles(o);
@@ -10415,13 +10458,13 @@ function renderPrint() {
     </div>
     <table><thead><tr>
       <th>Style</th><th>Buyer</th><th>Gauge</th><th class="num">Order qty</th><th>Ship date</th>
-      ${STEPS.map(s=>`<th class="num">${s.n}</th>`).join('')}
+      ${getSteps(merch?merch.division:'sweater').map(s=>`<th class="num">${s.n}</th>`).join('')}
       <th class="num">Balance</th><th>Status</th><th>Remarks</th>
     </tr></thead><tbody>
     ${os.map(o => `<tr class="${rowClass(o)}">
       <td class="sty">${o.style}</td><td>${o.buyer}</td><td>${o.gauge||'—'}</td>
       <td class="num">${fmt(o.qty)}</td><td>${short(o.ship_date)}</td>
-      ${STEPS.map(s=>`<td class="num">${fmt(o[s.k]||0)}</td>`).join('')}
+      ${getSteps(merch?merch.division:'sweater').map(s=>`<td class="num">${fmt(o[s.k]||0)}</td>`).join('')}
       <td class="num">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
       <td>${missedMiles(o).length ? 'LATE: '+missedMiles(o).map(x=>x.n).join(', ') : 'On plan'}</td>
       <td>${o.remarks||''}</td>
@@ -11471,7 +11514,7 @@ function lgTable(orders,showM){
       +(canAct?' <button class="btn sm danger" data-uid="'+o.id+'" onclick="openDeleteLaying(this.dataset.uid)" title="Move to Trash">&#x1F5D1; Delete</button>':'')
       +'</td></tr>';
   }).join('');
-  var customHeaders = buildFieldHeaderCells(customFields);
+  var customHeaders = buildFieldHeaderCells(customFields, divisionOf((orders[0]||{}).merchant_id));
   return '<div class="card"><div class="scroller"><table>'
     +'<thead><tr><th></th><th>Style/PO</th><th>Buyer</th><th class="num">PL Qty</th><th class="num">FOB</th><th class="num">Value</th><th class="num">CBM</th><th>Ship Date</th><th class="num">Days</th><th>FRI</th><th>Inspection</th><th>Mode</th><th></th>'+customHeaders+'<th></th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div></div>';
@@ -12724,7 +12767,7 @@ function renderFieldCell(field, orderId, canEdit) {
       : '<span>' + (val||'&mdash;') + '</span>';
   }
   if (field.type === 'special_weight') {
-    var display = val ? val + ' lbs' : 'Set';
+    var display = val ? val + (divisionOf((findOrderAnywhere(orderId)||{}).merchant_id)==='knit' ? ' GSM' : ' lbs') : 'Set';
     return '<button class="cf-chip ' + (val?'has-val':'') + '" data-oid="' + orderId + '" onclick="openAvgWeightModal(this.dataset.oid)">' + display + '</button>';
   }
   if (field.type === 'special_floor') {
@@ -12840,9 +12883,11 @@ async function onFieldInputChange(el) {
 }
 
 // Build header cells for a set of fields
-function buildFieldHeaderCells(fields) {
+var _fieldHdrDivision = 'sweater';
+function buildFieldHeaderCells(fields, division) {
+  _fieldHdrDivision = division || 'sweater';
   return fields.map(function(f) {
-    return '<th style="font-size:9.5px">' + f.name + '</th>';
+    return '<th style="font-size:9.5px">' + fieldNameFor(f.key, f.name, _fieldHdrDivision) + '</th>';
   }).join('');
 }
 
@@ -12900,17 +12945,19 @@ function openAvgWeightModal(orderId) {
 
 function renderAvgWeightModal() {
   var dis = _awCanEdit ? '' : ' disabled';
+  var _awKnit = divisionOf((findOrderAnywhere(_awOrderId)||{}).merchant_id) === 'knit', _awU = _awKnit ? 'GSM' : 'lbs';
+  var _awH = document.querySelector('#ov-avg-weight .m-h h3'); if (_awH) _awH.textContent = _awKnit ? 'GSM' : 'Average Weight';
   var rows = _awSizes.map(function(s, i) {
     return '<div class="aw-size-row">'
       + '<input type="text" placeholder="Size (e.g. XS, 8-9Y)" value="' + (s.size||'').replace(/"/g,'&quot;') + '" data-idx="' + i + '" data-field="size" onchange="updAwSize(this)" style="flex:1"' + dis + '>'
-      + '<input type="number" step="0.01" placeholder="Weight (lbs)" value="' + (s.weight||'') + '" data-idx="' + i + '" data-field="weight" onchange="updAwSize(this)" style="width:100px"' + dis + '>'
+      + '<input type="number" step="0.01" placeholder="' + (_awKnit ? 'GSM' : 'Weight (lbs)') + '" value="' + (s.weight||'') + '" data-idx="' + i + '" data-field="weight" onchange="updAwSize(this)" style="width:100px"' + dis + '>'
       + (_awCanEdit ? '<button class="btn sm danger" data-idx="' + i + '" onclick="removeAwSize(this)" style="padding:3px 8px">&#x2715;</button>' : '')
       + '</div>';
   }).join('');
 
   $('aw-body').innerHTML = '<div class="aw-glass-card">'
-    + '<div class="aw-glass-lbl">Average Contract Weight</div>'
-    + '<div class="aw-glass-input-wrap"><input type="number" step="0.01" id="aw-avg-input" class="aw-glass-input" value="' + (_awAvg||'') + '" placeholder="0.00" onchange="setAwAvg(this.value)"' + dis + '><span class="aw-glass-unit">lbs</span></div>'
+    + '<div class="aw-glass-lbl">' + (_awKnit ? 'Fabric GSM' : 'Average Contract Weight') + '</div>'
+    + '<div class="aw-glass-input-wrap"><input type="number" step="0.01" id="aw-avg-input" class="aw-glass-input" value="' + (_awAvg||'') + '" placeholder="0.00" onchange="setAwAvg(this.value)"' + dis + '><span class="aw-glass-unit">' + _awU + '</span></div>'
     + '<div class="aw-glass-hint">Agreed directly with the buyer \u2014 not necessarily the mathematical average of the sizes below</div>'
     + '</div>'
     + '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600">Size-wise breakdown <span style="font-weight:400">(reference only \u2014 doesn\u2019t affect the number above)</span></div>'
@@ -12972,7 +13019,11 @@ function openProdFloorModal(orderId) {
   var data = {};
   try { data = raw ? JSON.parse(raw) : {}; } catch(e) { data = {}; }
 
-  var rows = PF_STEPS.map(function(step) {
+  var _pfKnit = divisionOf(pfOrd ? pfOrd.merchant_id : null) === 'knit';
+  var steps = _pfKnit
+    ? [{key:'knitting',label:'Cutting'},{key:'linking',label:'Sewing'},{key:'iron',label:'Iron'},{key:'packing',label:'Packing'}]
+    : PF_STEPS;
+  var rows = steps.map(function(step) {
     var val = data[step.key] || '';
     var opts = '<option value="">--</option>' + PROD_FLOOR_OPTIONS.map(function(o){
       return '<option value="' + o + '"' + (o===val?' selected':'') + '>' + o + '</option>';
