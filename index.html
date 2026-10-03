@@ -1113,6 +1113,16 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 
 
 /* ── ADMIN PAGE STYLES ── */
+/* ── Transfer buyer ── */
+.tb-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tb-sum{margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--bg,#F8F6F1)}
+.tb-sum-h{font-weight:800;font-size:13px;margin-bottom:6px}
+.tb-sum ul{margin:0 0 0 18px;padding:0;font-size:12.5px;line-height:1.7}
+.tb-keep{margin-top:8px;font-size:12px;color:var(--muted)}
+/* ── Buyer settings window ── */
+.bs-help{font-size:12.5px;color:var(--muted);background:var(--bg,#F8F6F1);border:1px solid var(--line);border-radius:9px;padding:9px 12px;line-height:1.5}
+table.bs-table td.bs-c,table.bs-table th.bs-c{text-align:center}
+.bs-note{font-size:10.5px;color:var(--muted);font-style:italic;margin-top:2px;font-weight:400}
 /* ── Admin page (uniform layout) ── */
 .adm-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .adm-tool{display:flex;gap:11px;align-items:flex-start;text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer;font-family:inherit;color:var(--ink);transition:border-color .12s,box-shadow .12s,transform .12s}
@@ -1685,7 +1695,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-09-17:52</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-03:14</p>
   </div>
 </div>
 
@@ -1727,7 +1737,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-09-17:52</div>
+  <div id="ver-stamp">Version:26-10-03:14</div>
 </div>
 
 
@@ -2469,6 +2479,20 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
 
 <!-- Toast -->
 <!-- === IN-APP CONFIRM (replaces the browser's confirm() popup everywhere) === -->
+<div class="ov" id="ov-buyer-settings" onclick="if(event.target===this)closeModal('ov-buyer-settings')">
+  <div class="modal" style="max-width:1060px">
+    <div class="m-h"><div><h3>Buyer settings — Style-wise or PO-wise</h3><div class="msub">Per buyer: how new bookings and approval rounds are recorded</div></div>
+      <button class="btn" onclick="closeModal('ov-buyer-settings')">Close</button></div>
+    <div class="m-b" id="bs-body"></div>
+  </div>
+</div>
+<div class="ov" id="ov-transfer-buyer" onclick="if(event.target===this)closeModal('ov-transfer-buyer')">
+  <div class="modal" style="max-width:640px">
+    <div class="m-h"><div><h3>Transfer buyer to another merchant</h3><div class="msub">Moves the buyer’s live and Laying Goods orders with everything recorded on them. Shipped orders stay with the old merchant.</div></div>
+      <button class="btn" onclick="closeModal('ov-transfer-buyer')">Close</button></div>
+    <div class="m-b" id="tb-body"></div>
+  </div>
+</div>
 <div class="ov" id="ov-app-confirm" onclick="if(event.target===this)_appConfirmAnswer(false)">
   <div class="modal slim app-confirm">
     <div class="m-h"><div><h3 id="acf-title">Are you sure?</h3></div></div>
@@ -3059,7 +3083,11 @@ function buildMaterialReportRows(input) {
   var orders = input.orders || [], today = input.today;
   var yb = input.yarnBookings || [], yr = input.yarnReceipts || [];
   var ab = input.accBookings || [], ar = input.accReceipts || [], cl = input.checklist || [];
-  var poWise = !!(input.yarnPoWise || input.accPoWise);
+  // Style / PO-wise is decided per order (by its buyer's setting); plain
+  // booleans are still accepted for callers that pass one setting for all.
+  var yarnPoFor = input.yarnPoWiseFor || function(){ return !!input.yarnPoWise; };
+  var accPoFor  = input.accPoWiseFor  || function(){ return !!input.accPoWise; };
+  var poWise = false; // per-unit now (u.poWise); kept for the code below
   function up(x){ return String(x||'').toUpperCase(); }
   function dayDiff(d){ if (!d) return null; var a = new Date(d + 'T00:00:00'), b = new Date(today + 'T00:00:00'); return Math.round((a - b) / 86400000); }
   var yrQty = {}, yrLast = {};
@@ -3067,20 +3095,25 @@ function buildMaterialReportRows(input) {
     if (r.received_on && (!yrLast[r.booking_id] || r.received_on > yrLast[r.booking_id])) yrLast[r.booking_id] = r.received_on; });
   var arQty = {}, arCount = {};
   ar.forEach(function(r){ arQty[r.booking_id] = (arQty[r.booking_id]||0) + (Number(r.qty)||0); arCount[r.booking_id] = (arCount[r.booking_id]||0) + 1; });
-  function inScope(b, style, po, isPoWise) {
+  // A row shows the shared bookings plus bookings made for its own PO(s) —
+  // whatever the current mode, so nothing entered earlier is ever hidden.
+  function inScope(b, style, po, isPoWise, pos) {
     if (up(b.style) !== style) return false;
-    if (!isPoWise) return !b.po_number;            // style mode: shared bookings only (matches the board)
-    return !b.po_number || b.po_number === po;     // PO mode: shared + this PO's own
+    if (!b.po_number) return true;
+    if (isPoWise) return b.po_number === po;
+    return (pos || []).indexOf(b.po_number) !== -1;
   }
 
   // One row per style — or per PO when either booking mode is PO-wise, since
   // then two POs of a style genuinely have different figures.
   var units = [], byKey = {};
   orders.forEach(function(o){
-    var key = poWise ? o.id : up(o.style);
+    var oYarnPo = !!yarnPoFor(o), oAccPo = !!accPoFor(o), oPo = oYarnPo || oAccPo;
+    var key = oPo ? o.id : up(o.style);
     var u = byKey[key];
     if (!u) {
-      u = byKey[key] = { key: key, style: up(o.style), po: poWise ? (o.po_number||null) : null, pos: [], qty: 0,
+      u = byKey[key] = { key: key, style: up(o.style), po: oPo ? (o.po_number||null) : null, pos: [], qty: 0,
+        poWise: oPo, yarnPo: oYarnPo, accPo: oAccPo,
         buyerId: o.buyer_id || null, buyer: o.buyer || '', merchantId: o.merchant_id, orders: [] };
       units.push(u);
     }
@@ -3095,7 +3128,7 @@ function buildMaterialReportRows(input) {
     u.shipDate = earliest('ship_date'); u.daysLeft = dayDiff(u.shipDate);
 
     // ── Yarn
-    var ybs = yb.filter(function(b){ return inScope(b, u.style, u.po, !!input.yarnPoWise); });
+    var ybs = yb.filter(function(b){ return inScope(b, u.style, u.po, u.yarnPo && !!u.po, u.pos); });
     var booked = 0, recd = 0, suppliers = [], last = null;
     ybs.forEach(function(b){ booked += Number(b.qty)||0; recd += yrQty[b.id]||0;
       if (b.supplier && suppliers.indexOf(b.supplier) === -1) suppliers.push(b.supplier);
@@ -3106,7 +3139,7 @@ function buildMaterialReportRows(input) {
     // (no-PO) booking that appears on every PO row of a PO-wise merchant.
     // sharedOnly: this PO row's yarn is entirely a style-level booking.
     u.yarn = { parts: ybs.map(function(b){ return { id: b.id, qty: Number(b.qty)||0, recd: yrQty[b.id]||0 }; }),
-      sharedOnly: !!input.yarnPoWise && ybs.length > 0 && ybs.every(function(b){ return !b.po_number; }),
+      sharedOnly: u.yarnPo && !!u.po && ybs.length > 0 && ybs.every(function(b){ return !b.po_number; }),
       booked: booked, received: recd, balance: Math.max(0, booked - recd),
       pct: booked > 0 ? Math.min(100, Math.round(recd / booked * 100)) : 0, suppliers: suppliers, lastReceipt: last,
       plan: yPlan, actual: yAct, state: yState,
@@ -3115,7 +3148,7 @@ function buildMaterialReportRows(input) {
     // ── Accessories (sewing + packing)
     u.acc = {};
     ['sewing','packing'].forEach(function(cat){
-      var bks = ab.filter(function(b){ return b.category === cat && inScope(b, u.style, u.po, !!input.accPoWise); });
+      var bks = ab.filter(function(b){ return b.category === cat && inScope(b, u.style, u.po, u.accPo && !!u.po, u.pos); });
       var need = cl.filter(function(c){ return c.category === cat && up(c.style) === u.style; }).map(function(c){ return c.item; });
       var items = need.length ? need : Array.from(new Set(bks.map(function(b){ return b.item; })));
       var done = 0, pending = [];
@@ -3178,7 +3211,7 @@ function buildMaterialReportHtml(meta, rows) {
     if (seenBk[pt.id]) return; seenBk[pt.id] = 1;
     totBooked += pt.qty; totRecd += Math.min(pt.recd, pt.qty); }); });
   var kpis = '<div class="kpis">'
-    + '<div class="kpi"><div class="k">' + (meta.poWise ? 'POs' : 'Styles') + ' reviewed</div><div class="v">' + rows.length + '</div><div class="s">' + meta.orderCount + ' live PO' + (meta.orderCount===1?'':'s') + '</div></div>'
+    + '<div class="kpi"><div class="k">' + (meta.mixedWise ? 'Styles / POs' : meta.poWise ? 'POs' : 'Styles') + ' reviewed</div><div class="v">' + rows.length + '</div><div class="s">' + meta.orderCount + ' live PO' + (meta.orderCount===1?'':'s') + '</div></div>'
     + '<div class="kpi"><div class="k">' + matLabel + ' fully in-house</div><div class="v">' + yarnDone + '<small> / ' + rows.length + '</small></div><div class="s">' + n(totRecd) + ' of ' + n(totBooked) + ' ' + unit + ' received' + (notBooked ? ' · ' + notBooked + ' not booked' : '') + '</div></div>'
     + '<div class="kpi"><div class="k">Accessories complete</div><div class="v">' + accDone + '<small> / ' + accRows.length + '</small></div><div class="s">sewing + packing, all items in-house</div></div>'
     + '<div class="kpi' + (late ? ' bad' : '') + '"><div class="k">Behind TNA</div><div class="v">' + late + '</div><div class="s">' + (late ? 'TNA date passed, not in-house' : 'nothing overdue') + '</div></div>'
@@ -3225,7 +3258,7 @@ function buildMaterialReportHtml(meta, rows) {
         + '</tr>';
     }).join('');
     var gl = g.rows.filter(function(r){ return r.status === 'late'; }).length;
-    return '<section><div class="buyer"><h2>' + E(g.name) + '</h2><span>' + g.rows.length + (meta.poWise ? ' PO' : ' style') + (g.rows.length===1?'':'s')
+    return '<section><div class="buyer"><h2>' + E(g.name) + '</h2><span>' + g.rows.length + (g.rows.every(function(r){ return r.poWise; }) ? ' PO' : ' style') + (g.rows.length===1?'':'s')
       + (gl ? ' · <b class="red">' + gl + ' behind TNA</b>' : '') + '</span></div>'
       + '<table><thead><tr><th class="c-photo"></th><th class="c-style">Style / PO</th><th class="c-ship">Ship</th><th class="c-yarn">' + E(matLabel) + ' received / booked</th>'
       + '<th class="c-sup">Supplier</th><th class="c-acc">Sewing acc.</th><th class="c-acc">Packing acc.</th><th class="c-status">Status</th><th class="c-rem">Remarks</th></tr></thead>'
@@ -3299,7 +3332,7 @@ function buildMaterialReportHtml(meta, rows) {
   return '<!doctype html><html><head><meta charset="utf-8"><title>' + E(matLabel) + ' & Accessories Status — ' + E(meta.merchantName) + '</title><style>' + css + '</style></head><body><div class="sheet">'
     + '<div class="hd"><div><div class="org">Shahana Group · Weekly Review</div><h1>' + E(matLabel) + ' &amp; Accessories Status</h1>'
     + '<div class="who">Merchandiser: <b>' + E(meta.merchantName) + '</b>' + (meta.division ? ' · ' + E(meta.division) : '')
-    + ' · <span class="scope">' + (meta.poWise ? 'one row per PO (PO-wise booking)' + (rows.some(function(r){ return r.yarn.sharedOnly; }) ? ' · <span class="shr">all POs</span> = one style-level booking, shown on each of its POs' : '') : 'one row per style — figures cover every PO of the style') + '</span></div></div>'
+    + ' · <span class="scope">' + (meta.mixedWise ? 'one row per style, or per PO for PO-wise buyers' + (rows.some(function(r){ return r.yarn.sharedOnly; }) ? ' · <span class="shr">all POs</span> = one style-level booking, shown on each of its POs' : '') : meta.poWise ? 'one row per PO (PO-wise booking)' + (rows.some(function(r){ return r.yarn.sharedOnly; }) ? ' · <span class="shr">all POs</span> = one style-level booking, shown on each of its POs' : '') : 'one row per style — figures cover every PO of the style') + '</span></div></div>'
     + '<div class="meta"><div class="wk">Week ' + meta.week + ' · ' + E(meta.dateLabel) + '</div><div>Prepared by ' + E(meta.preparedBy) + ' at ' + E(meta.timeLabel) + '</div></div></div>'
     + (rows.length ? kpis + legend + sections : '<div class="empty">No live orders for this merchandiser.</div>')
     + '</div></body></html>';
@@ -3338,7 +3371,7 @@ async function openMaterialStatusReport(uid) {
     var rows = buildMaterialReportRows({
       today: todayStr(), orders: orders,
       yarnBookings: yb, yarnReceipts: yr, accBookings: ab, accReceipts: ar, checklist: cl,
-      yarnPoWise: merch.yarn_booking_mode === 'po', accPoWise: merch.accessory_booking_mode === 'po'
+      yarnPoWiseFor: function(o){ return isPoMode(o, 'yarn'); }, accPoWiseFor: function(o){ return isPoMode(o, 'accessory'); }
     });
     var buyerNames = {}; (S.buyers || []).forEach(function(b){ buyerNames[b.id] = b.name; });
     var now = new Date();
@@ -3346,7 +3379,8 @@ async function openMaterialStatusReport(uid) {
     var html = buildMaterialReportHtml({
       merchantName: merch.name, division: isKnit ? 'Knit' : 'Sweater',
       unit: isKnit ? 'kgs' : 'lbs', materialLabel: isKnit ? 'Fabric' : 'Yarn',
-      poWise: merch.yarn_booking_mode === 'po' || merch.accessory_booking_mode === 'po',
+      poWise: rows.length > 0 && rows.every(function(r){ return r.poWise; }),
+      mixedWise: rows.some(function(r){ return r.poWise; }) && rows.some(function(r){ return !r.poWise; }),
       orderCount: orders.length, buyerNames: buyerNames,
       week: isoWeek(now), dateLabel: now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
       timeLabel: now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + ', ' + now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
@@ -3605,7 +3639,8 @@ async function startApp() {
     ['loadBuyers',           loadBuyers],
     ['loadBuyerAssignments', loadBuyerAssignments],
     ['loadFieldVisibility',  loadFieldVisibility],
-    ['loadAppSettings',      loadAppSettings]
+    ['loadAppSettings',      loadAppSettings],
+    ['loadBuyerSettings',    loadBuyerSettings]
   ];
   await Promise.all(wave1.map(function(p){
     // Each is individually caught, exactly as before — one failing load must not
@@ -3840,6 +3875,7 @@ async function loadBoardOrders(merchantId) {
         sums[a.order_id].ap[a.type].push(a);
       }
     });
+    applySharedApprovals(sums, data || [], await fetchSharedApprovals(merchantId, Array.from(new Set((data||[]).map(function(o){ return (o.style||'').toUpperCase(); })))));
     (acc.data || []).forEach(a => {
       if (sums[a.order_id]) sums[a.order_id].acc[a.item_type] = a;
     });
@@ -3889,8 +3925,9 @@ async function loadYarnSummaryByOrder(merchantId, orders) {
     const rcRes = await db.from('yarn_receipts').select('booking_id,qty').in('booking_id', bookingIds);
     (rcRes.data || []).forEach(function(r){ receivedByBooking[r.booking_id] = (receivedByBooking[r.booking_id]||0) + (r.qty||0); });
   }
-  var merch = userById(merchantId);
-  var isPoWise = merch && merch.yarn_booking_mode === 'po';
+  // Every order shows the shared (style-wide) bookings plus any booked for its
+  // own PO — in either mode. The buyer's Style/PO setting only decides where a
+  // NEW booking is saved, so switching it never hides anything already entered.
   // Grouped by style for the (default, far more common) style-wide case, so
   // that path stays exactly as cheap as it always was — one lookup per style,
   // not per order. PO-wise only does the extra per-order work when it's
@@ -3906,7 +3943,7 @@ async function loadYarnSummaryByOrder(merchantId, orders) {
   orders.forEach(function(o){
     var s = (o.style||'').toUpperCase();
     var base = totalsByStyle[s] || { bk: 0, rc: 0 };
-    if (isPoWise && o.po_number) {
+    if (o.po_number) {
       var mine = { bk: base.bk, rc: base.rc };
       bookings.forEach(function(b){
         if ((b.style||'').toUpperCase() === s && b.po_number === o.po_number) {
@@ -3949,6 +3986,7 @@ async function reloadSummaries(merchantId) {
       sums[a.order_id].ap[a.type].push(a);
     }
   });
+  applySharedApprovals(sums, orders, await fetchSharedApprovals(merchantId, Array.from(new Set(orders.map(function(o){ return (o.style||'').toUpperCase(); })))));
   (acc.data || []).forEach(a => {
     if (sums[a.order_id]) sums[a.order_id].acc[a.item_type] = a;
   });
@@ -4075,6 +4113,16 @@ async function cleanOldArchive() {
 // orders already in Trash. Returns true when the orders are gone.
 async function purgeOrdersPermanently(ids) {
   if (!ids || !ids.length) return true;
+  // A shared (style-wise) Fit / Size Set round is filed under the order it was
+  // recorded on; hand it to another order of the same style so the other POs keep it.
+  try {
+    var sh = await db.from('approvals').select('id,shared_style,shared_merchant_id').in('order_id', ids).not('shared_style', 'is', null);
+    for (var k = 0; k < ((sh && sh.data) || []).length; k++) {
+      var row = sh.data[k];
+      var alt = await db.from('orders').select('id').eq('merchant_id', row.shared_merchant_id).ilike('style', row.shared_style).neq('stage', 'trash').limit(1);
+      if (alt.data && alt.data[0]) await db.from('approvals').update({ order_id: alt.data[0].id }).eq('id', row.id);
+    }
+  } catch (e) { /* column may not exist yet — nothing shared then */ }
   var children = ['shipment_alerts','tna_requests','order_field_values','approvals','accessories','yarn_receipts','yarn_bookings','order_activity'];
   for (var i = 0; i < children.length; i++) {
     try { await db.from(children[i]).delete().in('order_id', ids); } catch (e) { /* table may not carry order_id — fine */ }
@@ -6421,11 +6469,13 @@ function downloadPDF() {
 // under. Every PO sharing that style mirrors the exact same booking data.
 var _yarnMerchantId = null, _yarnStyle = null, _yarnUnit = 'lbs', _yarnCompositions = [];
 var _yarnPoNumber = null; // null = style-wide (shared); set = this booking belongs to one PO only
+var _yarnReadPo = null;   // the order's PO — its own PO bookings are always shown, whatever the mode
 var _yarnEditingId = null; // booking currently open in the inline Edit form
 var _yarnBookingsShown = []; // bookings on screen, so Edit can prefill without another fetch
 var _yarnHasAttachment = false, _yarnMaterialType = 'yarn';
 var _accOrderId = null, _accMerchantId = null, _accStyle = null, _accCategory = 'sewing';
 var _accPoNumber = null; // PO-wise mode context, mirrors _yarnPoNumber exactly
+var _accReadPo = null;
 var _accCheckItems = []; // this style/category's checklist — the source of truth for completion
 var _accSelectedItem = null; // selected checklist item name, in the middle column
 var _accSelectedBookingId = null; // selected booking within that item, in the right column
@@ -6449,16 +6499,32 @@ function getStyleColours(merchantId, style) {
 // One row per colour per round, per approval TYPE ('pp' or 'labdip') — this
 // fetches every round for every colour of this style+type in one query, then
 // reduces to "latest round per colour" to get current status.
-async function getColourApprovalData(merchantId, style, type) {
+// Which rounds count for one order, per colour. Rounds saved for the whole
+// style (no PO) and rounds saved for one PO can both exist — e.g. after a
+// buyer switched from style-wise to PO-wise. The series matching the buyer's
+// current mode is used when it has anything; otherwise the other one, so
+// history recorded under the old mode keeps showing. Nothing is rewritten.
+function pickApprovalSeries(rows, po, mode) {
+  var shared = rows.filter(function(r){ return !r.po_number; });
+  var own = po ? rows.filter(function(r){ return r.po_number === po; }) : [];
+  var pref = mode === 'po' ? own : shared, other = mode === 'po' ? shared : own;
+  var list = pref.length ? pref : other;
+  return list.slice().sort(function(a,b){ return (a.round||0)-(b.round||0) || String(a.created_at||'').localeCompare(String(b.created_at||'')); });
+}
+async function getColourApprovalData(merchantId, style, type, ord) {
   var upper = (style||'').toUpperCase();
   var colours = getStyleColours(merchantId, upper);
   const res = await db.from('pp_colour_approvals').select('*').eq('merchant_id', merchantId).eq('style', upper).eq('type', type).order('round');
-  var rows = res.data || [];
+  var all = res.data || [];
+  var po = ord ? (ord.po_number || null) : null, mode = ord ? modeFor(ord, type) : 'style';
   var byColour = {};
   colours.forEach(function(c){ byColour[c] = { colour: c, rounds: [] }; });
-  rows.forEach(function(r){
-    if (!byColour[r.colour]) byColour[r.colour] = { colour: r.colour, rounds: [] }; // colour removed from orders but has history — keep visible
-    byColour[r.colour].rounds.push(r);
+  var raw = {};
+  all.forEach(function(r){ (raw[r.colour] = raw[r.colour] || []).push(r); });
+  Object.keys(raw).forEach(function(c){
+    var picked = pickApprovalSeries(raw[c], po, mode);
+    if (!byColour[c]) { if (!picked.length) return; byColour[c] = { colour: c, rounds: [] }; } // colour removed from orders but has history — keep visible
+    byColour[c].rounds = picked;
   });
   return Object.keys(byColour).map(function(c){
     var entry = byColour[c];
@@ -6491,6 +6557,23 @@ async function loadColourApprovalSummaryByOrder(merchantId, orders, type) {
   if (!styles.length) return result;
   const res = await db.from('pp_colour_approvals').select('*').eq('merchant_id', merchantId).eq('type', type).in('style', styles);
   var rows = res.data || [];
+  // Any PO-specific rounds, or a buyer set to PO-wise, means orders of a style
+  // can differ — then each order is worked out on its own (same rule as the window).
+  var needPerOrder = rows.some(function(r){ return r.po_number; }) || orders.some(function(o){ return modeFor(o, type) === 'po'; });
+  if (needPerOrder) {
+    orders.forEach(function(o){
+      var s = (o.style||'').toUpperCase(), colours = getStyleColours(merchantId, s), mode = modeFor(o, type);
+      var approved = 0, submitted = 0, dates = [];
+      colours.forEach(function(c){
+        var series = pickApprovalSeries(rows.filter(function(r){ return (r.style||'').toUpperCase() === s && r.colour === c; }), o.po_number || null, mode);
+        var latest = series.length ? series[series.length-1] : null;
+        if (latest && latest.approved_on) { approved++; submitted++; dates.push(latest.approved_on); }
+        else if (latest && latest.submitted_on && !latest.rejected_on) submitted++;
+      });
+      result[o.id] = { total: colours.length, approved: approved, submitted: submitted, completedOn: (colours.length && approved === colours.length) ? dates.sort().slice(-1)[0] : null };
+    });
+    return result;
+  }
   var byStyleColour = {}; // style -> colour -> rounds[]
   rows.forEach(function(r){
     var s = (r.style||'').toUpperCase();
@@ -6534,7 +6617,7 @@ async function checkLabDipSupplierAlerts(merchantId, orders) {
     var rows = res.data || [];
     var byStyleColour = {};
     rows.forEach(function(r){
-      var key = r.style + '\u0001' + r.colour;
+      var key = r.style + '\u0001' + r.colour + '\u0001' + (r.po_number || ''); // PO-wise rounds are tracked per PO
       if (!byStyleColour[key] || (r.round||0) > (byStyleColour[key].round||0)) byStyleColour[key] = r;
     });
     var today0 = todayStr();
@@ -6548,7 +6631,7 @@ async function checkLabDipSupplierAlerts(merchantId, orders) {
       if (!latest.sent_to_supplier_on || latest.submitted_on || latest.approved_on || latest.rejected_on) continue;
       var daysElapsed = Math.floor((new Date(today0) - new Date(latest.sent_to_supplier_on)) / 86400000);
       if (daysElapsed < 5) continue;
-      var ord = orders.find(function(o){ return (o.style||'').toUpperCase() === latest.style; });
+      var ord = orders.find(function(o){ return (o.style||'').toUpperCase() === latest.style && (!latest.po_number || o.po_number === latest.po_number); });
       if (!ord) continue;
       pending.push({ latest: latest, ord: ord, checkpoint: daysElapsed < 7 ? 5 : 7 + 2*Math.floor((daysElapsed-7)/2) });
     }
@@ -6590,16 +6673,14 @@ async function checkLabDipSupplierAlerts(merchantId, orders) {
 // PP-only: Lab Dip deliberately has no TNA milestone link (same reasoning as
 // before — it's a reference point, not a tracked deadline).
 async function recomputePPActual(merchantId, style) {
+  // Worked out per order: a PO-wise buyer's PO completes when ITS colours are
+  // approved; style-wise POs all share the style's result (as before).
   var upper = (style||'').toUpperCase();
-  var colourData = await getColourApprovalData(merchantId, upper, 'pp');
-  var completedOn = null;
-  if (colourData.length && colourData.every(function(c){ return c.status==='approved'; })) {
-    var dates = colourData.map(function(c){ return c.latest.approved_on; }).filter(Boolean);
-    completedOn = dates.sort().slice(-1)[0]; // latest date = the last colour to finish
-  }
   var orders = (S.boardCache[merchantId] || []).filter(function(o){ return (o.style||'').toUpperCase() === upper; });
+  if (!orders.length) return;
+  var sums = await loadColourApprovalSummaryByOrder(merchantId, orders, 'pp');
   for (var j = 0; j < orders.length; j++) {
-    await setMilestoneActual(orders[j].id, 'pp', completedOn);
+    await setMilestoneActual(orders[j].id, 'pp', (sums[orders[j].id] || {}).completedOn || null);
   }
 }
 
@@ -6623,6 +6704,7 @@ function colourApprovalPill(sum, ordId, merchantId, style, type) {
 }
 
 // ─── COLOUR-WISE APPROVAL MODAL (shared by PP and Lab Dip) ───
+var _ppcPo = null;
 var _ppcMerchantId=null, _ppcStyle=null, _ppcOrdId=null, _ppcType='pp', _ppcCanEdit=false, _ppcColourData=[], _ppcMode='list';
 var _ppcSubmitSelected = {}, _ppcBulkSelected = {}, _ppcPickingResult = null, _ppcBulkPickingOutcome = null;
 
@@ -6633,7 +6715,9 @@ async function openColourApprovalModal(ordId, merchantId, style, type) {
   _ppcSubmitSelected = {}; _ppcBulkSelected = {}; _ppcPickingResult = null; _ppcBulkPickingOutcome = null; _ppcSubmitOnePicking = null;
   var typeLabel = type === 'labdip' ? 'Lab Dip Approval' : 'PP Approval';
   $('ppc-title').textContent = typeLabel + ' \u2014 ' + style;
-  $('ppc-sub').textContent = 'Shared across every PO of this style \u2014 tracked per colour';
+  var _ppcOrd = findOrderAnywhere(ordId) || {};
+  _ppcPo = isPoMode(_ppcOrd, type) ? _ppcOrd.po_number : null; // where NEW rounds are saved (buyer setting)
+  $('ppc-sub').textContent = _ppcPo ? ('For PO ' + _ppcPo + ' \u2014 tracked per colour (PO-wise buyer)') : 'Shared across every PO of this style \u2014 tracked per colour';
   $('ppc-body').innerHTML = '<div class="exp-loading">Loading\u2026</div>';
   openModal('ov-pp-colour');
   await renderPPColourModal();
@@ -6642,7 +6726,7 @@ async function openColourApprovalModal(ordId, merchantId, style, type) {
 var _ppcRenderToken = 0;
 async function renderPPColourModal() {
   var myToken = ++_ppcRenderToken;
-  var _fetched = await getColourApprovalData(_ppcMerchantId, _ppcStyle, _ppcType);
+  var _fetched = await getColourApprovalData(_ppcMerchantId, _ppcStyle, _ppcType, findOrderAnywhere(_ppcOrdId));
   if (myToken !== _ppcRenderToken) return; // superseded by a newer render
   _ppcColourData = _fetched;
   // A colour resolved through the individual Approve/Reject buttons is no
@@ -6835,8 +6919,11 @@ function ppcClearSubmit() { _ppcSubmitSelected={}; renderPPColourModal(); }
 // doesn't keep showing a stale alert for something that's already moved on.
 async function clearLabDipSupplierAlerts(merchantId, style, colour) {
   try {
-    await db.from('shipment_alerts').update({ dismissed: true, dismissed_by: 'system', dismissed_at: new Date().toISOString() })
+    var q = db.from('shipment_alerts').update({ dismissed: true, dismissed_by: 'system', dismissed_at: new Date().toISOString() })
       .eq('merchant_id', merchantId).eq('style', style).eq('colour', colour).eq('alert_type', 'labdip_supplier_late').eq('dismissed', false);
+    // PO-wise round: only this PO's alert — other POs of the style have their own swatch out
+    if (_ppcPo) q = q.eq('order_id', _ppcOrdId);
+    await q;
   } catch (e) { /* best-effort */ }
 }
 
@@ -6853,7 +6940,9 @@ async function ppcConfirmSubmit() {
       await clearLabDipSupplierAlerts(_ppcMerchantId, _ppcStyle, c);
     } else {
       var nextRound = cEntry && cEntry.latest ? (cEntry.latest.round||0)+1 : 1;
-      await db.from('pp_colour_approvals').insert({ merchant_id:_ppcMerchantId, style:_ppcStyle, type:_ppcType, colour:c, round:nextRound, submitted_on:date, created_by:S.user.name });
+      var _ins = { merchant_id:_ppcMerchantId, style:_ppcStyle, type:_ppcType, colour:c, round:nextRound, submitted_on:date, created_by:S.user.name };
+      if (_ppcPo) _ins.po_number = _ppcPo; // PO-wise buyer: this round belongs to this PO only
+      await db.from('pp_colour_approvals').insert(_ins);
     }
   }
   toast(selected.length + ' colour(s) submitted', 'ok-t');
@@ -6932,11 +7021,13 @@ async function ppcConfirmSource() {
     var c = selected[i];
     var cEntry = _ppcColourData.find(function(x){return x.colour===c;});
     var nextRound = cEntry && cEntry.latest ? (cEntry.latest.round||0)+1 : 1;
-    await db.from('pp_colour_approvals').insert({
+    var _src = {
       merchant_id:_ppcMerchantId, style:_ppcStyle, type:_ppcType, colour:c, round:nextRound,
       sent_to_supplier_on:date, supplier_name: supplier||null, tracking_ref: tracking||null,
       created_by:S.user.name
-    });
+    };
+    if (_ppcPo) _src.po_number = _ppcPo; // PO-wise buyer
+    await db.from('pp_colour_approvals').insert(_src);
   }
   toast(selected.length + ' colour(s) sent to supplier', 'ok-t');
   _ppcMode='list';
@@ -7067,9 +7158,11 @@ async function openMaterialModal(ordId, division) {
   // (style-wide) booking still counts toward every PO underneath it — see
   // the query in renderMaterialModalBody — but a new booking made here gets
   // tagged to this PO specifically, not merged into the shared pool.
-  var merch = userById(_yarnMerchantId);
-  var isPoWise = merch && merch.yarn_booking_mode === 'po';
+  // Where a NEW booking goes follows the buyer's setting (Admin → Buyer
+  // settings). What's SHOWN is always the shared bookings plus this PO's own.
+  var isPoWise = isPoMode(o, 'yarn');
   _yarnPoNumber = isPoWise ? (o.po_number || null) : null;
+  _yarnReadPo = o.po_number || null;
   $('mat-sub').textContent = isPoWise
     ? ('For PO ' + (o.po_number || '\u2014') + ' \u2014 plus any style-wide booking already shared across every PO')
     : 'Shared across every PO of this style';
@@ -7105,8 +7198,8 @@ async function renderMaterialModalBody() {
   // gets tagged with going forward. PO-wise mode only applies to yarn itself
   // — attachment fabric stays shared regardless, since that wasn't part of
   // what was asked for.
-  var scopeToPo = _yarnPoNumber && _yarnMaterialType === 'yarn';
-  const bkRes = await (scopeToPo ? bkQ.or('po_number.is.null,po_number.eq.' + _yarnPoNumber) : bkQ.is('po_number', null)).order('booked_on');
+  var scopeToPo = _yarnReadPo && _yarnMaterialType === 'yarn';
+  const bkRes = await (scopeToPo ? bkQ.or('po_number.is.null,po_number.eq.' + _yarnReadPo) : bkQ.is('po_number', null)).order('booked_on');
   const bookings = bkRes.data || [];
   const bookingIds = bookings.map(function(b){ return b.id; });
   var receipts = [];
@@ -7447,6 +7540,20 @@ async function backfillTNAApprovalLinks() {
 // again rather than leaving a stale "done" date behind.
 async function recomputeYarnActual(merchantId, style, poNumber) {
   var upper = (style || '').toUpperCase();
+  // No PO given: work out every order of the style on its own (shared
+  // bookings + that order's own PO bookings) — the same rule the board pill
+  // uses. Lumping them together stamped a PO "done" while its own PO booking
+  // was still outstanding, once a buyer had been switched PO-wise → style-wise.
+  if (!poNumber) {
+    var sameStyle = (S.boardCache[merchantId] || []).filter(function(o){ return (o.style||'').toUpperCase() === upper; });
+    for (var k = 0; k < sameStyle.length; k++) await recomputeYarnActualFor(merchantId, upper, sameStyle[k]);
+    return;
+  }
+  var target = (S.boardCache[merchantId] || []).filter(function(o){ return (o.style||'').toUpperCase() === upper && o.po_number === poNumber; });
+  for (var t = 0; t < target.length; t++) await recomputeYarnActualFor(merchantId, upper, target[t]);
+}
+async function recomputeYarnActualFor(merchantId, upper, order) {
+  var poNumber = order.po_number || null;
   // Only the 'yarn' material type drives the TNA Yarn Inhouse milestone —
   // attachment fabric is tracked the same way but is a separate material
   // serving a different purpose, so it never contributes to this total.
@@ -7477,13 +7584,7 @@ async function recomputeYarnActual(merchantId, style, poNumber) {
       }
     }
   }
-  var orders = (S.boardCache[merchantId] || []).filter(function(o){
-    if ((o.style||'').toUpperCase() !== upper) return false;
-    return poNumber ? o.po_number === poNumber : true;
-  });
-  for (var j = 0; j < orders.length; j++) {
-    await setMilestoneActual(orders[j].id, 'yarn', completedOn);
-  }
+  await setMilestoneActual(order.id, 'yarn', completedOn);
 }
 
 
@@ -7555,8 +7656,10 @@ async function openApvFlow(ordId, type, division) {
     if (!$('apvf-title')) { console.error('apvf-title missing'); toast('Modal not found — refresh page', 'err'); return; }
     $('apvf-title').textContent = label;
     $('apvf-sub').textContent = (o.style||'') + (o.buyer ? ' — ' + o.buyer : '') + (o.qty ? ' · ' + fmt(o.qty) + ' pcs' : '');
-    var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
-    S_apv.rounds = res.data || [];
+    S_apv.rounds = await loadApvRounds(ordId, type);
+    // Where a NEW round is saved: shared by the style for a style-wise buyer (Fit / Size Set)
+    S_apv.shareStyle = SHAREABLE_APV.indexOf(type) !== -1 && modeFor(o, type) === 'style';
+    if (SHAREABLE_APV.indexOf(type) !== -1) $('apvf-sub').textContent += S_apv.shareStyle ? ' \u00b7 shared by every PO of this style' : (o.po_number ? ' \u00b7 PO ' + o.po_number + ' only' : '');
     var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length - 1] : null;
     var canAct = can('edit', S_apv.merchantId);
     if (!latest || latest.rejected_on) {
@@ -7692,9 +7795,12 @@ async function apvDoSubmit() {
   if (!date) { toast('Please pick a date', 'err'); return; }
   var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length-1] : null;
   var nextRound = latest ? latest.round + 1 : 1;
-  var { error } = await db.from('approvals').insert({
-    order_id: S_apv.ordId, type: S_apv.type, round: nextRound, submitted_on: date
-  });
+  var _apvRow = { order_id: S_apv.ordId, type: S_apv.type, round: nextRound, submitted_on: date };
+  if (S_apv.shareStyle) { // style-wise buyer: one round for every PO of the style
+    var _ao = findOrderAnywhere(S_apv.ordId) || {};
+    _apvRow.shared_style = (_ao.style||'').toUpperCase(); _apvRow.shared_merchant_id = _ao.merchant_id;
+  }
+  var { error } = await db.from('approvals').insert(_apvRow);
   if (error) { toast('Error saving', 'err'); return; }
   toast('Submission recorded', 'ok-t');
   logActivity(S_apv.ordId, 'Approval submitted', (APV_TYPE_CONFIG[S_apv.type]||{}).label + ' — round ' + nextRound + ' submitted');
@@ -7783,12 +7889,49 @@ async function apvUndoLatest() {
 
   // Refresh the modal in place at the outcome step, rather than closing it —
   // the person almost certainly wants to immediately re-decide.
-  var res = await db.from('approvals').select('*').eq('order_id', S_apv.ordId).eq('type', S_apv.type).order('round');
-  S_apv.rounds = res.data || [];
+  S_apv.rounds = await loadApvRounds(S_apv.ordId, S_apv.type);
   S_apv.step = 'outcome';
   renderApvModal();
 }
 
+
+// ─── FIT / SIZE SET: style-wise or PO-wise per buyer ───
+// Fit and Size Set rounds were always saved per order (PO). For a buyer set to
+// style-wise, a NEW round is saved once with shared_style / shared_merchant_id
+// and counts for every PO of the style. Old rounds are never touched: an order
+// uses the series matching its buyer's mode, or the other one if that's empty.
+var SHAREABLE_APV = ['fit', 'sizeset'];
+function pickSharedSeries(own, shared, mode) {
+  var pref = mode === 'style' ? shared : own, other = mode === 'style' ? own : shared;
+  return (pref.length ? pref : other).slice().sort(function(a,b){ return (a.round||0)-(b.round||0) || String(a.created_at||'').localeCompare(String(b.created_at||'')); });
+}
+async function fetchSharedApprovals(merchantId, styles) {
+  if (S.buyerSettingsMissing || !styles.length) return [];
+  try {
+    var r = await db.from('approvals').select('*').eq('shared_merchant_id', merchantId).in('shared_style', styles).in('type', SHAREABLE_APV);
+    return r.error ? [] : (r.data || []);
+  } catch (e) { return []; }
+}
+function applySharedApprovals(sums, orders, sharedRows) {
+  orders.forEach(function(o){
+    var sm = sums[o.id]; if (!sm) return;
+    var st = (o.style||'').toUpperCase();
+    SHAREABLE_APV.forEach(function(t){
+      var own = (sm.ap[t] || []).filter(function(a){ return !a.shared_style; });
+      var shared = sharedRows.filter(function(a){ return a.type === t && (a.shared_style||'').toUpperCase() === st; });
+      var picked = pickSharedSeries(own, shared, modeFor(o, t));
+      if (picked.length || sm.ap[t]) sm.ap[t] = picked;
+    });
+  });
+}
+async function loadApvRounds(ordId, type) {
+  var o = findOrderAnywhere(ordId) || {};
+  var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
+  var rows = res.data || [];
+  if (SHAREABLE_APV.indexOf(type) === -1) return rows;
+  var shared = (await fetchSharedApprovals(o.merchant_id, [(o.style||'').toUpperCase()])).filter(function(a){ return a.type === type; });
+  return pickSharedSeries(rows.filter(function(a){ return !a.shared_style; }), shared, modeFor(o, type));
+}
 
 // ─── TNA LOCK + REQUEST ───
 function isTNALocked(ordId, merchantId) {
@@ -8620,8 +8763,7 @@ async function loadAccessorySummaryByOrder(merchantId, orders, category) {
     return { total: items.length, received: received };
   }
 
-  var merch = userById(merchantId);
-  var isPoWise = merch && merch.accessory_booking_mode === 'po';
+  // Same rule as yarn: shared bookings plus this order's own PO bookings.
   var summaryByStyle = {};
   styles.forEach(function(s){
     var shared = bookings.filter(function(b){ return (b.style||'').toUpperCase() === s && !b.po_number; });
@@ -8629,7 +8771,8 @@ async function loadAccessorySummaryByOrder(merchantId, orders, category) {
   });
   orders.forEach(function(o){
     var s = (o.style||'').toUpperCase();
-    if (isPoWise && o.po_number) {
+    var hasOwn = o.po_number && bookings.some(function(b){ return (b.style||'').toUpperCase() === s && b.po_number === o.po_number; });
+    if (hasOwn) {
       var mine = bookings.filter(function(b){ return (b.style||'').toUpperCase() === s && (!b.po_number || b.po_number === o.po_number); });
       result[o.id] = computeFor(mine, s);
     } else if (summaryByStyle[s]) {
@@ -8646,6 +8789,13 @@ async function loadAccessorySummaryByOrder(merchantId, orders, category) {
 // every order sharing the style; given = stamps only that one order.
 async function recomputeAccessoryActual(merchantId, style, category, poNumber) {
   var upper = (style||'').toUpperCase();
+  var targets = (S.boardCache[merchantId] || []).filter(function(o){
+    return (o.style||'').toUpperCase() === upper && (!poNumber || o.po_number === poNumber);
+  });
+  for (var k = 0; k < targets.length; k++) await recomputeAccessoryActualFor(merchantId, upper, category, targets[k]);
+}
+async function recomputeAccessoryActualFor(merchantId, upper, category, order) {
+  var poNumber = order.po_number || null;
   var milesKey = category === 'sewing' ? 'sew' : 'pack';
   var itemData = await getAccessoryItemData(merchantId, upper, category, poNumber);
   var completedOn = null;
@@ -8666,13 +8816,7 @@ async function recomputeAccessoryActual(merchantId, style, category, poNumber) {
     }).filter(Boolean);
     completedOn = dates.length ? dates.sort().slice(-1)[0] : null;
   }
-  var orders = (S.boardCache[merchantId] || []).filter(function(o){
-    if ((o.style||'').toUpperCase() !== upper) return false;
-    return poNumber ? o.po_number === poNumber : true;
-  });
-  for (var j = 0; j < orders.length; j++) {
-    await setMilestoneActual(orders[j].id, milesKey, completedOn);
-  }
+  await setMilestoneActual(order.id, milesKey, completedOn);
 }
 
 // ─── ACCESSORY MODAL — three columns: Checklist (left) → Booking (middle,
@@ -8681,9 +8825,9 @@ async function openAccessoryModal(ordId, merchantId, style, category) {
   _accOrderId = ordId; _accMerchantId = merchantId; _accStyle = (style || '').toUpperCase();
   _accCategory = category || 'sewing';
   var order = findOrderAnywhere(ordId) || {};
-  var merch = userById(merchantId);
-  var isPoWise = merch && merch.accessory_booking_mode === 'po';
+  var isPoWise = isPoMode(order, 'accessory'); // buyer setting decides where NEW bookings go
   _accPoNumber = isPoWise ? (order.po_number || null) : null;
+  _accReadPo = order.po_number || null;        // shared + this PO's own are always shown
   $('acc-title').textContent = 'Accessories \u2014 ' + _accStyle;
   $('acc-sub').textContent = isPoWise
     ? ('For PO ' + (order.po_number || '\u2014') + ' \u2014 plus any style-wide booking already shared across every PO')
@@ -8719,8 +8863,8 @@ async function renderAccessoryModalBody() {
   // instead of only reflecting whichever tab happened to be open.
   var otherCat = _accCategory === 'sewing' ? 'packing' : 'sewing';
   var both = await Promise.all([
-    getAccessoryItemData(_accMerchantId, _accStyle, _accCategory, _accPoNumber),
-    getAccessoryItemData(_accMerchantId, _accStyle, otherCat, _accPoNumber),
+    getAccessoryItemData(_accMerchantId, _accStyle, _accCategory, _accReadPo),
+    getAccessoryItemData(_accMerchantId, _accStyle, otherCat, _accReadPo),
     loadAccessoryChecklist(_accMerchantId, _accStyle, _accCategory)
   ]);
   if (myToken !== _accRenderToken) return; // a newer render started while this was loading
@@ -8808,7 +8952,7 @@ function renderAccBookingColumn(selectedItemData, canEdit) {
     var bPct = hasQty && b.qty > 0 ? Math.min(100, Math.round((bReceived/b.qty)*100)) : (myReceipts.length ? 100 : 0);
     var numsHtml = hasQty ? (fmt(bReceived) + ' / ' + fmt(b.qty) + ' pcs') : (myReceipts.length ? 'Received' : 'Pending first receipt');
     var isSel = b.id === _accSelectedBookingId;
-    var tagHtml = _accPoNumber ? (b.po_number ? '<span class="acc-booking-tag thispo">This PO</span>' : '<span class="acc-booking-tag shared">Shared</span>') : '';
+    var tagHtml = _accReadPo ? (b.po_number ? '<span class="acc-booking-tag thispo">This PO</span>' : '<span class="acc-booking-tag shared">Shared</span>') : '';
     return '<div class="acc-booking-card' + (isSel?' selected':'') + '" onclick="selectAccessoryBooking(\'' + b.id + '\')">'
       + (canEdit ? '<div class="booking-hdr-actions acc-booking-actions"><button class="booking-edit-btn" onclick="event.stopPropagation();startEditAccessoryBooking(\'' + b.id + '\')" title="Edit booking">&#x270E; Edit</button><button class="dev-icon-btn yarn-x" onclick="event.stopPropagation();deleteAccessoryBooking(\'' + b.id + '\')" title="Remove booking">&#x1F5D1;</button></div>' : '')
       + '<div class="acc-booking-date">' + short(b.booked_on) + tagHtml + '</div>'
@@ -9905,6 +10049,8 @@ function renderAdminPage() {
   + tool('&#x1F517;', 'Managers ↔ merchants', 'Which merchants each manager oversees', 'openMerchantAssign()')
   + tool('&#x1F9D1;&#x200D;&#x1F4BC;', 'Junior merchandisers', 'Link each JM to the merchants they support', 'openJMAssign()')
   + tool('&#x1F6CD;', 'Buyers', 'Assign buyers to merchants, approve new-buyer requests', 'openBuyerAssign()')
+  + tool('&#x1F39B;', 'Buyer settings', 'Style-wise or PO-wise per buyer: bookings and approvals', 'openBuyerSettings()')
+  + tool('&#x1F501;', 'Transfer buyer', 'Move a buyer\u2019s live orders and records to another merchant', 'openTransferBuyer()')
   + tool('&#x2699;', 'Column manager', 'Columns shown per buyer on the live board', 'openColumnManagerHub()')
   + tool('&#x1F504;', 'Sync TNA from approvals', 'Fill blank TNA actual dates from past approvals', 'backfillTNAApprovalLinks()', ' title="Fills in blank TNA actual dates for PP / Final Inspection approvals recorded before the auto-link existed. Never overwrites a date that is already set."')
   + '</div></div>'
@@ -9982,7 +10128,7 @@ function renderAdminList() {
   var rows = '', lastRole = null;
   staff.forEach(function(m) {
     if (m.role !== lastRole) {
-      rows += '<tr class="adm-grp"><td colspan="6">' + (roleGroup[m.role] || roleLabel(m.role)) + '<span>' + staff.filter(function(x){ return x.role === m.role; }).length + '</span></td></tr>';
+      rows += '<tr class="adm-grp"><td colspan="5">' + (roleGroup[m.role] || roleLabel(m.role)) + '<span>' + staff.filter(function(x){ return x.role === m.role; }).length + '</span></td></tr>';
       lastRole = m.role;
     }
     var isEdit = _editUserId === m.id;
@@ -9992,14 +10138,12 @@ function renderAdminList() {
       + '<td><span class="adm-role r-' + m.role + '">' + roleLabel(m.role) + '</span></td>'
       + '<td class="adm-muted">' + (m.division ? htmlEsc(m.division.charAt(0).toUpperCase() + m.division.slice(1)) : '—') + '</td>'
       + '<td>' + adminPasswordCell(m) + '</td>'
-      + '<td>' + (m.role === 'merchant'
-          ? '<div class="adm-modes"><span>Yarn</span>' + modeToggle(m, 'yarn_booking_mode', 'setYarnBookingMode') + '<span>Accessories</span>' + modeToggle(m, 'accessory_booking_mode', 'setAccessoryBookingMode') + '</div>'
-          : '<span class="adm-muted">—</span>') + '</td>'
+      // Style / PO-wise is now set per buyer (Admin → Buyer settings), not per merchant.
       + '<td class="adm-act"><button class="btn sm' + (isEdit?' pri':'') + '" data-uid="' + m.id + '" onclick="editUser(this.dataset.uid)">' + (isEdit?'Close':'Edit') + '</button>'
       +   '<button class="btn sm danger" data-uid="' + m.id + '" onclick="deleteUser(this.dataset.uid)">Delete</button></td>'
       + '</tr>';
     if (isEdit) {
-      rows += '<tr class="adm-editrow"><td colspan="6"><div class="adm-form" style="grid-template-columns:1.2fr 1.2fr 1fr 190px 120px">'
+      rows += '<tr class="adm-editrow"><td colspan="5"><div class="adm-form" style="grid-template-columns:1.2fr 1.2fr 1fr 190px 120px">'
         + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="eu-name-' + m.id + '" class="adm-inp" value="' + htmlEsc(m.name||'') + '"></div>'
         + '<div class="adm-field"><label class="adm-lbl">Designation</label><input id="eu-desig-' + m.id + '" class="adm-inp" value="' + htmlEsc(m.title||'') + '" placeholder="e.g. Senior Merchandiser"></div>'
         + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" class="adm-inp" placeholder="Leave blank to keep">'
@@ -10011,7 +10155,7 @@ function renderAdminList() {
         + '</div></td></tr>';
     }
   });
-  $('admin-list').innerHTML = '<div class="scroller"><table class="adm-users"><thead><tr><th>User</th><th>Role</th><th>Division</th><th>Password</th><th>Booking mode</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  $('admin-list').innerHTML = '<div class="scroller"><table class="adm-users"><thead><tr><th>User</th><th>Role</th><th>Division</th><th>Password</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 // ─── SAVE MY OWN PROFILE (admin renames/changes pwd) ───
@@ -12015,6 +12159,345 @@ async function deleteStyleImage() {
   toast('Photo deleted', 'ok-t');
 }
 
+
+// === TRANSFER BUYER TO ANOTHER MERCHANT ===
+// Moves one buyer's LIVE and LAYING GOODS orders from one merchant to another,
+// with everything recorded against them: yarn / accessory bookings (receipts
+// follow their booking), accessory checklists, Lab Dip / PP rounds, shared Fit /
+// Size Set rounds, TNA requests, alerts and that buyer's developments. Photos
+// and garment attachments are COPIED (the old merchant's shipped orders keep
+// theirs). Shipped orders stay with the old merchant. Nothing is deleted.
+var _tb = { buyerId:'', fromId:'', toId:'', preview:null, busy:false };
+function openTransferBuyer() {
+  if (!S.user || S.user.role !== 'admin') { toast('Only admin can do this', 'err'); return; }
+  _tb = { buyerId:'', fromId:'', toId:'', preview:null, busy:false };
+  openModal('ov-transfer-buyer');
+  Promise.all([loadBuyers(), loadBuyerAssignments()]).then(renderTransferBuyer);
+}
+function renderTransferBuyer() {
+  var merchants = S.users.filter(function(u){ return u.role === 'merchant'; }).sort(function(a,b){ return a.name.localeCompare(b.name); });
+  var buyers = (S.buyers||[]).slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+  function opts(list, sel, ph) { return '<option value="">' + ph + '</option>' + list.map(function(x){ return '<option value="' + x.id + '"' + (x.id === sel ? ' selected' : '') + '>' + htmlEsc(x.name) + '</option>'; }).join(''); }
+  var sel = 'style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#FCFBF7;color:var(--ink)"';
+  var p = _tb.preview;
+  var prev = '';
+  if (p) {
+    prev = p.orders.length
+      ? '<div class="tb-sum"><div class="tb-sum-h">Will move to ' + htmlEsc(userById(_tb.toId).name) + '</div><ul>'
+        + '<li><b>' + p.orders.length + '</b> live / Laying Goods order(s) — ' + p.styles.length + ' style(s)</li>'
+        + '<li><b>' + p.counts.yarn + '</b> yarn / fabric booking(s) and <b>' + p.counts.acc + '</b> accessory booking(s), with their receipts</li>'
+        + '<li><b>' + p.counts.checklist + '</b> accessory checklist item(s)</li>'
+        + '<li><b>' + p.counts.colour + '</b> Lab Dip / PP round(s)' + (p.counts.sharedApv ? ' and <b>' + p.counts.sharedApv + '</b> shared Fit / Size Set round(s)' : '') + '</li>'
+        + '<li><b>' + p.counts.devs + '</b> development(s) for this buyer</li>'
+        + '<li><b>' + p.counts.photos + '</b> photo(s) and <b>' + p.counts.attach + '</b> attachment record(s) copied (the old merchant keeps theirs)</li>'
+        + '<li>The buyer is assigned to ' + htmlEsc(userById(_tb.toId).name) + ' for new orders</li>'
+        + '</ul><div class="tb-keep">Stays with ' + htmlEsc(userById(_tb.fromId).name) + ': <b>' + p.shippedCount + '</b> shipped order(s).</div></div>'
+        + '<div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn pri" onclick="runTransferBuyer()"' + (_tb.busy ? ' disabled' : '') + '>' + (_tb.busy ? 'Transferring…' : 'Transfer') + '</button></div>'
+      : '<div class="pl-warning" style="margin-top:12px">' + htmlEsc(userById(_tb.fromId).name) + ' has no live or Laying Goods orders for this buyer. ' + (p.shippedCount ? p.shippedCount + ' shipped order(s) stay where they are. ' : '') + '<br><button class="btn sm" style="margin-top:8px" onclick="runTransferBuyer(true)">Only assign the buyer to ' + htmlEsc(userById(_tb.toId).name) + '</button></div>';
+  }
+  $('tb-body').innerHTML =
+    '<div class="tb-grid">'
+    + '<div class="f"><label>Buyer</label><select ' + sel + ' onchange="tbSet(\'buyerId\',this.value)">' + opts(buyers, _tb.buyerId, '— choose buyer —') + '</select></div>'
+    + '<div class="f"><label>From merchant</label><select ' + sel + ' onchange="tbSet(\'fromId\',this.value)">' + opts(merchants, _tb.fromId, '— choose —') + '</select></div>'
+    + '<div class="f"><label>To merchant</label><select ' + sel + ' onchange="tbSet(\'toId\',this.value)">' + opts(merchants.filter(function(m){ return m.id !== _tb.fromId; }), _tb.toId, '— choose —') + '</select></div>'
+    + '</div>'
+    + (_tb.buyerId && _tb.fromId && _tb.toId && !p ? '<div class="loading" style="margin-top:12px"><span class="spin"></span> Checking what will move…</div>' : '')
+    + prev;
+}
+function tbSet(k, v) {
+  _tb[k] = v; _tb.preview = null;
+  if (k === 'buyerId' && v && !_tb.fromId) _tb.fromId = (S.buyerAssignments || {})[v] || '';
+  if (_tb.toId === _tb.fromId) _tb.toId = '';
+  renderTransferBuyer();
+  if (_tb.buyerId && _tb.fromId && _tb.toId) tbPreview();
+}
+async function tbPreview() {
+  var key = _tb.buyerId + _tb.fromId + _tb.toId;
+  var b = (S.buyers||[]).find(function(x){ return x.id === _tb.buyerId; }) || {};
+  var all = await fetchAllRows(function(){ return db.from('orders').select('id,style,po_number,buyer,buyer_id,stage,pre_trash_stage,merchant_id').eq('merchant_id', _tb.fromId); });
+  var mine = all.filter(function(o){ return buyerIdOfOrder(o) === _tb.buyerId; });
+  var moving = mine.filter(function(o){ var st = o.stage || 'live'; return st === 'live' || st === 'laying' || (st === 'trash' && o.pre_trash_stage !== 'shipped'); });
+  var shippedCount = mine.filter(function(o){ return o.stage === 'shipped' || (o.stage === 'trash' && o.pre_trash_stage === 'shipped'); }).length;
+  var styles = Array.from(new Set(moving.map(function(o){ return (o.style||'').toUpperCase(); }).filter(Boolean)));
+  async function cnt(table, extra) {
+    if (!styles.length) return 0;
+    var q = db.from(table).select('id').eq('merchant_id', _tb.fromId).in('style', styles); if (extra) q = extra(q);
+    var r = await q; return (r.data || []).length;
+  }
+  var counts = {
+    yarn: await cnt('yarn_bookings'), acc: await cnt('accessory_bookings'), checklist: await cnt('accessory_checklist_items'),
+    colour: await cnt('pp_colour_approvals'), photos: await cnt('style_images'), attach: await cnt('style_attachments'), sharedApv: 0, devs: 0
+  };
+  if (styles.length && !S.buyerSettingsMissing) {
+    var sa = await db.from('approvals').select('id').eq('shared_merchant_id', _tb.fromId).in('shared_style', styles);
+    counts.sharedApv = sa.error ? 0 : (sa.data || []).length;
+  }
+  var dv = await db.from('developments').select('id,buyer_id,buyer').eq('merchant_id', _tb.fromId);
+  var devs = (dv.data || []).filter(function(d){ return d.buyer_id === _tb.buyerId || (!d.buyer_id && (d.buyer||'').toLowerCase() === (b.name||'').toLowerCase()); });
+  counts.devs = devs.length;
+  if (key !== _tb.buyerId + _tb.fromId + _tb.toId) return; // selection changed meanwhile
+  _tb.preview = { orders: moving, styles: styles, counts: counts, shippedCount: shippedCount, devIds: devs.map(function(d){ return d.id; }) };
+  renderTransferBuyer();
+}
+async function runTransferBuyer(assignOnly) {
+  if (!S.user || S.user.role !== 'admin' || _tb.busy || !_tb.preview) return;
+  var p = _tb.preview, A = _tb.fromId, C = _tb.toId, B = _tb.buyerId;
+  var bname = ((S.buyers||[]).find(function(x){ return x.id === B; }) || {}).name || 'this buyer';
+  var fromN = userById(A).name, toN = userById(C).name;
+  if (!(await appConfirm(assignOnly
+      ? 'Assign ' + bname + ' to ' + toN + ' for new orders?'
+      : 'Move ' + bname + '’s ' + p.orders.length + ' live / Laying Goods order(s) and their records from ' + fromN + ' to ' + toN + '?\n\nShipped orders stay with ' + fromN + '. Nothing is deleted.',
+      { title: 'Transfer buyer', okText: assignOnly ? 'Assign' : 'Transfer' }))) return;
+  _tb.busy = true; renderTransferBuyer();
+  var errs = [];
+  async function step(label, fn) { try { var r = await fn(); if (r && r.error) errs.push(label + ': ' + r.error.message); } catch (e) { errs.push(label + ': ' + (e.message || e)); } }
+  var ids = p.orders.map(function(o){ return o.id; }), styles = p.styles;
+  if (!assignOnly && styles.length) {
+    // style-level records first, orders last — if anything stops halfway, running it again finishes the rest
+    var now = new Date().toISOString();
+    await step('Yarn bookings', function(){ return db.from('yarn_bookings').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
+    await step('Accessory bookings', function(){ return db.from('accessory_bookings').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
+    await step('Accessory checklists', function(){ return db.from('accessory_checklist_items').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
+    await step('Lab Dip / PP', function(){ return db.from('pp_colour_approvals').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
+    if (!S.buyerSettingsMissing && p.counts.sharedApv) await step('Shared Fit / Size Set', function(){ return db.from('approvals').update({ shared_merchant_id: C }).eq('shared_merchant_id', A).in('shared_style', styles); });
+    // photos & attachments: copy (old merchant's shipped orders keep theirs)
+    await step('Photos', async function(){
+      var r = await db.from('style_images').select('*').eq('merchant_id', A).in('style', styles); if (r.error) return r;
+      for (var i = 0; i < (r.data||[]).length; i++) { var x = Object.assign({}, r.data[i]); delete x.id; x.merchant_id = C;
+        var w = await db.from('style_images').upsert(x, { onConflict: 'merchant_id,style' }); if (w.error) return w; }
+    });
+    await step('Attachments', async function(){
+      var r = await db.from('style_attachments').select('*').eq('merchant_id', A).in('style', styles); if (r.error) return r;
+      for (var i = 0; i < (r.data||[]).length; i++) { var x = Object.assign({}, r.data[i]); delete x.id; x.merchant_id = C;
+        var w = await db.from('style_attachments').upsert(x, { onConflict: 'merchant_id,style' }); if (w.error) return w; }
+    });
+    if (ids.length) {
+      await step('TNA requests', function(){ return db.from('tna_requests').update({ merchant_id: C }).in('order_id', ids); });
+      await step('Alerts', function(){ return db.from('shipment_alerts').update({ merchant_id: C }).in('order_id', ids); });
+    }
+    if (p.devIds.length) await step('Developments', function(){ return db.from('developments').update({ merchant_id: C }).in('id', p.devIds); });
+    if (ids.length) await step('Orders', function(){ return db.from('orders').update({ merchant_id: C, updated_at: now, updated_by: S.user.name }).in('id', ids).eq('merchant_id', A); });
+  }
+  await step('Buyer assignment', function(){ return db.from('buyer_assignments').upsert({ buyer_id: B, merchant_id: C }); });
+  if (!errs.length || assignOnly) ids.forEach(function(id){ logActivity(id, 'Transferred', bname + ': ' + fromN + ' → ' + toN); });
+  _tb.busy = false;
+  S.buyerAssignments[B] = C; S.boardCache = {}; S.layingLoaded = false; S.archiveLoaded = false; S.developmentsLoaded = false;
+  await loadDashOrders(); renderRail();
+  if (errs.length) {
+    toast('Transfer partly done — run it again to finish. ' + errs[0], 'err');
+    _tb.preview = null; renderTransferBuyer(); tbPreview();
+  } else {
+    toast(assignOnly ? bname + ' assigned to ' + toN : bname + ': ' + ids.length + ' order(s) moved to ' + toN, 'ok-t');
+    closeModal('ov-transfer-buyer');
+  }
+}
+
+// === BUYER SETTINGS: Style-wise or PO-wise, per buyer ===
+// One row per buyer in buyer_settings decides, for that buyer's orders, where
+// NEW entries are saved: for the whole style (shared by every PO) or for one
+// PO. Nothing already entered is ever rewritten — an order always shows the
+// shared entries plus any entries made for its own PO. A buyer without a saved
+// row keeps today's behaviour: yarn / accessories follow its merchant's old
+// switch, Lab Dip and PP are style-wise, Fit and Size Set are PO-wise.
+var MODE_KINDS = [
+  { k:'yarn',      label:'Yarn / Fabric' },
+  { k:'accessory', label:'Accessories' },
+  { k:'labdip',    label:'Lab Dip' },
+  { k:'fit',       label:'Fit' },
+  { k:'sizeset',   label:'Size Set' },
+  { k:'pp',        label:'PP' }
+];
+var MODE_DEFAULTS = { labdip:'style', pp:'style', fit:'po', sizeset:'po' };
+S.buyerSettings = {}; S.buyerSettingsMissing = false;
+async function loadBuyerSettings() {
+  try {
+    var r = await db.from('buyer_settings').select('*');
+    if (r.error) { S.buyerSettingsMissing = true; return; }
+    S.buyerSettingsMissing = false;
+    var m = {}; (r.data || []).forEach(function(row){ m[row.buyer_id] = row; }); S.buyerSettings = m;
+  } catch (e) { S.buyerSettingsMissing = true; }
+}
+function buyerIdOfOrder(o) {
+  if (!o) return null;
+  if (o.buyer_id) return o.buyer_id;
+  var b = (S.buyers || []).find(function(x){ return (x.name||'').toLowerCase() === (o.buyer||'').toLowerCase(); });
+  return b ? b.id : null;
+}
+function defaultModeFor(buyerId, kind, merchantId) {
+  if (kind === 'yarn' || kind === 'accessory') {
+    var m = userById(merchantId || (S.buyerAssignments || {})[buyerId]);
+    var v = m && m[kind === 'yarn' ? 'yarn_booking_mode' : 'accessory_booking_mode'];
+    return v === 'po' ? 'po' : 'style';
+  }
+  return MODE_DEFAULTS[kind] || 'style';
+}
+function buyerMode(buyerId, kind, merchantId) {
+  var row = buyerId && S.buyerSettings[buyerId];
+  var v = row && row[kind + '_mode'];
+  return (v === 'po' || v === 'style') ? v : defaultModeFor(buyerId, kind, merchantId);
+}
+// The mode that applies to one order.
+function modeFor(o, kind) { return o ? buyerMode(buyerIdOfOrder(o), kind, o.merchant_id) : (MODE_DEFAULTS[kind] || 'style'); }
+function isPoMode(o, kind) { return modeFor(o, kind) === 'po' && !!(o && o.po_number); }
+
+
+// ─── CARRY APPROVAL STATUS ACROSS A STYLE/PO SWITCH ───
+// Switching never deletes or rewrites history. It ADDS one round so the new
+// mode starts from where things were left off:
+//  • PO → Style: per style (and colour), the most advanced PO round becomes the
+//    style's shared round — one PO approved means the whole style is approved.
+//  • Style → PO: the style's latest shared round is copied to each PO, so every
+//    PO starts from the style result.
+// A copy is only added where the target is behind (nothing newer already there).
+// Round numbers continue from the highest already used. Copies are ordinary
+// rounds — undo / re-submit work on them as usual.
+function apvActDate(r) { return [r.sent_to_supplier_on, r.submitted_on, r.approved_on, r.rejected_on].filter(Boolean).sort().slice(-1)[0] || String(r.created_at||'').slice(0,10); }
+function apvRank(r) { return !r ? 0 : r.approved_on ? 4 : r.rejected_on ? 1 : r.submitted_on ? 3 : r.sent_to_supplier_on ? 2 : 0; }
+function apvLatest(list) { return list.slice().sort(function(a,b){ return (a.round||0)-(b.round||0) || apvActDate(a).localeCompare(apvActDate(b)); }).slice(-1)[0] || null; }
+function apvBest(list) { // most advanced; ties → most recent
+  return list.slice().sort(function(a,b){ return apvRank(a)-apvRank(b) || apvActDate(a).localeCompare(apvActDate(b)); }).slice(-1)[0] || null;
+}
+function apvSame(a, b) { return a && b && apvRank(a) === apvRank(b) && apvActDate(a) === apvActDate(b); }
+async function carryApprovalsOnSwitch(buyerId, mid, kind, toMode) {
+  var orders = (await fetchAllRows(function(){ return db.from('orders').select('*').eq('merchant_id', mid).or('stage.eq.live,stage.eq.laying,stage.is.null'); }))
+    .filter(function(o){ return buyerIdOfOrder(o) === buyerId; });
+  var byStyle = {};
+  orders.forEach(function(o){ var st = (o.style||'').toUpperCase(); if (st) (byStyle[st] = byStyle[st] || []).push(o); });
+  var styles = Object.keys(byStyle), added = 0, who = 'Switched to ' + (toMode === 'po' ? 'PO-wise' : 'Style-wise') + ' by ' + S.user.name;
+  if (!styles.length) return 0;
+
+  if (kind === 'labdip' || kind === 'pp') {
+    var all = (await db.from('pp_colour_approvals').select('*').eq('merchant_id', mid).eq('type', kind).in('style', styles)).data || [];
+    function copy(src, po, round) {
+      return { merchant_id: mid, style: src.style, type: kind, colour: src.colour, round: round, po_number: po,
+        sent_to_supplier_on: src.sent_to_supplier_on || null, supplier_name: src.supplier_name || null, tracking_ref: src.tracking_ref || null,
+        submitted_on: src.submitted_on || null, approved_on: src.approved_on || null, rejected_on: src.rejected_on || null, created_by: who };
+    }
+    for (var i = 0; i < styles.length; i++) {
+      var st = styles[i], rows = all.filter(function(r){ return (r.style||'').toUpperCase() === st; });
+      var pos = byStyle[st].map(function(o){ return o.po_number; }).filter(Boolean);
+      var colours = Array.from(new Set(rows.map(function(r){ return r.colour; })));
+      for (var c = 0; c < colours.length; c++) {
+        var cr = rows.filter(function(r){ return r.colour === colours[c]; });
+        var maxRound = cr.reduce(function(m,r){ return Math.max(m, r.round||0); }, 0);
+        var shared = cr.filter(function(r){ return !r.po_number; });
+        if (toMode === 'style') {
+          var perPo = pos.map(function(po){ return apvLatest(cr.filter(function(r){ return r.po_number === po; })); }).filter(Boolean);
+          var best = apvBest(perPo), cur = apvLatest(shared);
+          if (best && !apvSame(best, cur) && !(cur && apvRank(cur) >= apvRank(best) && apvActDate(cur) >= apvActDate(best))) {
+            await db.from('pp_colour_approvals').insert(copy(best, null, ++maxRound)); added++;
+          }
+        } else {
+          var src = apvLatest(shared); if (!src) continue;
+          var nextR = maxRound + 1; // every PO continues at the same next round
+          for (var p = 0; p < pos.length; p++) {
+            var own = apvLatest(cr.filter(function(r){ return r.po_number === pos[p]; }));
+            if (own && (apvSame(own, src) || apvActDate(own) > apvActDate(src))) continue; // PO already has this or newer
+            await db.from('pp_colour_approvals').insert(copy(src, pos[p], nextR)); added++;
+          }
+        }
+      }
+    }
+    if (kind === 'pp') { delete S.boardCache[mid]; await loadBoardOrders(mid); for (var k = 0; k < styles.length; k++) await recomputePPActual(mid, styles[k]); }
+    return added;
+  }
+
+  // Fit / Size Set — approvals table (own rounds per order; shared rounds carry shared_style)
+  var ids = orders.map(function(o){ return o.id; });
+  var own = ((await db.from('approvals').select('*').eq('type', kind).in('order_id', ids)).data || []).filter(function(a){ return !a.shared_style; });
+  var sh = (await db.from('approvals').select('*').eq('type', kind).eq('shared_merchant_id', mid).in('shared_style', styles)).data || [];
+  for (var j = 0; j < styles.length; j++) {
+    var st2 = styles[j], os = byStyle[st2];
+    var sRows = sh.filter(function(a){ return (a.shared_style||'').toUpperCase() === st2; });
+    var maxR = own.filter(function(a){ return os.some(function(o){ return o.id === a.order_id; }); }).concat(sRows).reduce(function(m,a){ return Math.max(m, a.round||0); }, 0);
+    function row(src, orderId, shared, round) {
+      var x = { order_id: orderId, type: kind, round: round, submitted_on: src.submitted_on || null, approved_on: src.approved_on || null, rejected_on: src.rejected_on || null };
+      if (shared) { x.shared_style = st2; x.shared_merchant_id = mid; }
+      return x;
+    }
+    if (toMode === 'style') {
+      var latestPer = os.map(function(o){ return apvLatest(own.filter(function(a){ return a.order_id === o.id; })); }).filter(Boolean);
+      var best2 = apvBest(latestPer), cur2 = apvLatest(sRows);
+      if (best2 && !apvSame(best2, cur2) && !(cur2 && apvRank(cur2) >= apvRank(best2) && apvActDate(cur2) >= apvActDate(best2))) {
+        await db.from('approvals').insert(row(best2, best2.order_id, true, ++maxR)); added++;
+      }
+    } else {
+      var src2 = apvLatest(sRows); if (!src2) continue;
+      var nextR2 = maxR + 1;
+      for (var q = 0; q < os.length; q++) {
+        var mine = apvLatest(own.filter(function(a){ return a.order_id === os[q].id; }));
+        if (mine && (apvSame(mine, src2) || apvActDate(mine) > apvActDate(src2))) continue;
+        await db.from('approvals').insert(row(src2, os[q].id, false, nextR2)); added++;
+      }
+    }
+  }
+  return added;
+}
+
+// ── Admin window ──
+function openBuyerSettings() {
+  if (!S.user || S.user.role !== 'admin') { toast('Only admin can change this', 'err'); return; }
+  openModal('ov-buyer-settings');
+  $('bs-body').innerHTML = '<div class="loading"><span class="spin"></span> Loading…</div>';
+  Promise.all([loadBuyers(), loadBuyerAssignments(), loadBuyerSettings()]).then(renderBuyerSettings);
+}
+function renderBuyerSettings() {
+  var q = (($('bs-search') || {}).value || '').trim().toLowerCase();
+  var buyers = (S.buyers || []).slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); })
+    .filter(function(b){ return !q || (b.name||'').toLowerCase().indexOf(q) !== -1; });
+  var head = '<tr><th>Buyer</th><th>Merchant</th>' + MODE_KINDS.map(function(k){ return '<th class="bs-c">' + k.label + '</th>'; }).join('') + '</tr>';
+  var rows = buyers.map(function(b){
+    var mid = (S.buyerAssignments || {})[b.id], m = userById(mid), saved = !!S.buyerSettings[b.id];
+    return '<tr><td><b>' + htmlEsc(b.name) + '</b>' + (saved ? '' : '<div class="bs-note">not set yet — using today’s behaviour</div>') + '</td>'
+      + '<td class="adm-muted">' + (m ? htmlEsc(m.name) : '—') + '</td>'
+      + MODE_KINDS.map(function(k){
+          var v = buyerMode(b.id, k.k, mid);
+          return '<td class="bs-c"><div class="ybm-toggle-sm">'
+            + '<button class="ybm-opt-sm' + (v==='style'?' active':'') + '" onclick="setBuyerMode(\'' + b.id + '\',\'' + k.k + '\',\'style\')">Style</button>'
+            + '<button class="ybm-opt-sm' + (v==='po'?' active':'') + '" onclick="setBuyerMode(\'' + b.id + '\',\'' + k.k + '\',\'po\')">PO</button></div></td>';
+        }).join('') + '</tr>';
+  }).join('');
+  var warn = S.buyerSettingsMissing
+    ? '<div class="pl-warning" style="margin-bottom:12px">The database update <b>buyer-settings-migration.sql</b> hasn’t been run yet — these switches can’t be saved until it is.</div>' : '';
+  $('bs-body').innerHTML = warn
+    + '<div class="bs-help">Style = one entry shared by every PO of the style. PO = each PO gets its own entries. Switching only changes where <b>new</b> entries are saved — everything already entered stays exactly as it is and keeps showing on its orders.</div>'
+    + '<input id="bs-search" type="search" placeholder="Search buyer…" value="' + htmlEsc(q) + '" oninput="renderBuyerSettings();this.focus();this.setSelectionRange(this.value.length,this.value.length)" style="width:100%;max-width:280px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;margin:10px 0">'
+    + '<div class="scroller"><table class="adm-users bs-table"><thead>' + head + '</thead><tbody>' + (rows || '<tr><td colspan="8" class="adm-muted">No buyers.</td></tr>') + '</tbody></table></div>';
+}
+async function setBuyerMode(buyerId, kind, mode) {
+  if (!S.user || S.user.role !== 'admin') { toast('Only admin can change this', 'err'); return; }
+  if (S.buyerSettingsMissing) { toast('Run buyer-settings-migration.sql first', 'err'); return; }
+  var mid = (S.buyerAssignments || {})[buyerId];
+  // Save the whole row (all six), so a buyer's settings never silently drift
+  // with its merchant's old switch once the admin has touched it.
+  var row = { buyer_id: buyerId, updated_at: new Date().toISOString(), updated_by: S.user.name };
+  MODE_KINDS.forEach(function(k){ row[k.k + '_mode'] = buyerMode(buyerId, k.k, mid); });
+  var prevMode = row[kind + '_mode'];
+  row[kind + '_mode'] = mode;
+  var r = await db.from('buyer_settings').upsert(row, { onConflict: 'buyer_id' });
+  if (r.error) { toast('Not saved: ' + r.error.message, 'err'); return; }
+  S.buyerSettings[buyerId] = row;
+  var carried = 0;
+  if (prevMode !== mode && mid && ['labdip','pp','fit','sizeset'].indexOf(kind) !== -1) {
+    try { carried = await carryApprovalsOnSwitch(buyerId, mid, kind, mode); }
+    catch (e) { console.error('carry approvals on switch:', e); toast('Setting saved, but carrying approvals across failed: ' + (e.message||e), 'err'); }
+  }
+  // PP's TNA date depends on which rounds a PO counts (shared or its own), so a
+  // switch must re-check it straight away instead of waiting for the next approval.
+  if (kind === 'pp' && mid) {
+    try {
+      delete S.boardCache[mid];
+      var ords = (await loadBoardOrders(mid)).filter(function(o){ return buyerIdOfOrder(o) === buyerId; });
+      var sts = Array.from(new Set(ords.map(function(o){ return (o.style||'').toUpperCase(); })));
+      for (var i = 0; i < sts.length; i++) await recomputePPActual(mid, sts[i]);
+    } catch (e) { console.error('PP TNA re-check after switch:', e); }
+  }
+  var b = (S.buyers||[]).find(function(x){ return x.id === buyerId; });
+  var kl = (MODE_KINDS.find(function(k){ return k.k === kind; })||{}).label || kind;
+  toast((b ? b.name : 'Buyer') + ': ' + kl + ' → ' + (mode === 'po' ? 'PO-wise' : 'Style-wise') + (carried ? ' · ' + carried + ' status(es) carried across' : ''), 'ok-t');
+  renderBuyerSettings();
+  S.boardCache = {}; // boards recompute with the new setting on next view
+}
 
 // === BUYER SYSTEM ===
 async function loadBuyers() {
