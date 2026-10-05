@@ -1698,6 +1698,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
 .ylf-row.on label{color:var(--green,#2E7D4F)}
 .ylf-meta{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
 .ylf-meta input[type=date]{font-size:11.5px;padding:2px 4px;width:auto}
+
 </style>
 </head>
 <body>
@@ -1715,7 +1716,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-05:12</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-05:18</p>
   </div>
 </div>
 
@@ -1757,7 +1758,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-05:12</div>
+  <div id="ver-stamp">Version:26-10-05:18</div>
 </div>
 
 
@@ -2020,7 +2021,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
 <div class="ov" id="ov-order-todo" onclick="if(event.target===this)closeOrderChecklist()" style="padding:16px">
   <div class="modal" style="max-width:820px;width:98vw;max-height:92vh;display:flex;flex-direction:column">
     <div class="m-h no-print" style="flex-shrink:0">
-      <div><h3>Outstanding Items</h3><div class="msub" id="todo-sub">What's left to do on this order</div></div>
+      <div><h3>To-Do</h3><div class="msub" id="todo-sub">What's left to do on this order</div></div>
       <div style="display:flex;gap:8px">
         <button class="btn" onclick="closeOrderChecklist()">Cancel</button>
         <button class="btn pri" onclick="printOrderChecklist()" style="display:flex;align-items:center;gap:6px"><span>&#x1F5A8;</span> Print / Save as PDF</button>
@@ -2696,7 +2697,7 @@ const S = {
 
 // Columns needed for dashboard (fast, lightweight)
 const DASH_COLS = [
-  'id','merchant_id','qty','fob','ship_date','prod_packing','buyer','style','shipped','stage','po_number','created_at','confirm_date',
+  'id','merchant_id','qty','fob','ship_date','prod_packing','packing_list_qty','buyer','style','shipped','stage','po_number','created_at','confirm_date',
   'plan_yarn','plan_pp','plan_sew','plan_pack','plan_knit','plan_insp','plan_ship',
   'act_yarn','act_pp','act_sew','act_pack','act_knit','act_insp','act_ship'
 ].join(',');
@@ -2855,6 +2856,7 @@ const initials = n => n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCa
 const titleOf = u => u.title || (u.role === 'management' ? 'Management' : 'Merchandiser');
 
 const ago = dt => {
+  if (!dt || isNaN(new Date(dt).getTime())) return 'never';
   const m = Math.round((Date.now() - new Date(dt).getTime()) / 60000);
   if (m < 1) return 'just now';
   if (m < 60) return m + ' min ago';
@@ -3762,13 +3764,17 @@ async function loadDashOrders() {
   // Scoped the same way as loadArchiveData/loadLayingGoods: JM and Manager are
   // limited to their assigned merchants. Without this they saw company-wide
   // order counts, quantities and FOB value on the dashboard.
+  // Laying Goods orders are loaded too: they're packed but NOT shipped, so their
+  // pieces and value still count on the dashboard until they move to Shipped.
   let q = db.from('orders').select(DASH_COLS)
-    .or('stage.eq.live,stage.is.null').order('ship_date', { ascending: true });
+    .or('stage.eq.live,stage.eq.laying,stage.is.null').order('ship_date', { ascending: true });
   if (S.user.role === 'merchant') q = q.eq('merchant_id', S.user.id);
   else if (S.user.role === 'jm') q = q.in('merchant_id', S.myJMMerchants && S.myJMMerchants.length ? S.myJMMerchants : ['00000000-0000-0000-0000-000000000000']);
   else if (S.user.role === 'manager') { var _mScope = managerScopeIds(); if (_mScope) q = q.in('merchant_id', _mScope); }
   const { data } = await q;
-  S.orders = autolinkBuyerId(data || []);
+  var _all = autolinkBuyerId(data || []);
+  S.orders = _all.filter(function(o){ return o.stage !== 'laying'; });
+  S.dashLaying = _all.filter(function(o){ return o.stage === 'laying'; });
   await loadAlerts();
 }
 
@@ -4302,6 +4308,9 @@ function subscribeRealtime() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'accessory_bookings' }, async () => {
       if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); } // other pages (Inbox, Trash, Admin…) used to be thrown back to the Dashboard
     })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'accessory_checklist_items' }, async () => {
+      if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); }
+    })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'accessory_receipts' }, async () => {
       if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); } // other pages (Inbox, Trash, Admin…) used to be thrown back to the Dashboard
     })
@@ -4455,6 +4464,23 @@ async function openAssignFromList(managerId, managerName) {
 
 
 
+
+// ─── NOT-YET-SHIPPED FIGURES (dashboard + its PDF) ───
+// Packing never reduces these: an order counts in full until it moves to
+// Shipped. Laying Goods orders count at their packing-list quantity.
+function shipQtyOf(o) { return o.stage === 'laying' ? (o.packing_list_qty != null ? o.packing_list_qty : (o.qty || 0)) : (o.qty || 0); }
+function packedOf(o) { return o.stage === 'laying' ? shipQtyOf(o) : (o.prod_packing || 0); }
+function unshippedOrders() { return (S.orders || []).concat(S.dashLaying || []); }
+function unshippedTotals(list) {
+  var t = { orders: list.length, qty: 0, packed: 0, toPack: 0, value: 0 };
+  list.forEach(function(o){
+    var q = shipQtyOf(o);
+    t.qty += q; t.packed += packedOf(o); t.value += q * (o.fob || 0);
+    if (o.stage !== 'laying') t.toPack += Math.max(0, (o.qty || 0) - (o.prod_packing || 0));
+  });
+  return t;
+}
+
 // ─── DASHBOARD ───
 function renderDashboard() {
   $('crumb').textContent = 'Overview';
@@ -4465,8 +4491,10 @@ function renderDashboard() {
   const live = S.orders;
   const late = live.filter(o => missedMiles(o).length);
   const totalQty = live.reduce((s, o) => s + (o.qty || 0), 0);
-  const totalBal = live.reduce((s, o) => s + ((o.qty || 0) - (o.prod_packing || 0)), 0);
-  const totalVal = live.reduce((s, o) => s + ((o.qty || 0) * (o.fob || 0)), 0);
+  const lay = S.dashLaying || [];
+  const unsh = unshippedTotals(unshippedOrders());
+  const totalBal = unsh.qty;     // pieces not yet SHIPPED (live + Laying Goods) — packing doesn't reduce it
+  const totalVal = unsh.value;   // value not yet shipped
   const urgent = live.filter(o => { const d = daysTo(o.ship_date); return d != null && d <= 10; });
   const stale = S.users.filter(u => u.role === 'merchant' && can('view_board', u.id) &&
     u.updated_at && (Date.now() - new Date(u.updated_at).getTime()) > 86400000);
@@ -4485,7 +4513,7 @@ function renderDashboard() {
   const shippedQty = shippedThisYear.reduce((s, o) => s + (o.shipped_qty != null ? o.shipped_qty : (o.qty || 0)), 0);
   const shippedVal = shippedThisYear.reduce((s, o) => s + ((o.shipped_qty != null ? o.shipped_qty : (o.qty || 0)) * (o.fob || 0)), 0);
 
-  $('page-sub').innerHTML = `${live.length} live orders · ${fmt(totalBal)} pcs balance`;
+  $('page-sub').innerHTML = `${live.length} live orders${lay.length ? ' · ' + lay.length + ' in Laying Goods' : ''} · ${fmt(totalBal)} pcs to ship`;
   $('stamp').innerHTML = `<div class="lab">Today</div>
     <div class="val">${today().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>`;
   $('act-row').innerHTML = `<button class="btn" onclick="openDashPdf()">Export PDF</button>`;
@@ -4499,11 +4527,11 @@ function renderDashboard() {
 
   let html = alertHtml + `<div class="stats">
     <div class="stat"><div class="k">Live orders</div><div class="v">${live.length}</div>
-      <div class="n">${fmt(totalQty)} pcs booked</div></div>
+      <div class="n">${fmt(totalQty)} pcs booked${lay.length ? ' · +' + lay.length + ' in Laying Goods' : ''}</div></div>
     <div class="stat"><div class="k">Balance to ship</div><div class="v">${fmt(totalBal)}</div>
-      <div class="n">pcs not yet packed</div></div>
+      <div class="n">pcs not yet shipped · ${fmt(unsh.packed)} packed</div></div>
     <div class="stat"><div class="k">Order value</div><div class="v">${(totalVal/1e6).toFixed(2)}M</div>
-      <div class="n">USD, live orders</div></div>
+      <div class="n">USD, not yet shipped (live + Laying Goods)</div></div>
     <div class="stat ${late.length ? 'alert' : ''}"><div class="k">TNA misses</div>
       <div class="v">${late.length}</div><div class="n">orders behind plan</div></div>
     <div class="stat"><div class="k">Shipped ${thisYear} — qty</div>
@@ -4578,21 +4606,20 @@ function renderDashboard() {
     html += `<div class="card">
       <div class="card-h"><h3>By merchandiser</h3><span class="note">Click a row to open their board</span></div>
       <div class="scroller"><table>
-        <thead><tr><th>Merchandiser</th><th class="num">Orders</th><th class="num">Booked</th>
-          <th class="num">Packed</th><th class="num">Balance</th>
+        <thead><tr><th>Merchandiser</th><th class="num">Orders</th><th class="num">To ship (pcs)</th>
+          <th class="num">Packed</th><th class="num">Still to pack</th>
           <th class="num">Value (USD)</th><th>Next shipment</th><th>Late</th><th>Last update</th></tr></thead>
         <tbody>${merchants.map(m => {
           const os = S.orders.filter(o => o.merchant_id === m.id);
-          const q = os.reduce((s,o)=>s+(o.qty||0),0);
-          const p = os.reduce((s,o)=>s+(o.prod_packing||0),0);
+          const ut = unshippedTotals(unshippedOrders().filter(o => o.merchant_id === m.id));
           const lt = os.filter(o=>missedMiles(o).length).length;
           const near = os.length ? os.sort((a,b)=>daysTo(a.ship_date)-daysTo(b.ship_date))[0] : null;
           const st = m.updated_at && (Date.now()-new Date(m.updated_at).getTime())>86400000;
           return `<tr onclick="setView('${m.id}')" style="cursor:pointer">
             <td class="sty">${m.name}<div class="sub2">${m.team||''}</div></td>
-            <td class="num">${os.length}</td><td class="num">${fmt(q)}</td>
-            <td class="num">${fmt(p)}</td><td class="num">${fmt(q-p)}</td>
-            <td class="num">${money(os.reduce((s,o)=>s+(o.qty||0)*(o.fob||0),0))}</td>
+            <td class="num">${os.length}${ut.orders > os.length ? '<div class="sub2">+' + (ut.orders - os.length) + ' laying</div>' : ''}</td><td class="num">${fmt(ut.qty)}</td>
+            <td class="num">${fmt(ut.packed)}</td><td class="num">${fmt(ut.toPack)}</td>
+            <td class="num">${money(ut.value)}</td>
             <td>${near?short(near.ship_date)+' · '+near.style:'—'}</td>
             <td>${lt?`<span class="chip bad">${lt}</span>`:'<span class="sub2">—</span>'}</td>
             <td>${st?`<span class="chip warn">${ago(m.updated_at)}</span>`:`<span class="sub2">${ago(m.updated_at)}</span>`}</td>
@@ -6437,7 +6464,7 @@ function downloadPDF() {
     + '<th style="text-align:right">Order Qty</th><th style="text-align:right">FOB</th><th style="text-align:right">Value</th>'
     + '<th>Ship Date</th><th style="text-align:right">Days</th>'
     + VSTEPS.map(function(s){return '<th>'+E(s.n)+'</th>';}).join('')
-    + '<th style="text-align:right">Balance</th><th>TNA Status</th><th>Remarks</th></tr></thead>';
+    + '<th style="text-align:right">To pack</th><th>TNA Status</th><th>Remarks</th></tr></thead>';
   var sections = groups.map(function(g){
     var late = g.rows.filter(function(o){ return missedMiles(o).length; }).length;
     return '<section><div class="buyer"><h2>' + E(g.name) + '</h2><span>' + g.rows.length + ' order' + (g.rows.length===1?'':'s')
@@ -6479,7 +6506,7 @@ function downloadPDF() {
     + '<div class="kpi"><div class="k">Orders</div><div class="v">' + orders.length + '</div></div>'
     + '<div class="kpi"><div class="k">Buyers</div><div class="v">' + groups.length + '</div></div>'
     + '<div class="kpi"><div class="k">Total qty</div><div class="v">' + fmt(totQty) + '</div></div>'
-    + '<div class="kpi"><div class="k">Balance</div><div class="v">' + fmt(totBal) + '</div></div>'
+    + '<div class="kpi"><div class="k">Still to pack</div><div class="v">' + fmt(totBal) + '</div></div>'
     + '<div class="kpi"><div class="k">Value</div><div class="v">' + money(totVal) + '</div></div>'
     + '</div>'
     + (orders.length ? sections + grand : '<p style="color:#73706A;padding:30px 0">No live orders.</p>')
@@ -6536,6 +6563,27 @@ function getStyleColours(merchantId, style) {
 // buyer switched from style-wise to PO-wise. The series matching the buyer's
 // current mode is used when it has anything; otherwise the other one, so
 // history recorded under the old mode keeps showing. Nothing is rewritten.
+function approvalHistoryRows(rows, po) {
+  return rows.filter(function(r){ return !r.po_number || (po && r.po_number === po); })
+    .sort(function(a,b){ return (a.round||0)-(b.round||0) || String(a.created_at||'').localeCompare(String(b.created_at||'')); });
+}
+function nextRoundOf(list) { return (list || []).reduce(function(m, r){ return Math.max(m, r.round || 0); }, 0) + 1; }
+// Counts per stage for a list of "latest round per colour" — used by every
+// colour pill (board, Laying Goods, To-Do) so they all agree.
+function colourStageCounts(latests, total) {
+  var c = { total: total, approved: 0, awaiting: 0, sourcing: 0, rejected: 0, submitted: 0, dates: [] };
+  latests.forEach(function(l){
+    if (!l) return;
+    if (l.approved_on) { c.approved++; c.dates.push(l.approved_on); }
+    else if (l.rejected_on) c.rejected++;
+    else if (l.submitted_on) c.awaiting++;
+    else if (l.sent_to_supplier_on) c.sourcing++;
+  });
+  c.submitted = c.approved + c.awaiting;
+  c.completedOn = (total && c.approved === total) ? c.dates.sort().slice(-1)[0] : null;
+  delete c.dates;
+  return c;
+}
 function pickApprovalSeries(rows, po, mode) {
   var shared = rows.filter(function(r){ return !r.po_number; });
   var own = po ? rows.filter(function(r){ return r.po_number === po; }) : [];
@@ -6556,11 +6604,15 @@ async function getColourApprovalData(merchantId, style, type, ord) {
   Object.keys(raw).forEach(function(c){
     var picked = pickApprovalSeries(raw[c], po, mode);
     if (!byColour[c]) { if (!picked.length) return; byColour[c] = { colour: c, rounds: [] }; } // colour removed from orders but has history — keep visible
-    byColour[c].rounds = picked;
+    byColour[c].status_rounds = picked;
+    // History shows every round that applies to this order — the style's
+    // shared rounds AND this PO's own — not just the series the current
+    // Style/PO setting reads, so nothing recorded before a switch disappears.
+    byColour[c].rounds = approvalHistoryRows(raw[c], po);
   });
   return Object.keys(byColour).map(function(c){
-    var entry = byColour[c];
-    var latest = entry.rounds.length ? entry.rounds[entry.rounds.length-1] : null;
+    var entry = byColour[c], sr = entry.status_rounds || [];
+    var latest = sr.length ? sr[sr.length-1] : null;
     var status = 'not_submitted';
     if (latest) {
       if (latest.approved_on) status = 'approved';
@@ -6595,14 +6647,10 @@ async function loadColourApprovalSummaryByOrder(merchantId, orders, type) {
   if (needPerOrder) {
     orders.forEach(function(o){
       var s = (o.style||'').toUpperCase(), colours = getStyleColours(merchantId, s), mode = modeFor(o, type);
-      var approved = 0, submitted = 0, dates = [];
-      colours.forEach(function(c){
+      result[o.id] = colourStageCounts(colours.map(function(c){
         var series = pickApprovalSeries(rows.filter(function(r){ return (r.style||'').toUpperCase() === s && r.colour === c; }), o.po_number || null, mode);
-        var latest = series.length ? series[series.length-1] : null;
-        if (latest && latest.approved_on) { approved++; submitted++; dates.push(latest.approved_on); }
-        else if (latest && latest.submitted_on && !latest.rejected_on) submitted++;
-      });
-      result[o.id] = { total: colours.length, approved: approved, submitted: submitted, completedOn: (colours.length && approved === colours.length) ? dates.sort().slice(-1)[0] : null };
+        return series.length ? series[series.length-1] : null;
+      }), colours.length);
     });
     return result;
   }
@@ -6616,18 +6664,12 @@ async function loadColourApprovalSummaryByOrder(merchantId, orders, type) {
   var summaryByStyle = {};
   styles.forEach(function(s){
     var colours = getStyleColours(merchantId, s);
-    var approved = 0, submitted = 0;
-    var approvalDates = [];
-    colours.forEach(function(c){
-      var roundsForC = ((byStyleColour[s]||{})[c]||[]).slice().sort(function(a,b){ return (a.round||0)-(b.round||0); });
-      var latest = roundsForC.length ? roundsForC[roundsForC.length-1] : null;
-      if (latest && latest.approved_on) { approved++; submitted++; approvalDates.push(latest.approved_on); }
-      else if (latest && latest.submitted_on && !latest.rejected_on) { submitted++; }
-    });
-    // Only meaningful once every colour is in — this is "the day the whole
+    // completedOn is only set once every colour is in — "the day the whole
     // style genuinely finished," the same date the TNA link uses for PP.
-    var completedOn = (colours.length && approved === colours.length) ? approvalDates.sort().slice(-1)[0] : null;
-    summaryByStyle[s] = { total: colours.length, approved: approved, submitted: submitted, completedOn: completedOn };
+    summaryByStyle[s] = colourStageCounts(colours.map(function(c){
+      var roundsForC = ((byStyleColour[s]||{})[c]||[]).slice().sort(function(a,b){ return (a.round||0)-(b.round||0) || String(a.created_at||'').localeCompare(String(b.created_at||'')); });
+      return roundsForC.length ? roundsForC[roundsForC.length-1] : null;
+    }), colours.length);
   });
   orders.forEach(function(o){
     var s = (o.style||'').toUpperCase();
@@ -6722,16 +6764,27 @@ function colourApprovalPill(sum, ordId, merchantId, style, type) {
   var submitted = sum ? sum.submitted : 0;
   var completedOn = sum ? sum.completedOn : null;
   var oc = "event.stopPropagation();openColourApprovalModal('" + ordId + "','" + merchantId + "','" + jsAttrEsc(style) + "','" + type + "')";
-  var cls, label;
+  var awaiting = sum ? (sum.awaiting != null ? sum.awaiting : Math.max(0, submitted - approved)) : 0;
+  var sourcing = sum ? (sum.sourcing || 0) : 0, rejected = sum ? (sum.rejected || 0) : 0;
+  var cls, label, extra = [];
+  // The headline is the furthest stage reached; the small line under it lists
+  // the other colours, so a colour that's submitted / with the supplier /
+  // rejected is never hidden behind "Not submitted".
   if (!total) { cls='not-sent'; label='No colours'; }
   else if (approved === total) {
     cls='approved';
     label = '&#x2713; All approved' + (completedOn ? '<br><span style="font-weight:600;font-size:9.5px;opacity:.9">'+short(completedOn)+'</span>' : '');
   }
-  else if (approved > 0) { cls='submitted'; label=approved+'/'+total+' approved'; }
-  else if (submitted === total) { cls='submitted'; label=submitted+'/'+total+' submitted'; }
-  else if (submitted > 0) { cls='submitted'; label=submitted+'/'+total+' submitted'; }
-  else { cls='not-sent'; label='Not submitted'; }
+  else {
+    if (approved > 0) { cls='submitted'; label=approved+'/'+total+' approved'; if (awaiting) extra.push(awaiting+' submitted'); }
+    else if (awaiting > 0) { cls='submitted'; label=awaiting+'/'+total+' submitted'; }
+    else if (sourcing > 0) { cls='submitted'; label=sourcing+'/'+total+' with supplier'; sourcing = 0; }
+    else if (rejected > 0) { cls='rejected'; label=rejected+'/'+total+' rejected'; rejected = 0; }
+    else { cls='not-sent'; label='Not submitted'; }
+    if (sourcing) extra.push(sourcing+' with supplier');
+    if (rejected) extra.push(rejected+' rejected');
+    if (extra.length) label += '<br><span style="font-weight:600;font-size:9px;opacity:.9">' + extra.join(' \u00b7 ') + '</span>';
+  }
   return '<button class="apv-chip ' + cls + '" onclick="' + oc + '">' + label + '</button>';
 }
 
@@ -6755,6 +6808,14 @@ async function openColourApprovalModal(ordId, merchantId, style, type) {
   await renderPPColourModal();
 }
 
+// After any Lab Dip / PP change: refresh whichever page is showing the pill.
+async function refreshAfterColourChange() {
+  try {
+    if (S.boardCache[_ppcMerchantId]) await reloadSummaries(_ppcMerchantId);
+    if (isMerchantBoardView()) renderBoard(S.view);
+    else if (S.view === 'laying-goods') { await refreshExtraSummaries([_ppcOrdId]); renderLayingGoods(); }
+  } catch (e) { console.error('refresh after colour change:', e); }
+}
 var _ppcRenderToken = 0;
 async function renderPPColourModal() {
   var myToken = ++_ppcRenderToken;
@@ -6894,6 +6955,7 @@ function renderPPColourCard(c) {
     // including a single round, so "approved" always has a way to see when
     // and how it got there, not just colours that were rejected first.
     var roundWord = c.rounds.length === 1 ? '1 round' : c.rounds.length + ' rounds';
+    var mixedScope = c.rounds.some(function(r){ return r.po_number; }) && c.rounds.some(function(r){ return !r.po_number; });
     historyHtml = '<details style="margin-top:5px"><summary style="font-size:10.5px;color:var(--accent);cursor:pointer;font-weight:600">View history (' + roundWord + ')</summary>'
       + c.rounds.slice().reverse().map(function(r){
           var parts = [];
@@ -6902,7 +6964,9 @@ function renderPPColourCard(c) {
           if (r.approved_on) parts.push('Approved ' + short(r.approved_on));
           else if (r.rejected_on) parts.push('Rejected ' + short(r.rejected_on));
           var line = parts.length ? parts.join(' \u2192 ') : 'No activity recorded';
-          return '<div style="font-size:11px;color:var(--muted);padding:3px 0">Round ' + r.round + ': ' + line + '</div>';
+          var tag = mixedScope ? ' <span style="font-size:9px;font-weight:700;padding:0 4px;border-radius:3px;background:var(--accent-soft);color:var(--accent)">' + (r.po_number ? 'PO ' + htmlEsc(r.po_number) : 'All POs') + '</span>' : '';
+          var carried = /^Switched to /.test(r.created_by || '') ? ' <span style="font-size:9.5px;font-style:italic">(carried over: ' + htmlEsc(r.created_by) + ')</span>' : '';
+          return '<div style="font-size:11px;color:var(--muted);padding:3px 0">Round ' + r.round + tag + ': ' + line + carried + '</div>';
         }).join('') + '</details>';
   }
 
@@ -6971,7 +7035,7 @@ async function ppcConfirmSubmit() {
       await db.from('pp_colour_approvals').update({ submitted_on: date }).eq('id', cEntry.latest.id);
       await clearLabDipSupplierAlerts(_ppcMerchantId, _ppcStyle, c);
     } else {
-      var nextRound = cEntry && cEntry.latest ? (cEntry.latest.round||0)+1 : 1;
+      var nextRound = cEntry ? nextRoundOf(cEntry.rounds) : 1;
       var _ins = { merchant_id:_ppcMerchantId, style:_ppcStyle, type:_ppcType, colour:c, round:nextRound, submitted_on:date, created_by:S.user.name };
       if (_ppcPo) _ins.po_number = _ppcPo; // PO-wise buyer: this round belongs to this PO only
       await db.from('pp_colour_approvals').insert(_ins);
@@ -7052,7 +7116,7 @@ async function ppcConfirmSource() {
   for (var i=0;i<selected.length;i++) {
     var c = selected[i];
     var cEntry = _ppcColourData.find(function(x){return x.colour===c;});
-    var nextRound = cEntry && cEntry.latest ? (cEntry.latest.round||0)+1 : 1;
+    var nextRound = cEntry ? nextRoundOf(cEntry.rounds) : 1;
     var _src = {
       merchant_id:_ppcMerchantId, style:_ppcStyle, type:_ppcType, colour:c, round:nextRound,
       sent_to_supplier_on:date, supplier_name: supplier||null, tracking_ref: tracking||null,
@@ -7063,6 +7127,7 @@ async function ppcConfirmSource() {
   }
   toast(selected.length + ' colour(s) sent to supplier', 'ok-t');
   _ppcMode='list';
+  await refreshAfterColourChange();
   await renderPPColourModal();
 }
 
@@ -7076,6 +7141,7 @@ async function ppcUndoSource(colour) {
   await db.from('pp_colour_approvals').delete().eq('id', cEntry.latest.id);
   await clearLabDipSupplierAlerts(_ppcMerchantId, _ppcStyle, colour);
   toast('Reverted', 'ok-t');
+  await refreshAfterColourChange();
   await renderPPColourModal();
 }
 
@@ -7692,6 +7758,7 @@ async function openApvFlow(ordId, type, division) {
     $('apvf-title').textContent = label;
     $('apvf-sub').textContent = (o.style||'') + (o.buyer ? ' — ' + o.buyer : '') + (o.qty ? ' · ' + fmt(o.qty) + ' pcs' : '');
     S_apv.rounds = await loadApvRounds(ordId, type);
+    S_apv.history = await loadApvHistory(ordId, type);
     // Where a NEW round is saved: shared by the style for a style-wise buyer (Fit / Size Set)
     S_apv.shareStyle = SHAREABLE_APV.indexOf(type) !== -1 && modeFor(o, type) === 'style';
     if (SHAREABLE_APV.indexOf(type) !== -1) $('apvf-sub').textContent += S_apv.shareStyle ? ' \u00b7 shared by every PO of this style' : (o.po_number ? ' \u00b7 PO ' + o.po_number + ' only' : '');
@@ -7716,11 +7783,7 @@ async function openApvFlow(ordId, type, division) {
 
 
 function renderApvModal() {
-  var o = null;
-  Object.keys(S.boardCache).forEach(function(mid){
-    if (!o) o = (S.boardCache[mid]||[]).find(function(x){return x.id===S_apv.ordId;});
-  });
-  o = o || {};
+  var o = findOrderAnywhere(S_apv.ordId) || {};
   var apvCfg = APV_TYPE_CONFIG[S_apv.type] || {};
   var planKey = apvCfg.planKey;
   var planDate = planKey ? o[planKey] : (apvCfg.planFieldKey ? getFieldValue(S_apv.ordId, apvCfg.planFieldKey) : null);
@@ -7738,10 +7801,12 @@ function renderApvModal() {
     + '<div style="font-size:14px;font-weight:600;color:'+pc+'">'+planLabel+'</div></div>';
 
   var histHTML = '';
-  if (S_apv.rounds.length) {
+  var _hist = S_apv.history && S_apv.history.length ? S_apv.history : S_apv.rounds;
+  var _mixed = _hist.some(function(r){ return r.shared_style; }) && _hist.some(function(r){ return !r.shared_style; });
+  if (_hist.length) {
     histHTML = '<div style="margin-bottom:14px">'
       + '<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:10px">History</div>'
-      + S_apv.rounds.map(function(r) {
+      + _hist.map(function(r) {
           var isOk=!!r.approved_on, isRj=!!r.rejected_on;
           var dot = isOk?'var(--green)':isRj?'var(--red)':'var(--amber)';
           var badge = isOk
@@ -7751,7 +7816,7 @@ function renderApvModal() {
             : '<span style="background:var(--amber-soft);color:var(--amber);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">Awaiting</span>';
           return '<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #F0EDE4">'
             + '<div style="width:8px;height:8px;border-radius:50%;background:'+dot+';flex-shrink:0;margin-top:5px"></div>'
-            + '<div style="flex:1"><div style="font-weight:600;font-size:12.5px;margin-bottom:4px">Round '+r.round+'</div>'
+            + '<div style="flex:1"><div style="font-weight:600;font-size:12.5px;margin-bottom:4px">Round '+r.round+(_mixed && _hist.some(function(x){ return x !== r && (x.round||0) < (r.round||0) && !!x.shared_style !== !!r.shared_style && (x.submitted_on||'') === (r.submitted_on||'') && (x.approved_on||'') === (r.approved_on||'') && (x.rejected_on||'') === (r.rejected_on||''); }) ? ' <span style="font-size:9.5px;font-weight:400;font-style:italic;color:var(--muted)">carried over on Style/PO switch</span>' : '')+(_mixed?' <span style="font-size:9.5px;font-weight:700;padding:0 5px;border-radius:3px;background:var(--accent-soft);color:var(--accent)">'+(r.shared_style?'All POs':'This PO')+'</span>':'')+'</div>'
             + (r.submitted_on?'<div style="font-size:12px;color:var(--muted);margin-bottom:2px">'+(apvCfg.offerWording?'Offered':'Submitted')+' <strong style="color:var(--ink);font-family:var(--mono)">'+short(r.submitted_on)+'</strong></div>':'')
             + (r.approved_on ?'<div style="font-size:12px;color:var(--green);font-weight:600">Approved <span style="font-family:var(--mono)">'+short(r.approved_on)+'</span></div>':'')
             + (r.rejected_on ?'<div style="font-size:12px;color:var(--red)">Rejected <span style="font-family:var(--mono)">'+short(r.rejected_on)+'</span></div>':'')
@@ -7762,13 +7827,13 @@ function renderApvModal() {
 
   var actionHTML='', footHTML='<button class="btn" onclick="closeModal(\'ov-apv-flow\')">Close</button>';
   var latest=S_apv.rounds.length?S_apv.rounds[S_apv.rounds.length-1]:null;
-  var nextRound=latest?latest.round+1:1;
+  var nextRound=nextRoundOf(_hist);
   var today0=todayStr();
   var canAct=can('edit', S_apv.merchantId);
 
   if (S_apv.step==='submit') {
     var isOffer = !!apvCfg.offerWording;
-    var rLabel = S_apv.rounds.length ? 'Re-'+(isOffer?'offer':'submit')+' — Round '+nextRound : (isOffer?'Offer':'Submit')+' — Round 1';
+    var rLabel = (S_apv.rounds.length ? 'Re-'+(isOffer?'offer':'submit') : (isOffer?'Offer':'Submit'))+' — Round '+nextRound;
     actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
       +'<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">'+rLabel+'</div>'
       +'<div style="font-size:13px;color:var(--muted);margin-bottom:8px">'+(isOffer?'When was it offered to the buyer?':'When did you send it to the buyer?')+'</div>'
@@ -7794,7 +7859,7 @@ function renderApvModal() {
       +'<input class="apv-date-big" style="border-color:var(--red)" type="date" id="apv-result-date" value="'+today0+'"></div>';
     footHTML='<button class="btn" onclick="apvBackToOutcome()">Back</button><button class="btn pri" style="background:var(--red);border-color:var(--red)" onclick="apvDoResult(\'reject\')">Confirm rejected</button>';
   } else if (S_apv.step==='done') {
-    var ar=S_apv.rounds.find(function(r){return r.approved_on;});
+    var ar=S_apv.rounds.filter(function(r){return r.approved_on;}).slice(-1)[0];
     actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px;text-align:center;padding-bottom:6px">'
       +'<div style="width:44px;height:44px;border-radius:50%;background:var(--green-soft);border:2px solid #4ADE80;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:var(--green)">✓</div>'
       +'<div style="font-size:16px;font-weight:600;color:var(--green);margin-bottom:4px">Approved</div>'
@@ -7828,8 +7893,7 @@ async function apvDoSubmit() {
   var dt = document.getElementById('apv-submit-date');
   var date = dt ? dt.value : '';
   if (!date) { toast('Please pick a date', 'err'); return; }
-  var latest = S_apv.rounds.length ? S_apv.rounds[S_apv.rounds.length-1] : null;
-  var nextRound = latest ? latest.round + 1 : 1;
+  var nextRound = nextRoundOf(S_apv.history && S_apv.history.length ? S_apv.history : S_apv.rounds);
   var _apvRow = { order_id: S_apv.ordId, type: S_apv.type, round: nextRound, submitted_on: date };
   if (S_apv.shareStyle) { // style-wise buyer: one round for every PO of the style
     var _ao = findOrderAnywhere(S_apv.ordId) || {};
@@ -7839,8 +7903,7 @@ async function apvDoSubmit() {
   if (error) { toast('Error saving', 'err'); return; }
   toast('Submission recorded', 'ok-t');
   logActivity(S_apv.ordId, 'Approval submitted', (APV_TYPE_CONFIG[S_apv.type]||{}).label + ' — round ' + nextRound + ' submitted');
-  if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); }
-  else if (S.view === 'laying-goods') renderLayingGoods();
+  await refreshAfterApvChange(S_apv.ordId);
   closeModal('ov-apv-flow');
 }
 
@@ -7871,8 +7934,7 @@ async function apvDoResult(outcome) {
   // a planKey/planFieldKey in APV_TYPE_CONFIG (not just PP as before).
   var apvCfgLate = APV_TYPE_CONFIG[S_apv.type] || {};
   if (outcome === 'approve' && (apvCfgLate.planKey || apvCfgLate.planFieldKey)) {
-    var ord = null;
-    Object.keys(S.boardCache).forEach(function(m){ if(!ord) ord=(S.boardCache[m]||[]).find(function(x){return x.id===S_apv.ordId;}); });
+    var ord = findOrderAnywhere(S_apv.ordId);
     if (ord) {
       var planDateLate = apvCfgLate.planKey ? ord[apvCfgLate.planKey] : getFieldValue(S_apv.ordId, apvCfgLate.planFieldKey);
       if (planDateLate && date > planDateLate) {
@@ -7890,8 +7952,7 @@ async function apvDoResult(outcome) {
 
   toast(outcome === 'approve' ? 'Approved!' : 'Rejection recorded', outcome === 'approve' ? 'ok-t' : '');
   logActivity(S_apv.ordId, outcome === 'approve' ? 'Approval accepted' : 'Approval rejected', (APV_TYPE_CONFIG[S_apv.type]||{}).label + ' on ' + date);
-  if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); }
-  else if (S.view === 'laying-goods') renderLayingGoods();
+  await refreshAfterApvChange(S_apv.ordId);
   closeModal('ov-apv-flow');
 }
 
@@ -7919,12 +7980,12 @@ async function apvUndoLatest() {
 
   toast('Undone — back to awaiting a decision', '');
   logActivity(S_apv.ordId, 'Approval undone', (APV_TYPE_CONFIG[S_apv.type]||{}).label + ' — round ' + latest.round + ' reverted to pending');
-  if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); }
-  else if (S.view === 'laying-goods') renderLayingGoods();
+  await refreshAfterApvChange(S_apv.ordId);
 
   // Refresh the modal in place at the outcome step, rather than closing it —
   // the person almost certainly wants to immediately re-decide.
   S_apv.rounds = await loadApvRounds(S_apv.ordId, S_apv.type);
+  S_apv.history = await loadApvHistory(S_apv.ordId, S_apv.type);
   S_apv.step = 'outcome';
   renderApvModal();
 }
@@ -7959,6 +8020,17 @@ function applySharedApprovals(sums, orders, sharedRows) {
     });
   });
 }
+// Every round that applies to this order (its own + the style's shared ones), oldest first.
+async function loadApvHistory(ordId, type) {
+  var o = findOrderAnywhere(ordId) || {};
+  var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
+  var rows = (res.data || []).filter(function(a){ return !a.shared_style; });
+  if (SHAREABLE_APV.indexOf(type) !== -1) {
+    var shared = (await fetchSharedApprovals(o.merchant_id, [(o.style||'').toUpperCase()])).filter(function(a){ return a.type === type; });
+    shared.forEach(function(a){ if (!rows.some(function(x){ return x.id === a.id; })) rows.push(a); });
+  }
+  return rows.sort(function(a,b){ return (a.round||0)-(b.round||0) || String(a.created_at||'').localeCompare(String(b.created_at||'')); });
+}
 async function loadApvRounds(ordId, type) {
   var o = findOrderAnywhere(ordId) || {};
   var res = await db.from('approvals').select('*').eq('order_id', ordId).eq('type', type).order('round');
@@ -7966,6 +8038,43 @@ async function loadApvRounds(ordId, type) {
   if (SHAREABLE_APV.indexOf(type) === -1) return rows;
   var shared = (await fetchSharedApprovals(o.merchant_id, [(o.style||'').toUpperCase()])).filter(function(a){ return a.type === type; });
   return pickSharedSeries(rows.filter(function(a){ return !a.shared_style; }), shared, modeFor(o, type));
+}
+
+
+// ─── APPROVAL SUMMARIES FOR ORDERS NOT ON A LIVE BOARD (Laying Goods) ───
+// Board summaries only cover live orders, so Final Inspection / Spudi chips
+// on Laying Goods had no rounds to read and always said "Not offered", even
+// after a result was recorded. These fill that gap.
+S.extraSummaries = S.extraSummaries || {};
+async function refreshExtraSummaries(orderIds) {
+  var orders = (orderIds || []).map(function(id){ return findOrderAnywhere(id); }).filter(Boolean);
+  if (!orders.length) return;
+  var ids = orders.map(function(o){ return o.id; }), rows = [];
+  for (var i = 0; i < ids.length; i += 150) {
+    var r = await db.from('approvals').select('*').in('order_id', ids.slice(i, i + 150)).order('round');
+    rows = rows.concat(r.data || []);
+  }
+  var byMerchant = {};
+  orders.forEach(function(o){ (byMerchant[o.merchant_id] = byMerchant[o.merchant_id] || []).push(o); });
+  for (var mid in byMerchant) {
+    var mo = byMerchant[mid], sums = {};
+    mo.forEach(function(o){ sums[o.id] = { ap: {} }; });
+    rows.forEach(function(a){ var sm = sums[a.order_id]; if (sm) (sm.ap[a.type] = sm.ap[a.type] || []).push(a); });
+    applySharedApprovals(sums, mo, await fetchSharedApprovals(mid, Array.from(new Set(mo.map(function(o){ return (o.style||'').toUpperCase(); })))));
+    mo.forEach(function(o){ S.extraSummaries[o.id] = sums[o.id]; });
+  }
+}
+function summaryForOrder(o) {
+  if (!o) return { ap: {} };
+  return (S.boardSummaries[o.merchant_id] || {})[o.id] || S.extraSummaries[o.id] || { ap: {} };
+}
+// After any Fit / Size Set / inspection change: refresh the page that's showing it.
+async function refreshAfterApvChange(ordId) {
+  var o = findOrderAnywhere(ordId);
+  if (o && S.boardCache[o.merchant_id]) await reloadSummaries(o.merchant_id);
+  if (isMerchantBoardView()) renderBoard(S.view);
+  else if (S.view === 'laying-goods') { await refreshExtraSummaries([ordId]); renderLayingGoods(); }
+  else if (o) await refreshExtraSummaries([ordId]);
 }
 
 // ─── TNA LOCK + REQUEST ───
@@ -8067,7 +8176,8 @@ async function generateBulkTNAPrint() {
   var ids = Object.keys(_btnaSelected);
   if (!ids.length || !_btnaAudience) return;
   var orders = bulkTNAGetOrders().filter(function(o){ return _btnaSelected[o.id]; });
-  var buffer = _btnaAudience === 'planning' ? (parseInt(document.getElementById('btna-buffer-days').value) || 0) : 0;
+  var buffer = _btnaAudience === 'planning' ? Math.abs(parseInt(document.getElementById('btna-buffer-days').value) || 0) : 0;
+
   var merch = S.users.find(function(u){ return u.id === _btnaUid; });
   var division = merch ? (merch.division||'sweater') : 'sweater';
   var VMILES = getMiles(division);
@@ -8090,7 +8200,7 @@ async function generateBulkTNAPrint() {
       var photoUrl = getStyleImage(o.merchant_id, o.style);
       var attachList = ((S.boardSummaries[o.merchant_id]||{})[o.id]||{}).attach || [];
       var cells = VMILES.map(function(x){
-        var p = o['plan_' + x.k];
+        var p = tnaPlanFor(o, x.k);
         if (buffer && (x.k === 'insp' || x.k === 'ship')) p = shiftDate(p, buffer);
         return '<td style="padding:9px 10px;border-bottom:1px solid #E5E2D9;font-family:Georgia,serif;font-size:12.5px;white-space:nowrap">'+(p?short(p):'\u2014')+'</td>';
       }).join('');
@@ -8155,6 +8265,9 @@ function selectTNAAudience(aud) {
   document.getElementById('tna-buffer-row').style.display = aud === 'planning' ? 'block' : 'none';
   document.getElementById('tna-print-generate-btn').disabled = false;
 }
+// Plan date as printed: Shipment falls back to the order's Ship Date when no
+// separate shipment plan date was saved (it used to print a blank).
+function tnaPlanFor(o, k) { return k === 'ship' ? (o.plan_ship || o.ship_date || null) : (o['plan_' + k] || null); }
 function shiftDate(dateStr, days) {
   if (!dateStr || !days) return dateStr;
   var d = new Date(dateStr + 'T00:00:00');
@@ -8171,7 +8284,7 @@ function generateTNAPrint() {
   var merch = S.users.find(function(u){ return u.id === o.merchant_id; });
   var division = merch ? (merch.division||'sweater') : 'sweater';
   var VMILES = getMiles(division);
-  var buffer = _tnaPrintAudience === 'planning' ? (parseInt(document.getElementById('tna-buffer-days').value) || 0) : 0;
+  var buffer = _tnaPrintAudience === 'planning' ? Math.abs(parseInt(document.getElementById('tna-buffer-days').value) || 0) : 0;
   var countryVal = getFieldValue(ordId, 'country') || '';
   var photoUrl = getStyleImage(o.merchant_id, o.style);
   var attachList = ((S.boardSummaries[o.merchant_id]||{})[o.id]||{}).attach || [];
@@ -8184,7 +8297,7 @@ function generateTNAPrint() {
   }
 
   var rows = VMILES.map(function(x) {
-    var p = o['plan_' + x.k];
+    var p = tnaPlanFor(o, x.k);
     // Only Final Inspection & Shipment get the buffer applied — every other
     // milestone always prints its real, unmodified plan date.
     if (buffer && (x.k === 'insp' || x.k === 'ship')) p = shiftDate(p, buffer);
@@ -8260,6 +8373,7 @@ function checklistLabDipStatus(sum) {
   return s.approved + '/' + s.total + ' colours approved';
 }
 function accessoryItemStatus(it) {
+  if (!it.bookings || !it.bookings.length) return 'Not booked yet';
   return it.hasQty ? (fmt(it.totalReceived) + ' / ' + fmt(it.totalBooked) + ' received') : 'Booked, not yet received';
 }
 
@@ -8275,114 +8389,137 @@ async function openOrderChecklist(ordId) {
   }
   var location = o.stage === 'laying' ? 'laying' : o.stage === 'shipped' ? 'shipped' : 'live';
   var VMILES = getMiles(division);
-  var sum = (S.boardSummaries[o.merchant_id]||{})[ordId] || { ap:{}, pp:{total:0,approved:0}, labdip:{total:0,approved:0}, sew:{total:0,received:0}, pack:{total:0,received:0}, bk:0, rc:0 };
+  var style = (o.style||'').toUpperCase(), po = o.po_number || null;
 
-  $('todo-sub').textContent = o.style + (o.buyer ? ' \u2014 ' + o.buyer : '') + ' \u00b7 What\u2019s left to do';
-  $('todo-body').innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading\u2026</div>';
+  $('todo-sub').textContent = o.style + (o.buyer ? ' — ' + o.buyer : '') + ' · To-Do';
+  $('todo-body').innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading…</div>';
   openModal('ov-order-todo');
 
-  // Section 1 — outstanding TNA milestones. Universal: every order has these
-  // regardless of buyer column settings, so this section is never filtered.
-  var msRows = VMILES.map(function(x){
+  // Everything is read fresh from the database for THIS order. The board's
+  // summary isn't loaded for Laying Goods / Shipped orders and can lag behind
+  // a change made in another window, and accessories used to be read without
+  // the PO — so a PO-wise buyer's sewing / packing items never showed as in.
+  var own = [], shared = [], ldData = [], ppData = [], ysum = { bk: 0, rc: 0 }, ychk = null, sewItems = [], packItems = [];
+  try {
+    var got = await Promise.all([
+      db.from('approvals').select('*').eq('order_id', ordId).order('round'),
+      fetchSharedApprovals(o.merchant_id, [style]),
+      getColourApprovalData(o.merchant_id, style, 'labdip', o),
+      getColourApprovalData(o.merchant_id, style, 'pp', o),
+      loadYarnSummaryByOrder(o.merchant_id, [o]),
+      division !== 'knit' ? fetchYarnChecks(o.merchant_id, [style]) : Promise.resolve(null),
+      getAccessoryItemData(o.merchant_id, style, 'sewing', po),
+      getAccessoryItemData(o.merchant_id, style, 'packing', po)
+    ]);
+    own = (got[0].data || []).filter(function(a){ return !a.shared_style; }); shared = got[1] || [];
+    ldData = got[2] || []; ppData = got[3] || []; ysum = got[4][o.id] || ysum;
+    ychk = got[5] ? yarnChecksForOrder(o, got[5]) : null;
+    sewItems = got[6] || []; packItems = got[7] || [];
+  } catch (e) { console.error('To-Do load:', e); toast('Some To-Do items could not be loaded — check the connection', 'err'); }
+
+  function roundsOf(t) {
+    var ow = own.filter(function(a){ return a.type === t; });
+    if (SHAREABLE_APV.indexOf(t) !== -1) return pickSharedSeries(ow, shared.filter(function(a){ return a.type === t; }), modeFor(o, t));
+    return ow.sort(function(a,b){ return (a.round||0)-(b.round||0); });
+  }
+  // One row: { name, done, status, urgent }
+  function apvItem(name, t) {
+    var r = roundsOf(t), l = r[r.length-1], isOffer = !!(APV_TYPE_CONFIG[t] && APV_TYPE_CONFIG[t].offerWording);
+    if (l && l.approved_on) return { name: name, done: true, status: 'Approved ' + short(l.approved_on) + (l.round > 1 ? ' (round ' + l.round + ')' : '') };
+    if (!l) return { name: name, done: false, status: isOffer ? 'Not yet offered' : 'Not yet submitted' };
+    if (l.rejected_on) return { name: name, done: false, urgent: true, status: 'Round ' + l.round + ' rejected ' + short(l.rejected_on) + ' — resubmit' };
+    if (l.submitted_on) return { name: name, done: false, status: (isOffer ? 'Offered ' : 'Submitted ') + short(l.submitted_on) + ' — awaiting outcome' };
+    return { name: name, done: false, status: 'Round ' + l.round + ' in progress' };
+  }
+  function colourItems(label, data) {
+    if (!data.length) return [{ name: label, done: false, status: 'No colours on the order yet' }];
+    return data.map(function(c){
+      var l = c.latest, st;
+      if (c.status === 'approved') return { name: label + ' — ' + c.colour, done: true, status: 'Approved ' + short(l.approved_on) };
+      if (c.status === 'rejected') st = 'Rejected ' + short(l.rejected_on) + ' — resubmit';
+      else if (c.status === 'awaiting') st = 'Submitted ' + short(l.submitted_on) + ' — awaiting outcome';
+      else if (c.status === 'sourcing') st = 'With supplier since ' + short(l.sent_to_supplier_on);
+      else st = 'Not yet submitted';
+      return { name: label + ' — ' + c.colour, done: false, urgent: c.status === 'rejected', status: st };
+    });
+  }
+  function accItems(cat, items) {
+    return items.map(function(it){
+      var name = cat + ' — ' + it.item;
+      if (it.complete) {
+        var last = it.receipts.map(function(r){ return r.received_on; }).filter(Boolean).sort().slice(-1)[0];
+        return { name: name, done: true, status: 'Inhouse' + (last ? ' ' + short(last) : '') + (it.hasQty ? ' · ' + fmt(it.totalReceived) + ' / ' + fmt(it.totalBooked) : '') };
+      }
+      if (!it.bookings.length) return { name: name, done: false, status: 'Not booked yet' };
+      return { name: name, done: false, status: accessoryItemStatus(it) };
+    });
+  }
+
+  // Milestones — every order has these; pinned first.
+  var msItems = VMILES.map(function(x){
     var p = o['plan_'+x.k], a = o['act_'+x.k];
-    if (a) return null; // already done
+    if (a) return { name: x.n, done: true, status: 'Done ' + short(a) + (p ? (a > p ? ' · ' + Math.round((new Date(a) - new Date(p)) / 86400000) + 'd late' : '') : '') };
     var dl = p ? daysTo(p) : null;
-    return { name: x.n, plan: p, dl: dl };
-  }).filter(Boolean);
-  msRows.sort(function(A,B){
-    if (A.dl==null && B.dl==null) return 0;
-    if (A.dl==null) return 1;
-    if (B.dl==null) return -1;
-    return A.dl - B.dl; // most overdue (most negative) first, then soonest due
+    return { name: x.n, done: false, urgent: dl != null && dl <= 0, dl: dl,
+      status: p ? (dl < 0 ? (-dl) + ' days overdue · ' + short(p) : dl === 0 ? 'Due today' : 'Due in ' + dl + ' days · ' + short(p)) : 'No target date set' };
   });
 
-  // Section 2 — pending approvals, buyer-filtered. PP is deliberately excluded:
-  // its true completion already shows up as the 'pp' TNA milestone above via
-  // recomputePPActual, so repeating it here would just duplicate the same fact
-  // with no deadline attached to it.
-  //
-  // Each of these becomes its own "block" below, positioned by that column's
-  // actual position in the buyer's live table (col_order) — not a fixed order —
-  // so a buyer who has Yarn before Approvals sees Yarn first here too.
-  var apGroupRows = [];
-  if (buyerHasColumn(buyerId, '_approvals', location)) {
-    var ld = checklistLabDipStatus(sum); if (ld) apGroupRows.push({ name:'Lab Dip', status: ld });
-    var ft = checklistApprovalStatus(sum, 'fit'); if (ft) apGroupRows.push({ name:'Fit', status: ft });
-    var ss = checklistApprovalStatus(sum, 'sizeset'); if (ss) apGroupRows.push({ name:'Size Set', status: ss });
-  }
-  var inlineRow = null, pptRow = null, lockRow = null, spudiRow = null;
-  if (location === 'live') {
-    if (buyerHasColumn(buyerId, 'inline_insp', 'live')) inlineRow = checklistApprovalStatus(sum, 'inline');
-    if (buyerHasColumn(buyerId, 'pre_prod_test', 'live')) pptRow = checklistApprovalStatus(sum, 'ppt');
-    if (buyerHasColumn(buyerId, 'lock_sample', 'live')) lockRow = checklistApprovalStatus(sum, 'lock_sample');
-  }
-  if (location === 'laying' && buyerHasColumn(buyerId, 'spudi_status', 'laying')) {
-    spudiRow = checklistApprovalStatus(sum, 'spudi_status');
-  }
-
-  // Section 3 — yarn/fabric, buyer-filtered
-  var yarnRow = null;
-  if (buyerHasColumn(buyerId, '_yarn', location)) {
-    var bk = sum.bk||0, rc = sum.rc||0;
-    if (!bk) yarnRow = 'Not booked yet';
-    else if (rc < bk) yarnRow = fmt(rc) + ' / ' + fmt(bk) + ' received';
-  }
-  var lfRows = [];
-  if (division !== 'knit' && buyerHasColumn(buyerId, '_yarn', location) && sum.ychk && (sum.bk||0) > 0) {
-    YARN_CHECK_ITEMS.forEach(function(it){ if (!sum.ychk[it.k]) lfRows.push(it.n); });
-  }
-
-  // Section 4 — accessories, buyer-filtered, item-level. Only items that have
-  // at least one booking are considered here — an item nobody has booked yet
-  // at all doesn't show up as "missing" (that's the same open question flagged
-  // separately: completeness is measured against items booked so far, not a
-  // fixed expected list).
-  var accRows = [];
-  if (buyerHasColumn(buyerId, '_accessories', location)) {
-    try {
-      var sewItems = await getAccessoryItemData(o.merchant_id, o.style, 'sewing');
-      var packItems = await getAccessoryItemData(o.merchant_id, o.style, 'packing');
-      sewItems.filter(function(it){ return !it.complete; }).forEach(function(it){ accRows.push({ cat:'Sewing', item: it.item, status: accessoryItemStatus(it) }); });
-      packItems.filter(function(it){ return !it.complete; }).forEach(function(it){ accRows.push({ cat:'Packing', item: it.item, status: accessoryItemStatus(it) }); });
-    } catch(e) { console.error('checklist accessory load failed:', e); }
-  }
-
-  var nothingOutstanding = !msRows.length && !apGroupRows.length && !inlineRow && !pptRow && !lockRow && !spudiRow && !yarnRow && !lfRows.length && !accRows.length;
-
-  function sectionHeader(label) {
-    return '<div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;font-weight:700;padding:0 0 8px;border-bottom:2px solid #191817;margin-bottom:2px">' + label + '</div>';
-  }
-  function row(name, status, urgent) {
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #E5E2D9">'
-      + '<div style="font-weight:600;font-size:13px">' + htmlEsc(name) + '</div>'
-      + '<div style="font-size:12.5px;font-family:var(--mono);' + (urgent?'color:#C0392B;font-weight:700':'color:#73706A') + '">' + htmlEsc(status) + '</div></div>';
-  }
-  function colOrderOf(key) {
-    var cfg = getBuyerFieldConfig(buyerId, key);
-    return (cfg && cfg.col_order != null) ? cfg.col_order : 999;
-  }
-
-  // Every section below except Milestones corresponds to one real column on the
-  // buyer's live board, so it's positioned at that column's actual col_order —
-  // a buyer with Yarn before Approvals on their live table sees the same order
-  // here. Milestones has no single matching column (it summarises six separate
-  // TNA plan dates), so it's pinned first as the overall schedule summary.
   var blocks = [];
-  if (apGroupRows.length) blocks.push({ order: colOrderOf('_approvals'), html: sectionHeader('Pending Approvals') + apGroupRows.map(function(r){ return row(r.name, r.status, r.status.indexOf('Rejected')===0); }).join('') });
-  if (yarnRow || lfRows.length) blocks.push({ order: colOrderOf('_yarn'), html: sectionHeader(division==='knit'?'Fabric':'Yarn') + (yarnRow ? row(division==='knit'?'Fabric Inhouse':'Yarn Inhouse', yarnRow, false) : '') + lfRows.map(function(n){ return row(n, 'Not inhouse yet', false); }).join('') });
-  if (accRows.length) blocks.push({ order: colOrderOf('_accessories'), html: sectionHeader('Accessories') + accRows.map(function(r){ return row(r.cat + ' \u2014 ' + r.item, r.status, false); }).join('') });
-  if (inlineRow) blocks.push({ order: colOrderOf('inline_insp'), html: sectionHeader('Inline Inspection') + row('Inline Inspection', inlineRow, false) });
-  if (pptRow) blocks.push({ order: colOrderOf('pre_prod_test'), html: sectionHeader('Pre-Production Test') + row('Pre-Production Test', pptRow, false) });
-  if (lockRow) blocks.push({ order: colOrderOf('lock_sample'), html: sectionHeader('Lock Sample') + row('Lock Sample', lockRow, false) });
-  if (spudiRow) blocks.push({ order: colOrderOf('spudi_status'), html: sectionHeader('Spudi Status') + row('Spudi Status', spudiRow, false) });
+  function colOrderOf(key) { var cfg = getBuyerFieldConfig(buyerId, key); return (cfg && cfg.col_order != null) ? cfg.col_order : 999; }
+  function addBlock(key, title, items) { if (items.length) blocks.push({ order: colOrderOf(key), title: title, items: items }); }
+  if (buyerHasColumn(buyerId, '_approvals', location)) {
+    addBlock('_approvals', 'Approvals', [].concat(colourItems('Lab Dip', ldData), [apvItem('Fit', 'fit'), apvItem('Size Set', 'sizeset')], colourItems('PP', ppData)));
+  }
+  if (location === 'live') {
+    if (buyerHasColumn(buyerId, 'inline_insp', 'live')) addBlock('inline_insp', 'Inline Inspection', [apvItem('Inline Inspection', 'inline')]);
+    if (buyerHasColumn(buyerId, 'pre_prod_test', 'live')) addBlock('pre_prod_test', 'Pre-Production Test', [apvItem('Pre-Production Test', 'ppt')]);
+    if (buyerHasColumn(buyerId, 'lock_sample', 'live')) addBlock('lock_sample', 'Lock Sample', [apvItem('Lock Sample', 'lock_sample')]);
+  }
+  if (location === 'laying') {
+    if (buyerHasColumn(buyerId, 'final_insp', 'laying')) addBlock('final_insp', 'Final Inspection', [apvItem('Final Inspection', 'final_insp')]);
+    if (buyerHasColumn(buyerId, 'spudi_status', 'laying')) addBlock('spudi_status', 'Spudi Status', [apvItem('Spudi Status', 'spudi_status')]);
+  }
+  if (buyerHasColumn(buyerId, '_yarn', location)) {
+    var yName = division === 'knit' ? 'Fabric Inhouse' : 'Knitting Yarn Inhouse', unitY = division === 'knit' ? 'kgs' : 'lbs';
+    var yItems = [ !ysum.bk ? { name: yName, done: false, status: 'Not booked yet' }
+      : ysum.rc >= ysum.bk ? { name: yName, done: true, status: 'Inhouse' + (o.act_yarn ? ' ' + short(o.act_yarn) : '') + ' · ' + fmt(ysum.rc) + ' / ' + fmt(ysum.bk) + ' ' + unitY }
+      : { name: yName, done: false, status: fmt(ysum.rc) + ' / ' + fmt(ysum.bk) + ' ' + unitY + ' received' } ];
+    if (ychk) YARN_CHECK_ITEMS.forEach(function(it){
+      var r = ychk[it.k];
+      yItems.push(r ? { name: it.n, done: true, status: 'Inhouse ' + short(r.received_on) } : { name: it.n, done: false, status: 'Not inhouse yet' });
+    });
+    addBlock('_yarn', division === 'knit' ? 'Fabric' : 'Yarn', yItems);
+  }
+  if (buyerHasColumn(buyerId, '_accessories', location)) {
+    var accAll = accItems('Sewing', sewItems).concat(accItems('Packing', packItems));
+    addBlock('_accessories', 'Accessories', accAll.length ? accAll : [{ name: 'Accessories', done: false, status: 'No items on the checklist or booked yet' }]);
+  }
   blocks.sort(function(a,b){ return a.order - b.order; });
+  blocks.unshift({ title: 'TNA Milestones', items: msItems });
 
-  var msHtml = msRows.length ? sectionHeader('Outstanding Milestones') + msRows.map(function(m){
-    var label = m.plan ? (m.dl<0 ? (-m.dl)+' days overdue' : m.dl===0 ? 'Due today' : 'Due in '+m.dl+' days \u00b7 '+short(m.plan)) : 'No target date set';
-    return row(m.name, label, m.dl!=null && m.dl<=0);
-  }).join('') : '';
+  var allItems = [].concat.apply([], blocks.map(function(b){ return b.items; }));
+  var pendingCount = allItems.filter(function(x){ return !x.done; }).length, doneCount = allItems.length - pendingCount;
+  var nothingOutstanding = pendingCount === 0;
 
-  var bodyHtml = msHtml + blocks.map(function(b){ return b.html; }).join('');
+  function sectionHeader(label, items) {
+    var d = items.filter(function(x){ return x.done; }).length;
+    return '<div style="display:flex;justify-content:space-between;align-items:baseline;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;font-weight:700;padding:14px 0 8px;border-bottom:2px solid #191817;margin-bottom:2px"><span>' + label + '</span><span style="letter-spacing:0;text-transform:none;font-weight:600">' + d + ' of ' + items.length + ' done</span></div>';
+  }
+  function row(it) {
+    var col = it.done ? '#2F7A4F' : it.urgent ? '#C0392B' : '#191817';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #E5E2D9' + (it.done ? ';opacity:.78' : '') + '">'
+      + '<div style="font-weight:' + (it.done ? 500 : 650) + ';font-size:13px;color:' + (it.done ? '#5f5c56' : '#191817') + '">' + (it.done ? '<span style="color:#2F7A4F;font-weight:800;margin-right:6px">✓</span>' : '<span style="display:inline-block;width:9px;height:9px;border:1.5px solid ' + (it.urgent ? '#C0392B' : '#A0A09A') + ';border-radius:2px;margin-right:8px;vertical-align:-1px"></span>') + htmlEsc(it.name) + '</div>'
+      + '<div style="font-size:12px;font-family:var(--mono);text-align:right;color:' + col + (it.urgent ? ';font-weight:700' : '') + '">' + (it.done ? 'Completed · ' : '') + htmlEsc(it.status) + '</div></div>';
+  }
+  var bodyHtml = '<div style="display:flex;gap:10px;margin-bottom:4px">'
+      + '<span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;background:' + (pendingCount ? '#FDF1E7;color:#B35C00' : '#E7F3EC;color:#2F7A4F') + '">' + pendingCount + ' outstanding</span>'
+      + '<span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;background:#E7F3EC;color:#2F7A4F">' + doneCount + ' completed</span></div>'
+    + (nothingOutstanding ? '<div style="text-align:center;padding:18px 0 6px;color:#2F7A4F"><div style="font-size:28px;margin-bottom:6px">&#x2713;</div><div style="font-size:14px;font-weight:700">Nothing outstanding — fully on track</div></div>' : '')
+    + blocks.map(function(b){
+        // outstanding first, then completed, inside each section
+        var items = b.items.filter(function(x){ return !x.done; }).concat(b.items.filter(function(x){ return x.done; }));
+        return sectionHeader(b.title, b.items) + items.map(row).join('');
+      }).join('');
 
   var photoUrl = getStyleImage(o.merchant_id, o.style);
   var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
@@ -8394,7 +8531,7 @@ async function openOrderChecklist(ordId) {
   var html = '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;color:#191817;background:#fff;margin:20px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">'
     + '<div style="padding:24px 28px 20px;border-bottom:2px solid #191817;display:flex;justify-content:space-between;align-items:flex-start">'
     + '<div><div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#73706A;font-weight:700;margin-bottom:6px">Shahana Group</div>'
-    + '<div style="font-family:Georgia,serif;font-size:26px;font-weight:600;letter-spacing:-.4px">Outstanding Items \u2014 ' + htmlEsc(o.style||'') + '</div></div>'
+    + '<div style="font-family:Georgia,serif;font-size:26px;font-weight:600;letter-spacing:-.4px">To-Do \u2014 ' + htmlEsc(o.style||'') + '</div></div>'
     + '<div style="text-align:right"><div style="font-size:12px;color:#73706A">' + genDate + '</div></div>'
     + '</div>'
     + '<div style="display:flex;gap:16px;align-items:flex-start;padding:20px 28px;background:#F7F5EF;border-bottom:1px solid #E5E2D9">'
@@ -8404,9 +8541,7 @@ async function openOrderChecklist(ordId) {
     + infoItem('Quantity', o.qty?fmt(o.qty)+' pcs':'') + infoItem('Ship Date', o.ship_date?short(o.ship_date):'')
     + '</div></div>'
     + '<div style="padding:20px 28px">'
-    + (nothingOutstanding
-        ? '<div style="text-align:center;padding:40px 0;color:#2F7A4F"><div style="font-size:32px;margin-bottom:10px">&#x2713;</div><div style="font-size:15px;font-weight:700">Nothing outstanding \u2014 fully on track</div></div>'
-        : bodyHtml)
+    + bodyHtml
     + '</div>'
     + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + htmlEsc(S.user.name) + '</div>'
     + '</div>';
@@ -9040,13 +9175,25 @@ async function addChecklistItem() {
   if (res.error) { showSaveError('Could not add to checklist.\n\nDatabase said:\n' + res.error.message); return; }
   toast('Added to checklist', 'ok-t');
   _accSelectedItem = item; _accSelectedBookingId = null;
+  await afterChecklistChange();
   await renderAccessoryModalBody();
+}
+// The checklist decides what "all in" means, so adding or removing an item
+// changes the board pill (e.g. 2/2 → 2/3) and can un-complete / complete the
+// Sewing or Packing Item Inhouse TNA date. Refresh both straight away.
+async function afterChecklistChange() {
+  try {
+    if (S.boardCache[_accMerchantId]) await recomputeAccessoryActual(_accMerchantId, _accStyle, _accCategory, null);
+    if (S.boardCache[_accMerchantId]) await reloadSummaries(_accMerchantId);
+    if (isMerchantBoardView()) renderBoard(S.view);
+  } catch (e) { console.error('after checklist change:', e); }
 }
 async function removeChecklistItem(id) {
   if (!can('edit', _accMerchantId)) { toast('You don\u2019t have permission to do this', 'err'); return; }
   if (!(await appConfirm('Remove this item from the checklist? Any bookings already made for it are kept \u2014 only the checklist entry itself goes away.', {title:'Remove from checklist', okText:'Remove', danger:true}))) return;
   await db.from('accessory_checklist_items').delete().eq('id', id);
   toast('Removed from checklist', 'ok-t');
+  await afterChecklistChange();
   await renderAccessoryModalBody();
 }
 
@@ -10732,9 +10879,8 @@ function renderDashPdf() {
   var live = S.orders;
   var late = live.filter(function(o){ return missedMiles(o).length; });
   var totalQty = live.reduce(function(s,o){ return s+(o.qty||0); }, 0);
-  var totalBal = live.reduce(function(s,o){ return s+(o.qty||0)-(o.prod_packing||0); }, 0);
-  var totalVal = live.reduce(function(s,o){ return s+(o.qty||0)*(o.fob||0); }, 0);
-  var totalPkd = live.reduce(function(s,o){ return s+(o.prod_packing||0); }, 0);
+  var unshP = unshippedTotals(unshippedOrders());
+  var totalBal = unshP.qty, totalVal = unshP.value, totalPkd = unshP.packed;
   var thisYear = new Date().getFullYear();
   var shippedY = (S.archive||[]).filter(function(o){ return o.shipped_on && new Date(o.shipped_on).getFullYear()===thisYear; });
   var shpQty = shippedY.reduce(function(s,o){ return s+(o.shipped_qty!=null?o.shipped_qty:(o.qty||0)); }, 0);
@@ -10769,8 +10915,8 @@ function renderDashPdf() {
   // ── KPIs
   + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:20px 28px;background:#F7F5EF;border-bottom:1px solid #E5E2D9">'
   + kpi('Live orders', live.length, fmt(totalQty) + ' pcs booked')
-  + kpi('Balance to ship', fmt(totalBal), Math.round(100*totalPkd/Math.max(totalQty,1)) + '% packed')
-  + kpi('Order value', '$' + (totalVal/1e6).toFixed(2) + 'M', 'USD, live orders')
+  + kpi('Balance to ship', fmt(totalBal), 'pcs not yet shipped \u00b7 ' + fmt(totalPkd) + ' packed')
+  + kpi('Order value', '$' + (totalVal/1e6).toFixed(2) + 'M', 'USD, not yet shipped')
   + kpi('TNA misses', late.length, late.length === 0 ? 'All milestones on plan' : late.length + ' orders behind plan', late.length > 0)
   + '</div>'
   + '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px 28px 20px;background:#F7F5EF;border-bottom:1px solid #E5E2D9">'
@@ -10782,8 +10928,8 @@ function renderDashPdf() {
   if (merchants.length) {
     var mRows = merchants.map(function(m) {
       var os = live.filter(function(o){ return o.merchant_id===m.id; });
-      var q = os.reduce(function(s,o){ return s+(o.qty||0); }, 0);
-      var p = os.reduce(function(s,o){ return s+(o.prod_packing||0); }, 0);
+      var utP = unshippedTotals(unshippedOrders().filter(function(o){ return o.merchant_id===m.id; }));
+      var q = utP.qty, p = utP.packed;
       var lt = os.filter(function(o){ return missedMiles(o).length; }).length;
       var near = os.length ? os.slice().sort(function(a,b){ return (daysTo(a.ship_date)||999)-(daysTo(b.ship_date)||999); })[0] : null;
       var rowBg = lt ? '#FEF2F2' : '';
@@ -10792,8 +10938,8 @@ function renderDashPdf() {
         + '<td style="padding:9px 12px;text-align:right;font-variant-numeric:tabular-nums">' + os.length + '</td>'
         + '<td style="padding:9px 12px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(q) + '</td>'
         + '<td style="padding:9px 12px;text-align:right;font-variant-numeric:tabular-nums">' + fmt(p) + '</td>'
-        + '<td style="padding:9px 12px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums">' + fmt(q-p) + '</td>'
-        + '<td style="padding:9px 12px;text-align:right">' + money(os.reduce(function(s,o){ return s+(o.qty||0)*(o.fob||0); }, 0)) + '</td>'
+        + '<td style="padding:9px 12px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums">' + fmt(utP.toPack) + '</td>'
+        + '<td style="padding:9px 12px;text-align:right">' + money(utP.value) + '</td>'
         + '<td style="padding:9px 12px;' + (lt?'color:#C0392B;font-weight:700':'color:#A0A09A') + '">' + (lt ? lt + ' late' : '\u2014') + '</td>'
         + '<td style="padding:9px 12px;font-size:11px;color:#73706A">' + (near ? short(near.ship_date) + ' \u00b7 ' + near.style : '\u2014') + '</td>'
         + '</tr>';
@@ -10806,9 +10952,9 @@ function renderDashPdf() {
       + '<thead><tr style="background:#F7F5EF">'
       + '<th style="padding:8px 12px;text-align:left;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Merchandiser</th>'
       + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Orders</th>'
-      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Booked</th>'
+      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">To ship (pcs)</th>'
       + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Packed</th>'
-      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Balance</th>'
+      + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Still to pack</th>'
       + '<th style="padding:8px 12px;text-align:right;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Value</th>'
       + '<th style="padding:8px 12px;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">TNA</th>'
       + '<th style="padding:8px 12px;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700;border-bottom:2px solid #E5E2D9">Next ship</th>'
@@ -11531,7 +11677,7 @@ async function loadLayingGoods(){
     rows=await fetchAllRows(function(){ var q=db.from('orders').select('*').eq('stage','laying').order('ship_date',{ascending:true}); return scope?q.in('merchant_id',scope):q; });
   } catch(e) { console.error('loadLayingGoods:', e); toast('Could not load Laying Goods \u2014 check the connection and press Refresh','err'); S.layingGoods=S.layingGoods||[]; return; }
   S.layingGoods=rows.map(function(o){ if (o.style) o.style = o.style.toUpperCase(); return o; });
-  S.layingLoaded=true;
+  S.layingLoaded=true; S._lgApvLoaded=false;
   try { await loadFieldValues(S.layingGoods.map(function(o){ return o.id; })); } catch(e) { console.error('loadFieldValues laying:', e); }
 }
 
@@ -11612,6 +11758,7 @@ async function renderLayingGoods(){
     await loadLayingGoods();
   }
   var goods=S.layingGoods||[];
+  if (!S._lgApvLoaded) { try { await refreshExtraSummaries(goods.map(function(o){ return o.id; })); S._lgApvLoaded = true; } catch (e) { console.error('laying approvals:', e); } }
   await ensureStyleImagesFor(goods);
   if (S.view !== 'laying-goods') return; // navigated away while photos loaded
   var isMerchant=S.user.role==='merchant';
@@ -12538,6 +12685,7 @@ async function setBuyerMode(buyerId, kind, mode) {
       for (var i = 0; i < sts.length; i++) await recomputePPActual(mid, sts[i]);
     } catch (e) { console.error('PP TNA re-check after switch:', e); }
   }
+  if (mid) delete S.boardCache[mid]; // board pills re-read with the new setting next time it's opened
   var b = (S.buyers||[]).find(function(x){ return x.id === buyerId; });
   var kl = (MODE_KINDS.find(function(k){ return k.k === kind; })||{}).label || kind;
   toast((b ? b.name : 'Buyer') + ': ' + kl + ' → ' + (mode === 'po' ? 'PO-wise' : 'Style-wise') + (carried ? ' · ' + carried + ' status(es) carried across' : ''), 'ok-t');
@@ -13317,7 +13465,7 @@ function renderApprovalFieldCell(field, orderId) {
   if (!o) return '<span>&mdash;</span>';
   var apvType = field.approvalType;
   var cfg = APV_TYPE_CONFIG[apvType] || {};
-  var sum = (S.boardSummaries[o.merchant_id]||{})[orderId] || {ap:{}};
+  var sum = summaryForOrder(o);
   var merch = userById(o.merchant_id);
   var division = merch ? (merch.division||'sweater') : 'sweater';
   var canUpd = can('edit', o.merchant_id);
