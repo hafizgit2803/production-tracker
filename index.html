@@ -1678,6 +1678,26 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
   td,th{white-space:normal}
   @page{margin:12mm;size:A4 landscape}
 }
+
+/* Copy for Excel */
+.copy-xl-bar{display:flex;justify-content:flex-end;padding:4px 6px 0}
+.copy-xl-btn{border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:11px;font-weight:600;padding:3px 9px;border-radius:7px;cursor:pointer;font-family:inherit}
+.copy-xl-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+@media print{.copy-xl-bar{display:none!important}}
+
+/* Linking / finishing yarn */
+.ylf{font-size:10px;font-weight:600;color:var(--muted);margin-top:3px;white-space:nowrap;letter-spacing:.01em}
+.ylf.ok{color:var(--green,#2E7D4F)}
+.ylf.warn{color:#B26A00;font-weight:700}
+.ylf-card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:12px;background:var(--panel)}
+.ylf-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+.ylf-h span{text-transform:none;letter-spacing:0;font-weight:500;margin-left:6px}
+.ylf-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 0;border-top:1px dashed var(--line);font-size:13px}
+.ylf-row:first-of-type{border-top:0}
+.ylf-row label{display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600}
+.ylf-row.on label{color:var(--green,#2E7D4F)}
+.ylf-meta{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.ylf-meta input[type=date]{font-size:11.5px;padding:2px 4px;width:auto}
 </style>
 </head>
 <body>
@@ -1695,7 +1715,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-03:14</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-05:12</p>
   </div>
 </div>
 
@@ -1737,7 +1757,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-03:14</div>
+  <div id="ver-stamp">Version:26-10-05:12</div>
 </div>
 
 
@@ -3138,7 +3158,8 @@ function buildMaterialReportRows(input) {
     // parts: each booking once, so report totals can de-duplicate a style-level
     // (no-PO) booking that appears on every PO row of a PO-wise merchant.
     // sharedOnly: this PO row's yarn is entirely a style-level booking.
-    u.yarn = { parts: ybs.map(function(b){ return { id: b.id, qty: Number(b.qty)||0, recd: yrQty[b.id]||0 }; }),
+    var ychk = input.yarnChecks ? yarnChecksForOrder(Object.assign({}, u.orders[0], { po_number: (u.yarnPo && u.po) ? u.po : null }), input.yarnChecks) : null;
+    u.yarn = { checks: ychk, parts: ybs.map(function(b){ return { id: b.id, qty: Number(b.qty)||0, recd: yrQty[b.id]||0 }; }),
       sharedOnly: u.yarnPo && !!u.po && ybs.length > 0 && ybs.every(function(b){ return !b.po_number; }),
       booked: booked, received: recd, balance: Math.max(0, booked - recd),
       pct: booked > 0 ? Math.min(100, Math.round(recd / booked * 100)) : 0, suppliers: suppliers, lastReceipt: last,
@@ -3249,6 +3270,7 @@ function buildMaterialReportHtml(meta, rows) {
             ? '<span class="nobook">Not booked</span>'
             : '<div class="l1"><span class="num">' + n(y.received) + ' / ' + n(y.booked) + ' ' + unit + '</span><span class="pct">' + y.pct + '%</span>' + shr + '</div>'
               + bar(y.pct, y.late ? 'late' : y.state === 'done' ? 'done' : 'prog'))
+        + (y.checks && y.state !== 'none' ? '<div class="lf">' + [['linking','Linking'],['finishing','Finishing']].map(function(it){ var c = y.checks[it[0]]; return '<span class="' + (c ? 'y' : (y.state === 'done' ? 'w' : 'n')) + '">' + it[1] + ' ' + (c ? '✓ ' + d(c.received_on) : '✕') + '</span>'; }).join(' ') + '</div>' : '')
         + '</td>'
         + '<td class="c-sup">' + (supTxt || '<span class="muted">\u2014</span>') + '</td>'
         + '<td class="c-acc">' + accCell(r.acc.sewing) + '</td>'
@@ -3306,6 +3328,7 @@ function buildMaterialReportHtml(meta, rows) {
     + '.bar{flex:1;min-width:18px;height:4px;background:#EFECE3;border-radius:3px;overflow:hidden;display:block}.bar i{display:block;height:100%;border-radius:3px}'
     + '.bar i.done{background:#2F7A4F}.bar i.prog{background:#E0A73A}.bar i.late{background:#C0392B}.bar i.none{background:#D8D2C4}'
     + '.tna{font-size:8px;color:#73706A;font-family:ui-monospace,Consolas,monospace}.tna.late{color:#C0392B}.tna .act{color:#2F7A4F;font-weight:700}'
+    + '.lf{font-size:7.5px;margin-top:3px;white-space:nowrap}.lf span{margin-right:6px}.lf .y{color:#2E7D4F;font-weight:700}.lf .w{color:#B26A00;font-weight:700}.lf .n{color:#8a867d}'
     + '.sup{font-size:8px;color:#8a867d}.shr{font-size:6.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#5f5c56;background:#EFECE3;border-radius:3px;padding:0 3px}'
     + '.nobook{font-weight:800;color:#C0392B;font-size:9.5px}.muted{color:#A09C93}'
     + '.pend{font-size:8.5px;line-height:1.3;word-break:break-word}.pend em{font-style:normal;color:#A0522D;font-size:8px}'
@@ -3350,14 +3373,16 @@ async function openMaterialStatusReport(uid) {
   try {
     var orders = (S.boardCache[uid] || await loadBoardOrders(uid) || []).filter(function(o){ return o.stage === 'live' || !o.stage; });
     var styles = Array.from(new Set(orders.map(function(o){ return String(o.style||'').toUpperCase(); }).filter(Boolean)));
-    var yb = [], yr = [], ab = [], ar = [], cl = [];
+    var yb = [], yr = [], ab = [], ar = [], cl = [], yc = [];
     if (styles.length) {
       var first = await Promise.all([
         db.from('yarn_bookings').select('id,style,qty,po_number,supplier').eq('merchant_id', uid).eq('material_type', 'yarn').in('style', styles),
         db.from('accessory_bookings').select('id,style,category,item,qty,po_number').eq('merchant_id', uid).in('style', styles),
         db.from('accessory_checklist_items').select('style,category,item').eq('merchant_id', uid).in('style', styles),
-        ensureStyleImagesFor(orders)
+        ensureStyleImagesFor(orders),
+        fetchYarnChecks(uid, styles)
       ]);
+      yc = first[4] || [];
       [first[0], first[1]].forEach(function(r){ if (r.error) throw r.error; });
       yb = first[0].data || []; ab = first[1].data || [];
       cl = first[2].error ? [] : (first[2].data || []); // checklist table may not exist yet on older databases — report still works
@@ -3368,9 +3393,10 @@ async function openMaterialStatusReport(uid) {
       second.forEach(function(r){ if (r.error) throw r.error; });
       yr = second[0].data || []; ar = second[1].data || [];
     }
+    var isKnitDiv = (merch.division || 'sweater') === 'knit';
     var rows = buildMaterialReportRows({
       today: todayStr(), orders: orders,
-      yarnBookings: yb, yarnReceipts: yr, accBookings: ab, accReceipts: ar, checklist: cl,
+      yarnBookings: yb, yarnReceipts: yr, accBookings: ab, accReceipts: ar, checklist: cl, yarnChecks: isKnitDiv ? null : yc,
       yarnPoWiseFor: function(o){ return isPoMode(o, 'yarn'); }, accPoWiseFor: function(o){ return isPoMode(o, 'accessory'); }
     });
     var buyerNames = {}; (S.buyers || []).forEach(function(b){ buyerNames[b.id] = b.name; });
@@ -3879,6 +3905,7 @@ async function loadBoardOrders(merchantId) {
     (acc.data || []).forEach(a => {
       if (sums[a.order_id]) sums[a.order_id].acc[a.item_type] = a;
     });
+    await attachYarnChecks(merchantId, data || [], sums);
     if (!S.boardSummaries) S.boardSummaries = {};
     S.boardSummaries[merchantId] = sums;
   }
@@ -3990,6 +4017,7 @@ async function reloadSummaries(merchantId) {
   (acc.data || []).forEach(a => {
     if (sums[a.order_id]) sums[a.order_id].acc[a.item_type] = a;
   });
+  await attachYarnChecks(merchantId, orders, sums);
   if (!S.boardSummaries) S.boardSummaries = {};
   S.boardSummaries[merchantId] = sums;
 }
@@ -4252,6 +4280,9 @@ function subscribeRealtime() {
       // qty, dates) — only the summary counts shown alongside it — so there's no need
       // to wipe the board cache here. Just refresh summaries and re-render in place.
       if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); } // other pages (Inbox, Trash, Admin…) used to be thrown back to the Dashboard
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'yarn_extra_checks' }, async () => {
+      if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); }
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'yarn_receipts' }, async () => {
       if (isMerchantBoardView()) { await reloadSummaries(S.view); renderBoard(S.view); } // other pages (Inbox, Trash, Admin…) used to be thrown back to the Dashboard
@@ -5035,7 +5066,8 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     // in size or shape again.
     var yarnCls = totalBk === 0 ? 'not-sent' : totalRc >= totalBk ? 'approved' : 'submitted';
     var yarnLabel = totalBk === 0 ? 'No booking' : (fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + yarnUnitLabel);
-    const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '" title="' + htmlEsc(yarnLabel) + '">' + yarnLabel + '</button>';
+    const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '" title="' + htmlEsc(yarnLabel) + '">' + yarnLabel + '</button>'
+      + (division === 'knit' ? '' : yarnChecksBoardLine(sum, totalBk, totalRc));
 
     // Days Left is one of the most-watched columns on the board, so it always
     // renders as a solid colour-coded pill (not plain text once healthy) and at
@@ -7148,7 +7180,7 @@ function getStyleCompositions(merchantId, style) {
 
 async function openMaterialModal(ordId, division) {
   const o = (S.boardCache[S.view]||[]).find(function(x){return x.id===ordId;}) || {};
-  _yarnMerchantId = o.merchant_id; _yarnStyle = (o.style||'').toUpperCase();
+  _yarnMerchantId = o.merchant_id; _yarnStyle = (o.style||'').toUpperCase(); _yarnOrder = o;
   _yarnUnit = division === 'knit' ? 'kgs' : 'lbs';
   _yarnMaterialType = 'yarn';
   _yarnEditingId = null;
@@ -7254,9 +7286,11 @@ async function renderMaterialModalBody() {
       + '</div></div>';
   }).join('');
 
-  $('mat-body').innerHTML = tabsHtml + overallHtml + addBtnHtml
+  var lfHtml = (_yarnMaterialType === 'yarn' && _yarnUnit !== 'kgs') ? '<div id="yarn-lf-card"></div>' : '';
+  $('mat-body').innerHTML = tabsHtml + overallHtml + lfHtml + addBtnHtml
     + '<div id="yarn-add-booking-form"></div>'
     + (bookingCards || '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px 0">No ' + materialLabel.toLowerCase() + ' bookings yet for this style.</div>');
+  if (lfHtml) await renderYarnChecksCard();
 }
 
 function yarnBarClass(pct) {
@@ -7590,6 +7624,7 @@ async function recomputeYarnActualFor(merchantId, upper, order) {
 
 // ─── PP APPROVAL MODAL ───
 var _ppOrdId = null, _ppDiv = null;
+var _yarnOrder = null;
 
 
 
@@ -8292,6 +8327,10 @@ async function openOrderChecklist(ordId) {
     if (!bk) yarnRow = 'Not booked yet';
     else if (rc < bk) yarnRow = fmt(rc) + ' / ' + fmt(bk) + ' received';
   }
+  var lfRows = [];
+  if (division !== 'knit' && buyerHasColumn(buyerId, '_yarn', location) && sum.ychk && (sum.bk||0) > 0) {
+    YARN_CHECK_ITEMS.forEach(function(it){ if (!sum.ychk[it.k]) lfRows.push(it.n); });
+  }
 
   // Section 4 — accessories, buyer-filtered, item-level. Only items that have
   // at least one booking are considered here — an item nobody has booked yet
@@ -8308,7 +8347,7 @@ async function openOrderChecklist(ordId) {
     } catch(e) { console.error('checklist accessory load failed:', e); }
   }
 
-  var nothingOutstanding = !msRows.length && !apGroupRows.length && !inlineRow && !pptRow && !lockRow && !spudiRow && !yarnRow && !accRows.length;
+  var nothingOutstanding = !msRows.length && !apGroupRows.length && !inlineRow && !pptRow && !lockRow && !spudiRow && !yarnRow && !lfRows.length && !accRows.length;
 
   function sectionHeader(label) {
     return '<div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;font-weight:700;padding:0 0 8px;border-bottom:2px solid #191817;margin-bottom:2px">' + label + '</div>';
@@ -8330,7 +8369,7 @@ async function openOrderChecklist(ordId) {
   // TNA plan dates), so it's pinned first as the overall schedule summary.
   var blocks = [];
   if (apGroupRows.length) blocks.push({ order: colOrderOf('_approvals'), html: sectionHeader('Pending Approvals') + apGroupRows.map(function(r){ return row(r.name, r.status, r.status.indexOf('Rejected')===0); }).join('') });
-  if (yarnRow) blocks.push({ order: colOrderOf('_yarn'), html: sectionHeader(division==='knit'?'Fabric':'Yarn') + row(division==='knit'?'Fabric Inhouse':'Yarn Inhouse', yarnRow, false) });
+  if (yarnRow || lfRows.length) blocks.push({ order: colOrderOf('_yarn'), html: sectionHeader(division==='knit'?'Fabric':'Yarn') + (yarnRow ? row(division==='knit'?'Fabric Inhouse':'Yarn Inhouse', yarnRow, false) : '') + lfRows.map(function(n){ return row(n, 'Not inhouse yet', false); }).join('') });
   if (accRows.length) blocks.push({ order: colOrderOf('_accessories'), html: sectionHeader('Accessories') + accRows.map(function(r){ return row(r.cat + ' \u2014 ' + r.item, r.status, false); }).join('') });
   if (inlineRow) blocks.push({ order: colOrderOf('inline_insp'), html: sectionHeader('Inline Inspection') + row('Inline Inspection', inlineRow, false) });
   if (pptRow) blocks.push({ order: colOrderOf('pre_prod_test'), html: sectionHeader('Pre-Production Test') + row('Pre-Production Test', pptRow, false) });
@@ -10067,6 +10106,7 @@ function renderAdminPage() {
   + '<div id="admin-own-err" class="adm-err" style="display:none"></div>'
   + '</div>'
 
+  + '<div class="adm-card"><div class="adm-card-head"><div><h3 class="adm-h3">Backup &amp; restore</h3><div class="adm-sub">Download a full copy of the data, or put it back from a backup file</div></div></div><div id="admin-backup-body"></div></div>'
   + '<div id="admin-settings-body"></div>'
 
   // ── Add User ───────────────────────────────────────────────────────────
@@ -10096,6 +10136,7 @@ function renderAdminPage() {
 
   renderAdminList();
   renderAdminSettings();
+  renderBackupCard();
   handleProfileType();
   // Readable passwords load separately (admin only), then the list redraws.
   loadReadablePasswords().then(function(){
@@ -12258,6 +12299,7 @@ async function runTransferBuyer(assignOnly) {
     await step('Yarn bookings', function(){ return db.from('yarn_bookings').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
     await step('Accessory bookings', function(){ return db.from('accessory_bookings').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
     await step('Accessory checklists', function(){ return db.from('accessory_checklist_items').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
+    if (!S.yarnChecksMissing) await step('Linking / finishing yarn', function(){ return db.from('yarn_extra_checks').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
     await step('Lab Dip / PP', function(){ return db.from('pp_colour_approvals').update({ merchant_id: C }).eq('merchant_id', A).in('style', styles); });
     if (!S.buyerSettingsMissing && p.counts.sharedApv) await step('Shared Fit / Size Set', function(){ return db.from('approvals').update({ shared_merchant_id: C }).eq('shared_merchant_id', A).in('shared_style', styles); });
     // photos & attachments: copy (old merchant's shipped orders keep theirs)
@@ -12478,6 +12520,10 @@ async function setBuyerMode(buyerId, kind, mode) {
   if (r.error) { toast('Not saved: ' + r.error.message, 'err'); return; }
   S.buyerSettings[buyerId] = row;
   var carried = 0;
+  if (prevMode !== mode && mid && kind === 'yarn') {
+    try { carried = await carryYarnChecksOnSwitch(buyerId, mid, mode); }
+    catch (e) { console.error('carry yarn checks on switch:', e); }
+  }
   if (prevMode !== mode && mid && ['labdip','pp','fit','sizeset'].indexOf(kind) !== -1) {
     try { carried = await carryApprovalsOnSwitch(buyerId, mid, kind, mode); }
     catch (e) { console.error('carry approvals on switch:', e); toast('Setting saved, but carrying approvals across failed: ' + (e.message||e), 'err'); }
@@ -13954,6 +14000,338 @@ async function renderJMOverview(jmId) {
     + merchantCardsHtml
     + '<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Recent Activity <span style="font-weight:400;text-transform:none;letter-spacing:0">(last 40 edits)</span></div>'
     + activityHtml;
+}
+
+
+
+// ─── LINKING / FINISHING YARN CHECKLIST (sweater only) ───
+// Two ticks in the yarn window: Linking yarn and Finishing yarn inhoused.
+// Record-keeping only — never touches TNA, booked/inhouse totals or the
+// 100% Yarn Inhouse date. Follows the buyer's Yarn Style/PO setting: PO-wise
+// shows that PO's own ticks, style-wise the style's shared ticks. Switching
+// carries ticks across (see carryYarnChecksOnSwitch) and never deletes any.
+var YARN_CHECK_ITEMS = [{ k:'linking', n:'Linking yarn', s:'Link' }, { k:'finishing', n:'Finishing yarn', s:'Fin' }];
+function yarnChecksForOrder(o, rows) {
+  var st = (o.style||'').toUpperCase(), po = isPoMode(o, 'yarn') && o.po_number ? o.po_number : null, out = {};
+  YARN_CHECK_ITEMS.forEach(function(it){
+    out[it.k] = (rows||[]).filter(function(r){ return (r.style||'').toUpperCase() === st && r.item === it.k && (po ? r.po_number === po : !r.po_number); })
+      .sort(function(a,b){ return String(a.received_on||'').localeCompare(String(b.received_on||'')); }).slice(-1)[0] || null;
+  });
+  return out;
+}
+async function fetchYarnChecks(merchantId, styles) {
+  if (!styles.length || S.yarnChecksMissing) return [];
+  var r = await db.from('yarn_extra_checks').select('*').eq('merchant_id', merchantId).in('style', styles);
+  if (r.error) { S.yarnChecksMissing = true; return []; } // table not created yet — everything else keeps working
+  return r.data || [];
+}
+async function attachYarnChecks(merchantId, orders, sums) {
+  try {
+    var rows = await fetchYarnChecks(merchantId, Array.from(new Set(orders.map(function(o){ return (o.style||'').toUpperCase(); }).filter(Boolean))));
+    orders.forEach(function(o){ if (sums[o.id]) sums[o.id].ychk = yarnChecksForOrder(o, rows); });
+  } catch (e) { console.error('yarn checks:', e); }
+}
+function yarnChecksBoardLine(sum, totalBk, totalRc) {
+  var c = sum.ychk; if (!c || totalBk <= 0) return '';
+  var l = !!c.linking, f = !!c.finishing;
+  var cls = (l && f) ? 'ok' : (totalRc >= totalBk ? 'warn' : '');
+  var tip = YARN_CHECK_ITEMS.map(function(it){ var r = c[it.k]; return it.n + ': ' + (r ? 'inhouse ' + short(r.received_on) : 'not inhouse'); }).join(' · ');
+  return '<div class="ylf ' + cls + '" title="' + htmlEsc(tip) + '">' + YARN_CHECK_ITEMS.map(function(it){ return it.s + ' ' + (c[it.k] ? '✓' : '✕'); }).join(' · ') + '</div>';
+}
+async function renderYarnChecksCard() {
+  var el = $('yarn-lf-card'); if (!el) return;
+  if (S.yarnChecksMissing) { el.innerHTML = '<div class="ylf-card"><div class="ylf-h">Linking &amp; finishing yarn</div><div class="adm-muted" style="font-size:12px">Run <b>yarn-extra-checks-migration.sql</b> in Supabase to turn this on.</div></div>'; return; }
+  var o = _yarnOrder || {}, rows = await fetchYarnChecks(_yarnMerchantId, [_yarnStyle]);
+  if (S.yarnChecksMissing) return renderYarnChecksCard();
+  var c = yarnChecksForOrder(o, rows), canEdit = can('edit', _yarnMerchantId);
+  var scope = isPoMode(o, 'yarn') && o.po_number ? 'PO ' + htmlEsc(o.po_number) : 'all POs of this style';
+  el.innerHTML = '<div class="ylf-card"><div class="ylf-h">Linking &amp; finishing yarn <span>record only · ' + scope + '</span></div>'
+    + YARN_CHECK_ITEMS.map(function(it){
+        var r = c[it.k];
+        return '<div class="ylf-row' + (r ? ' on' : '') + '">'
+          + '<label><input type="checkbox"' + (r ? ' checked' : '') + (canEdit ? '' : ' disabled') + ' onchange="toggleYarnCheck(\'' + it.k + '\', this.checked)"> ' + it.n + ' inhoused</label>'
+          + (r ? '<span class="ylf-meta">' + (canEdit ? '<input type="date" value="' + htmlEsc(r.received_on||'') + '" onchange="setYarnCheckDate(\'' + r.id + '\', this.value)">' : short(r.received_on)) + (r.checked_by ? ' · ' + htmlEsc(r.checked_by) : '') + '</span>' : '<span class="ylf-meta muted">not yet</span>')
+          + '</div>';
+      }).join('') + '</div>';
+}
+async function afterYarnCheckChange() {
+  await reloadSummaries(_yarnMerchantId); if (isMerchantBoardView()) renderBoard(S.view);
+  await renderYarnChecksCard();
+}
+async function toggleYarnCheck(item, on) {
+  if (!can('edit', _yarnMerchantId)) { toast('You don’t have permission to do this', 'err'); return renderYarnChecksCard(); }
+  var o = _yarnOrder || {}, po = isPoMode(o, 'yarn') && o.po_number ? o.po_number : null;
+  var r;
+  if (on) {
+    r = await db.from('yarn_extra_checks').insert({ merchant_id: _yarnMerchantId, style: _yarnStyle, po_number: po, item: item, received_on: todayStr(), checked_by: S.user.name });
+  } else {
+    var rows = await fetchYarnChecks(_yarnMerchantId, [_yarnStyle]), cur = yarnChecksForOrder(o, rows)[item];
+    if (!cur) return renderYarnChecksCard();
+    if (!po && !(await appConfirm('Untick ' + (item === 'linking' ? 'Linking' : 'Finishing') + ' yarn for every PO of ' + _yarnStyle + '?', { title:'Untick', okText:'Untick' }))) return renderYarnChecksCard();
+    var q = db.from('yarn_extra_checks').delete().eq('merchant_id', _yarnMerchantId).eq('style', _yarnStyle).eq('item', item);
+    r = await (po ? q.eq('po_number', po) : q.is('po_number', null));
+  }
+  if (r && r.error) { showSaveError('Not saved.\n\n' + r.error.message); }
+  await afterYarnCheckChange();
+}
+async function setYarnCheckDate(id, val) {
+  if (!val || !can('edit', _yarnMerchantId)) return;
+  var r = await db.from('yarn_extra_checks').update({ received_on: val, checked_by: S.user.name }).eq('id', id);
+  if (r.error) showSaveError('Not saved.\n\n' + r.error.message);
+  await afterYarnCheckChange();
+}
+// Style/PO switch: PO → Style — if any PO has it ticked, the style gets it
+// (latest date). Style → PO — every PO without its own tick takes the
+// style's. Only ADDS rows; history stays.
+async function carryYarnChecksOnSwitch(buyerId, mid, toMode) {
+  if (S.yarnChecksMissing) return 0;
+  var orders = (await fetchAllRows(function(){ return db.from('orders').select('id,style,po_number,buyer,buyer_id,stage').eq('merchant_id', mid).or('stage.eq.live,stage.eq.laying,stage.is.null'); }))
+    .filter(function(o){ return buyerIdOfOrder(o) === buyerId; });
+  var styles = Array.from(new Set(orders.map(function(o){ return (o.style||'').toUpperCase(); }).filter(Boolean)));
+  var rows = await fetchYarnChecks(mid, styles), added = 0, who = 'Switched to ' + (toMode === 'po' ? 'PO-wise' : 'Style-wise') + ' by ' + S.user.name;
+  function latest(list){ return list.slice().sort(function(a,b){ return String(a.received_on||'').localeCompare(String(b.received_on||'')); }).slice(-1)[0] || null; }
+  for (var i = 0; i < styles.length; i++) {
+    var st = styles[i], pos = orders.filter(function(o){ return (o.style||'').toUpperCase() === st && o.po_number; }).map(function(o){ return o.po_number; });
+    for (var j = 0; j < YARN_CHECK_ITEMS.length; j++) {
+      var it = YARN_CHECK_ITEMS[j].k, mine = rows.filter(function(r){ return (r.style||'').toUpperCase() === st && r.item === it; });
+      var shared = latest(mine.filter(function(r){ return !r.po_number; }));
+      if (toMode === 'style') {
+        var best = latest(mine.filter(function(r){ return r.po_number && pos.indexOf(r.po_number) !== -1; }));
+        if (best && !shared) { await db.from('yarn_extra_checks').insert({ merchant_id: mid, style: st, po_number: null, item: it, received_on: best.received_on, checked_by: who }); added++; }
+      } else if (shared) {
+        for (var k = 0; k < pos.length; k++) {
+          if (mine.some(function(r){ return r.po_number === pos[k]; })) continue;
+          await db.from('yarn_extra_checks').insert({ merchant_id: mid, style: st, po_number: pos[k], item: it, received_on: shared.received_on, checked_by: who }); added++;
+        }
+      }
+    }
+  }
+  return added;
+}
+
+// ─── COPY ANY TABLE FOR EXCEL ───
+// Adds a "Copy for Excel" button above every table. Copies tab-separated text
+// (Excel puts each value in its own cell) plus a plain HTML table, expanding
+// merged headers, reading what's typed in inputs/dropdowns, and skipping
+// photo and button-only columns.
+function cellText(td) {
+  var c = td.cloneNode(true);
+  c.querySelectorAll('input,select,textarea').forEach(function(inp, i){
+    var src = td.querySelectorAll('input,select,textarea')[i], v = '';
+    if (src.tagName === 'SELECT') v = src.selectedIndex >= 0 && src.value ? src.options[src.selectedIndex].text : '';
+    else if (src.type === 'checkbox') v = src.checked ? 'Yes' : 'No';
+    else v = src.value || '';
+    if (src.type === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(v)) v = short(v);
+    inp.replaceWith(document.createTextNode(' ' + v + ' '));
+  });
+  c.querySelectorAll('img,script,style,.no-copy').forEach(function(x){ x.remove(); });
+  c.querySelectorAll('br,div,p,li').forEach(function(x){ x.parentNode.insertBefore(document.createTextNode(' '), x); x.appendChild(document.createTextNode(' ')); });
+  return (c.textContent || '').replace(/[\u200b\u200c\u200d\ufeff]/g, '').replace(/[\t\r\n]+/g, ' ').replace(/\u00a0/g, ' ').replace(/\s{2,}/g, ' ').trim();
+}
+function tableGrid(table) {
+  var grid = [], rows = Array.prototype.slice.call(table.rows);
+  rows.forEach(function(tr, r){
+    grid[r] = grid[r] || [];
+    var c = 0;
+    Array.prototype.forEach.call(tr.cells, function(cell){
+      while (grid[r][c] !== undefined) c++;
+      var rs = cell.rowSpan || 1, cs = cell.colSpan || 1, txt = cellText(cell);
+      var actions = cell.classList.contains('row-actions-cell') || (!!cell.querySelector('button') && !txt.replace(/[\u2715\u00d7]/g,'').trim() && cell.tagName === 'TD');
+      for (var i = 0; i < rs; i++) for (var j = 0; j < cs; j++) {
+        grid[r+i] = grid[r+i] || [];
+        // merged header: name the group once, then "Group – sub" in the row below
+        grid[r+i][c+j] = { t: (i === 0 && j === 0) ? txt : (i > 0 ? '' : txt), head: cell.tagName === 'TH', skip: actions, img: !!cell.querySelector('img') && !txt };
+      }
+      c += cs;
+    });
+  });
+  var cols = Math.max.apply(null, grid.map(function(r){ return r.length; }).concat([0]));
+  var headRows = table.tHead ? table.tHead.rows.length : 0;
+  // drop columns that are empty, photo-only, or button-only in every body row
+  var keep = [];
+  for (var c2 = 0; c2 < cols; c2++) {
+    var body = grid.slice(headRows).map(function(r){ return r[c2] || { t:'' }; });
+    var useful = body.some(function(x){ return x.t && !x.skip; });
+    var hasHead = grid.slice(0, headRows).some(function(r){ return r[c2] && r[c2].t; });
+    if (useful || (hasHead && body.length === 0)) keep.push(c2);
+  }
+  // flatten multi-row header into one row: "Approvals – Fit"
+  var header = keep.map(function(c3){
+    var parts = []; for (var h = 0; h < headRows; h++) { var x = grid[h][c3]; if (x && x.t && parts.indexOf(x.t) === -1) parts.push(x.t); }
+    return parts.join(' \u2013 ');
+  });
+  var out = headRows ? [header] : [];
+  grid.slice(headRows).forEach(function(r){
+    if (!r.some(function(x){ return x && x.t; })) return;
+    if (r.length === 1 || (r[0] && r.length < cols && r.filter(Boolean).length === 1 && cols > 2)) { out.push([r[0].t]); return; } // section heading rows
+    out.push(keep.map(function(c4){ var x = r[c4]; return x && !x.skip ? x.t : ''; }));
+  });
+  return out;
+}
+async function copyTableForExcel(table, btn) {
+  var rows = tableGrid(table);
+  if (rows.length <= 1) { toast('Nothing to copy in this table', 'err'); return; }
+  var tsv = rows.map(function(r){ return r.join('\t'); }).join('\r\n');
+  var html = '<table border="1">' + rows.map(function(r, i){
+    var tag = i === 0 ? 'th' : 'td';
+    return '<tr>' + r.map(function(v){ return '<' + tag + ' style="mso-number-format:\'\\@\'">' + htmlEsc(v) + '</' + tag + '>'; }).join('') + '</tr>';
+  }).join('') + '</table>';
+  var done = false;
+  try {
+    if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+      await navigator.clipboard.write([new ClipboardItem({ 'text/plain': new Blob([tsv], { type:'text/plain' }), 'text/html': new Blob([html], { type:'text/html' }) })]);
+      done = true;
+    }
+  } catch (e) {}
+  if (!done) { try { await navigator.clipboard.writeText(tsv); done = true; } catch (e) {} }
+  if (!done) {
+    var ta = document.createElement('textarea'); ta.value = tsv; ta.style.cssText = 'position:fixed;left:-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { done = document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+  }
+  if (done) {
+    toast((rows.length - 1) + ' row' + (rows.length === 2 ? '' : 's') + ' copied \u2014 paste into Excel (Ctrl+V)', 'ok-t');
+    if (btn) { var t0 = btn.textContent; btn.textContent = '\u2713 Copied'; setTimeout(function(){ btn.textContent = t0; }, 1500); }
+  } else toast('Copy blocked by the browser \u2014 try again', 'err');
+}
+function addCopyButtons(root) {
+  (root || document).querySelectorAll('table').forEach(function(t){
+    if (t.dataset.copyXl || t.closest('.float-thead') || t.closest('#login-wrap') || t.rows.length < 2) return;
+    if (t.closest('.pdf-wrap') || t.closest('#tnapdf-body') || t.closest('#btnapdf-body') || t.closest('#dpdf-body') || t.closest('#todo-body')) return;
+    t.dataset.copyXl = '1';
+    var host = t.closest('.scroller') || t.closest('.dev-compare-wrap') || t;
+    if (host.previousElementSibling && host.previousElementSibling.classList.contains('copy-xl-bar')) return;
+    var bar = document.createElement('div'); bar.className = 'copy-xl-bar no-print';
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'copy-xl-btn'; b.textContent = '\u29C9 Copy for Excel';
+    b.title = 'Copy this whole table, then paste into Excel';
+    b.onclick = function(e){ e.stopPropagation(); copyTableForExcel(t, b); };
+    bar.appendChild(b); host.parentNode.insertBefore(bar, host);
+  });
+}
+(function(){
+  var pend = false;
+  function sched(){ if (pend) return; pend = true; setTimeout(function(){ pend = false; addCopyButtons(document.getElementById('content')); document.querySelectorAll('.ov.open').forEach(addCopyButtons); }, 60); }
+  var c = document.getElementById('content');
+  if (c) new MutationObserver(sched).observe(c, { childList:true, subtree:true });
+  document.querySelectorAll('.ov').forEach(function(o){ new MutationObserver(sched).observe(o, { childList:true, subtree:true, attributes:true, attributeFilter:['class'] }); });
+})();
+
+
+// ─── BACKUP & RESTORE (Admin) ───
+// Backup: every table, every row, into one .json file (what Restore reads)
+// and, optionally, an Excel copy to look through. Restore never deletes
+// anything: rows in the file are written back by their id — missing rows are
+// re-created, changed rows are put back to how they were in the backup.
+// user_password_view (readable passwords) is left out on purpose so the
+// backup file never holds plain passwords; it refills as people log in.
+var BACKUP_TABLES = [ // parents before children, so a restore can go in this order
+  'users','buyers','app_settings','memo','buyer_settings','buyer_assignments','manager_assignments','jm_assignments',
+  'buyer_field_visibility','buyer_requests','orders','order_field_values','order_activity','style_images','style_attachments',
+  'yarn_bookings','yarn_receipts','yarn_extra_checks','accessory_bookings','accessory_receipts','accessory_checklist_items','accessories',
+  'approvals','pp_colour_approvals','tna_requests','shipment_alerts','alert_dismissals','messages',
+  'developments','development_options','development_samples'
+];
+var _backupBusy = false;
+function backupStamp() { var d = new Date(); function z(n){ return String(n).padStart(2,'0'); } return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'_'+z(d.getHours())+z(d.getMinutes()); }
+function downloadBlob(blob, name) {
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+}
+async function collectBackup(progress) {
+  var data = {}, counts = {}, problems = [];
+  for (var i = 0; i < BACKUP_TABLES.length; i++) {
+    var t = BACKUP_TABLES[i];
+    if (progress) progress('Reading ' + t + ' (' + (i+1) + '/' + BACKUP_TABLES.length + ')…');
+    try {
+      var rows = await fetchAllRows(function(){ return db.from(t).select('*'); });
+      data[t] = rows; counts[t] = rows.length;
+    } catch (e) { problems.push(t + ': ' + (e.message || e)); }
+  }
+  return { meta: { app: 'Shahana Production Tracker', made_at: new Date().toISOString(), made_by: S.user.name, version: (document.getElementById('ver-stamp')||{}).textContent || '', counts: counts, problems: problems }, data: data };
+}
+async function runBackup(withExcel) {
+  if (!S.user || S.user.role !== 'admin') { toast('Only admin can do this', 'err'); return; }
+  if (_backupBusy) return; _backupBusy = true;
+  var st = $('bk-status'); function say(m){ if (st) st.textContent = m; }
+  try {
+    var b = await collectBackup(say);
+    var total = Object.keys(b.meta.counts).reduce(function(s,k){ return s + b.meta.counts[k]; }, 0);
+    var name = 'tracker-backup_' + backupStamp();
+    downloadBlob(new Blob([JSON.stringify(b)], { type: 'application/json' }), name + '.json');
+    if (withExcel) {
+      say('Building Excel copy…');
+      if (typeof XLSX === 'undefined') await new Promise(function(res, rej){ var sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); });
+      var wb = XLSX.utils.book_new();
+      BACKUP_TABLES.forEach(function(t){
+        var rows = (b.data[t] || []).map(function(r){ var o = {}; Object.keys(r).forEach(function(k){ var v = r[k]; o[k] = (v !== null && typeof v === 'object') ? JSON.stringify(v) : v; }); return o; });
+        XLSX.utils.book_append_sheet(wb, rows.length ? XLSX.utils.json_to_sheet(rows) : XLSX.utils.aoa_to_sheet([['(empty)']]), t.slice(0, 31));
+      });
+      XLSX.writeFile(wb, name + '.xlsx');
+    }
+    try { await db.from('app_settings').upsert({ key: 'last_backup_at', value: b.meta.made_at, updated_at: b.meta.made_at, updated_by: S.user.name }); S.settings.last_backup_at = b.meta.made_at; } catch (e) {}
+    say('');
+    if (b.meta.problems.length) showSaveError('Backup downloaded (' + total + ' rows), but some tables could not be read:\n\n' + b.meta.problems.join('\n') + '\n\nIf a table doesn’t exist yet in your database, this is expected.');
+    else toast('Backup downloaded — ' + total + ' rows from ' + Object.keys(b.meta.counts).length + ' tables', 'ok-t');
+    renderBackupCard();
+  } catch (e) { say(''); showSaveError('Backup failed.\n\n' + (e.message || e)); }
+  finally { _backupBusy = false; }
+}
+var _restoreFile = null;
+function onRestoreFile(input) {
+  _restoreFile = null; var f = input.files && input.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    try {
+      var b = JSON.parse(r.result);
+      if (!b || !b.data || !b.meta) throw new Error('This isn’t a tracker backup file.');
+      _restoreFile = b; renderBackupCard();
+    } catch (e) { showSaveError('Could not read that file.\n\n' + (e.message || e)); }
+  };
+  r.readAsText(f);
+}
+async function runRestore() {
+  if (!S.user || S.user.role !== 'admin') { toast('Only admin can do this', 'err'); return; }
+  var b = _restoreFile; if (!b || _backupBusy) return;
+  var tables = BACKUP_TABLES.filter(function(t){ return (b.data[t] || []).length; });
+  var total = tables.reduce(function(s,t){ return s + b.data[t].length; }, 0);
+  var when = new Date(b.meta.made_at).toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  if (!(await appConfirm('Restore ' + total + ' rows from the backup made ' + when + '?\n\nNothing is deleted. Rows missing now are re-created, and rows that exist are put back to how they were in the backup — any change made AFTER ' + when + ' to those rows will be overwritten.\n\nTip: download a fresh backup first.', { title:'Restore backup', okText:'Continue', danger:true }))) return;
+  if (!(await appConfirm('Last check before writing to the database.', { title:'Restore backup', okText:'Restore now', danger:true, typeToConfirm:'RESTORE' }))) return;
+  _backupBusy = true; var st = $('bk-status'), fails = [], done = 0;
+  for (var i = 0; i < tables.length; i++) {
+    var t = tables[i], rows = b.data[t];
+    for (var k = 0; k < rows.length; k += 500) {
+      if (st) st.textContent = 'Restoring ' + t + ' (' + Math.min(k + 500, rows.length) + '/' + rows.length + ')…';
+      try { var res = await db.from(t).upsert(rows.slice(k, k + 500)); if (res.error) { fails.push(t + ': ' + res.error.message); break; } done += Math.min(500, rows.length - k); }
+      catch (e) { fails.push(t + ': ' + (e.message || e)); break; }
+    }
+  }
+  _backupBusy = false; if (st) st.textContent = '';
+  S.boardCache = {}; S.archiveLoaded = false; S.layingLoaded = false; S.trashLoaded = false; S.developmentsLoaded = false;
+  if (fails.length) showSaveError('Restored ' + done + ' of ' + total + ' rows. These tables had problems:\n\n' + fails.join('\n'));
+  else toast('Restore complete — ' + done + ' rows. Reloading…', 'ok-t');
+  if (!fails.length) setTimeout(function(){ location.reload(); }, 1500);
+}
+function renderBackupCard() {
+  var el = $('admin-backup-body'); if (!el) return;
+  var last = S.settings && S.settings.last_backup_at, days = last ? Math.floor((Date.now() - new Date(last).getTime()) / 86400000) : null;
+  var lastTxt = !last ? '<b style="color:var(--red)">Never</b>' : (days === 0 ? 'Today' : days + ' day' + (days === 1 ? '' : 's') + ' ago') + ' <span class="adm-muted">(' + new Date(last).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) + ')</span>';
+  var warn = (!last || days >= 7) ? '<div class="pl-warning" style="margin:10px 0 0">No backup in the last 7 days — download one now and keep a copy outside this computer (e.g. Google Drive).</div>' : '';
+  var rf = _restoreFile, prev = '';
+  if (rf) {
+    var tot = Object.keys(rf.data).reduce(function(s,t){ return s + (rf.data[t]||[]).length; }, 0);
+    prev = '<div class="tb-sum" style="margin-top:10px"><div class="tb-sum-h">Backup from ' + htmlEsc(new Date(rf.meta.made_at).toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })) + ' by ' + htmlEsc(rf.meta.made_by||'') + '</div>'
+      + '<div style="font-size:12.5px">' + tot + ' rows · orders ' + ((rf.data.orders||[]).length) + ' · users ' + ((rf.data.users||[]).length) + ' · buyers ' + ((rf.data.buyers||[]).length) + '</div>'
+      + '<div style="margin-top:10px"><button class="btn danger" onclick="runRestore()">Restore this backup…</button></div></div>';
+  }
+  el.innerHTML = '<div style="font-size:13px">Last backup: ' + lastTxt + '</div>' + warn
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">'
+    + '<button class="btn pri" onclick="runBackup(false)">&#x2B07; Download backup</button>'
+    + '<button class="btn" onclick="runBackup(true)">&#x2B07; Backup + Excel copy</button>'
+    + '<label class="btn" style="cursor:pointer">&#x2B06; Restore from backup…<input type="file" accept=".json,application/json" style="display:none" onchange="onRestoreFile(this)"></label>'
+    + '</div><div id="bk-status" class="adm-muted" style="margin-top:8px;min-height:16px"></div>' + prev
+    + '<div class="adm-muted" style="margin-top:8px;font-size:11.5px">The backup is one .json file with every table. Keep it safe — it contains all order and buyer data. Product photos are stored separately and are not inside the file.</div>';
 }
 
 // ─── START ───
