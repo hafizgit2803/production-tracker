@@ -752,7 +752,8 @@ table.dyn-board th.days-left-hdr{background:#F1EDE3;color:var(--ink);font-weight
 .alert-card.short,.alert-card.both{border-left-color:var(--red,#C0392B)}
 .alert-card.late,.alert-card.pp_late{border-left-color:var(--amber,#C05621)}
 .alert-icon{font-size:20px;line-height:1;flex-shrink:0;width:26px;text-align:center}
-.alert-body{flex:1;min-width:0}
+.alert-body{flex:1 1 220px;min-width:0}
+.alert-card{flex-wrap:wrap}
 .alert-title{font-weight:700;font-size:13px;color:var(--ink)}
 .alert-detail{font-size:12.5px;color:var(--muted);margin-top:2px}
 .alert-detail strong{color:var(--ink)}
@@ -1699,6 +1700,8 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
 .ylf-meta{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
 .ylf-meta input[type=date]{font-size:11.5px;padding:2px 4px;width:auto}
 
+
+.alert-card.due-soon{border-left:3px solid var(--amber,#B7791F)}
 </style>
 </head>
 <body>
@@ -1716,7 +1719,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-05:18</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-06:17</p>
   </div>
 </div>
 
@@ -1758,7 +1761,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-05:18</div>
+  <div id="ver-stamp">Version:26-10-06:17</div>
 </div>
 
 
@@ -3776,6 +3779,10 @@ async function loadDashOrders() {
   S.orders = _all.filter(function(o){ return o.stage !== 'laying'; });
   S.dashLaying = _all.filter(function(o){ return o.stage === 'laying'; });
   await loadAlerts();
+  if (['merchant','jm'].includes(S.user.role)) {
+    var _mids = Array.from(new Set(S.orders.map(function(o){ return o.merchant_id; })));
+    _mids.forEach(function(mid){ checkTNADueSoonAlerts(mid, S.orders.filter(function(o){ return o.merchant_id === mid; })); });
+  }
 }
 
 
@@ -3790,13 +3797,15 @@ async function loadAlerts() {
     // consistency warnings — not shipment late/short alerts, which stay senior-only.
     var myIds = S.user.role === 'merchant' ? [S.user.id] : (S.myJMMerchants || []);
     if (!myIds.length) { S.alerts = []; return; }
-    q = q.in('alert_type', ['labdip_supplier_late', 'tna_after_ship']).in('merchant_id', myIds);
+    q = q.in('alert_type', ['labdip_supplier_late', 'tna_after_ship', 'tna_due_soon']).in('merchant_id', myIds);
   } else if (S.user.role === 'manager') {
     // Managers get alerts for the same merchants their dashboard shows —
     // they used to see every merchant's shipment alerts.
     var _ms = managerScopeIds(); if (_ms) q = q.in('merchant_id', _ms);
   }
   const { data: ad } = await q;
+  // Upcoming-TNA reminders are for the merchant and JM only.
+  if (isSenior && ad) for (var _i = ad.length - 1; _i >= 0; _i--) if (ad[_i].alert_type === 'tna_due_soon') ad.splice(_i, 1);
   // Per-user layer: an alert dismissed by one senior stays live for every
   // other senior until they each dismiss it themselves — see dismissAlert().
   var myDismissedIds = [];
@@ -3819,7 +3828,8 @@ var TNA_SHIP_CHECK_FIELDS = [
   {plan:'plan_pack', act:'act_pack', label:'Packing Item Inhouse'},
   {plan:'plan_insp', act:'act_insp', label:'Final Inspection'}
 ];
-async function checkTNAAfterShipAlerts(merchantId, orders) {
+function checkTNAAfterShipAlerts(merchantId, orders) { return serializedAlertCheck('tna_after_ship', merchantId, orders, _checkTNAAfterShipAlerts); }
+async function _checkTNAAfterShipAlerts(merchantId, orders) {
   try {
     var live = (orders||[]).filter(function(o){ return (o.stage === 'live' || !o.stage) && o.ship_date; });
     var problems = [];
@@ -3864,6 +3874,96 @@ async function checkTNAAfterShipAlerts(merchantId, orders) {
   } catch (e) { /* best-effort — never block board load */ }
 }
 
+
+// Alert checks run on every board redraw, and one edit triggers two redraws
+// (the save + its live-update echo). Run at most one check of each kind per
+// merchant at a time; a call that arrives meanwhile triggers ONE re-run with
+// the latest orders once the current one finishes — never two in parallel,
+// which is how duplicate alerts used to get inserted.
+var _alertCheckState = {};
+function serializedAlertCheck(kind, merchantId, orders, fn) {
+  var key = kind + '|' + merchantId, st = _alertCheckState[key] || (_alertCheckState[key] = { running: false, pending: null });
+  if (st.running) { st.pending = orders; return Promise.resolve(); }
+  st.running = true;
+  return Promise.resolve().then(function(){ return fn(merchantId, orders); }).catch(function(e){ console.error(kind + ' check:', e); })
+    .then(function(){
+      st.running = false;
+      if (st.pending) { var next = st.pending; st.pending = null; return serializedAlertCheck(kind, merchantId, next, fn); }
+    });
+}
+
+// ─── UPCOMING TNA REMINDERS (merchant + JM only) ───
+// A reminder 3 days before any TNA date that has no actual date yet, and a
+// second one on the due day. One reminder per order lists every milestone
+// falling due, so a busy week doesn't flood the inbox. It clears itself once
+// the actual dates are entered or the plan date moves later; a date that has
+// passed is a TNA miss and shows on the board as before. Senior roles never
+// see these (see loadAlerts). Created when the merchant's orders are opened,
+// like the Lab Dip reminders — the app has no background server.
+function tnaDueItems(o, division) {
+  var out = [];
+  getMiles(division).forEach(function(m){
+    var p = m.k === 'ship' ? (o.plan_ship || o.ship_date) : o['plan_' + m.k];
+    if (!p || o['act_' + m.k]) return;
+    var d = daysTo(p);
+    if (d != null && d >= 0 && d <= 3) out.push({ k: m.k, n: m.n, d: d, p: p });
+  });
+  return out.sort(function(a,b){ return a.d - b.d; });
+}
+function checkTNADueSoonAlerts(merchantId, orders) { return serializedAlertCheck('tna_due_soon', merchantId, orders, _checkTNADueSoonAlerts); }
+async function _checkTNADueSoonAlerts(merchantId, orders) {
+  try {
+    var division = divisionOf(merchantId);
+    // `orders` is always this merchant's full live list (board or dashboard).
+    var live = (orders||[]).filter(function(o){ return (o.stage === 'live' || !o.stage) && o.merchant_id === merchantId; });
+    var r0 = await db.from('shipment_alerts').select('id,order_id,detail,days_late,created_at').eq('alert_type', 'tna_due_soon').eq('dismissed', false).eq('merchant_id', merchantId);
+    if (r0.error) return;
+    var existing = (r0.data || []).slice().sort(function(a,b){ return String(a.created_at||'').localeCompare(String(b.created_at||'')); });
+    var changed = false, sysOff = function(){ return { dismissed: true, dismissed_by: 'system', dismissed_at: new Date().toISOString() }; };
+    // Orders no longer live here (shipped, moved to Laying Goods, deleted,
+    // transferred to another merchant) — their reminders go.
+    var liveIds = {}; live.forEach(function(o){ liveIds[o.id] = 1; });
+    for (var x = 0; x < existing.length; x++) if (!liveIds[existing[x].order_id]) { await db.from('shipment_alerts').update(sysOff()).eq('id', existing[x].id); changed = true; }
+    existing = existing.filter(function(a){ return liveIds[a.order_id]; });
+    // Duplicates (e.g. merchant and JM opened the app at the same moment): keep the oldest.
+    var seenKey = {};
+    for (var y = 0; y < existing.length; y++) {
+      var kk = existing[y].order_id + '|' + existing[y].days_late;
+      if (seenKey[kk]) { await db.from('shipment_alerts').update(sysOff()).eq('id', existing[y].id); existing[y]._gone = true; changed = true; } else seenKey[kk] = 1;
+    }
+    existing = existing.filter(function(a){ return !a._gone; });
+    for (var j = 0; j < live.length; j++) {
+      var o = live[j], due = tnaDueItems(o, division), mine = existing.filter(function(a){ return a.order_id === o.id; });
+      if (!due.length) { // nothing due any more — clear old reminders
+        for (var k = 0; k < mine.length; k++) { await db.from('shipment_alerts').update({ dismissed: true, dismissed_by: 'system', dismissed_at: new Date().toISOString() }).eq('id', mine[k].id); changed = true; }
+        continue;
+      }
+      var checkpoint = due[0].d === 0 ? 0 : 3; // 3 = "coming up", 0 = "due today" (the second reminder)
+      var detail = (o.po_number ? 'PO ' + o.po_number + ' \u00b7 ' : '') + due.map(function(x){ return x.n + ' ' + (x.d === 0 ? 'due TODAY' : 'due in ' + x.d + ' day' + (x.d === 1 ? '' : 's')) + ' (' + short(x.p) + ')'; }).join(' \u00b7 ');
+      var same = mine.find(function(a){ return a.days_late === checkpoint; });
+      for (var m = 0; m < mine.length; m++) { // a reminder from the other checkpoint is replaced by this one
+        if (mine[m] === same) continue;
+        await db.from('shipment_alerts').update({ dismissed: true, dismissed_by: 'system', dismissed_at: new Date().toISOString() }).eq('id', mine[m].id); changed = true;
+      }
+      if (same) {
+        if (same.detail !== detail) { await db.from('shipment_alerts').update({ detail: detail }).eq('id', same.id); changed = true; } // keep it current, no new reminder
+        continue;
+      }
+      // A reminder for this checkpoint sent in the last few days (e.g. the date
+      // moved, or "due today" was dealt with and another item is still coming
+      // up) is brought back instead of sending a new one — so anyone who had
+      // dismissed it doesn't get it again.
+      var prev = await db.from('shipment_alerts').select('id,created_at').eq('alert_type', 'tna_due_soon').eq('order_id', o.id).eq('merchant_id', merchantId).eq('days_late', checkpoint);
+      var recent = (prev.data || []).filter(function(a){ return a.created_at && (Date.now() - new Date(a.created_at).getTime()) < 4 * 86400000; })
+        .sort(function(a,b){ return String(a.created_at).localeCompare(String(b.created_at)); })[0];
+      if (recent) { await db.from('shipment_alerts').update({ dismissed: false, dismissed_by: null, dismissed_at: null, detail: detail }).eq('id', recent.id); changed = true; continue; }
+      await db.from('shipment_alerts').insert({ order_id: o.id, style: o.style, buyer: o.buyer, merchant_id: merchantId, alert_type: 'tna_due_soon', days_late: checkpoint, detail: detail });
+      changed = true;
+    }
+    if (changed) { await loadAlerts(); renderRail(); if (S.view === 'inbox') renderInbox(); if (S.view === 'dashboard') renderDashboard(); }
+  } catch (e) { console.error('TNA reminders:', e); /* best-effort — never block a board load */ }
+}
+
 async function loadBoardOrders(merchantId) {
   // Kicked off first but not awaited yet, so it overlaps the order fetch instead
   // of blocking it — and on a cache hit it's the only thing we wait for.
@@ -3877,6 +3977,7 @@ async function loadBoardOrders(merchantId) {
     // cached return.
     checkLabDipSupplierAlerts(merchantId, S.boardCache[merchantId]);
     checkTNAAfterShipAlerts(merchantId, S.boardCache[merchantId]);
+    checkTNADueSoonAlerts(merchantId, S.boardCache[merchantId]);
     return S.boardCache[merchantId];
   }
   const { data } = await db.from('orders').select('*')
@@ -3887,6 +3988,7 @@ async function loadBoardOrders(merchantId) {
   if (ids.length) {
     checkLabDipSupplierAlerts(merchantId, data || []); // fire-and-forget; own try/catch inside
     checkTNAAfterShipAlerts(merchantId, data || []);
+    checkTNADueSoonAlerts(merchantId, data || []);
     // Genuinely in parallel now — these were sequential awaits despite the old
     // comment claiming otherwise, costing ~8 round trips per board open.
     const [yarnByOrder, attachByOrder, ppByOrder, labdipByOrder, sewByOrder, packByOrder, ap, acc] = await Promise.all([
@@ -4520,7 +4622,7 @@ function renderDashboard() {
 
   const isMA = S.user.role === 'management';
   let alertHtml = '';
-  if (can('inbox') && S.alerts && S.alerts.length) {
+  if ((can('inbox') || ['merchant','jm'].includes(S.user.role)) && S.alerts && S.alerts.length) {
     alertHtml = '<div class="alert-cards"><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px">Alerts — ' + S.alerts.length + ' unresolved</div>' +
       buildAlertCardsHTML() + '</div>';
   }
@@ -5102,7 +5204,7 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     const dlSpan = dl==null ? '\u2014'
       : '<span class="days-left-chip ' + (dl<0?'crit':dl<=5?'warn':'ok') + '">' + dl + 'd</span>';
 
-    const notesText = (o.remarks||'').trim();
+    const notesText = notesAsText(o.remarks).trim(); // older notes are stored as a list — show the readable text, never the raw data
     const notesPreviewRaw = notesText ? notesText.replace(/\u2022\s*/g,'').split('\n')[0].slice(0,28) : '';
     const remCell = '<button class="notes-chip' + (notesText?' has-val':'') + '" onclick="event.stopPropagation();openOrderNotesModal(\'' + o.id + '\')" title="' + htmlEsc(notesText || 'Click to add notes') + '">' + (notesText ? '&#x1F4DD; ' + htmlEsc(notesPreviewRaw) + (notesText.length>28?'\u2026':'') : '+ Note') + '</button>';
 
@@ -6050,7 +6152,7 @@ function notesAsText(raw) {
   try {
     var parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      return parsed.map(function(n){ return '\u2022 ' + (n.text||''); }).join('\n');
+      return parsed.map(function(n){ return '\u2022 ' + (typeof n === 'string' ? n : (n && (n.text || n.note || n.value)) || ''); }).join('\n');
     }
   } catch(e) {}
   return raw;
@@ -6450,7 +6552,7 @@ function downloadPDF() {
       + VSTEPS.map(function(s){const v=o[s.k]||0;return '<td style="text-align:right">' + (v>=(o.qty||0)&&(o.qty||0)>0?'<strong style="color:#2F7A4F">OK</strong>':fmt(v)) + '</td>';}).join('')
       + '<td style="text-align:right;font-weight:600">' + fmt((o.qty||0)-(o.prod_packing||0)) + '</td>'
       + '<td>' + (ms.length?'<span style="color:#C0392B;font-weight:600">'+E(ms.map(function(m){return m.n;}).join(', '))+'</span>':'On plan') + '</td>'
-      + '<td style="font-size:10px;color:#73706A">' + E(o.remarks||'') + '</td>'
+      + '<td style="font-size:10px;color:#73706A;white-space:pre-line">' + E(notesAsText(o.remarks)) + '</td>'
       + '</tr>';
   }
   function totalsRow(label, list, cls){
@@ -6683,7 +6785,8 @@ async function loadColourApprovalSummaryByOrder(merchantId, orders, type) {
 // 2 days after that. One alert row per checkpoint (not per day) so repeated
 // board loads don't spam duplicates; dismissing one doesn't suppress the
 // next checkpoint since each checkpoint is its own row.
-async function checkLabDipSupplierAlerts(merchantId, orders) {
+function checkLabDipSupplierAlerts(merchantId, orders) { return serializedAlertCheck('labdip_supplier_late', merchantId, orders, _checkLabDipSupplierAlerts); }
+async function _checkLabDipSupplierAlerts(merchantId, orders) {
   try {
     var styles = Array.from(new Set(orders.map(function(o){ return (o.style||'').toUpperCase(); }).filter(Boolean)));
     if (!styles.length) return;
@@ -8698,6 +8801,11 @@ function buildAlertCardsHTML() {
                  : '<strong>Short packing list: ' + fmt(a.short_qty) + ' pcs</strong> \u2014 expected loss ' + money(a.value_lost||0) + (a.detail ? ' \u00b7 ' + htmlEsc(a.detail) : ''))
         + '</div></div>' + actionButtons(a.id) + '</div>';
     }
+    if (a.alert_type === 'tna_due_soon') {
+      var today0 = a.days_late === 0;
+      return '<div class="alert-card ' + (today0 ? 'pp_late' : 'due-soon') + '"><div class="alert-icon">' + (today0 ? '&#x1F514;' : '&#x1F4C6;') + '</div><div class="alert-body"><div class="alert-title">' + htmlEsc((a.style||'').toUpperCase()) + ' \u00b7 ' + htmlEsc(a.buyer||'') + ' \u2014 ' + (today0 ? 'TNA due today' : 'TNA coming up') + '</div><div class="alert-detail">' + htmlEsc(a.detail||'') + '</div></div>'
+        + '<button class="btn sm no-print" onclick="openTNA(\'' + a.order_id + '\')">TNA</button>' + actionButtons(a.id) + '</div>';
+    }
     if (a.alert_type === 'tna_after_ship') {
       const merchTNA = S.users.find(function(u){return u.id===a.merchant_id;});
       return '<div class="alert-card pp_late"><div class="alert-icon">&#x1F4C5;</div><div class="alert-body"><div class="alert-title">' + htmlEsc(( a.style||'' ).toUpperCase()) + ' \u00b7 ' + htmlEsc(a.buyer||'') + (merchTNA?' \u00b7 '+htmlEsc(merchTNA.name):'') + '</div><div class="alert-detail">TNA date falls after the ship date \u2014 <strong>' + htmlEsc(a.detail||'') + '</strong></div></div>' + actionButtons(a.id) + '</div>';
@@ -10543,7 +10651,7 @@ function renderODDetails() {
     '<table class="tna-cmp"><thead><tr><th>Milestone</th><th>Plan date</th><th>Actual date</th><th>Status / Delay</th></tr></thead><tbody>' + tnaRows + '</tbody></table></div>' +
     '<div class="od-section"><div class="od-section-title">Production progress</div>' +
     '<div class="prod-rows">' + prodRows + '</div>' +
-    (o.remarks ? '<div style="margin-top:10px;font-size:12.5px;color:var(--muted);padding:8px 10px;background:#FAF9F5;border-radius:7px;border:1px solid var(--line)">' + o.remarks + '</div>' : '') +
+    (o.remarks ? '<div style="margin-top:10px;font-size:12.5px;color:var(--muted);padding:8px 10px;background:#FAF9F5;border-radius:7px;border:1px solid var(--line);white-space:pre-line">' + htmlEsc(notesAsText(o.remarks)) + '</div>' : '') +
     '</div>';
 }
 
@@ -10752,7 +10860,7 @@ function exportExcelRun() {
     const dl=daysTo(o.ship_date);
     const ms=missedMiles(o);
     const status=ms.length?'LATE':dl!=null&&dl<=5?'URGENT':dl!=null&&dl<=10?'DUE SOON':'ON PLAN';
-    return [o.style,o.buyer,o.house||'',o.gauge||'',o.color||'',o.comp||'',o.qty||0,o.fob||0,(o.qty||0)*(o.fob||0),o.ship_date?new Date(o.ship_date+'T00:00:00').toLocaleDateString('en-GB'):'',dl!=null?dl:''].concat(VSTEPS.map(function(s){return o[s.k]||0;})).concat([(o.qty||0)-(o.prod_packing||0),status,o.remarks||'']);
+    return [o.style,o.buyer,o.house||'',o.gauge||'',o.color||'',o.comp||'',o.qty||0,o.fob||0,(o.qty||0)*(o.fob||0),o.ship_date?new Date(o.ship_date+'T00:00:00').toLocaleDateString('en-GB'):'',dl!=null?dl:''].concat(VSTEPS.map(function(s){return o[s.k]||0;})).concat([(o.qty||0)-(o.prod_packing||0),status,notesAsText(o.remarks)]);
   });
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet([headers].concat(rows));
@@ -10799,7 +10907,7 @@ function renderPrint() {
       ${getSteps(merch?merch.division:'sweater').map(s=>`<td class="num">${fmt(o[s.k]||0)}</td>`).join('')}
       <td class="num">${fmt((o.qty||0)-(o.prod_packing||0))}</td>
       <td>${missedMiles(o).length ? 'LATE: '+missedMiles(o).map(x=>x.n).join(', ') : 'On plan'}</td>
-      <td>${o.remarks||''}</td>
+      <td style="white-space:pre-line">${htmlEsc(notesAsText(o.remarks))}</td>
     </tr>`).join('')}
     </tbody></table>
     <div class="hint" style="margin-top:8px">
@@ -11035,17 +11143,6 @@ function handleProfileType() {
   if (divField) divField.style.display = t === 'merchant' ? 'block' : 'none';
 }
 
-async function deleteMerchant(uid, name) {
-  if (!(await appConfirm(`Remove ${name}? Their orders and notes will also be deleted permanently.`, {title:'Remove merchant', okText:'Remove', danger:true}))) return;
-  const { error } = await db.from('users').delete().eq('id', uid);
-  if (!error) {
-    toast(`${name} removed`);
-    await loadAll();
-    renderAdminList();
-    renderRail();
-    if (S.view === uid) setView('dashboard');
-  } else { toast('Error. Try again.', 'err'); }
-}
 
 // ─── RENDER RAIL (6-tier sidebar) ───
 // ─── GLOBAL SEARCH — style/PO, scoped live orders ───
@@ -11218,7 +11315,7 @@ function renderRail() {
   var unreadMsgs = getMyThreads().filter(function(t2){ return t2.unread; }).length;
   var inboxBadge = unreadMsgs;
   if (can('requests')) inboxBadge += (S.tnaRequests||[]).filter(function(r2){return r2.status==='pending';}).length;
-  if (can('inbox')) inboxBadge += (S.alerts||[]).filter(function(a){return !a.dismissed;}).length;
+  if (can('inbox') || isMerchant || isJM) inboxBadge += (S.alerts||[]).filter(function(a){return !a.dismissed;}).length;
   if (isMerchant || isJM) {
     var visReqs = (S.tnaRequests||[]).filter(function(r2){ return !isDismissedByMe(r2); });
     inboxBadge += isJM
