@@ -1715,6 +1715,11 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
 .apv-exp{font-weight:600;font-size:9px;opacity:.95}.apv-exp.soon{color:#B7791F}.apv-exp.late{color:#C0392B}
 .apv-chip.not-sent .apv-exp.late{color:#C0392B}
 .apv-exp-box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:14px}
+
+.yarn-dates{font-size:8.6px;font-weight:700;color:var(--muted);margin-top:3px;white-space:nowrap;letter-spacing:-.02em;overflow:hidden;text-overflow:clip}
+.yarn-dates .yd-late{color:var(--red)}.yarn-dates .yd-soon{color:var(--amber,#B7791F)}.yarn-dates .yd-ok{color:var(--green)}.yarn-dates .yd-none{opacity:.7}
+.yarn-dates + .ylf{margin-top:1px}
+.yd-sep{display:inline-block;width:5px}
 </style>
 </head>
 <body>
@@ -1732,7 +1737,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-10:15</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-10:16</p>
   </div>
 </div>
 
@@ -1774,7 +1779,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-10:15</div>
+  <div id="ver-stamp">Version:26-10-10:16</div>
 </div>
 
 
@@ -5535,7 +5540,16 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     var yarnCls = totalBk === 0 ? 'not-sent' : totalRc >= totalBk ? 'approved' : 'submitted';
     var yarnLabel = totalBk === 0 ? 'No booking' : (fmt(totalRc) + ' / ' + fmt(totalBk) + ' ' + yarnUnitLabel);
     var yarnTip = yarnLabel + (totalRc < totalBk && sum.eta ? ' \u00b7 expected fully in ' + short(sum.eta) + ' (' + etaText(sum.eta) + ')' : '');
-    const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '" title="' + htmlEsc(yarnTip) + '">' + yarnLabel + '</button>'
+    // One short line under the pill: the TNA Yarn Inhouse date and the expected
+    // date of what's still outstanding ("ETA"), so management sees both at a glance.
+    var yTna = o.plan_yarn, yAct = o.act_yarn, yEta = (totalRc < totalBk) ? sum.eta : null;
+    var yParts = [];
+    if (yTna) yParts.push('<span class="' + (!yAct && daysTo(yTna) < 0 ? 'yd-late' : '') + '">TNA ' + short(yTna).slice(0,5) + '</span>');
+    if (yAct) yParts.push('<span class="yd-ok">In ' + short(yAct).slice(0,5) + '</span>');
+    else if (yEta) yParts.push('<span class="' + (daysTo(yEta) < 0 ? 'yd-late' : daysTo(yEta) <= 3 ? 'yd-soon' : '') + '">ETA ' + short(yEta).slice(0,5) + '</span>');
+    else if (totalBk > 0 && totalRc < totalBk) yParts.push('<span class="yd-none">ETA \u2014</span>');
+    var yDateLine = yParts.length ? '<div class="yarn-dates" title="TNA Yarn Inhouse date' + (yAct ? ' / actual inhouse date' : ' / expected inhouse date of what is still outstanding') + '">' + yParts.join('<span class="yd-sep"></span>') + '</div>' : '';
+    const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '" title="' + htmlEsc(yarnTip) + '">' + yarnLabel + '</button>' + yDateLine
       + (division === 'knit' ? '' : yarnChecksBoardLine(sum, totalBk, totalRc));
 
     // Days Left is one of the most-watched columns on the board, so it always
@@ -13465,7 +13479,7 @@ var FIXED_BLOCKS = [
   { key:'_value',       name:'Total Value',  width:96,  wrap:true, mandatory:false },
   { key:'_ship',        name:'Ship Date',    width:96,  wrap:true, mandatory:false }, // wide enough for the highlighted date chip
   { key:'_days',        name:'Days Left',    width:70,  mandatory:false },
-  { key:'_yarn',        name:'Yarn / Fabric',width:84,  mandatory:false },
+  { key:'_yarn',        name:'Yarn / Fabric',width:106,  mandatory:false },
   { key:'_attachment',  name:'Garment Attachment', width:95,  wrap:true, mandatory:false },
   { key:'_accessories', name:'Accessories',  width:88,  mandatory:false },
   { key:'_approvals',   name:'Approvals (group)',   width:432, mandatory:false, isGroup:true },
@@ -13542,7 +13556,7 @@ var DEFAULT_COLUMN_ORDER = [
   '_composition','avg_weight','sales_contract','lc_no','lc_status','_approvals',
   '_accessories','_yarn','internal_pp','buyer_pp','khata_sign','knit_start','_production'
 ];
-DEFAULT_COLUMN_ORDER.splice(DEFAULT_COLUMN_ORDER.indexOf('_approvals') + 1, 0, 'ship_sample');
+DEFAULT_COLUMN_ORDER.splice(DEFAULT_COLUMN_ORDER.indexOf('_production') + 1, 0, 'ship_sample');
 DEFAULT_COLUMN_ORDER.splice(DEFAULT_COLUMN_ORDER.indexOf('_accessories'), 0, '_attachment');
 // Append any remaining keys (not explicitly listed above) in their natural definition order
 (function() {
@@ -13586,6 +13600,13 @@ function getBuyerFieldConfig(buyerId, fieldKey) {
   }
   var master = getFieldByKey(fieldKey);
   if (!master) return null;
+  if (fieldKey === 'ship_sample') {
+    // Not set up for this buyer yet: sit immediately after Production, wherever
+    // this buyer's saved layout put Production.
+    var prodCfg = S.fieldVisibility[buyerId] && S.fieldVisibility[buyerId]['_production'];
+    var after = prodCfg && prodCfg.col_order != null ? prodCfg.col_order + 0.5 : getDefaultColOrder(fieldKey);
+    return { buyer_id: buyerId, field_key: fieldKey, visible: true, in_live: true, in_laying: false, in_shipped: false, col_order: after };
+  }
   return {
     buyer_id: buyerId, field_key: fieldKey, visible: !master.defaultHidden,
     in_live: !!master.defLoc.live, in_laying: !!master.defLoc.laying, in_shipped: !!master.defLoc.shipped,
