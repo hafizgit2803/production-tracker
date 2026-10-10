@@ -1716,10 +1716,12 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
 .apv-chip.not-sent .apv-exp.late{color:#C0392B}
 .apv-exp-box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:14px}
 
-.yarn-dates{font-size:8.6px;font-weight:700;color:var(--muted);margin-top:3px;white-space:nowrap;letter-spacing:-.02em;overflow:hidden;text-overflow:clip}
-.yarn-dates .yd-late{color:var(--red)}.yarn-dates .yd-soon{color:var(--amber,#B7791F)}.yarn-dates .yd-ok{color:var(--green)}.yarn-dates .yd-none{opacity:.7}
+.yarn-dates{font-size:8.6px;letter-spacing:-.01em;font-weight:600;color:var(--muted);margin-top:3px;white-space:nowrap;line-height:1.15;overflow:hidden;margin-top:2px}.yarn-dates .yd-k{display:inline-block;width:20px;font-weight:800;opacity:.75}
+.yarn-dates .yd-late{color:var(--red);font-weight:700}.yarn-dates .yd-soon{color:var(--amber,#B7791F)}.yarn-dates .yd-ok{color:var(--green)}.yarn-dates .yd-none{opacity:.7}
 .yarn-dates + .ylf{margin-top:1px}
 .yd-sep{display:inline-block;width:5px}
+
+.ylf{line-height:1.15;font-size:8.6px;margin-top:1px}.ylf .ylf-y{color:var(--green)}.ylf.warn .ylf-n{color:#B26A00}
 </style>
 </head>
 <body>
@@ -1737,7 +1739,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-10:16</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-10:18</p>
   </div>
 </div>
 
@@ -1779,7 +1781,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-10:16</div>
+  <div id="ver-stamp">Version:26-10-10:18</div>
 </div>
 
 
@@ -5543,12 +5545,16 @@ function renderBuyerOrdersTable(orders, uid, division, canEdit, VSTEPS, buyerId)
     // One short line under the pill: the TNA Yarn Inhouse date and the expected
     // date of what's still outstanding ("ETA"), so management sees both at a glance.
     var yTna = o.plan_yarn, yAct = o.act_yarn, yEta = (totalRc < totalBk) ? sum.eta : null;
-    var yParts = [];
-    if (yTna) yParts.push('<span class="' + (!yAct && daysTo(yTna) < 0 ? 'yd-late' : '') + '">TNA ' + short(yTna).slice(0,5) + '</span>');
-    if (yAct) yParts.push('<span class="yd-ok">In ' + short(yAct).slice(0,5) + '</span>');
-    else if (yEta) yParts.push('<span class="' + (daysTo(yEta) < 0 ? 'yd-late' : daysTo(yEta) <= 3 ? 'yd-soon' : '') + '">ETA ' + short(yEta).slice(0,5) + '</span>');
-    else if (totalBk > 0 && totalRc < totalBk) yParts.push('<span class="yd-none">ETA \u2014</span>');
-    var yDateLine = yParts.length ? '<div class="yarn-dates" title="TNA Yarn Inhouse date' + (yAct ? ' / actual inhouse date' : ' / expected inhouse date of what is still outstanding') + '">' + yParts.join('<span class="yd-sep"></span>') + '</div>' : '';
+    // TNA and expected (or actual) inhouse dates on their own short lines —
+    // the row is already this tall because of the approval pills, so this
+    // uses that space without making rows any taller.
+    function yd(x){ var p = String(x).split('-'); return p[2] + '/' + p[1] + '/' + p[0].slice(2); }
+    var yLines = [];
+    if (yTna) yLines.push('<div class="' + (!yAct && daysTo(yTna) < 0 ? 'yd-late' : '') + '"><span class="yd-k">TNA</span> ' + yd(yTna) + (!yAct && daysTo(yTna) < 0 ? ' ' + (-daysTo(yTna)) + 'd late' : '') + '</div>');
+    if (yAct) yLines.push('<div class="yd-ok"><span class="yd-k">In</span> ' + yd(yAct) + (yTna && yAct > yTna ? ' ' + Math.round((new Date(yAct) - new Date(yTna)) / 86400000) + 'd late' : ' \u2713') + '</div>');
+    else if (yEta) yLines.push('<div class="' + (daysTo(yEta) < 0 ? 'yd-late' : daysTo(yEta) <= 3 ? 'yd-soon' : '') + '"><span class="yd-k">ETA</span> ' + yd(yEta) + ' ' + (daysTo(yEta) < 0 ? (-daysTo(yEta)) + 'd late' : daysTo(yEta) === 0 ? 'today' : 'in ' + daysTo(yEta) + 'd') + '</div>');
+    else if (totalBk > 0 && totalRc < totalBk) yLines.push('<div class="yd-none"><span class="yd-k">ETA</span> not given</div>');
+    var yDateLine = yLines.length ? '<div class="yarn-dates" title="TNA = TNA Yarn Inhouse date \u00b7 ETA = expected inhouse date of what is still outstanding \u00b7 In = date it was fully in-house">' + yLines.join('') + '</div>' : '';
     const yarnInner = '<button type="button" class="apv-chip ' + yarnCls + '" title="' + htmlEsc(yarnTip) + '">' + yarnLabel + '</button>' + yDateLine
       + (division === 'knit' ? '' : yarnChecksBoardLine(sum, totalBk, totalRc));
 
@@ -13479,7 +13485,7 @@ var FIXED_BLOCKS = [
   { key:'_value',       name:'Total Value',  width:96,  wrap:true, mandatory:false },
   { key:'_ship',        name:'Ship Date',    width:96,  wrap:true, mandatory:false }, // wide enough for the highlighted date chip
   { key:'_days',        name:'Days Left',    width:70,  mandatory:false },
-  { key:'_yarn',        name:'Yarn / Fabric',width:106,  mandatory:false },
+  { key:'_yarn',        name:'Yarn / Fabric',width:112,  mandatory:false },
   { key:'_attachment',  name:'Garment Attachment', width:95,  wrap:true, mandatory:false },
   { key:'_accessories', name:'Accessories',  width:88,  mandatory:false },
   { key:'_approvals',   name:'Approvals (group)',   width:432, mandatory:false, isGroup:true },
@@ -14712,7 +14718,8 @@ function yarnChecksBoardLine(sum, totalBk, totalRc) {
   var l = !!c.linking, f = !!c.finishing;
   var cls = (l && f) ? 'ok' : (totalRc >= totalBk ? 'warn' : '');
   var tip = YARN_CHECK_ITEMS.map(function(it){ var r = c[it.k]; return it.n + ': ' + (r ? 'inhouse ' + short(r.received_on) : 'not inhouse'); }).join(' · ');
-  return '<div class="ylf ' + cls + '" title="' + htmlEsc(tip) + '">' + YARN_CHECK_ITEMS.map(function(it){ return it.s + ' ' + (c[it.k] ? '✓' : '✕'); }).join(' · ') + '</div>';
+  // One line each, full names — "Linking yarn ✓" / "Finishing yarn ✕".
+  return '<div class="ylf ' + cls + '" title="' + htmlEsc(tip) + '">' + YARN_CHECK_ITEMS.map(function(it){ return '<div class="' + (c[it.k] ? 'ylf-y' : 'ylf-n') + '">' + it.n + ' ' + (c[it.k] ? '✓' : '✕') + '</div>'; }).join('') + '</div>';
 }
 async function renderYarnChecksCard() {
   var el = $('yarn-lf-card'); if (!el) return;
