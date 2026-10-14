@@ -204,7 +204,8 @@ tbody tr.late td.stk{background-color:#FDECEA!important}
 .rq-rail-note{font-size:11px;color:var(--muted);padding:2px 12px 6px}
 .rq-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .rq-filter select,.rq-filter input{padding:5px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-size:12.5px}
-.rq-filter input{min-width:250px}
+.rq-filter input[type=search]{min-width:250px}
+.rq-filter input[type=checkbox]{width:auto;min-width:0}
 .rq-ovbar{display:flex;justify-content:flex-end;margin-bottom:10px}
 .rq-count{font-family:var(--sans);font-size:12px;color:var(--muted);font-weight:600;margin-left:4px}
 table.rq-t td{font-size:12.5px;padding:7px 8px;vertical-align:top}
@@ -220,7 +221,7 @@ table.rq-t tbody tr:hover td{background:var(--accent-soft)}
 .rq-pri.low{opacity:.7}
 tr.rq-urgent td:first-child{box-shadow:inset 3px 0 0 var(--red)}
 .rq-late{color:var(--red);font-weight:700}
-.rq-why{white-space:normal;display:inline-block;max-width:300px}
+.rq-why{white-space:normal;display:inline-block;max-width:300px;min-width:170px}
 .rq-prog{display:flex;align-items:center;gap:8px;white-space:nowrap}
 .rq-bar{width:90px;height:7px;border-radius:5px;background:var(--line);overflow:hidden;flex:0 0 auto}
 .rq-bar i{display:block;height:100%;background:var(--accent);border-radius:5px}.rq-bar i.full{background:var(--green)}
@@ -263,6 +264,12 @@ table.rq-items input{width:100%;padding:5px 7px;border:1px solid var(--line);bor
 .rq-ev-progress .rq-ev-dot,.rq-ev-cost .rq-ev-dot{background:var(--accent)}
 .rq-ev-note{white-space:pre-wrap;color:var(--ink)}
 #ov-rq .modal{max-width:920px}
+.rq-tallies{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.rq-tally{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:4px 12px;font-size:12.5px;color:var(--ink)}
+.rq-tally b{margin-left:4px}.rq-tally.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.rq-mine{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink);white-space:nowrap}
+.rq-month{padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-size:13px}
+.rq-hint{margin-top:14px;padding:9px 12px;border-radius:8px;background:var(--accent-soft);font-size:12.5px}
 .rq-adm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .rq-adm-prev{height:96px;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;background:#fff}
 .rq-adm-prev img{max-height:84px;max-width:90%}
@@ -2049,7 +2056,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-14:17</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-14:23</p>
   </div>
 </div>
 
@@ -2091,7 +2098,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-14:17</div>
+  <div id="ver-stamp">Version:26-10-14:23</div>
 </div>
 
 
@@ -19433,7 +19440,7 @@ var RQ_TABS = [
   { k: 'done', n: 'Completed' },
   { k: 'closed', n: 'Returned / rejected' }
 ];
-var RQ = { rows: [], loaded: false, missing: false, settings: null, events: {}, openId: null, filter: { co: '', q: '' }, channel: null, editId: null };
+var RQ = { rows: [], loaded: false, missing: false, settings: null, events: {}, openId: null, filter: { co: '', q: '', st: '', dp: '', mine: false }, channel: null, editId: null };
 
 function rqDept(k) { return RQ_DEPTS.find(function(d){ return d.k === k; }) || null; }
 function rqCompany(c) { return RQ_COMPANIES.find(function(x){ return x.c === c; }) || { c: c, n: c || '' }; }
@@ -19594,12 +19601,15 @@ function rqRailHtml() {
     var all = rqCounts(null);
     if (S.user.role === 'audit' || S.user.role === 'management') h += item('rq:approvals', '&#x270D;', 'Waiting for my approval', all.mine, all.mine > 0);
     h += item('rq:overview', '&#x25A6;', 'Overview', all.overdue, all.overdue > 0);
+    h += item('rq:all', '&#x2630;', 'All requisitions', RQ.rows.length);
+    h += item('rq:report', '&#x25A4;', 'Monthly spend report');
   }
   rqMyDepts().forEach(function(d){
     var c = rqCounts(d.k);
     var key = 'rq_' + d.k;
     var open = localStorage.getItem('pt_sb_' + key) === '1' || (typeof S.view === 'string' && S.view.indexOf('rq:' + d.k + ':') === 0);
     var body = (rqCanWork(d.k) ? item('rq:' + d.k + ':new', '&#x002B;', 'New requisition') : '')
+      + item('rq:' + d.k + ':all', '&#x2630;', flat ? 'My requisitions' : 'All ' + d.n, RQ.rows.filter(function(r){ return r.dept === d.k; }).length)
       + item('rq:' + d.k + ':pending', '&#x23F3;', 'Approval pending', c.pending, c.pending > 0 && !rqIsDeptUser())
       + item('rq:' + d.k + ':wip', '&#x2692;', 'Work in progress', c.wip, c.overdue > 0)
       + item('rq:' + d.k + ':done', '&#x2713;', 'Completed', c.done)
@@ -19635,8 +19645,11 @@ function rqRender(view) {
   var p = String(view).split(':');
   if (p[1] === 'approvals') return rqRenderApprovals();
   if (p[1] === 'overview') return rqRenderOverview();
+  if (p[1] === 'all') return rqRenderAll(null);
+  if (p[1] === 'report') { if (rqIsDeptUser()) { setView(rqHomeView()); return; } return rqRenderReport(); }
   var d = rqDept(p[1]);
   if (!d || !rqMyDepts().some(function(x){ return x.k === d.k; })) { setView(rqHomeView()); return; }
+  if (p[2] === 'all') { RQ.editId = null; return rqRenderAll(d); }
   if (p[2] === 'edit' && !RQ.editId) { setView('rq:' + d.k + ':pending'); return; } // e.g. after a page refresh
   if (p[2] === 'new' || p[2] === 'edit') return rqRenderForm(d, p[2] === 'edit' ? RQ.editId : null);
   RQ.editId = null;
@@ -19708,6 +19721,52 @@ function rqRenderList(d, tab) {
   rqSetHead('Requisitions › ' + d.n, d.n + ' — ' + t.n, sub, acts);
   $('content').innerHTML = '<div class="card">' + '<div class="card-h"><h3>' + t.n + ' <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, tab, false) + '</div>';
 }
+// Every requisition with where it is now: a department's own list ("My
+// requisitions"), or all departments for admin / management / audit.
+function rqWhere(r) {
+  if (r.status === 'pending') return r.audit_status === 'approved' ? 'Audit approved &middot; waiting for management' : 'Waiting for audit / management';
+  if (r.status === 'wip') return 'Work in progress &middot; <b>' + (Number(r.progress) || 0) + '%</b>' + (rqOverdue(r) ? ' <span class="rq-late">overdue</span>' : '');
+  if (r.status === 'hold') return 'On hold &middot; ' + (Number(r.progress) || 0) + '%';
+  if (r.status === 'done') return 'Completed ' + (r.completed_at ? rqDateTxt(rqLocalDate(r.completed_at)) : '');
+  if (r.status === 'returned') return 'Returned by ' + rqEsc((r.mgmt_status === 'returned' ? r.mgmt_by_name : r.audit_by_name) || '') + ' &middot; needs changes';
+  if (r.status === 'rejected') return 'Rejected by ' + rqEsc((r.mgmt_status === 'rejected' ? r.mgmt_by_name : r.audit_by_name) || '');
+  if (r.status === 'cancelled') return 'Cancelled';
+  return rqEsc(r.status);
+}
+var RQ_STATUS_OPTS = [['', 'Every status'], ['pending', 'Approval pending'], ['wip', 'Work in progress'], ['hold', 'On hold'], ['done', 'Completed'], ['returned', 'Returned'], ['rejected', 'Rejected'], ['cancelled', 'Cancelled']];
+function rqRenderAll(d) {
+  var f = RQ.filter;
+  var base = RQ.rows.filter(function(r){ return d ? r.dept === d.k : true; });
+  var list = rqFiltered(base).filter(function(r){
+    if (f.st && r.status !== f.st) return false;
+    if (!d && f.dp && r.dept !== f.dp) return false;
+    if (f.mine && r.created_by !== S.user.id) return false;
+    return true;
+  }).sort(function(a, b){ return String(b.created_at).localeCompare(String(a.created_at)); });
+  var tally = {}; base.forEach(function(r){ tally[r.status] = (tally[r.status] || 0) + 1; });
+  var chips = RQ_STATUS_OPTS.slice(1).filter(function(o){ return tally[o[0]]; }).map(function(o){
+    return '<button class="rq-tally' + (f.st === o[0] ? ' on' : '') + '" onclick="RQ.filter.st=RQ.filter.st===\'' + o[0] + '\'?\'\':\'' + o[0] + '\';rqRender(S.view)">' + o[1] + ' <b>' + tally[o[0]] + '</b></button>';
+  }).join('');
+  var extra = '<select onchange="RQ.filter.st=this.value;rqRender(S.view)">' + RQ_STATUS_OPTS.map(function(o){ return '<option value="' + o[0] + '"' + (f.st === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'
+    + (!d ? '<select onchange="RQ.filter.dp=this.value;rqRender(S.view)"><option value="">All departments</option>' + RQ_DEPTS.map(function(x){ return '<option value="' + x.k + '"' + (f.dp === x.k ? ' selected' : '') + '>' + x.n + '</option>'; }).join('') + '</select>' : '')
+    + (rqIsDeptUser() ? '<label class="rq-mine"><input type="checkbox"' + (f.mine ? ' checked' : '') + ' onchange="RQ.filter.mine=this.checked;rqRender(S.view)"> Only the ones I raised</label>' : '');
+  var cols = ['Job no.'].concat(d ? [] : ['Department']).concat(['Date', 'Company', 'Location', 'Type of work', 'Cost', 'Status', 'Where it is now', 'Raised by']);
+  var body = list.map(function(r){
+    var cells = ['<span class="rq-job">' + rqEsc(r.job_no) + '</span>'].concat(d ? [] : [rqEsc((rqDept(r.dept) || {}).n || r.dept)]).concat([
+      rqDateTxt(r.req_date), '<span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span>',
+      '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : ''),
+      rqEsc(r.work_type || '') + (r.priority === 'urgent' ? ' ' + rqPriChip('urgent') : ''),
+      '<span class="num">' + rqMoney(r.status === 'done' && r.final_cost != null ? r.final_cost : r.approved_cost != null ? r.approved_cost : r.est_cost) + '</span>',
+      rqStatusChip(r), '<span class="rq-why">' + rqWhere(r) + '</span>', rqEsc(r.created_by_name || '')]);
+    return '<tr onclick="rqOpen(\'' + r.id + '\')">' + cells.map(function(c){ return '<td>' + c + '</td>'; }).join('') + '</tr>';
+  }).join('');
+  var title = d ? (rqIsDeptUser() ? 'My requisitions' : 'All ' + d.n + ' requisitions') : 'All requisitions';
+  rqSetHead('Requisitions' + (d ? ' \u203A ' + d.n : ''), title, (d ? d.n + ' department' : 'Every department') + ' &middot; every requisition ever raised, newest first. Cost: final if completed, else approved, else estimated.', d && rqCanWork(d.k) ? '<button class="btn pri" onclick="setView(\'rq:' + d.k + ':new\')">&#x002B; New requisition</button>' : '');
+  $('content').innerHTML = (chips ? '<div class="rq-tallies">' + chips + '</div>' : '')
+    + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3 style="white-space:nowrap">' + title + ' <span class="rq-count">' + list.length + (list.length !== base.length ? ' of ' + base.length : '') + '</span></h3>' + rqFilterBar(extra) + '</div>'
+    + (list.length ? '<div class="scroller"><table class="rq-t"><thead><tr>' + cols.map(function(c){ return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>' + body + '</tbody></table></div>'
+      : '<div class="empty"><h4>Nothing here</h4>' + (base.length ? 'No requisition matches these filters.' : 'No requisitions yet.') + '</div>') + '</div>';
+}
 function rqRenderApprovals() {
   var me = S.user.role;
   var list = RQ.rows.filter(function(r){ return r.status === 'pending' && (me === 'admin' || rqNeedsMe(r)); });
@@ -19755,7 +19814,7 @@ function rqRenderOverview() {
       return '<tr><td>' + rqEsc((rqDept(r.dept) || {}).n || '') + '</td><td>' + rqEsc(r.company) + '</td><td><b>' + rqEsc(r.location) + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '') + '</td><td>' + rqEsc(r.work_type || '') + '</td><td><b>' + l.length + '</b></td><td class="num">' + rqMoney(cost) + '</td></tr>'; }).join('') + '</tbody></table>'
     : '<div class="empty" style="padding:18px">No place has needed the same work 3 or more times in the last 12 months.</div>';
   var overdue = rqSortForTab(rows.filter(rqOverdue), 'wip');
-  rqSetHead('Requisitions', 'Requisitions overview', 'All departments' + (RQ.filter.co ? ' &middot; ' + rqEsc(rqCompany(RQ.filter.co).n) : ''), '');
+  rqSetHead('Requisitions', 'Requisitions overview', 'All departments' + (RQ.filter.co ? ' &middot; ' + rqEsc(rqCompany(RQ.filter.co).n) : ''), '<button class="btn" onclick="setView(\'rq:all\')">&#x2630; See all requisitions</button>');
   $('content').innerHTML = '<div class="rq-ovbar">' + rqFilterBar() + '</div>' + tiles
     + '<div class="card"><div class="card-h"><h3>By department</h3></div><div class="scroller">' + byDept + '</div></div>'
     + '<div class="card"><div class="card-h"><h3>Overdue work <span class="rq-count">' + overdue.length + '</span></h3></div>' + rqTable(overdue, 'wip', true) + '</div>'
@@ -19910,7 +19969,7 @@ async function rqCreate(d, v) {
   await rqEvent(res.data.id, 'created', { amount: v.est_cost });
   RQ.rows.unshift(res.data);
   _rqFormStart = null;
-  toast('Requisition ' + res.data.job_no + ' submitted — sent to audit and management', 'ok-t');
+  toast('Requisition ' + res.data.job_no + ' submitted \u2014 sent to audit and management. Print the form below if it needs signatures on paper.', 'ok-t');
   setView('rq:' + d.k + ':pending');
   rqOpen(res.data.id);
 }
@@ -19976,6 +20035,7 @@ function rqRenderDetail(id, withEvents) {
       + (r.status === 'done' ? rqKv('Completed', rqDateTime(r.completed_at)) + rqKv('Final cost', '<b>' + rqMoney(r.final_cost) + '</b>') : '')
       + '</div>' + (r.completion_note ? '<div class="rq-remarks" style="margin-top:8px">' + rqEsc(r.completion_note) + '</div>' : '') + '</div>';
   }
+  if ((r.status === 'pending' || r.status === 'returned') && rqCanWork(r.dept)) h += '<div class="rq-hint">Need signatures on paper first? Use <b>Print form for signing</b> below. Audit and management then record their approval here.</div>';
   h += '<div id="rq-actions">' + rqActionsHtml(r) + '</div>';
   var ev = RQ.events[id];
   h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
@@ -19984,7 +20044,8 @@ function rqRenderDetail(id, withEvents) {
         + (e.note ? '<div class="rq-ev-note">' + rqEsc(e.note) + '</div>' : '') + '<div class="sub2">' + rqEsc(e.by_name || '') + ' &middot; ' + rqDateTime(e.at) + '</div></div></div>';
     }).join('') + '</div>') + '</div>';
   $('rq-body').innerHTML = h;
-  $('rq-foot').innerHTML = '<button class="btn" onclick="rqPrint(\'' + r.id + '\')">&#x1F5A8; Print / PDF</button><span style="flex:1"></span><button class="btn" onclick="closeModal(\'ov-rq\')">Close</button>';
+  $('rq-foot').innerHTML = '<button class="btn" onclick="rqPrint(\'' + r.id + '\',\'form\')" title="Only the requisition, with empty signature boxes: to take round for signatures on paper">&#x1F5A8; Print form for signing</button>'
+    + '<button class="btn" onclick="rqPrint(\'' + r.id + '\')" title="Everything: approvals with seal and signature, work record">&#x1F5A8; Print full record</button><span style="flex:1"></span><button class="btn" onclick="closeModal(\'ov-rq\')">Close</button>';
 }
 function rqActionsHtml(r) {
   var role = S.user.role, h = '';
@@ -20158,76 +20219,224 @@ async function rqReopen(id) {
 }
 
 // ─── PRINT ───
-async function rqPrint(id) {
+async function rqPrint(id, mode) {
   var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r) return;
   var st = {};
   try { st = await rqLoadSettings(true); } catch (e) {}
   var ev = RQ.events[id] || await rqLoadEvents(id);
-  openReportPreview('Requisition ' + r.job_no, rqPrintHtml(r, st, ev));
+  openReportPreview((mode === 'form' ? 'Requisition form ' : 'Requisition ') + r.job_no, rqPrintHtml(r, st, ev, mode === 'form'));
 }
-function rqPrintHtml(r, st, ev) {
+// "Cards" layout (option A): figure cards on top, then details, remarks,
+// items, approval path, comments / notes, and five signature cards.
+// formOnly: the request only, with empty boxes, to take round for signatures.
+function rqDocCss() {
+  return '@page{size:A4 portrait;margin:0}*{box-sizing:border-box;margin:0;padding:0}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    + 'body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:#141414;font-size:9px;line-height:1.45;background:#d9d8d3;padding:18px}'
+    + '.pg{background:#f3f3f1;width:210mm;min-height:297mm;margin:0 auto 18px;padding:9mm;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(0,0,0,.14)}'
+    + '@media print{body{background:#fff;padding:0}.pg{margin:0;box-shadow:none;break-after:page}.pg:last-child{break-after:auto}}'
+    + '.mut{color:#8b8b88}.k{font-size:7.4px;color:#8b8b88;font-weight:500;margin-bottom:1.5px}.v{font-size:10px;font-weight:500;overflow-wrap:anywhere}'
+    + '.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}'
+    + '.card{background:#fff;border:1px solid #e7e7e4;border-radius:12px;padding:10px 12px;break-inside:avoid}'
+    + '.ticks{height:9px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--c) 0 2px,transparent 2px 4px)}.bar{display:flex}'
+    + '.top{display:flex;justify-content:space-between;align-items:center}'
+    + '.brand{display:flex;align-items:center;gap:8px}.mark{width:24px;height:24px;border-radius:7px;background:#141414;color:#fff;font-weight:800;font-size:9px;display:flex;align-items:center;justify-content:center}'
+    + '.logo{height:26px;max-width:120px;object-fit:contain}.brand b{font-size:13px;letter-spacing:-.01em}.brand span{display:block;font-size:8px;color:#8b8b88}'
+    + '.job{text-align:right}.job .v{font-size:15px;font-weight:700;letter-spacing:-.01em}'
+    + 'h1{font-size:17px;font-weight:600;letter-spacing:-.02em;margin:5mm 0 .5mm}.sub{font-size:9px;color:#8b8b88}'
+    + '.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4mm}'
+    + '.tile .big{font-size:17px;font-weight:600;letter-spacing:-.02em;margin:3px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tile .row{display:flex;justify-content:space-between;gap:6px;font-size:7.6px;color:#8b8b88;margin-top:4px}'
+    + '.g2{display:grid;grid-template-columns:1fr 1.35fr;gap:8px;margin-top:8px}.mt{margin-top:8px}'
+    + '.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px}.kv4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 10px}'
+    + '.h{font-size:9.5px;font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}'
+    + '.txt{font-size:9.4px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}'
+    + 'table{width:100%;border-collapse:collapse}th{background:#f6f6f4;font-size:7.4px;color:#8b8b88;font-weight:500;text-align:left;padding:5px 7px}th:first-child{border-radius:6px 0 0 6px}th:last-child{border-radius:0 6px 6px 0}'
+    + 'td{padding:5px 7px;border-bottom:1px solid #f0f0ee;font-size:9px;vertical-align:top;overflow-wrap:anywhere}tr{break-inside:avoid}tr.t td{border:0;font-weight:700;padding-top:7px}'
+    + '.path{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.st .ticks{margin:5px 0}.st .n{font-size:9px;font-weight:600}.st .w{font-size:7.6px;color:#8b8b88;min-height:11px}'
+    + '.grow{flex:1;display:flex;flex-direction:column}.lines{flex:1;min-height:24mm;background:repeating-linear-gradient(#fff 0,#fff 7.4mm,#ececea 7.4mm,#ececea calc(7.4mm + 1px))}'
+    + '.note{font-size:9px;padding:4px 0;border-bottom:1px solid #f0f0ee}.note b{font-weight:600}'
+    + '.sigs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px;break-inside:avoid}'
+    + '.sg{height:36mm;display:flex;flex-direction:column}.sg .area{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}.sg .area img{max-height:19mm;max-width:95%}.sg.seal .area img{transform:rotate(-8deg)}'
+    + '.sg .ln{border-top:1px solid #141414;padding-top:4px}.sg .t{font-size:8.6px;font-weight:600}.sg .nm{font-size:7.4px;color:#8b8b88;height:21px;overflow:hidden;line-height:1.4}'
+    + '.ft{display:flex;justify-content:space-between;font-size:7px;color:#9a9a97;margin-top:6px}';
+}
+function rqTicks(pct, color) {
+  pct = Math.max(0, Math.min(100, Math.round(Number(pct) || 0)));
+  return '<div class="bar"><div class="ticks" style="--c:' + color + ';width:' + pct + '%"></div><div class="ticks" style="--c:#dededb;width:' + (100 - pct) + '%"></div></div>';
+}
+function rqBrandHtml(st, coName) {
+  var E = rqEsc;
+  return '<div class="brand">' + (st && st.group_logo ? '<img class="logo" src="' + st.group_logo + '" alt="">' : '<div class="mark">SG</div>') + '<div><b>Shahana Group</b><span>' + E(coName) + '</span></div></div>';
+}
+function rqPrintHtml(r, st, ev, formOnly) {
   var E = rqEsc, d = rqDept(r.dept) || { n: r.dept };
-  var auditOk = r.audit_status === 'approved', mgmtOk = r.mgmt_status === 'approved';
-  var items = Array.isArray(r.items) && r.items.length ? '<table class="it"><thead><tr><th style="width:5%">#</th><th>Item / specification</th><th style="width:9%">Qty</th><th style="width:9%">Unit</th><th style="width:14%">Est. rate</th><th style="width:16%">Amount</th></tr></thead><tbody>'
-    + r.items.map(function(i, n){ return '<tr><td>' + (n + 1) + '</td><td>' + E(i.item) + '</td><td class="n">' + (i.qty == null ? '' : i.qty) + '</td><td>' + E(i.unit || '') + '</td><td class="n">' + E(rqMoneyTxt(i.rate)) + '</td><td class="n">' + (i.qty != null && i.rate != null ? E(rqMoneyTxt(i.qty * i.rate)) : '') + '</td></tr>'; }).join('')
-    + '<tr class="tot"><td colspan="5">Estimated total</td><td class="n">' + E(rqMoneyTxt(r.est_cost)) + '</td></tr></tbody></table>' : '';
-  function f(k, v) { return '<div class="fl"><div class="k">' + k + '</div><div class="v">' + (v || '&nbsp;') + '</div></div>'; }
+  st = st || {};
+  var auditOk = !formOnly && r.audit_status === 'approved', mgmtOk = !formOnly && r.mgmt_status === 'approved';
+  var items = Array.isArray(r.items) ? r.items : [];
+  var started = !formOnly && ['wip', 'hold', 'done'].indexOf(r.status) !== -1;
+  var prog = Math.max(0, Math.min(100, Number(r.progress) || 0));
+  var head = st['dept_head_' + r.dept] || '';
+  var newton = st.newton_line || 'Mr. Newton, AGM (HR, Admin & Compliance)';
+  var status = { pending: 'Approval pending', returned: 'Returned for changes', rejected: 'Rejected', wip: 'In progress', hold: 'On hold', done: 'Completed', cancelled: 'Cancelled' }[r.status] || r.status;
+  // figure cards
+  var costPct = 100, costRow = '<span>' + (items.length ? items.length + (items.length === 1 ? ' item' : ' items') : 'Work / service') + '</span><span>' + (formOnly ? 'For approval' : r.approved_cost != null ? 'Approved ' + E(rqMoneyTxt(r.approved_cost)) : 'Estimate') + '</span>';
+  if (started && Number(r.approved_cost) > 0) {
+    var spentNow = r.status === 'done' && r.final_cost != null ? Number(r.final_cost) : Number(r.spent) || 0;
+    costPct = spentNow / Number(r.approved_cost) * 100;
+    costRow = '<span>' + (r.status === 'done' ? 'Final ' : 'Spent ') + E(rqMoneyTxt(spentNow)) + '</span><span>of ' + E(rqMoneyTxt(r.approved_cost)) + '</span>';
+  }
+  var priPct = { low: 25, normal: 55, urgent: 100 }[r.priority] || 55;
+  var apprBig = formOnly ? 'For approval' : mgmtOk ? 'Approved' : r.status === 'rejected' ? 'Rejected' : r.status === 'returned' ? 'Returned' : r.status === 'cancelled' ? 'Cancelled' : 'Pending';
+  var apprPct = formOnly ? 20 : mgmtOk ? 100 : auditOk ? 60 : 20;
+  var apprCol = mgmtOk ? '#3fae6a' : (r.status === 'rejected' || r.status === 'cancelled') ? '#d1584b' : '#e0a33c';
+  var apprRow = formOnly ? '<span>Needs</span><span>Audit, Management</span>'
+    : mgmtOk ? '<span>' + (auditOk ? 'Audit &middot; Management' : 'Management') + '</span><span>' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) + '</span>'
+    : '<span>' + (auditOk ? 'Audit approved' : 'Waiting for') + '</span><span>' + (auditOk ? 'Management' : 'Audit, Management') + '</span>';
+  var tiles = '<div class="tiles">'
+    + '<div class="card tile"><div class="k">Estimated cost</div><div class="big">' + E(rqMoneyTxt(r.est_cost) || 'Tk 0') + '</div>' + rqTicks(costPct, costPct > 110 ? '#d1584b' : '#9aa05a') + '<div class="row">' + costRow + '</div></div>'
+    + '<div class="card tile"><div class="k">Time required</div><div class="big">' + E(rqTimeTxt(r) || '—') + '</div>' + rqTicks(started ? prog : 0, '#4f7fa8') + '<div class="row"><span>' + (started ? 'Progress ' + prog + '%' : 'Target') + '</span><span>' + (r.target_date ? E(rqDateTxt(r.target_date)) : 'after approval') + '</span></div></div>'
+    + '<div class="card tile"><div class="k">Priority</div><div class="big">' + E({ urgent: 'Urgent', low: 'Low' }[r.priority] || 'Normal') + '</div>' + rqTicks(priPct, r.priority === 'urgent' ? '#d1584b' : '#8f84cf') + '<div class="row"><span>Low</span><span>Urgent</span></div></div>'
+    + '<div class="card tile"><div class="k">Approval</div><div class="big">' + apprBig + '</div>' + rqTicks(apprPct, apprCol) + '<div class="row">' + apprRow + '</div></div></div>';
+  function kv(k, v) { return '<div><div class="k">' + k + '</div><div class="v">' + (v || '&nbsp;') + '</div></div>'; }
+  var details = '<div class="g2"><div class="card"><div class="h">Details</div><div class="kv">'
+    + kv('Date', E(rqDateTxt(r.req_date))) + kv('Type of work', E(r.work_type || '')) + kv('Building / area', E(r.location || '')) + kv('Exact location', E(r.location_detail || ''))
+    + kv('Company', E(rqCompany(r.company).n)) + kv('Department', E(d.n)) + '</div></div>'
+    + '<div class="card"><div class="h">Detailed remarks</div><div class="txt">' + E(r.remarks || '') + '</div></div></div>';
+  var itemsHtml = items.length ? '<div class="card mt"><div class="h">Items to buy <span class="mut" style="font-weight:500">' + items.length + (items.length === 1 ? ' item' : ' items') + '</span></div><table><tr><th style="width:5%">#</th><th>Item / specification</th><th class="num" style="width:9%">Qty</th><th style="width:9%">Unit</th><th class="num" style="width:14%">Rate (Tk)</th><th class="num" style="width:16%">Amount (Tk)</th></tr>'
+    + items.map(function(i, n){ return '<tr><td>' + (n + 1) + '</td><td>' + E(i.item) + '</td><td class="num">' + (i.qty == null ? '' : E(i.qty)) + '</td><td>' + E(i.unit || '') + '</td><td class="num">' + (i.rate == null ? '' : Number(i.rate).toLocaleString('en-IN')) + '</td><td class="num">' + (i.qty != null && i.rate != null ? (i.qty * i.rate).toLocaleString('en-IN') : '') + '</td></tr>'; }).join('')
+    + '<tr class="t"><td></td><td>Estimated total</td><td></td><td></td><td></td><td class="num">' + E(rqMoneyTxt(r.est_cost)) + '</td></tr></table></div>' : '';
+  // approval path: department head and AGM sign on paper; audit and management in the app
+  var green = '#3fae6a', grey = '#dededb';
+  var steps = [
+    ['Raised', green, E(r.created_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.created_at)))],
+    ['Department head', grey, formOnly ? E(head) : 'Signed on paper'],
+    ['AGM', grey, formOnly ? 'Mr. Newton' : 'Signed on paper'],
+    ['Audit', auditOk ? green : (!formOnly && r.audit_status) ? '#d1584b' : grey, auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : (!formOnly && r.audit_status ? E({ returned: 'Returned', rejected: 'Rejected' }[r.audit_status] || '') : '')],
+    ['Management', mgmtOk ? green : (!formOnly && r.mgmt_status) ? '#d1584b' : grey, mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : (!formOnly && r.mgmt_status ? E({ returned: 'Returned', rejected: 'Rejected' }[r.mgmt_status] || '') : '')]
+  ];
+  var path = '<div class="card mt"><div class="h">Approval path</div><div class="path">' + steps.map(function(s, i){
+    return '<div class="st"><div class="n">' + (i + 1) + '. ' + s[0] + '</div><div class="ticks" style="--c:' + s[1] + '"></div><div class="w">' + (s[2] || '&nbsp;') + '</div></div>'; }).join('') + '</div></div>';
+  // work record (full record only)
   var work = '';
-  if (['wip', 'hold', 'done'].indexOf(r.status) !== -1) {
+  if (started) {
     var log = (ev || []).filter(function(e){ return ['progress', 'cost', 'hold', 'resumed', 'done'].indexOf(e.kind) !== -1; });
-    work = '<h3>Work record</h3><div class="grid g4">' + f('Started', E(rqDateTime(r.started_at))) + f('Target date', E(rqDateTxt(r.target_date))) + f('Progress', (Number(r.progress) || 0) + '%') + f(r.status === 'done' ? 'Completed' : 'Status', E(r.status === 'done' ? rqDateTime(r.completed_at) : r.status === 'hold' ? 'On hold' : 'In progress'))
-      + f('Approved amount', E(rqMoneyTxt(r.approved_cost))) + f('Spent', E(rqMoneyTxt(r.spent || 0))) + f('Final cost', E(rqMoneyTxt(r.final_cost))) + f('Completion note', E(r.completion_note || '')) + '</div>'
-      + (log.length ? '<table class="it"><thead><tr><th style="width:17%">Date</th><th style="width:16%">Update</th><th>Note</th><th style="width:14%">By</th></tr></thead><tbody>' + log.map(function(e){
-        return '<tr><td>' + E(rqDateTime(e.at)) + '</td><td>' + E(RQ_EVENT_TXT[e.kind] || e.kind) + (e.pct != null ? ' ' + e.pct + '%' : '') + (e.amount != null ? ' ' + E(rqMoneyTxt(e.amount)) : '') + '</td><td>' + E(e.note || '') + '</td><td>' + E(e.by_name || '') + '</td></tr>'; }).join('') + '</tbody></table>' : '');
+    work = '<div class="card mt"><div class="h">Work record <span class="mut" style="font-weight:500">' + E(status) + '</span></div><div class="kv4">'
+      + kv('Started', E(rqDateTime(r.started_at))) + kv('Target date', E(rqDateTxt(r.target_date))) + kv('Progress', prog + '%') + kv(r.status === 'done' ? 'Completed' : 'Spent so far', E(r.status === 'done' ? rqDateTime(r.completed_at) : rqMoneyTxt(r.spent || 0)))
+      + '</div>' + (r.completion_note ? '<div class="txt" style="margin-top:6px">' + E(r.completion_note) + '</div>' : '')
+      + (log.length ? '<table style="margin-top:6px"><tr><th style="width:18%">Date</th><th style="width:20%">Update</th><th>Note</th><th style="width:15%">By</th></tr>' + log.map(function(e){
+        return '<tr><td>' + E(rqDateTime(e.at)) + '</td><td>' + E(RQ_EVENT_TXT[e.kind] || e.kind) + (e.pct != null ? ' ' + e.pct + '%' : '') + (e.amount != null ? ' ' + E(rqMoneyTxt(e.amount)) : '') + '</td><td>' + E(e.note || '') + '</td><td>' + E(e.by_name || '') + '</td></tr>'; }).join('') + '</table>' : '') + '</div>';
   }
-  var newton = (st && st.newton_line) || 'Mr. Newton, AGM (HR, Admin & Compliance)';
-  var head = (st && st['dept_head_' + r.dept]) || '';
-  function sig(title, name, img, stamp, cls) {
-    return '<div class="sg ' + (cls || '') + '"><div class="mark">' + (img ? '<img src="' + img + '" alt="">' : '') + '</div><div class="ln"></div><div class="t">' + title + '</div><div class="nm">' + (name || '&nbsp;') + '</div>' + (stamp ? '<div class="dt">' + stamp + '</div>' : '') + '</div>';
+  // comments: ruled lines on the form; the approvers' recorded notes on the full record
+  var notes = [];
+  if (!formOnly) {
+    if (r.audit_note) notes.push('<div class="note"><b>Audit</b> &middot; ' + E(r.audit_by_name || '') + ': ' + E(r.audit_note) + '</div>');
+    if (r.mgmt_note) notes.push('<div class="note"><b>Management</b> &middot; ' + E(r.mgmt_by_name || '') + ': ' + E(r.mgmt_note) + '</div>');
   }
-  var logo = st && st.group_logo ? '<img class="logo" src="' + st.group_logo + '" alt="">' : '';
-  var status = { pending: 'Approval pending', returned: 'Returned for changes', rejected: 'Rejected', wip: 'Approved · work in progress', hold: 'Approved · on hold', done: 'Completed', cancelled: 'Cancelled' }[r.status] || r.status;
-  var css = '@page{size:A4 portrait;margin:10mm 11mm 12mm}*{box-sizing:border-box;margin:0;padding:0}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
-    + 'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;color:#141413;font-size:10.5px;line-height:1.4;background:#E9E6DE;padding:18px}'
-    + '.sheet{background:#fff;width:188mm;min-height:270mm;margin:0 auto;padding:9mm 9mm 8mm;box-shadow:0 4px 24px rgba(0,0,0,.12);display:flex;flex-direction:column}'
-    + '@media print{body{background:#fff;padding:0}.sheet{width:auto;min-height:273mm;box-shadow:none;padding:2mm 1mm 0}}.sgs,.ft{break-inside:avoid;page-break-inside:avoid}'
-    + '.hd{text-align:center;border-bottom:1.6px solid #141413;padding-bottom:3mm}.logo{height:13mm;display:block;margin:0 auto 1.5mm}'
-    + '.grp{font-family:"Playfair Display","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:24px;font-weight:600;letter-spacing:.14em}'
-    + '.co{font-size:12.5px;font-weight:600;margin-top:1mm}'
-    + '.tt{display:flex;justify-content:space-between;align-items:flex-end;margin-top:4mm}.tt h1{font-size:17px;font-weight:700;letter-spacing:-.01em}.tt .dp{font-size:10.5px;color:#55534d;margin-top:1px}'
-    + '.job{text-align:right}.job .k{font-size:8px;color:#6b6862;letter-spacing:.08em;text-transform:uppercase}.job .v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}.job .s{font-size:9.5px;color:#55534d}'
-    + 'h3{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:#141413;margin:4.5mm 0 1.6mm;padding-bottom:1mm;border-bottom:1px solid #141413}'
-    + '.grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #d6d3cb;border-radius:6px;overflow:hidden}.grid.g4{grid-template-columns:repeat(4,1fr)}'
-    + '.fl{padding:4px 7px;border-right:1px solid #e6e3dc;border-bottom:1px solid #e6e3dc}.fl .k{font-size:7.6px;color:#6b6862;letter-spacing:.05em;text-transform:uppercase}.fl .v{font-size:10.5px;font-weight:500;min-height:13px;overflow-wrap:anywhere}'
-    + '.rm{border:1px solid #d6d3cb;border-radius:6px;padding:6px 8px;white-space:pre-wrap;overflow-wrap:anywhere;min-height:16mm}'
-    + 'table.it{width:100%;border-collapse:collapse;margin-top:2mm}table.it th{background:#f2f0ea;font-size:7.8px;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:3px 5px;border:1px solid #d6d3cb}table.it td{padding:3px 5px;border:1px solid #e3e0d8;vertical-align:top;overflow-wrap:anywhere}td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}tr.tot td{font-weight:700;background:#faf9f6}'
-    + '.ap{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.ap>div{border:1px solid #d6d3cb;border-radius:6px;padding:5px 8px}.ap .k{font-size:7.6px;color:#6b6862;letter-spacing:.05em;text-transform:uppercase}.ap b{font-size:10.5px}'
-    + '.sp{flex:1;min-height:6mm}'
-    + '.sgs{display:grid;grid-template-columns:repeat(5,1fr);gap:4mm;margin-top:3mm}.sg{text-align:center;position:relative}.sg .mark{height:21mm;display:flex;align-items:flex-end;justify-content:center}.sg .mark img{max-height:21mm;max-width:100%}'
-    + '.sg.seal .mark img{max-height:22mm;transform:rotate(-8deg);opacity:.92}'
-    + '.sg .ln{border-top:1px solid #141413;margin-top:1mm}.sg .t{font-size:8.6px;font-weight:700;margin-top:1.2mm}.sg .nm{font-size:8px;color:#55534d;line-height:1.3}.sg .dt{font-size:7.4px;color:#55534d}'
-    + '.ft{display:flex;justify-content:space-between;border-top:1px solid #d6d3cb;margin-top:4mm;padding-top:1.5mm;font-size:7.2px;color:#8a867d}';
-  var body = '<div class="sheet"><div class="hd">' + logo + '<div class="grp">SHAHANA GROUP</div><div class="co">' + E(rqCompany(r.company).n) + '</div></div>'
-    + '<div class="tt"><div><h1>Requisition Form</h1><div class="dp">' + E(d.n) + ' Department' + (r.kind === 'purchase' ? ' &middot; Purchase' : ' &middot; Work / service') + '</div></div><div class="job"><div class="k">Job no.</div><div class="v">' + E(r.job_no) + '</div><div class="s">' + E(status) + '</div></div></div>'
-    + '<h3>Details</h3><div class="grid">' + f('Date', E(rqDateTxt(r.req_date))) + f('Priority', E({ urgent: 'Urgent', low: 'Low' }[r.priority] || 'Normal')) + f('Type of work', E(r.work_type || ''))
-    + f('Building / area', E(r.location || '')) + f('Exact location', E(r.location_detail || '')) + f('Time required', E(rqTimeTxt(r)))
-    + f('Estimated cost', E(rqMoneyTxt(r.est_cost))) + f('Raised by', E(r.created_by_name || '')) + f('Raised on', E(rqDateTime(r.created_at))) + '</div>'
-    + (items ? '<h3>Items to buy</h3>' + items : '')
-    + '<h3>Detailed remarks</h3><div class="rm">' + E(r.remarks || '') + '</div>'
-    + '<h3>Approval</h3><div class="ap"><div><div class="k">Audit</div><b>' + E({ approved: 'Approved', returned: 'Returned', rejected: 'Rejected' }[r.audit_status] || 'Not yet') + '</b>' + (r.audit_by_name ? ' &middot; ' + E(r.audit_by_name) + ' &middot; ' + E(rqDateTime(r.audit_at)) : '') + (r.audit_note ? '<div>' + E(r.audit_note) + '</div>' : '') + '</div>'
-    + '<div><div class="k">Management</div><b>' + E({ approved: 'Approved', returned: 'Returned', rejected: 'Rejected' }[r.mgmt_status] || 'Not yet') + '</b>' + (r.mgmt_by_name ? ' &middot; ' + E(r.mgmt_by_name) + ' &middot; ' + E(rqDateTime(r.mgmt_at)) : '') + (mgmtOk ? '<div>Approved amount: <b>' + E(rqMoneyTxt(r.approved_cost)) + '</b></div>' : '') + (r.mgmt_note ? '<div>' + E(r.mgmt_note) + '</div>' : '') + '</div></div>'
-    + work
-    + '<div class="sp"></div>'
-    + '<div class="sgs">'
-    + sig('Prepared by', E(r.created_by_name || ''), '', '')
-    + sig('Department Head', (head ? E(head) + '<br>' : '') + E(d.n), '', '')
-    + sig('AGM', E(newton), '', '')
-    + sig('Audit', auditOk ? E(r.audit_by_name || '') : '', auditOk && st.audit_seal ? st.audit_seal : '', auditOk ? E(rqDateTime(r.audit_at)) : '', 'seal')
-    + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') : '', mgmtOk && st.mgmt_sign ? st.mgmt_sign : '', mgmtOk ? E(rqDateTime(r.mgmt_at)) : '', 'sign')
-    + '</div>'
-    + '<div class="ft"><span>Shahana Group &middot; Requisition ' + E(r.job_no) + ' &middot; system record, printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + E(rqCompany(r.company).n) + '</span></div>'
+  var comments = '<div class="card mt grow"><div class="h">Comments by approvers</div>' + notes.join('') + '<div class="lines"></div></div>';
+  function sig(title, name, img, cls) {
+    return '<div class="card sg ' + (cls || '') + '"><div class="area">' + (img ? '<img src="' + img + '" alt="">' : '') + '</div><div class="ln"><div class="t">' + title + '</div><div class="nm">' + (name || '&nbsp;') + '</div></div></div>';
+  }
+  var sigs = '<div class="sigs">'
+    + sig('Prepared by', E(r.created_by_name || ''))
+    + sig('Department head', (head ? E(head) + '<br>' : '') + E(d.n))
+    + sig('AGM', E(newton))
+    + sig('Audit', auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : 'Date:', auditOk ? st.audit_seal : '', 'seal')
+    + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : 'Date:', mgmtOk ? st.mgmt_sign : '', 'sign')
     + '</div>';
-  return '<!doctype html><html><head><meta charset="utf-8"><title>Requisition ' + E(r.job_no.replace(/\//g, '-')) + '</title><style>' + css + '</style></head><body>' + body + '</body></html>';
+  var body = '<div class="pg"><div class="card top">' + rqBrandHtml(st, rqCompany(r.company).n) + '<div class="job"><div class="k">JOB NO.</div><div class="v">' + E(r.job_no) + '</div></div></div>'
+    + '<h1>Requisition &mdash; ' + E(d.n) + '</h1><div class="sub">' + (r.kind === 'purchase' ? 'Items to buy' : 'Work / service') + ' &middot; raised by ' + E(r.created_by_name || '') + ' on ' + E(rqDateTime(r.created_at)) + (formOnly ? '' : ' &middot; ' + E(status)) + '</div>'
+    + tiles + details + itemsHtml + path + work + comments + sigs
+    + '<div class="ft"><span>Shahana Group &middot; Requisition ' + E(r.job_no) + (formOnly ? ' &middot; form for signing' : ' &middot; full record') + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + E(rqCompany(r.company).n) + '</span></div></div>';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Requisition ' + E(r.job_no.replace(/\//g, '-')) + '</title><style>' + rqDocCss() + '</style></head><body>' + body + '</body></html>';
+}
+
+// ─── MONTHLY SPEND REPORT ───
+// Money is counted when it happens: approved in the month (management
+// approval date), spent in the month (completed in the month, at the final
+// cost). Work still open at the end of the month is listed as committed.
+function rqMonthRange(m) { var y = +m.slice(0, 4), mo = +m.slice(5, 7); var next = mo === 12 ? (y + 1) + '-01' : y + '-' + String(mo + 1).padStart(2, '0'); return { from: m + '-01', to: next + '-01' }; }
+function rqMonthName(m) { var n = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; return n[+m.slice(5, 7) - 1] + ' ' + m.slice(0, 4); }
+function rqReportData(month, co) {
+  var rg = rqMonthRange(month);
+  var inM = function(ts){ if (!ts) return false; var d = rqLocalDate(ts); return d >= rg.from && d < rg.to; };
+  var rows = RQ.rows.filter(function(r){ return !co || r.company === co; });
+  var raised = rows.filter(function(r){ return inM(r.created_at); });
+  var approved = rows.filter(function(r){ return r.mgmt_status === 'approved' && inM(r.mgmt_at); });
+  var done = rows.filter(function(r){ return r.status === 'done' && inM(r.completed_at); });
+  var open = rows.filter(function(r){ return (r.status === 'wip' || r.status === 'hold') && r.mgmt_at && rqLocalDate(r.mgmt_at) < rg.to; });
+  var rejected = rows.filter(function(r){ return r.status === 'rejected' && inM(r.updated_at); });
+  var sum = function(l, f){ return l.reduce(function(s, r){ return s + (Number(f(r)) || 0); }, 0); };
+  var fc = function(r){ return r.final_cost != null ? r.final_cost : r.approved_cost; };
+  function by(keyFn, list, valFn) { var o = {}; list.forEach(function(r){ var k = keyFn(r); o[k] = (o[k] || 0) + (Number(valFn(r)) || 0); }); return o; }
+  var grid = {};
+  RQ_COMPANIES.forEach(function(c){ grid[c.c] = {}; RQ_DEPTS.forEach(function(dd){ grid[c.c][dd.k] = 0; }); });
+  done.forEach(function(r){ if (grid[r.company]) grid[r.company][r.dept] = (grid[r.company][r.dept] || 0) + (Number(fc(r)) || 0); });
+  var types = by(function(r){ return (rqDept(r.dept) || {}).n + ' · ' + (r.work_type || 'Other'); }, done, fc);
+  var over = done.filter(function(r){ return Number(r.approved_cost) > 0 && Number(r.final_cost) > Number(r.approved_cost) * 1.1; });
+  return {
+    month: month, co: co, raised: raised, approved: approved, done: done, open: open, rejected: rejected, grid: grid, over: over,
+    types: Object.keys(types).map(function(k){ return [k, types[k]]; }).sort(function(a, b){ return b[1] - a[1]; }),
+    tot: { raisedEst: sum(raised, function(r){ return r.est_cost; }), approved: sum(approved, function(r){ return r.approved_cost; }), spent: sum(done, fc),
+      openCommitted: sum(open, function(r){ return r.approved_cost; }), openSpent: sum(open, function(r){ return r.spent; }), doneApproved: sum(done, function(r){ return r.approved_cost; }) },
+    days: done.length ? Math.round(done.reduce(function(s, r){ return s + Math.max(0, rqDaysBetween(rqLocalDate(r.started_at || r.mgmt_at || r.created_at), rqLocalDate(r.completed_at))); }, 0) / done.length) : null
+  };
+}
+function rqRenderReport() {
+  if (!RQ.reportMonth) RQ.reportMonth = todayStr().slice(0, 7);
+  var D = rqReportData(RQ.reportMonth, RQ.filter.co);
+  var E = rqEsc, T = D.tot;
+  var acts = '<input type="month" class="rq-month" value="' + RQ.reportMonth + '" onchange="if(this.value){RQ.reportMonth=this.value;rqRender(S.view)}">'
+    + '<select class="rq-month" onchange="RQ.filter.co=this.value;rqRender(S.view)"><option value="">All companies</option>' + RQ_COMPANIES.map(function(c){ return '<option value="' + c.c + '"' + (RQ.filter.co === c.c ? ' selected' : '') + '>' + c.n + '</option>'; }).join('') + '</select>'
+    + '<button class="btn pri" onclick="rqPrintReport()">&#x1F5A8; Print / PDF</button>';
+  rqSetHead('Requisitions', 'Monthly spend report', E(rqMonthName(D.month)) + ' &middot; ' + (D.co ? E(rqCompany(D.co).n) : 'All companies'), acts);
+  var tiles = '<div class="stats">'
+    + '<div class="stat"><div class="k">Spent (completed)</div><div class="v" style="font-size:22px">' + rqMoney(T.spent) + '</div><div class="n">' + D.done.length + ' jobs finished</div></div>'
+    + '<div class="stat"><div class="k">Approved this month</div><div class="v" style="font-size:22px">' + rqMoney(T.approved) + '</div><div class="n">' + D.approved.length + ' requisitions</div></div>'
+    + '<div class="stat"><div class="k">Raised this month</div><div class="v" style="font-size:22px">' + D.raised.length + '</div><div class="n">' + rqMoney(T.raisedEst) + ' estimated</div></div>'
+    + '<div class="stat' + (D.open.length ? ' alert' : '') + '"><div class="k">Still open (committed)</div><div class="v" style="font-size:22px">' + rqMoney(T.openCommitted) + '</div><div class="n">' + D.open.length + ' jobs, ' + rqMoney(T.openSpent) + ' spent so far</div></div>'
+    + '<div class="stat"><div class="k">Average days to finish</div><div class="v" style="font-size:22px">' + (D.days == null ? '&mdash;' : D.days) + '</div><div class="n">' + (T.doneApproved ? 'Final cost ' + Math.round(T.spent / T.doneApproved * 100) + '% of approved' : '') + '</div></div></div>';
+  var cos = D.co ? [rqCompany(D.co)] : RQ_COMPANIES;
+  var grid = '<table class="rq-t"><thead><tr><th>Company</th>' + RQ_DEPTS.map(function(d){ return '<th class="num">' + d.n + '</th>'; }).join('') + '<th class="num">Total</th></tr></thead><tbody>'
+    + cos.map(function(c){ var g = D.grid[c.c] || {}, t = 0; return '<tr><td><b>' + E(c.n) + '</b></td>' + RQ_DEPTS.map(function(d){ t += g[d.k] || 0; return '<td class="num">' + (g[d.k] ? rqMoney(g[d.k]) : '&mdash;') + '</td>'; }).join('') + '<td class="num"><b>' + rqMoney(t) + '</b></td></tr>'; }).join('')
+    + '<tr><td><b>Total</b></td>' + RQ_DEPTS.map(function(d){ var t = cos.reduce(function(s, c){ return s + ((D.grid[c.c] || {})[d.k] || 0); }, 0); return '<td class="num"><b>' + rqMoney(t) + '</b></td>'; }).join('') + '<td class="num"><b>' + rqMoney(T.spent) + '</b></td></tr></tbody></table>';
+  var types = D.types.length ? '<table class="rq-t"><thead><tr><th>Department &middot; type of work</th><th class="num">Spent</th><th style="width:40%"></th></tr></thead><tbody>' + D.types.map(function(t){
+    return '<tr><td>' + E(t[0]) + '</td><td class="num">' + rqMoney(t[1]) + '</td><td><div class="rq-bar" style="width:100%"><i style="width:' + (T.spent ? Math.round(t[1] / T.spent * 100) : 0) + '%"></i></div></td></tr>'; }).join('') + '</tbody></table>' : '<div class="empty" style="padding:16px">No work finished this month.</div>';
+  var doneList = D.done.slice().sort(function(a, b){ return (Number(b.final_cost) || 0) - (Number(a.final_cost) || 0); });
+  var jobs = doneList.length ? '<table class="rq-t"><thead><tr><th>Job no.</th><th>Company</th><th>Location</th><th>Type of work</th><th>Completed</th><th class="num">Approved</th><th class="num">Final cost</th></tr></thead><tbody>' + doneList.map(function(r){
+    return '<tr onclick="rqOpen(\'' + r.id + '\')"><td><span class="rq-job">' + E(r.job_no) + '</span></td><td>' + E(r.company) + '</td><td>' + E(r.location || '') + '</td><td>' + E(r.work_type || '') + '</td><td>' + rqDateTxt(rqLocalDate(r.completed_at)) + '</td><td class="num">' + rqMoney(r.approved_cost) + '</td><td class="num' + (rqOverBudget(r) ? ' rq-late' : '') + '">' + rqMoney(r.final_cost) + '</td></tr>'; }).join('') + '</tbody></table>' : '<div class="empty" style="padding:16px">No work finished this month.</div>';
+  $('content').innerHTML = tiles
+    + '<div class="card"><div class="card-h"><h3>Spent by company and department</h3><span class="note">Completed work, at final cost</span></div><div class="scroller">' + grid + '</div></div>'
+    + '<div class="card"><div class="card-h"><h3>Where the money went</h3></div><div class="scroller">' + types + '</div></div>'
+    + '<div class="card"><div class="card-h"><h3>Completed jobs <span class="rq-count">' + doneList.length + '</span></h3>' + (D.over.length ? '<span class="note rq-late">' + D.over.length + ' over the approved amount by more than 10%</span>' : '') + '</div>' + jobs + '</div>';
+}
+async function rqPrintReport() {
+  var st = {}; try { st = await rqLoadSettings(true); } catch (e) {}
+  var D = rqReportData(RQ.reportMonth || todayStr().slice(0, 7), RQ.filter.co);
+  var E = rqEsc, T = D.tot, m = function(n){ return E(rqMoneyTxt(n) || 'Tk 0'); };
+  var cos = D.co ? [rqCompany(D.co)] : RQ_COMPANIES;
+  var maxType = D.types.length ? D.types[0][1] : 0;
+  var palette = ['#9aa05a', '#4f7fa8', '#8f84cf', '#c9925b', '#5fa59b', '#b07aa1'];
+  var tile = function(k, big, pct, col, l, r){ return '<div class="card tile"><div class="k">' + k + '</div><div class="big">' + big + '</div>' + rqTicks(pct, col) + '<div class="row"><span>' + l + '</span><span>' + r + '</span></div></div>'; };
+  var doneList = D.done.slice().sort(function(a, b){ return (Number(b.final_cost) || 0) - (Number(a.final_cost) || 0); });
+  var body = '<div class="pg"><div class="card top">' + rqBrandHtml(st, D.co ? rqCompany(D.co).n : 'All companies') + '<div class="job"><div class="k">REPORT</div><div class="v">' + E(rqMonthName(D.month)) + '</div></div></div>'
+    + '<h1>Monthly spend &mdash; Maintenance, Civil, IT</h1><div class="sub">Spent = work completed in the month, at final cost. Approved = approved by management in the month.</div>'
+    + '<div class="tiles">'
+    + tile('Spent (completed)', m(T.spent), T.doneApproved ? Math.min(100, T.spent / T.doneApproved * 100) : 0, '#9aa05a', D.done.length + ' jobs', T.doneApproved ? Math.round(T.spent / T.doneApproved * 100) + '% of approved' : '')
+    + tile('Approved this month', m(T.approved), 100, '#4f7fa8', D.approved.length + ' requisitions', '')
+    + tile('Raised this month', String(D.raised.length), D.raised.length ? 100 : 0, '#8f84cf', m(T.raisedEst) + ' est.', D.rejected.length + ' rejected')
+    + tile('Still open', m(T.openCommitted), T.openCommitted ? Math.min(100, T.openSpent / T.openCommitted * 100) : 0, '#e0a33c', D.open.length + ' jobs', m(T.openSpent) + ' spent')
+    + '</div>'
+    + '<div class="card mt"><div class="h">Spent by company and department</div><table><tr><th>Company</th>' + RQ_DEPTS.map(function(d){ return '<th class="num">' + d.n + '</th>'; }).join('') + '<th class="num">Total</th></tr>'
+    + cos.map(function(c){ var g = D.grid[c.c] || {}, t = 0; return '<tr><td>' + E(c.n) + '</td>' + RQ_DEPTS.map(function(d){ t += g[d.k] || 0; return '<td class="num">' + (g[d.k] ? m(g[d.k]) : '&mdash;') + '</td>'; }).join('') + '<td class="num"><b>' + m(t) + '</b></td></tr>'; }).join('')
+    + '<tr class="t"><td>Total</td>' + RQ_DEPTS.map(function(d){ return '<td class="num">' + m(cos.reduce(function(s, c){ return s + ((D.grid[c.c] || {})[d.k] || 0); }, 0)) + '</td>'; }).join('') + '<td class="num">' + m(T.spent) + '</td></tr></table></div>'
+    + '<div class="card mt"><div class="h">Where the money went</div>' + (D.types.length ? D.types.slice(0, 12).map(function(t, i){
+      return '<div style="display:grid;grid-template-columns:42% 1fr 22%;gap:10px;align-items:center;padding:3px 0"><span>' + E(t[0]) + '</span>' + rqTicks(maxType ? t[1] / maxType * 100 : 0, palette[i % palette.length]) + '<span class="num">' + m(t[1]) + '</span></div>'; }).join('') : '<div class="mut">No work finished this month.</div>') + '</div>'
+    + '<div class="card mt grow"><div class="h">Completed jobs <span class="mut" style="font-weight:500">' + doneList.length + (D.over.length ? ' &middot; ' + D.over.length + ' over approved by 10%+' : '') + '</span></div>'
+    + (doneList.length ? '<table><tr><th>Job no.</th><th>Company</th><th>Location</th><th>Type of work</th><th>Completed</th><th class="num">Approved</th><th class="num">Final cost</th></tr>' + doneList.map(function(r){
+      return '<tr><td>' + E(r.job_no) + '</td><td>' + E(r.company) + '</td><td>' + E(r.location || '') + '</td><td>' + E(r.work_type || '') + '</td><td>' + E(rqDateTxt(rqLocalDate(r.completed_at))) + '</td><td class="num">' + m(r.approved_cost) + '</td><td class="num"' + (rqOverBudget(r) ? ' style="color:#c0392b;font-weight:700"' : '') + '>' + m(r.final_cost) + '</td></tr>'; }).join('') + '</table>' : '<div class="mut">None.</div>') + '</div>'
+    + (D.open.length ? '<div class="card mt"><div class="h">Still open at the end of the month <span class="mut" style="font-weight:500">' + D.open.length + '</span></div><table><tr><th>Job no.</th><th>Location</th><th>Type of work</th><th>Progress</th><th>Target</th><th class="num">Approved</th><th class="num">Spent</th></tr>'
+      + D.open.map(function(r){ return '<tr><td>' + E(r.job_no) + '</td><td>' + E(r.location || '') + '</td><td>' + E(r.work_type || '') + '</td><td>' + (Number(r.progress) || 0) + '%</td><td>' + E(rqDateTxt(r.target_date)) + '</td><td class="num">' + m(r.approved_cost) + '</td><td class="num">' + m(r.spent) + '</td></tr>'; }).join('') + '</table></div>' : '')
+    + '<div class="ft"><span>Shahana Group &middot; Requisitions monthly spend &middot; ' + E(rqMonthName(D.month)) + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + (D.co ? E(rqCompany(D.co).n) : 'All companies') + '</span></div></div>';
+  openReportPreview('Monthly spend ' + rqMonthName(D.month), '<!doctype html><html><head><meta charset="utf-8"><title>Requisitions spend ' + E(D.month) + '</title><style>' + rqDocCss() + '</style></head><body>' + body + '</body></html>');
 }
 
 // ─── ADMIN: seal, signature, logo, names ───
