@@ -200,6 +200,77 @@ tbody tr.late td.stk{background-color:#FDECEA!important}
 .bar i.full{background:var(--green)}
 .done-lbl{font-size:10.5px;font-weight:700;color:var(--green);letter-spacing:.03em}
 
+/* ── REQUISITIONS ── */
+.rq-rail-note{font-size:11px;color:var(--muted);padding:2px 12px 6px}
+.rq-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rq-filter select,.rq-filter input{padding:5px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-size:12.5px}
+.rq-filter input{min-width:250px}
+.rq-ovbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+.rq-count{font-family:var(--sans);font-size:12px;color:var(--muted);font-weight:600;margin-left:4px}
+table.rq-t td{font-size:12.5px;padding:7px 8px;vertical-align:top}
+table.rq-t tbody tr{cursor:pointer}
+table.rq-t tbody tr:hover td{background:var(--accent-soft)}
+.rq-job{font-family:var(--mono);font-weight:700;font-size:12px;white-space:nowrap}
+.rq-co{font-weight:700;font-size:11px;padding:1px 6px;border-radius:5px;background:rgba(0,0,0,.06)}
+.rq-ap{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap}
+.rq-ap.ok{background:var(--green-soft);color:var(--green)}.rq-ap.warn{background:var(--orange-soft);color:var(--orange)}
+.rq-ap.bad{background:var(--red-soft);color:var(--red)}.rq-ap.wait{background:rgba(0,0,0,.06);color:var(--muted)}
+.rq-pri{font-size:11.5px;font-weight:600;color:var(--muted)}
+.rq-pri.urgent{color:#fff;background:var(--red);padding:1px 8px;border-radius:10px}
+.rq-pri.low{opacity:.7}
+tr.rq-urgent td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+.rq-late{color:var(--red);font-weight:700}
+.rq-why{white-space:normal;display:inline-block;max-width:300px}
+.rq-prog{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.rq-bar{width:90px;height:7px;border-radius:5px;background:var(--line);overflow:hidden;flex:0 0 auto}
+.rq-bar i{display:block;height:100%;background:var(--accent);border-radius:5px}.rq-bar i.full{background:var(--green)}
+.rq-form .m-b{padding:16px 18px}
+.rq-form textarea,.rq-act textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:13.5px;resize:vertical}
+.rq-act textarea{margin-top:2px}
+.rq-form .f input,.rq-form .f select,.rq-act .f input{background:var(--panel)}
+.rq-req{color:var(--red)}
+.rq-lbl{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.rq-seg{display:flex;gap:16px;padding-top:7px;flex-wrap:wrap}
+.rq-seg label{display:flex!important;gap:6px;align-items:center;font-size:13px!important;color:var(--ink)!important;font-weight:500!important;margin:0!important;cursor:pointer}
+.rq-seg input{width:auto!important}
+table.rq-items th{white-space:nowrap}
+table.rq-items td{padding:3px 4px;white-space:normal}
+table.rq-items td.rqi-amt{white-space:nowrap}
+table.rq-items input{width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font-size:13px}
+.rq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 18px}
+.rq-kv .k{font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.rq-kv .v{font-size:13.5px;margin-top:1px;overflow-wrap:anywhere}
+.rq-sec{margin-top:16px}
+.rq-sec-h{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.rq-remarks{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;overflow-wrap:anywhere}
+.rq-appr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rq-appr-box{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.rq-appr-box .k{font-size:11px;font-weight:700;margin-bottom:5px}
+.rq-note{font-size:12.5px;margin-top:5px;white-space:pre-wrap}
+.rq-act{margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--bg)}
+.rq-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.rq-own{margin-top:14px}
+.rq-slider{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.rq-slider input{flex:1;accent-color:var(--accent);height:22px}
+.rq-slider b{font-size:20px;min-width:56px;text-align:right;font-variant-numeric:tabular-nums}
+.rq-hist{border-left:2px solid var(--line);margin-left:5px;padding-left:16px}
+.rq-ev{position:relative;padding:3px 0 9px;font-size:13px}
+.rq-ev-dot{position:absolute;left:-22px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--muted);border:2px solid var(--panel)}
+.rq-ev-mgmt_approved .rq-ev-dot,.rq-ev-done .rq-ev-dot{background:var(--green)}
+.rq-ev-audit_approved .rq-ev-dot{background:#0284C7}
+.rq-ev-returned .rq-ev-dot,.rq-ev-hold .rq-ev-dot{background:var(--orange)}
+.rq-ev-rejected .rq-ev-dot,.rq-ev-cancelled .rq-ev-dot{background:var(--red)}
+.rq-ev-progress .rq-ev-dot,.rq-ev-cost .rq-ev-dot{background:var(--accent)}
+.rq-ev-note{white-space:pre-wrap;color:var(--ink)}
+#ov-rq .modal{max-width:920px}
+.rq-adm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rq-adm-prev{height:96px;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;background:#fff}
+.rq-adm-prev img{max-height:84px;max-width:90%}
+@media(max-width:760px){
+  .rq-grid{grid-template-columns:1fr 1fr}.rq-appr{grid-template-columns:1fr}.rq-adm-grid{grid-template-columns:1fr}
+  .rq-filter input{min-width:0;flex:1}.rq-form .grid3,.rq-form .grid2{grid-template-columns:1fr}
+}
+
 /* ── LOGIN ── */
 #login-wrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200}
 .login-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:36px 36px 28px;
@@ -1978,7 +2049,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-13:36</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-14:17</p>
   </div>
 </div>
 
@@ -2020,7 +2091,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-13:36</div>
+  <div id="ver-stamp">Version:26-10-14:17</div>
 </div>
 
 
@@ -2857,6 +2928,16 @@ td.col-cm{min-width:96px;font-size:11px}
 </div>
 
 <!-- === IN-APP REPORT PREVIEW (replaces the old pop-up browser window) === -->
+<!-- ═══ MODAL: REQUISITION ═══ -->
+<div class="ov" id="ov-rq" onclick="if(event.target===this)closeModal('ov-rq')">
+  <div class="modal wide">
+    <div class="m-h"><div><h3 id="rq-title">Requisition</h3><div class="msub" id="rq-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-rq')">Close</button></div>
+    <div class="m-b" id="rq-body"></div>
+    <div class="m-f" id="rq-foot"></div>
+  </div>
+</div>
+
 <div class="ov" id="ov-report-preview" onclick="if(event.target===this)closeReportPreview()">
   <div class="modal" style="max-width:1400px;width:96vw;height:90vh;display:flex;flex-direction:column">
     <div class="m-h" style="flex-shrink:0"><div><h3 id="rp-title">Report</h3><div class="msub">Preview — use Print to save as PDF or print</div></div>
@@ -3031,10 +3112,11 @@ const DASH_COLS = [
 
 // ─── Helpers ───
 const $ = id => document.getElementById(id);
-var ROLE_ORDER = { management:1, audit:2, hod:3, manager:4, merchant:5, jm:6, commercial:7 };
+var ROLE_ORDER = { management:1, audit:2, hod:3, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
 const ROLE_LABELS = {
   admin: 'Administrator', management: 'Management', hod: 'Head of Dept',
-  manager: 'Manager', audit: 'Audit', merchant: 'Merchandiser', jm: 'Junior Merchandiser', commercial: 'Commercial'
+  manager: 'Manager', audit: 'Audit', merchant: 'Merchandiser', jm: 'Junior Merchandiser', commercial: 'Commercial',
+  dept: 'Department'
 };
 const roleLabel = function(r) { return ROLE_LABELS[r] || r; };
 
@@ -3078,7 +3160,7 @@ function can(action, merchantId) {
 function getMessageableUsers() {
   if (!S.user) return [];
   var role = S.user.role;
-  var others = S.users.filter(function(u){ return u.id !== S.user.id; });
+  var others = S.users.filter(function(u){ return u.id !== S.user.id && u.role !== 'dept'; }); // department (requisition) logins have no messaging
 
   if (['admin','management','hod'].includes(role)) return others;
   if (role === 'audit') return [];
@@ -4299,6 +4381,9 @@ async function startApp() {
 
   $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading…</div>';
 
+  // Department staff (requisitions only): none of the order data is loaded.
+  if (S.user.role === 'dept') { await rqBoot(); return; }
+
   // These were 13 sequential awaits — each one a full network round trip that
   // waited for the previous to finish, so boot cost ~13 RTTs of pure latency.
   // They fall into three dependency waves instead.
@@ -4318,7 +4403,8 @@ async function startApp() {
     ['loadAppSettings',      loadAppSettings],
     ['loadBuyerSettings',    loadBuyerSettings],
     ['probeCommercialSchema', probeCommercialSchema],
-    ['loadCompanies',        loadCompanies]
+    ['loadCompanies',        loadCompanies],
+    ['rqLoad',               function(){ return rqCanSee() ? rqLoad() : Promise.resolve(); }]
   ];
   await Promise.all(wave1.map(function(p){
     // Each is individually caught, exactly as before — one failing load must not
@@ -4339,6 +4425,12 @@ async function startApp() {
 
   cleanOldArchive();
   subscribeRealtime();
+  if (rqCanSee()) rqSubscribe();
+  // audit / management: say how many requisitions are waiting for them
+  if (rqCanSee() && !RQ.missing) {
+    var _rqMine = RQ.rows.filter(rqNeedsMe).length;
+    if (_rqMine) setTimeout(function(){ toast(_rqMine + ' requisition' + (_rqMine === 1 ? ' is' : 's are') + ' waiting for your approval'); }, 1200);
+  }
 
   // Lab dip alerts only ever get (re)checked at the moment a board loads. A
   // tab left open on one board all day would otherwise never see a checkpoint
@@ -5149,7 +5241,9 @@ function subscribeRealtime() {
 
 // ─── RENDER ───
 function render() {
+  if (S.user && S.user.role === 'dept' && !(typeof S.view === 'string' && S.view.indexOf('rq:') === 0)) { setView(rqHomeView()); return; }
   renderRail();
+  if (typeof S.view === 'string' && S.view.indexOf('rq:') === 0) { rqRender(S.view); return; }
   if (S.view === 'dashboard') renderDashboard();
   else if (S.view === 'shipped' || S.view === 'archive') renderShippedPage();
   else if (S.view === 'trash') renderTrashPage();
@@ -5166,6 +5260,22 @@ function render() {
 }
 
 function setView(v) {
+  // Requisitions are a separate part: department staff never leave it, and
+  // only admin / management / audit / department staff can open it.
+  if (S.user && S.user.role === 'dept' && !(typeof v === 'string' && v.indexOf('rq:') === 0)) v = rqHomeView();
+  if (rqFormDirty() && v !== S.view) {
+    appConfirm('Leave the requisition form? What you typed will be lost.', { title: 'Discard changes', okText: 'Leave', cancelText: 'Stay', danger: true }).then(function(ok){ if (ok) { _rqFormStart = null; RQ.editId = null; setView(v); } });
+    return;
+  }
+  if (typeof v === 'string' && v.indexOf('rq:') === 0) {
+    if (!rqCanSee()) { toast('You don\u2019t have access to this page'); return; }
+    S.view = v;
+    var _rc = document.getElementById('content'); if (_rc) delete _rc.dataset.page;
+    try { sessionStorage.setItem('pt_last_view', v); } catch(e) {}
+    renderRail();
+    rqRender(v);
+    return;
+  }
   var isJMOverview = typeof v === 'string' && v.indexOf('jm_') === 0;
   if (v === 'admin' && S.user.role !== 'admin') {
     toast('Access restricted to Admin only');
@@ -12387,6 +12497,7 @@ function renderAdminPage() {
 
   + '<div class="adm-card"><div class="adm-card-head"><div><h3 class="adm-h3">Backup &amp; restore</h3><div class="adm-sub">Download a full copy of the data, or put it back from a backup file</div></div></div><div id="admin-backup-body"></div></div>'
   + '<div class="adm-card"><div class="adm-card-head"><div><h3 class="adm-h3">Companies</h3><div class="adm-sub">The companies orders are made under, with the details used on commercial documents</div></div></div><div id="admin-company-body"></div></div>'
+  + '<div class="adm-card"><div class="adm-card-head"><div><h3 class="adm-h3">Requisitions</h3><div class="adm-sub">The seal, signature, logo and names printed on requisition forms</div></div></div><div id="admin-rq-body"></div></div>'
   + '<div id="admin-settings-body"></div>'
 
   // ── Add User ───────────────────────────────────────────────────────────
@@ -12400,9 +12511,12 @@ function renderAdminPage() {
   + '<select id="a_type" ' + sel + ' onchange="handleProfileType()">'
   + '<option value="merchant">Merchant</option><option value="jm">Junior Merchandiser</option><option value="manager">Manager</option>'
   + '<option value="hod">HOD</option><option value="audit">Audit</option><option value="management">Management</option><option value="commercial">Commercial</option>'
+  + '<option value="dept">Department (requisitions)</option>'
   + '</select></div>'
   + '<div class="adm-field" id="div-field"><label class="adm-lbl">Division</label>'
   + '<select id="a_div" ' + sel + '><option value="sweater">Sweater</option><option value="knit">Knit</option></select></div>'
+  + '<div class="adm-field" id="rqdept-field" style="display:none"><label class="adm-lbl">Department</label>'
+  + '<select id="a_rqdept" ' + sel + '>' + RQ_DEPTS.map(function(d){ return '<option value="' + d.k + '">' + d.n + '</option>'; }).join('') + '</select></div>'
   + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" onclick="addMerchant()">Add user</button></div>'
   + '</div>'
   + '<div id="admin-err" class="adm-err" style="display:none"></div>'
@@ -12418,6 +12532,7 @@ function renderAdminPage() {
   renderAdminSettings();
   renderBackupCard();
   renderCompaniesCard();
+  rqRenderAdminCard().catch(function(e){ console.error('rqRenderAdminCard:', e); });
   handleProfileType();
   // Readable passwords load separately (admin only), then the list redraws.
   loadReadablePasswords().then(function(){
@@ -12428,14 +12543,14 @@ function renderAdminPage() {
 }
 
 function renderAdminList() {
-  var roleOrder = { management:1, hod:2, audit:3, manager:4, merchant:5, jm:6 };
-  var roleGroup = { management:'Management', hod:'Heads of department', audit:'Audit', manager:'Managers', merchant:'Merchandisers', jm:'Junior merchandisers', commercial:'Commercial' };
+  var roleOrder = { management:1, hod:2, audit:3, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
+  var roleGroup = { management:'Management', hod:'Heads of department', audit:'Audit', manager:'Managers', merchant:'Merchandisers', jm:'Junior merchandisers', commercial:'Commercial', dept:'Departments (requisitions)' };
   var staff = S.users.filter(function(u){ return u.role !== 'admin'; })
     .sort(function(a,b){
       var ra = roleOrder[a.role]||9, rb = roleOrder[b.role]||9;
       return ra !== rb ? ra - rb : a.name.localeCompare(b.name);
     });
-  var avColors = { management:'#7C3AED', hod:'#D97706', manager:'#059669', audit:'#0284C7', jm:'#DB2777', merchant:'#6B7280' };
+  var avColors = { management:'#7C3AED', hod:'#D97706', manager:'#059669', audit:'#0284C7', jm:'#DB2777', merchant:'#6B7280', dept:'#0F766E' };
   var sub = $('adm-users-sub');
   if (sub) sub.textContent = staff.length + ' accounts' + (_pwViewMissing ? ' · readable passwords need the database update (user-password-view-migration.sql)' : '');
   if (!staff.length) { $('admin-list').innerHTML = '<div class="empty" style="padding:18px">No users yet.</div>'; return; }
@@ -12458,21 +12573,23 @@ function renderAdminList() {
       + '<td><div class="adm-who"><span class="adm-user-av" style="background:' + (avColors[m.role]||'#6B7280') + '">' + initials(m.name) + '</span>'
       +   '<span><b>' + htmlEsc(m.name) + '</b>' + (m.title ? '<small>' + htmlEsc(m.title) + '</small>' : '') + '</span></div></td>'
       + '<td><span class="adm-role r-' + m.role + '">' + roleLabel(m.role) + '</span></td>'
-      + '<td class="adm-muted">' + (m.division ? htmlEsc(m.division.charAt(0).toUpperCase() + m.division.slice(1)) : '—') + '</td>'
+      + '<td class="adm-muted">' + (m.role === 'dept' ? htmlEsc((rqDept(m.division) || { n: 'No department' }).n) : m.division ? htmlEsc(m.division.charAt(0).toUpperCase() + m.division.slice(1)) : '—') + '</td>'
       + '<td>' + adminPasswordCell(m) + '</td>'
       // Style / PO-wise is now set per buyer (Admin -> Buyer settings), not per merchant.
       + '<td class="adm-act"><button class="btn sm' + (isEdit?' pri':'') + '" data-uid="' + m.id + '" onclick="editUser(this.dataset.uid)">' + (isEdit?'Close':'Edit') + '</button>'
       +   '<button class="btn sm danger" data-uid="' + m.id + '" onclick="deleteUser(this.dataset.uid)">Delete</button></td>'
       + '</tr>';
     if (isEdit) {
-      rows += '<tr class="adm-editrow"><td colspan="5"><div class="adm-form" style="grid-template-columns:1.2fr 1.2fr 1fr 190px 120px">'
+      rows += '<tr class="adm-editrow"><td colspan="5"><div class="adm-form" style="grid-template-columns:1.2fr 1.2fr 1fr 190px 150px 120px">'
         + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="eu-name-' + m.id + '" class="adm-inp" value="' + htmlEsc(m.name||'') + '"></div>'
         + '<div class="adm-field"><label class="adm-lbl">Designation</label><input id="eu-desig-' + m.id + '" class="adm-inp" value="' + htmlEsc(m.title||'') + '" placeholder="e.g. Senior Merchandiser"></div>'
         + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" class="adm-inp" placeholder="Leave blank to keep">'
         +   '<button class="pwd-eye" type="button" tabindex="-1" onclick="var i=$(\'eu-pwd-' + m.id + '\');i.type=i.type===\'password\'?\'text\':\'password\'">&#x1F441;</button></div></div>'
-        + '<div class="adm-field"><label class="adm-lbl">Role</label><select id="eu-role-' + m.id + '" class="adm-sel">'
-        + ['merchant','jm','manager','hod','audit','management','commercial'].map(function(r){ return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>'; }).join('')
+        + '<div class="adm-field"><label class="adm-lbl">Role</label><select id="eu-role-' + m.id + '" class="adm-sel" onchange="var f=$(\'eu-rqdept-wrap-' + m.id + '\');if(f)f.style.display=this.value===\'dept\'?\'block\':\'none\'">'
+        + ['merchant','jm','manager','hod','audit','management','commercial','dept'].map(function(r){ return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>'; }).join('')
         + '</select></div>'
+        + '<div class="adm-field" id="eu-rqdept-wrap-' + m.id + '" style="display:' + (m.role === 'dept' ? 'block' : 'none') + '"><label class="adm-lbl">Department</label><select id="eu-rqdept-' + m.id + '" class="adm-sel">'
+        + RQ_DEPTS.map(function(d){ return '<option value="' + d.k + '"' + (m.division === d.k ? ' selected' : '') + '>' + d.n + '</option>'; }).join('') + '</select></div>'
         + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" data-uid="' + m.id + '" onclick="saveEditUser(this.dataset.uid)">Save</button></div>'
         + '</div></td></tr>';
     }
@@ -12553,6 +12670,9 @@ async function saveEditUser(uid) {
   var update = { name: name, title: desig||null };
   if (pwd)  { update.password = await hashPassword(pwd); recordReadablePassword(uid, pwd); if (_pwView) _pwView[uid] = pwd; }
   if (role) update.role = role;
+  var _prevUser = S.users.find(function(x){ return x.id === uid; });
+  if (role === 'dept') { var _rqd = $('eu-rqdept-' + uid); update.division = _rqd ? _rqd.value : null; }
+  else if (role && _prevUser && _prevUser.role === 'dept') update.division = null;
   // Moving a merchant to another role leaves their orders without a merchant
   // board — say so before doing it.
   var _before = S.users.find(function(x){ return x.id === uid; });
@@ -12958,7 +13078,7 @@ async function addMerchant() {
   if (!pwd)  { errEl.textContent='Password is required.'; errEl.style.display='block'; return; }
   var dupUser = S.users.find(function(u){ return u.name.toLowerCase() === name.toLowerCase(); });
   if (dupUser) { errEl.textContent = 'A user named "' + dupUser.name + '" already exists.'; errEl.style.display='block'; return; }
-  const division = type === 'merchant' && $('a_div') ? $('a_div').value : null;
+  const division = type === 'merchant' && $('a_div') ? $('a_div').value : (type === 'dept' && $('a_rqdept') ? $('a_rqdept').value : null);
   const designation = ($('a_designation').value||'').trim();
   const { error } = await db.from('users').insert({ name, role: type, password: await hashPassword(pwd), division, title: designation||null });
   if (!error) {
@@ -12971,6 +13091,8 @@ async function addMerchant() {
     renderAdminList(); renderRail();
   } else if (error.code === '23505') {
     errEl.textContent='A user with that name already exists.'; errEl.style.display='block';
+  } else if (type === 'dept' && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
+    errEl.textContent='The Department role needs requisitions-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
   } else if (type === 'commercial' && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
     errEl.textContent='The Commercial role needs commercial-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
   } else {
@@ -13169,6 +13291,7 @@ function handleProfileType() {
   const t = $('a_type').value;
   const divField = $('div-field');
   if (divField) divField.style.display = t === 'merchant' ? 'block' : 'none';
+  var rqf = $('rqdept-field'); if (rqf) rqf.style.display = t === 'dept' ? 'block' : 'none';
 }
 
 
@@ -13318,6 +13441,7 @@ function renderRail() {
     var on=S.view==='jm_'+j.id?'on':'';
     return '<button class="ni '+on+'" onclick="setView(\'jm_'+j.id+'\')" style="color:#DB2777"><span class="av" style="font-size:11px;background:#FCE7F3;color:#DB2777">'+initials(j.name)+'</span><span class="nm">'+htmlEsc(j.name)+'</span></button>';
   }
+  if (r === 'dept') { rqRenderRailForDept(); return; } // department staff see only their requisitions
   var html=ni('dashboard','&#x2302;','Dashboard');
   if (r === 'commercial') {
     var ab=(S.alerts||[]).filter(function(a){return !a.dismissed;}).length + getMyThreads().filter(function(t2){ return t2.unread; }).length;
@@ -13365,6 +13489,7 @@ function renderRail() {
   // Trash always renders last among the regular nav items, deliberately — any
   // new section added above must stay above this line, not below it.
   html+=ni('trash','&#x1F5D1;','Trash',S.trash.length);
+  try { html+=rqRailHtml(); } catch(e) { console.error('rqRailHtml:', e); } // Requisitions: admin, management, audit only
   if(isAdmin){
     html+='<div class="rail-sep"></div>';
     html+='<button class="ni'+(S.view==='admin'?' on':'')+'" onclick="setView(\'admin\')"><span class="av" style="font-size:12px">&#x2699;</span><span class="nm">Admin</span></button>';
@@ -18666,7 +18791,8 @@ var BACKUP_TABLES = [ // known tables, parents before children (restore goes in 
   'yarn_bookings','yarn_receipts','yarn_extra_checks','accessory_bookings','accessory_receipts','accessory_checklist_items','accessories',
   'approvals','pp_colour_approvals','tna_requests','shipment_alerts','alert_dismissals','messages',
   'developments','development_options','development_samples','dev_colour_approvals','dev_price_history','order_commercial','commercial_payments',
-  'buyer_invoice_details'
+  'buyer_invoice_details',
+  'rq_settings','rq_counters','rq_requisitions','rq_events'
 ];
 var BACKUP_EXCLUDE = ['user_password_view'];
 var _backupBusy = false;
@@ -18676,7 +18802,8 @@ var BACKUP_KEYS = {
   buyer_settings: ['buyer_id'], app_settings: ['key'], companies: ['code'], buyer_invoice_details: ['buyer_key'], buyer_assignments: ['buyer_id'], jm_assignments: ['merchant_id'],
   buyer_field_visibility: ['buyer_id', 'field_key'], memo: ['field', 'value'], order_commercial: ['order_id'],
   style_attachments: ['merchant_id', 'style'], style_images: ['merchant_id', 'style'], order_field_values: ['order_id', 'field_key'],
-  user_password_view: ['user_id']
+  user_password_view: ['user_id'],
+  rq_settings: ['key'], rq_counters: ['dept', 'yr']
 };
 function backupStamp() { var d = new Date(); function z(n){ return String(n).padStart(2,'0'); } return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'_'+z(d.getHours())+z(d.getMinutes()); }
 function downloadBlob(blob, name) {
@@ -18758,7 +18885,12 @@ async function collectBackup(progress) {
       // check nothing was missed: the database's own count must match
       var n = await countRows(t);
       if (n != null && n !== rows.length) problems.push(t + ': read ' + rows.length + ' rows but the table has ' + n + ' (someone may have been saving at the same time — take the backup again)');
-    } catch (e) { problems.push(t + ': ' + (e.message || e)); }
+    } catch (e) {
+      // Requisition tables only exist once requisitions-migration.sql is run;
+      // until then there is simply nothing to back up there.
+      if (/^rq_/.test(t) && isTableMissing(e)) { tables.splice(i, 1); i--; continue; }
+      problems.push(t + ': ' + (e.message || e));
+    }
   }
   return { meta: { app: 'Shahana Production Tracker', format: 3, made_at: new Date().toISOString(), made_by: S.user ? S.user.name : '', source: SB_URL,
     version: (document.getElementById('ver-stamp')||{}).textContent || '', tables: tables, buckets: bucketsUsedByCode(), counts: counts, problems: problems, schema: schema }, data: data };
@@ -19022,6 +19154,10 @@ async function runRestore() {
 // out from the rows when the backup has no layout. Run once in the new
 // Supabase project's SQL Editor; safe to run again.
 var SETUP_KNOWN = { // every column the app uses: for tables a backup has no rows of (when it has no saved layout)
+  rq_requisitions: 'approved_cost:numeric,audit_at:timestamptz,audit_by:text,audit_by_name:text,audit_note:text,audit_status:text,company:text,completed_at:timestamptz,completion_note:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,est_cost:numeric,final_cost:numeric,id:uuid,items:jsonb,job_no:text,kind:text,location:text,location_detail:text,mgmt_at:timestamptz,mgmt_by:text,mgmt_by_name:text,mgmt_note:text,mgmt_status:text,priority:text,progress:integer,remarks:text,req_date:date,seq:integer,spent:numeric,started_at:timestamptz,status:text,target_date:date,time_unit:text,time_value:numeric,updated_at:timestamptz,updated_by:text,work_type:text,yr:integer',
+  rq_events: 'amount:numeric,at:timestamptz,by_id:text,by_name:text,id:uuid,kind:text,note:text,pct:integer,req_id:uuid',
+  rq_counters: 'dept:text,last:integer,yr:integer',
+  rq_settings: 'key:text,updated_at:timestamptz,updated_by:text,value:text',
   companies: 'address:text,bank_account:text,bank_branch:text,bank_name:text,bin:text,bond_licence:text,code:text,erc:text,invoice_prefix:text,irc:text,name:text,phone:text,signatory:text,signature_img:text,sort:integer,swift:text',
   accessories: 'booked_on:date,id:uuid,inhouse_on:date,item_name:text,item_type:text,order_id:uuid',
   accessory_bookings: 'booked_on:date,category:text,created_at:timestamptz,created_by:text,expected_note:text,expected_on:date,id:uuid,item:text,lc_number:text,merchant_id:uuid,pi_number:text,po_number:text,qty:numeric,style:text,supplier:text,updated_at:timestamptz,updated_by:text',
@@ -19272,6 +19408,902 @@ async function recoveryRestore() {
   var html = (msgs.length ? '<b>Restored ' + r.done + ' of ' + r.total + ' rows' : '<b>All ' + r.done + ' rows restored') + (r.files ? ', ' + r.files.ok + ' of ' + r.files.total + ' photos/files' : '') + '.</b>' + (msgs.length ? '<br>' + msgs.map(htmlEsc).join('<br>') : '');
   if (r.done) showRecoveryScreen('done');
   var st2 = $('rc-status'); if (st2) st2.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// REQUISITIONS (Maintenance, Civil, IT)
+// A separate part of the tracker. Own tables (rq_*), own views ('rq:...'),
+// own login role ('dept', department in users.division). Seen only by
+// admin, management, audit and the department staff (their own department).
+// Nothing here reads or writes order data.
+// ═══════════════════════════════════════════════════════════════════════════
+var RQ_DEPTS = [
+  { k: 'maint', n: 'Maintenance', code: 'MNT', types: ['Machine repair', 'Electrical', 'Generator', 'Boiler / compressor', 'Water / plumbing', 'Fire safety', 'AC / ventilation', 'Other'] },
+  { k: 'civil', n: 'Civil', code: 'CIV', types: ['Repair', 'New construction', 'Painting', 'Plumbing / drainage', 'Roof', 'Floor', 'Furniture / fixtures', 'Other'] },
+  { k: 'it', n: 'IT', code: 'IT', types: ['Hardware purchase', 'Hardware repair', 'Network / internet', 'CCTV', 'Software / licence', 'Printer / scanner', 'Telephone / PABX', 'Other'] }
+];
+var RQ_COMPANIES = [
+  { c: 'MTS', n: 'M.T. Sweaters Limited' },
+  { c: 'BFL', n: 'Banga Fashion Limited' },
+  { c: 'BKL', n: 'Banga Knitwear Limited' }
+];
+var RQ_TABS = [
+  { k: 'pending', n: 'Approval pending' },
+  { k: 'wip', n: 'Work in progress' },
+  { k: 'done', n: 'Completed' },
+  { k: 'closed', n: 'Returned / rejected' }
+];
+var RQ = { rows: [], loaded: false, missing: false, settings: null, events: {}, openId: null, filter: { co: '', q: '' }, channel: null, editId: null };
+
+function rqDept(k) { return RQ_DEPTS.find(function(d){ return d.k === k; }) || null; }
+function rqCompany(c) { return RQ_COMPANIES.find(function(x){ return x.c === c; }) || { c: c, n: c || '' }; }
+function rqIsDeptUser() { return !!S.user && S.user.role === 'dept'; }
+function rqCanSee() { return !!S.user && (['admin', 'management', 'audit'].includes(S.user.role) || (rqIsDeptUser() && !!rqDept(S.user.division))); }
+function rqMyDepts() { if (!rqCanSee()) return []; return rqIsDeptUser() ? [rqDept(S.user.division)] : RQ_DEPTS.slice(); }
+function rqCanWork(dept) { return !!S.user && (S.user.role === 'admin' || (rqIsDeptUser() && S.user.division === dept)); }
+function rqHomeView() { return rqIsDeptUser() ? 'rq:' + S.user.division + ':pending' : (S.user.role === 'admin' ? 'rq:overview' : 'rq:approvals'); }
+function rqEsc(s) { return htmlEsc(s); }
+function rqMoney(n) { if (n == null || n === '' || isNaN(Number(n))) return '&mdash;'; return 'Tk ' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+function rqMoneyTxt(n) { if (n == null || n === '' || isNaN(Number(n))) return ''; return 'Tk ' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+function rqDateTxt(d) { if (!d) return ''; var s = String(d).slice(0, 10).split('-'); return s.length === 3 ? s[2] + '.' + s[1] + '.' + s[0] : String(d); }
+function rqDateTime(ts) { if (!ts) return ''; var d = new Date(ts); if (isNaN(d)) return ''; return rqDateTxt(rqLocalDate(d)) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+function rqLocalDate(ts) { var d = new Date(ts); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function rqDaysBetween(a, b) { return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000); }
+function rqAddDays(d, n) { var x = new Date(d + 'T00:00:00'); x.setDate(x.getDate() + n); return rqLocalDate(x); }
+function rqTimeTxt(r) { if (r.time_value == null || r.time_value === '') return ''; var n = Number(r.time_value), u = r.time_unit || 'days'; return n + ' ' + (n === 1 ? u.replace(/s$/, '') : u); }
+function rqTargetFrom(r, start) {
+  var v = Number(r.time_value); if (!v || v < 0) return null;
+  var days = r.time_unit === 'hours' ? Math.max(1, Math.ceil(v / 8)) : r.time_unit === 'weeks' ? Math.ceil(v * 7) : Math.ceil(v);
+  return rqAddDays(start, days);
+}
+function rqOverdue(r) { return (r.status === 'wip' || r.status === 'hold') && r.target_date && r.target_date < todayStr(); }
+function rqOverBudget(r) { var a = Number(r.approved_cost), s = Number(r.status === 'done' ? (r.final_cost != null ? r.final_cost : r.spent) : r.spent); return a > 0 && s > a * 1.1; }
+function rqTabOf(r) {
+  if (r.status === 'pending') return 'pending';
+  if (r.status === 'wip' || r.status === 'hold') return 'wip';
+  if (r.status === 'done') return 'done';
+  return 'closed';
+}
+function rqNeedsMe(r) {
+  if (!S.user || r.status !== 'pending') return false;
+  if (S.user.role === 'audit') return !r.audit_status;
+  if (S.user.role === 'management') return !r.mgmt_status;
+  return false;
+}
+function rqStatusChip(r) {
+  var m = { pending: ['run', 'Approval pending'], returned: ['warn', 'Returned'], rejected: ['bad', 'Rejected'], wip: ['ok', 'In progress'], hold: ['warn', 'On hold'], done: ['ok', 'Completed'], cancelled: ['run', 'Cancelled'] }[r.status] || ['run', r.status];
+  return '<span class="chip ' + m[0] + '">' + m[1] + '</span>';
+}
+function rqApprChip(st) {
+  if (st === 'approved') return '<span class="rq-ap ok">&#x2713; Approved</span>';
+  if (st === 'returned') return '<span class="rq-ap warn">Returned</span>';
+  if (st === 'rejected') return '<span class="rq-ap bad">Rejected</span>';
+  return '<span class="rq-ap wait">Waiting</span>';
+}
+function rqPriChip(p) {
+  if (p === 'urgent') return '<span class="rq-pri urgent">Urgent</span>';
+  if (p === 'low') return '<span class="rq-pri low">Low</span>';
+  return '<span class="rq-pri">Normal</span>';
+}
+
+// ─── DATA ───
+async function rqLoad() {
+  if (!rqCanSee()) { RQ.rows = []; RQ.loaded = true; return; }
+  var q = db.from('rq_requisitions').select('*').order('created_at', { ascending: false });
+  if (rqIsDeptUser()) q = q.eq('dept', S.user.division);
+  var res = await q;
+  if (res.error) {
+    RQ.missing = /rq_requisitions|relation|schema cache|does not exist/i.test(res.error.message || '') || res.error.code === '42P01' || res.error.code === 'PGRST205';
+    RQ.rows = []; RQ.loaded = true;
+    if (!RQ.missing) console.error('rqLoad:', res.error);
+    return;
+  }
+  RQ.missing = false;
+  RQ.rows = res.data || [];
+  RQ.loaded = true;
+}
+async function rqLoadSettings(force) {
+  if (RQ.settings && !force) return RQ.settings;
+  var res = await db.from('rq_settings').select('key,value');
+  var s = {};
+  (res.data || []).forEach(function(x){ s[x.key] = x.value; });
+  RQ.settings = s;
+  return s;
+}
+async function rqLoadEvents(id) {
+  var res = await db.from('rq_events').select('*').eq('req_id', id).order('at', { ascending: true });
+  RQ.events[id] = res.data || [];
+  return RQ.events[id];
+}
+async function rqRefreshOne(id) {
+  var res = await db.from('rq_requisitions').select('*').eq('id', id).maybeSingle();
+  var i = RQ.rows.findIndex(function(x){ return x.id === id; });
+  if (res.data) {
+    if (rqIsDeptUser() && res.data.dept !== S.user.division) return null;
+    if (i >= 0) RQ.rows[i] = res.data; else RQ.rows.unshift(res.data);
+  } else if (i >= 0) RQ.rows.splice(i, 1);
+  return res.data || null;
+}
+// put a saved row into the list (replacing the old copy, wherever it is now)
+function rqPut(row) {
+  var i = RQ.rows.findIndex(function(x){ return x.id === row.id; });
+  if (i >= 0) RQ.rows[i] = row; else RQ.rows.unshift(row);
+  return row;
+}
+async function rqEvent(id, kind, extra) {
+  extra = extra || {};
+  var row = { req_id: id, kind: kind, by_id: S.user.id, by_name: S.user.name, pct: extra.pct == null ? null : extra.pct, amount: extra.amount == null ? null : extra.amount, note: extra.note || null };
+  var res = await db.from('rq_events').insert(row);
+  if (res.error) console.error('rqEvent:', res.error);
+}
+function rqSubscribe() {
+  if (RQ.channel || !rqCanSee()) return;
+  try {
+    RQ.channel = db.channel('rq-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rq_requisitions' }, function(p){
+        var id = (p.new && p.new.id) || (p.old && p.old.id);
+        if (!id) return;
+        rqRefreshOne(id).then(function(){
+          renderRail();
+          if (typeof S.view === 'string' && S.view.indexOf('rq:') === 0 && !RQ.editId && !rqFormDirty()) rqRender(S.view);
+          if (RQ.openId === id && $('ov-rq') && $('ov-rq').classList.contains('open')) {
+            // someone else changed the one on screen: refresh it, unless a comment is half typed
+            var typing = Array.prototype.some.call(document.querySelectorAll('#rq-actions textarea, #rq-actions input:not([type=range])'), function(e){ return e.value && e.value !== e.defaultValue; });
+            if (typing) toast('Someone has just updated this requisition. Your next save is checked against the latest.');
+            else rqLoadEvents(id).then(function(){ if (RQ.openId === id) rqRenderDetail(id, true); });
+          }
+        });
+      })
+      .subscribe();
+  } catch (e) { console.error('rqSubscribe:', e); }
+}
+// Department staff: the tracker opens straight on their requisitions; none of
+// the order data is loaded for them.
+async function rqBoot() {
+  var rs = document.querySelector('.rail-search'); if (rs) rs.style.display = 'none';
+  var bs = document.querySelector('.brand-sub'); if (bs) bs.textContent = 'Requisitions';
+  try { await rqLoad(); } catch (e) { console.error('rqLoad:', e); }
+  rqSubscribe();
+  var v = null; try { v = sessionStorage.getItem('pt_last_view'); } catch (e) {}
+  setView(v && v.indexOf('rq:') === 0 ? v : rqHomeView());
+}
+
+// ─── SIDEBAR ───
+function rqCounts(dept) {
+  var c = { pending: 0, wip: 0, done: 0, closed: 0, mine: 0, overdue: 0 };
+  RQ.rows.forEach(function(r){
+    if (dept && r.dept !== dept) return;
+    c[rqTabOf(r)]++;
+    if (rqNeedsMe(r)) c.mine++;
+    if (rqOverdue(r)) c.overdue++;
+  });
+  return c;
+}
+function rqRailHtml() {
+  if (!rqCanSee()) return '';
+  var flat = rqIsDeptUser();
+  function item(view, icon, label, count, hot) {
+    var on = S.view === view ? ' on' : '';
+    var cnt = count > 0 ? (hot ? '<span class="badge">' + count + '</span>' : '<span class="ct">' + count + '</span>') : '';
+    return '<button class="ni' + on + ' rq-ni" onclick="setView(\'' + view + '\')"><span class="av" style="font-size:12px">' + icon + '</span><span class="nm">' + label + '</span>' + cnt + '</button>';
+  }
+  var h = '';
+  if (!rqIsDeptUser()) {
+    h += '<div class="rail-sep"></div><div class="rail-label">Requisitions</div>';
+    if (RQ.missing) return h + '<div class="rq-rail-note">Needs requisitions-migration.sql</div>';
+    var all = rqCounts(null);
+    if (S.user.role === 'audit' || S.user.role === 'management') h += item('rq:approvals', '&#x270D;', 'Waiting for my approval', all.mine, all.mine > 0);
+    h += item('rq:overview', '&#x25A6;', 'Overview', all.overdue, all.overdue > 0);
+  }
+  rqMyDepts().forEach(function(d){
+    var c = rqCounts(d.k);
+    var key = 'rq_' + d.k;
+    var open = localStorage.getItem('pt_sb_' + key) === '1' || (typeof S.view === 'string' && S.view.indexOf('rq:' + d.k + ':') === 0);
+    var body = (rqCanWork(d.k) ? item('rq:' + d.k + ':new', '&#x002B;', 'New requisition') : '')
+      + item('rq:' + d.k + ':pending', '&#x23F3;', 'Approval pending', c.pending, c.pending > 0 && !rqIsDeptUser())
+      + item('rq:' + d.k + ':wip', '&#x2692;', 'Work in progress', c.wip, c.overdue > 0)
+      + item('rq:' + d.k + ':done', '&#x2713;', 'Completed', c.done)
+      + item('rq:' + d.k + ':closed', '&#x21A9;', 'Returned / rejected', c.closed);
+    if (flat) { h += '<div class="rail-label">' + d.n + ' department</div>' + body; return; }
+    h += '<div class="rail-section-hdr" onclick="toggleSection(\'' + key + '\')"><div class="rail-label" style="padding:0;margin:0">' + d.n + '</div><span class="rail-section-arrow' + (open ? ' open' : '') + '">&#x25B6;</span></div>'
+      + '<div class="rail-section-body" id="sec-' + key + '" style="max-height:' + (open ? '2000px' : '0') + '">' + body + '</div>';
+  });
+  return h;
+}
+function rqRenderRailForDept() {
+  var rb = $('rail-body'); if (!rb) return;
+  var d = rqDept(S.user.division);
+  var h = d ? (RQ.missing ? '<div class="rail-label" style="color:var(--muted)">Requisitions need the database update</div>' : rqRailHtml())
+            : '<div class="rail-label" style="color:var(--muted)">No department set for this login. Ask the admin.</div>';
+  var top = rb.scrollTop; rb.innerHTML = h; rb.scrollTop = top;
+}
+
+// ─── PAGES ───
+function rqSetHead(crumb, title, sub, actions) {
+  var c = $('crumb'); if (c) c.textContent = crumb;
+  var t = $('page-title'); if (t) t.textContent = title;
+  var s = $('page-sub'); if (s) s.innerHTML = sub || '';
+  var a = $('act-row'); if (a) a.innerHTML = actions || '';
+}
+function rqRender(view) {
+  if (!rqCanSee()) { $('content').innerHTML = '<div class="empty"><h4>No access</h4>Requisitions are only for management, audit, admin and the department staff.</div>'; return; }
+  if (RQ.missing) {
+    rqSetHead('Requisitions', 'Requisitions', '', '');
+    $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>requisitions-migration.sql</b> once in Supabase &rarr; SQL Editor, then refresh this page.</div></div>';
+    return;
+  }
+  var p = String(view).split(':');
+  if (p[1] === 'approvals') return rqRenderApprovals();
+  if (p[1] === 'overview') return rqRenderOverview();
+  var d = rqDept(p[1]);
+  if (!d || !rqMyDepts().some(function(x){ return x.k === d.k; })) { setView(rqHomeView()); return; }
+  if (p[2] === 'edit' && !RQ.editId) { setView('rq:' + d.k + ':pending'); return; } // e.g. after a page refresh
+  if (p[2] === 'new' || p[2] === 'edit') return rqRenderForm(d, p[2] === 'edit' ? RQ.editId : null);
+  RQ.editId = null;
+  rqRenderList(d, RQ_TABS.some(function(t){ return t.k === p[2]; }) ? p[2] : 'pending');
+}
+function rqFilterBar(extra) {
+  return '<div class="rq-filter"><select onchange="RQ.filter.co=this.value;rqRender(S.view)"><option value="">All companies</option>'
+    + RQ_COMPANIES.map(function(c){ return '<option value="' + c.c + '"' + (RQ.filter.co === c.c ? ' selected' : '') + '>' + c.n + '</option>'; }).join('')
+    + '</select><input type="search" placeholder="Search job no., location, type, remarks&hellip;" value="' + rqEsc(RQ.filter.q) + '" oninput="RQ.filter.q=this.value;clearTimeout(RQ._ft);RQ._ft=setTimeout(function(){rqRender(S.view);var i=document.querySelector(\'.rq-filter input\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)">' + (extra || '') + '</div>';
+}
+function rqFiltered(list) {
+  var co = RQ.filter.co, q = (RQ.filter.q || '').trim().toLowerCase();
+  return list.filter(function(r){
+    if (co && r.company !== co) return false;
+    if (!q) return true;
+    return [r.job_no, r.location, r.location_detail, r.work_type, r.remarks, r.created_by_name].join(' ').toLowerCase().indexOf(q) !== -1;
+  });
+}
+function rqTable(list, tab, showDept) {
+  if (!list.length) return '<div class="empty"><h4>Nothing here</h4>' + ({ pending: 'No requisitions waiting for approval.', wip: 'No work in progress.', done: 'No completed work yet.', closed: 'Nothing returned or rejected.' }[tab] || 'No requisitions.') + '</div>';
+  var today = todayStr();
+  var cols;
+  if (tab === 'pending') cols = ['Job no.', 'Date', 'Company', 'Location', 'Type of work', 'Priority', 'Est. cost', 'Audit', 'Management', 'Raised by', 'Waiting'];
+  else if (tab === 'wip') cols = ['Job no.', 'Company', 'Location', 'Type of work', 'Progress', 'Target date', 'Approved', 'Spent', 'Status'];
+  else if (tab === 'done') cols = ['Job no.', 'Company', 'Location', 'Type of work', 'Completed', 'Days taken', 'Approved', 'Final cost'];
+  else cols = ['Job no.', 'Date', 'Company', 'Location', 'Type of work', 'Status', 'By', 'Reason'];
+  if (showDept) cols.splice(1, 0, 'Department');
+  var body = list.map(function(r){
+    var loc = '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '');
+    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>';
+    var co = '<span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span>';
+    var cells;
+    if (tab === 'pending') {
+      var age = rqDaysBetween(rqLocalDate(r.created_at), today);
+      cells = [job, rqDateTxt(r.req_date), co, loc, rqEsc(r.work_type || ''), rqPriChip(r.priority), '<span class="num">' + rqMoney(r.est_cost) + '</span>', rqApprChip(r.audit_status), rqApprChip(r.mgmt_status), rqEsc(r.created_by_name || ''), age <= 0 ? 'today' : age + (age === 1 ? ' day' : ' days')];
+    } else if (tab === 'wip') {
+      var pct = Math.max(0, Math.min(100, Number(r.progress) || 0));
+      var od = rqOverdue(r);
+      cells = [job, co, loc, rqEsc(r.work_type || ''), '<div class="rq-prog"><div class="rq-bar"><i style="width:' + pct + '%"' + (pct >= 100 ? ' class="full"' : '') + '></i></div><b>' + pct + '%</b></div>',
+        r.target_date ? '<span class="' + (od ? 'rq-late' : '') + '">' + rqDateTxt(r.target_date) + (od ? ' &middot; ' + rqDaysBetween(r.target_date, today) + 'd late' : '') + '</span>' : '&mdash;',
+        '<span class="num">' + rqMoney(r.approved_cost) + '</span>', '<span class="num' + (rqOverBudget(r) ? ' rq-late' : '') + '">' + rqMoney(r.spent || 0) + '</span>', rqStatusChip(r)];
+    } else if (tab === 'done') {
+      var dt = r.completed_at ? rqLocalDate(r.completed_at) : null;
+      cells = [job, co, loc, rqEsc(r.work_type || ''), dt ? rqDateTxt(dt) : '&mdash;', dt && r.started_at ? rqDaysBetween(rqLocalDate(r.started_at), dt) : '&mdash;', '<span class="num">' + rqMoney(r.approved_cost) + '</span>', '<span class="num' + (rqOverBudget(r) ? ' rq-late' : '') + '">' + rqMoney(r.final_cost) + '</span>'];
+    } else {
+      var by = r.status === 'cancelled' ? (r.updated_by || '') : (r.mgmt_status === 'rejected' || r.mgmt_status === 'returned') ? r.mgmt_by_name : r.audit_by_name;
+      var why = (r.mgmt_status === 'rejected' || r.mgmt_status === 'returned') ? r.mgmt_note : r.audit_note;
+      cells = [job, rqDateTxt(r.req_date), co, loc, rqEsc(r.work_type || ''), rqStatusChip(r), rqEsc(by || ''), '<span class="rq-why">' + rqEsc(r.status === 'cancelled' ? '' : (why || '')) + '</span>'];
+    }
+    if (showDept) cells.splice(1, 0, rqEsc((rqDept(r.dept) || {}).n || r.dept));
+    var cls = (r.priority === 'urgent' && tab === 'pending') ? ' class="rq-urgent"' : (tab === 'wip' && rqOverdue(r)) ? ' class="late"' : '';
+    return '<tr' + cls + ' onclick="rqOpen(\'' + r.id + '\')">' + cells.map(function(c){ return '<td>' + c + '</td>'; }).join('') + '</tr>';
+  }).join('');
+  return '<div class="scroller"><table class="rq-t"><thead><tr>' + cols.map(function(c){ return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>' + body + '</tbody></table></div>';
+}
+function rqSortForTab(list, tab) {
+  var pri = { urgent: 0, normal: 1, low: 2 };
+  var pr = function(x){ return pri[x.priority] != null ? pri[x.priority] : 1; };
+  if (tab === 'pending') return list.sort(function(a, b){ return pr(a) - pr(b) || String(a.created_at).localeCompare(String(b.created_at)); });
+  if (tab === 'wip') return list.sort(function(a, b){ return (rqOverdue(b) ? 1 : 0) - (rqOverdue(a) ? 1 : 0) || String(a.target_date || '9').localeCompare(String(b.target_date || '9')); });
+  if (tab === 'done') return list.sort(function(a, b){ return String(b.completed_at).localeCompare(String(a.completed_at)); });
+  return list.sort(function(a, b){ return String(b.updated_at).localeCompare(String(a.updated_at)); });
+}
+function rqRenderList(d, tab) {
+  var t = RQ_TABS.find(function(x){ return x.k === tab; });
+  var list = rqSortForTab(rqFiltered(RQ.rows.filter(function(r){ return r.dept === d.k && rqTabOf(r) === tab; })), tab);
+  var acts = rqCanWork(d.k) ? '<button class="btn pri" onclick="setView(\'rq:' + d.k + ':new\')">&#x002B; New requisition</button>' : '';
+  var sub = tab === 'pending' ? 'Waiting for audit and management. Management approval starts the work.' : tab === 'wip' ? 'Approved work. Update the progress as the work goes on.' : tab === 'done' ? 'Finished work, kept on record.' : 'Returned for changes, rejected, or cancelled.';
+  rqSetHead('Requisitions › ' + d.n, d.n + ' — ' + t.n, sub, acts);
+  $('content').innerHTML = '<div class="card">' + '<div class="card-h"><h3>' + t.n + ' <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, tab, false) + '</div>';
+}
+function rqRenderApprovals() {
+  var me = S.user.role;
+  var list = RQ.rows.filter(function(r){ return r.status === 'pending' && (me === 'admin' || rqNeedsMe(r)); });
+  list = rqSortForTab(rqFiltered(list), 'pending');
+  rqSetHead('Requisitions', me === 'admin' ? 'All requisitions waiting for approval' : 'Waiting for my approval', me === 'audit' ? 'Audit approval is recorded; management approval starts the work.' : me === 'management' ? 'Your approval moves the work straight to Work in progress.' : '', '');
+  $('content').innerHTML = '<div class="card"><div class="card-h"><h3>Waiting <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, 'pending', true) + '</div>';
+}
+function rqRenderOverview() {
+  var today = todayStr(), m0 = today.slice(0, 7);
+  var rows = rqFiltered(RQ.rows);
+  function stats(list) {
+    var s = { pending: 0, wip: 0, overdue: 0, doneMonth: 0, apprMonth: 0, spentMonth: 0 };
+    list.forEach(function(r){
+      if (r.status === 'pending') s.pending++;
+      if (r.status === 'wip' || r.status === 'hold') s.wip++;
+      if (rqOverdue(r)) s.overdue++;
+      if (r.status === 'done' && r.completed_at && rqLocalDate(r.completed_at).slice(0, 7) === m0) { s.doneMonth++; s.spentMonth += Number(r.final_cost) || 0; }
+      if (r.mgmt_status === 'approved' && r.mgmt_at && rqLocalDate(r.mgmt_at).slice(0, 7) === m0) s.apprMonth += Number(r.approved_cost) || 0;
+    });
+    return s;
+  }
+  var a = stats(rows);
+  var tiles = '<div class="stats">'
+    + '<div class="stat' + (a.pending ? ' alert' : '') + '"><div class="k">Waiting for approval</div><div class="v">' + a.pending + '</div></div>'
+    + '<div class="stat"><div class="k">In progress</div><div class="v">' + a.wip + '</div></div>'
+    + '<div class="stat' + (a.overdue ? ' alert' : '') + '"><div class="k">Overdue</div><div class="v">' + a.overdue + '</div></div>'
+    + '<div class="stat"><div class="k">Completed this month</div><div class="v">' + a.doneMonth + '</div></div>'
+    + '<div class="stat"><div class="k">Approved this month</div><div class="v" style="font-size:20px">' + rqMoney(a.apprMonth) + '</div></div>'
+    + '<div class="stat"><div class="k">Spent on completed (month)</div><div class="v" style="font-size:20px">' + rqMoney(a.spentMonth) + '</div></div></div>';
+  var byDept = '<table class="rq-t"><thead><tr><th>Department</th><th>Waiting</th><th>In progress</th><th>Overdue</th><th>Completed this month</th><th>Approved this month</th></tr></thead><tbody>'
+    + RQ_DEPTS.map(function(d){
+      var s = stats(rows.filter(function(r){ return r.dept === d.k; }));
+      return '<tr onclick="setView(\'rq:' + d.k + ':' + (s.pending ? 'pending' : 'wip') + '\')"><td><b>' + d.n + '</b></td><td>' + s.pending + '</td><td>' + s.wip + '</td><td' + (s.overdue ? ' class="rq-late"' : '') + '>' + s.overdue + '</td><td>' + s.doneMonth + '</td><td class="num">' + rqMoney(s.apprMonth) + '</td></tr>';
+    }).join('') + '</tbody></table>';
+  // the same place needing work again and again: a sign to replace, not repair
+  var yearAgo = rqAddDays(today, -365), rep = {};
+  rows.forEach(function(r){
+    if (r.status === 'cancelled' || r.status === 'rejected' || !r.location || String(r.req_date) < yearAgo) return;
+    var k = r.dept + '|' + r.company + '|' + String(r.location).trim().toLowerCase() + '|' + String(r.location_detail || '').trim().toLowerCase() + '|' + (r.work_type || '');
+    (rep[k] = rep[k] || []).push(r);
+  });
+  var reps = Object.keys(rep).map(function(k){ return rep[k]; }).filter(function(l){ return l.length >= 3; }).sort(function(x, y){ return y.length - x.length; });
+  var repHtml = reps.length ? '<table class="rq-t"><thead><tr><th>Department</th><th>Company</th><th>Location</th><th>Type of work</th><th>Times (12 months)</th><th>Total cost</th></tr></thead><tbody>'
+    + reps.map(function(l){ var r = l[0]; var cost = l.reduce(function(s, x){ return s + (Number(x.final_cost != null ? x.final_cost : x.approved_cost) || 0); }, 0);
+      return '<tr><td>' + rqEsc((rqDept(r.dept) || {}).n || '') + '</td><td>' + rqEsc(r.company) + '</td><td><b>' + rqEsc(r.location) + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '') + '</td><td>' + rqEsc(r.work_type || '') + '</td><td><b>' + l.length + '</b></td><td class="num">' + rqMoney(cost) + '</td></tr>'; }).join('') + '</tbody></table>'
+    : '<div class="empty" style="padding:18px">No place has needed the same work 3 or more times in the last 12 months.</div>';
+  var overdue = rqSortForTab(rows.filter(rqOverdue), 'wip');
+  rqSetHead('Requisitions', 'Requisitions overview', 'All departments' + (RQ.filter.co ? ' &middot; ' + rqEsc(rqCompany(RQ.filter.co).n) : ''), '');
+  $('content').innerHTML = '<div class="rq-ovbar">' + rqFilterBar() + '</div>' + tiles
+    + '<div class="card"><div class="card-h"><h3>By department</h3></div><div class="scroller">' + byDept + '</div></div>'
+    + '<div class="card"><div class="card-h"><h3>Overdue work <span class="rq-count">' + overdue.length + '</span></h3></div>' + rqTable(overdue, 'wip', true) + '</div>'
+    + '<div class="card"><div class="card-h"><h3>Repeat problems</h3><span class="note">Same place, same type of work, 3+ times in a year &mdash; worth replacing rather than repairing</span></div><div class="scroller">' + repHtml + '</div></div>';
+}
+
+// ─── NEW / EDIT FORM ───
+var _rqFormStart = null;
+function rqFormDirty() { var f = $('rq-form'); if (!f) return false; return _rqFormStart !== null && rqFormSnapshot() !== _rqFormStart; }
+function rqFormSnapshot() { var f = $('rq-form'); if (!f) return ''; return Array.prototype.map.call(f.querySelectorAll('input,select,textarea'), function(e){ return e.type === 'radio' ? (e.checked ? e.value : '') : e.value; }).join('\u0001'); }
+function rqRenderForm(d, editId) {
+  var r = editId ? RQ.rows.find(function(x){ return x.id === editId; }) : null;
+  if (editId && !r) { setView('rq:' + d.k + ':pending'); return; }
+  if (!rqCanWork(d.k)) { setView('rq:' + d.k + ':pending'); return; }
+  if (r && !rqCanEditReq(r)) { toast('This requisition can no longer be changed', 'err'); setView('rq:' + d.k + ':' + rqTabOf(r)); return; }
+  r = r || { company: '', req_date: todayStr(), kind: 'work', priority: 'normal', time_unit: 'days', items: [] };
+  var locs = {}; RQ.rows.forEach(function(x){ if (x.location) locs[x.location] = 1; });
+  var types = d.types.slice(); var isOther = r.work_type && types.indexOf(r.work_type) === -1;
+  var items = Array.isArray(r.items) && r.items.length ? r.items : [{}];
+  var h = '<div class="card rq-form" id="rq-form"><div class="card-h"><h3>' + (editId ? 'Change requisition ' + rqEsc(r.job_no) : 'New ' + d.n + ' requisition') + '</h3><span class="note">' + (editId ? (r.status === 'returned' ? 'Saving sends it back to audit and management.' : 'No one has approved it yet.') : 'A job number is given when you submit.') + '</span></div><div class="m-b">'
+    + '<div class="grid3">'
+    + '<div class="f"><label>Company <span class="rq-req">*</span></label><select id="rqf-company"><option value="">&mdash; Select company &mdash;</option>' + RQ_COMPANIES.map(function(c){ return '<option value="' + c.c + '"' + (r.company === c.c ? ' selected' : '') + '>' + c.n + '</option>'; }).join('') + '</select></div>'
+    + '<div class="f"><label>Date <span class="rq-req">*</span></label><input id="rqf-date" type="date" value="' + rqEsc(r.req_date || todayStr()) + '"></div>'
+    + '<div class="f"><label>Priority</label><select id="rqf-priority">' + [['urgent', 'Urgent'], ['normal', 'Normal'], ['low', 'Low']].map(function(p){ return '<option value="' + p[0] + '"' + (r.priority === p[0] ? ' selected' : '') + '>' + p[1] + '</option>'; }).join('') + '</select></div>'
+    + '</div><div class="grid2" style="margin-top:10px">'
+    + '<div class="f"><label>Building / area <span class="rq-req">*</span></label><input id="rqf-location" list="rqf-locs" autocomplete="off" placeholder="e.g. Building 2, 3rd floor" value="' + rqEsc(r.location || '') + '"><datalist id="rqf-locs">' + Object.keys(locs).sort().map(function(l){ return '<option value="' + rqEsc(l) + '">'; }).join('') + '</datalist></div>'
+    + '<div class="f"><label>Exact location <span class="rq-req">*</span></label><input id="rqf-locdetail" placeholder="e.g. Linking section, line 4, beside the stairs" value="' + rqEsc(r.location_detail || '') + '"></div>'
+    + '</div><div class="grid3" style="margin-top:10px">'
+    + '<div class="f"><label>Type of work <span class="rq-req">*</span></label><select id="rqf-type" onchange="$(\'rqf-type-other\').style.display=this.value===\'Other\'?\'block\':\'none\'"><option value="">&mdash; Select &mdash;</option>' + types.map(function(t){ return '<option' + ((r.work_type === t || (isOther && t === 'Other')) ? ' selected' : '') + '>' + rqEsc(t) + '</option>'; }).join('') + '</select>'
+    + '<input id="rqf-type-other" placeholder="Describe the type of work" style="margin-top:6px;display:' + (isOther ? 'block' : 'none') + '" value="' + rqEsc(isOther ? r.work_type : '') + '"></div>'
+    + '<div class="f"><label>Work or purchase</label><div class="rq-seg">'
+    + '<label><input type="radio" name="rqf-kind" value="work"' + (r.kind !== 'purchase' ? ' checked' : '') + ' onchange="rqKindChange()"> Work / service</label>'
+    + '<label><input type="radio" name="rqf-kind" value="purchase"' + (r.kind === 'purchase' ? ' checked' : '') + ' onchange="rqKindChange()"> Items to buy</label></div></div>'
+    + '<div class="f"><label>Time required</label><div style="display:flex;gap:6px"><input id="rqf-time" type="number" min="0" step="0.5" style="flex:1" value="' + rqEsc(r.time_value == null ? '' : r.time_value) + '"><select id="rqf-unit" style="width:100px">' + ['hours', 'days', 'weeks'].map(function(u){ return '<option' + ((r.time_unit || 'days') === u ? ' selected' : '') + '>' + u + '</option>'; }).join('') + '</select></div></div>'
+    + '</div>'
+    + '<div id="rqf-items-wrap" style="margin-top:12px;display:' + (r.kind === 'purchase' ? 'block' : 'none') + '"><label class="rq-lbl">Items to buy</label><table class="rq-items"><thead><tr><th style="width:44%">Item / specification</th><th>Qty</th><th>Unit</th><th>Est. rate (Tk)</th><th>Amount</th><th></th></tr></thead><tbody id="rqf-items">'
+    + items.map(rqItemRow).join('') + '</tbody></table><button class="btn sm" type="button" onclick="rqAddItem()" style="margin-top:6px">&#x002B; Add item</button></div>'
+    + '<div class="grid3" style="margin-top:12px"><div class="f"><label>Estimated cost (Tk) <span class="rq-req">*</span></label><input id="rqf-cost" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"><div class="sub2" id="rqf-cost-note"></div></div></div>'
+    + '<div class="f" style="margin-top:12px"><label>Detailed remarks <span class="rq-req">*</span></label><textarea id="rqf-remarks" rows="5" placeholder="What is wrong or what is needed, why, and anything the approvers should know">' + rqEsc(r.remarks || '') + '</textarea></div>'
+    + '<div class="adm-err" id="rqf-err" style="display:none;margin-top:10px"></div>'
+    + '</div><div class="m-f"><button class="btn" onclick="rqCancelForm(\'' + d.k + '\')">Cancel</button><button class="btn pri" id="rqf-save" onclick="rqSubmitForm(\'' + d.k + '\')">' + (editId ? (r.status === 'returned' ? 'Save and send again' : 'Save changes') : 'Submit requisition') + '</button></div></div>';
+  rqSetHead('Requisitions › ' + d.n, editId ? 'Change ' + r.job_no : 'New requisition', d.n + ' department', '');
+  $('content').innerHTML = h;
+  rqItemsChanged();
+  _rqFormStart = rqFormSnapshot();
+}
+function rqItemRow(it) {
+  it = it || {};
+  return '<tr><td><input class="rqi-item" value="' + rqEsc(it.item || '') + '" placeholder="e.g. 4 TB hard disk, Seagate"></td>'
+    + '<td><input class="rqi-qty" type="number" min="0" step="any" value="' + rqEsc(it.qty == null ? '' : it.qty) + '" oninput="rqItemsChanged()"></td>'
+    + '<td><input class="rqi-unit" value="' + rqEsc(it.unit || '') + '" placeholder="pcs"></td>'
+    + '<td><input class="rqi-rate" type="number" min="0" step="any" value="' + rqEsc(it.rate == null ? '' : it.rate) + '" oninput="rqItemsChanged()"></td>'
+    + '<td class="num rqi-amt"></td><td><button class="btn sm ghost" type="button" title="Remove" onclick="this.closest(\'tr\').remove();rqItemsChanged()">&#x2715;</button></td></tr>';
+}
+function rqAddItem() { var tb = $('rqf-items'); if (!tb) return; tb.insertAdjacentHTML('beforeend', rqItemRow({})); rqItemsChanged(); }
+function rqKindChange() {
+  var k = document.querySelector('input[name="rqf-kind"]:checked');
+  $('rqf-items-wrap').style.display = k && k.value === 'purchase' ? 'block' : 'none';
+  rqItemsChanged();
+}
+function rqReadItems() {
+  var tb = $('rqf-items'); if (!tb) return [];
+  return Array.prototype.map.call(tb.querySelectorAll('tr'), function(tr){
+    var g = function(c){ var e = tr.querySelector('.' + c); return e ? e.value.trim() : ''; };
+    return { item: g('rqi-item'), qty: g('rqi-qty') === '' ? null : Number(g('rqi-qty')), unit: g('rqi-unit'), rate: g('rqi-rate') === '' ? null : Number(g('rqi-rate')) };
+  }).filter(function(x){ return x.item || x.qty != null || x.rate != null; });
+}
+function rqItemsChanged() {
+  var k = document.querySelector('input[name="rqf-kind"]:checked');
+  var purchase = k && k.value === 'purchase';
+  var tb = $('rqf-items'), total = 0, any = false;
+  if (tb) Array.prototype.forEach.call(tb.querySelectorAll('tr'), function(tr){
+    var q = Number(tr.querySelector('.rqi-qty').value), rt = Number(tr.querySelector('.rqi-rate').value);
+    var amt = (tr.querySelector('.rqi-qty').value !== '' && tr.querySelector('.rqi-rate').value !== '') ? q * rt : null;
+    tr.querySelector('.rqi-amt').innerHTML = amt == null ? '' : rqMoney(amt);
+    if (amt != null) { total += amt; any = true; }
+  });
+  var c = $('rqf-cost'), n = $('rqf-cost-note');
+  if (!c) return;
+  if (purchase && any) { c.value = Math.round(total * 100) / 100; c.readOnly = true; if (n) n.textContent = 'Added up from the items'; }
+  else { c.readOnly = false; if (n) n.textContent = ''; }
+}
+async function rqCancelForm(dk) {
+  if (rqFormDirty() && !(await appConfirm('Leave without saving? What you typed will be lost.', { title: 'Discard changes', okText: 'Discard', danger: true }))) return;
+  _rqFormStart = null; RQ.editId = null;
+  setView('rq:' + dk + ':pending');
+}
+function rqCanEditReq(r) {
+  if (!rqCanWork(r.dept)) return false;
+  if (r.status === 'returned') return true;
+  return r.status === 'pending' && !r.audit_status && !r.mgmt_status;
+}
+async function rqSubmitForm(dk) {
+  var d = rqDept(dk), err = $('rqf-err'), btn = $('rqf-save');
+  function fail(m) { err.textContent = m; err.style.display = 'block'; err.scrollIntoView({ block: 'nearest' }); }
+  err.style.display = 'none';
+  if (!rqCanWork(dk)) return fail('Only the ' + d.n + ' department can raise these.');
+  var kindEl = document.querySelector('input[name="rqf-kind"]:checked');
+  var type = $('rqf-type').value === 'Other' ? ($('rqf-type-other').value.trim() || '') : $('rqf-type').value;
+  var v = {
+    company: $('rqf-company').value, req_date: $('rqf-date').value, priority: $('rqf-priority').value,
+    location: $('rqf-location').value.trim(), location_detail: $('rqf-locdetail').value.trim(),
+    work_type: type, kind: kindEl ? kindEl.value : 'work',
+    time_value: $('rqf-time').value === '' ? null : Number($('rqf-time').value), time_unit: $('rqf-unit').value,
+    est_cost: $('rqf-cost').value === '' ? null : Number($('rqf-cost').value),
+    remarks: $('rqf-remarks').value.trim()
+  };
+  v.items = v.kind === 'purchase' ? rqReadItems() : null;
+  if (!v.company) return fail('Choose the company.');
+  if (!v.req_date) return fail('Enter the date.');
+  if (!v.location) return fail('Enter the building / area.');
+  if (!v.location_detail) return fail('Enter the exact location.');
+  if (!v.work_type) return fail($('rqf-type').value === 'Other' ? 'Describe the type of work.' : 'Choose the type of work.');
+  if (v.time_value != null && (isNaN(v.time_value) || v.time_value < 0)) return fail('Time required cannot be negative.');
+  if (v.est_cost == null || isNaN(v.est_cost)) return fail('Enter the estimated cost (0 if there is no cost).');
+  if (v.est_cost < 0) return fail('Estimated cost cannot be negative.');
+  if (v.kind === 'purchase') {
+    if (!v.items.length) return fail('Add the items to buy.');
+    if (v.items.some(function(i){ return !i.item; })) return fail('Every item needs a name or specification.');
+    if (v.items.some(function(i){ return (i.qty != null && i.qty < 0) || (i.rate != null && i.rate < 0); })) return fail('Quantities and rates cannot be negative.');
+  }
+  if (!v.remarks) return fail('Write the detailed remarks.');
+  if (v.req_date > rqAddDays(todayStr(), 1) && !(await appConfirm('The date is in the future (' + rqDateTxt(v.req_date) + '). Submit anyway?', { title: 'Check the date', okText: 'Submit' }))) return;
+  btn.disabled = true;
+  try {
+    if (RQ.editId) await rqSaveEdit(d, v); else await rqCreate(d, v);
+  } finally { if (btn && document.body.contains(btn)) btn.disabled = false; }
+}
+async function rqCreate(d, v) {
+  var yr = new Date().getFullYear();
+  // The number comes from the database counter. If that function is missing
+  // (e.g. a database rebuilt from a backup), fall back to the highest number
+  // used + 1; the database still refuses a duplicate, so retry on a clash.
+  var res = null;
+  for (var attempt = 0; attempt < 6; attempt++) {
+    var seq = null;
+    var seqRes = await db.rpc('rq_next_seq', { p_dept: d.k, p_year: yr });
+    if (!seqRes.error && seqRes.data != null) seq = Number(seqRes.data);
+    else {
+      var mx = await db.from('rq_requisitions').select('seq').eq('dept', d.k).eq('yr', yr).order('seq', { ascending: false }).limit(1);
+      if (mx.error) { showSaveError('Could not get a job number', seqRes.error || mx.error); return; }
+      seq = ((mx.data && mx.data[0] && Number(mx.data[0].seq)) || 0) + 1 + attempt;
+    }
+    var row = Object.assign({}, v, {
+      dept: d.k, yr: yr, seq: seq, job_no: d.code + '/' + v.company + '/' + String(yr).slice(2) + '/' + String(seq).padStart(4, '0'),
+      status: 'pending', created_by: S.user.id, created_by_name: S.user.name, updated_by: S.user.name
+    });
+    res = await db.from('rq_requisitions').insert(row).select().single();
+    if (!res.error || res.error.code !== '23505') break;
+  }
+  if (res.error) { showSaveError('Could not save the requisition', res.error); return; }
+  await rqEvent(res.data.id, 'created', { amount: v.est_cost });
+  RQ.rows.unshift(res.data);
+  _rqFormStart = null;
+  toast('Requisition ' + res.data.job_no + ' submitted — sent to audit and management', 'ok-t');
+  setView('rq:' + d.k + ':pending');
+  rqOpen(res.data.id);
+}
+async function rqSaveEdit(d, v) {
+  var r = RQ.rows.find(function(x){ return x.id === RQ.editId; });
+  if (!r) return;
+  var wasReturned = r.status === 'returned';
+  var upd = Object.assign({}, v, { updated_at: new Date().toISOString(), updated_by: S.user.name });
+  if (wasReturned) Object.assign(upd, { status: 'pending', audit_status: null, audit_by: null, audit_by_name: null, audit_at: null, audit_note: null, mgmt_status: null, mgmt_by: null, mgmt_by_name: null, mgmt_at: null, mgmt_note: null });
+  var q = db.from('rq_requisitions').update(upd).eq('id', r.id).eq('status', r.status);
+  if (!wasReturned) q = q.is('audit_status', null).is('mgmt_status', null);
+  var res = await q.select();
+  if (res.error) { showSaveError('Could not save the changes', res.error); return; }
+  if (!res.data || !res.data.length) { await rqRefreshOne(r.id); toast('Someone has already acted on this requisition — it was not changed', 'err'); _rqFormStart = null; RQ.editId = null; setView('rq:' + d.k + ':' + rqTabOf(RQ.rows.find(function(x){ return x.id === r.id; }) || r)); return; }
+  await rqEvent(r.id, wasReturned ? 'resubmitted' : 'edited', { amount: v.est_cost });
+  r = rqPut(res.data[0]);
+  _rqFormStart = null; RQ.editId = null;
+  toast(wasReturned ? r.job_no + ' sent again for approval' : r.job_no + ' saved', 'ok-t');
+  setView('rq:' + d.k + ':pending');
+}
+function rqStartEdit(id) {
+  var r = RQ.rows.find(function(x){ return x.id === id; });
+  if (!r || !rqCanEditReq(r)) { toast('This requisition can no longer be changed', 'err'); return; }
+  closeModal('ov-rq');
+  RQ.editId = id;
+  setView('rq:' + r.dept + ':edit');
+}
+
+// ─── DETAIL WINDOW ───
+async function rqOpen(id) {
+  RQ.openId = id;
+  rqRenderDetail(id, false);
+  openModal('ov-rq');
+  await rqLoadEvents(id);
+  if (RQ.openId === id) rqRenderDetail(id, true);
+}
+function rqKv(k, v) { return '<div class="rq-kv"><div class="k">' + k + '</div><div class="v">' + (v == null || v === '' ? '&mdash;' : v) + '</div></div>'; }
+var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled' };
+function rqRenderDetail(id, withEvents) {
+  var r = RQ.rows.find(function(x){ return x.id === id; });
+  if (!r) { closeModal('ov-rq'); return; }
+  var d = rqDept(r.dept) || { n: r.dept };
+  $('rq-title').textContent = r.job_no;
+  $('rq-sub').innerHTML = rqEsc(d.n) + ' &middot; ' + rqEsc(rqCompany(r.company).n) + ' &middot; ' + rqStatusChip(r) + (rqOverdue(r) ? ' <span class="chip bad">Overdue</span>' : '') + (rqOverBudget(r) ? ' <span class="chip bad">Over approved cost</span>' : '');
+  var items = Array.isArray(r.items) && r.items.length ? '<div class="rq-sec"><div class="rq-sec-h">Items to buy</div><table class="rq-t"><thead><tr><th>Item / specification</th><th>Qty</th><th>Unit</th><th>Est. rate</th><th>Amount</th></tr></thead><tbody>'
+    + r.items.map(function(i){ return '<tr><td style="white-space:normal">' + rqEsc(i.item) + '</td><td class="num">' + (i.qty == null ? '' : i.qty) + '</td><td>' + rqEsc(i.unit || '') + '</td><td class="num">' + rqMoney(i.rate) + '</td><td class="num">' + (i.qty != null && i.rate != null ? rqMoney(i.qty * i.rate) : '') + '</td></tr>'; }).join('') + '</tbody></table></div>' : '';
+  var h = '<div class="rq-grid">'
+    + rqKv('Date', rqDateTxt(r.req_date)) + rqKv('Company', rqEsc(rqCompany(r.company).n)) + rqKv('Priority', rqPriChip(r.priority))
+    + rqKv('Building / area', rqEsc(r.location)) + rqKv('Exact location', rqEsc(r.location_detail)) + rqKv('Type of work', rqEsc(r.work_type) + (r.kind === 'purchase' ? ' &middot; items to buy' : ''))
+    + rqKv('Time required', rqEsc(rqTimeTxt(r))) + rqKv('Estimated cost', rqMoney(r.est_cost)) + rqKv('Raised by', rqEsc(r.created_by_name) + ' <span class="sub2">' + rqDateTime(r.created_at) + '</span>')
+    + '</div>' + items
+    + '<div class="rq-sec"><div class="rq-sec-h">Detailed remarks</div><div class="rq-remarks">' + rqEsc(r.remarks || '') + '</div></div>'
+    + '<div class="rq-sec"><div class="rq-sec-h">Approval</div><div class="rq-appr">'
+    + '<div class="rq-appr-box"><div class="k">Audit</div>' + rqApprChip(r.audit_status) + (r.audit_by_name ? '<div class="sub2">' + rqEsc(r.audit_by_name) + ' &middot; ' + rqDateTime(r.audit_at) + '</div>' : '') + (r.audit_note ? '<div class="rq-note">' + rqEsc(r.audit_note) + '</div>' : '') + '</div>'
+    + '<div class="rq-appr-box"><div class="k">Management</div>' + rqApprChip(r.mgmt_status) + (r.mgmt_by_name ? '<div class="sub2">' + rqEsc(r.mgmt_by_name) + ' &middot; ' + rqDateTime(r.mgmt_at) + '</div>' : '') + (r.mgmt_status === 'approved' ? '<div class="rq-note">Approved amount: <b>' + rqMoney(r.approved_cost) + '</b></div>' : '') + (r.mgmt_note ? '<div class="rq-note">' + rqEsc(r.mgmt_note) + '</div>' : '') + '</div>'
+    + '</div></div>';
+  if (['wip', 'hold', 'done'].indexOf(r.status) !== -1) {
+    var pct = Math.max(0, Math.min(100, Number(r.progress) || 0));
+    h += '<div class="rq-sec"><div class="rq-sec-h">Work</div><div class="rq-grid">'
+      + rqKv('Progress', '<div class="rq-prog"><div class="rq-bar" style="width:120px"><i style="width:' + pct + '%"' + (pct >= 100 ? ' class="full"' : '') + '></i></div><b>' + pct + '%</b></div>')
+      + rqKv('Started', rqDateTime(r.started_at)) + rqKv('Target date', r.target_date ? '<span class="' + (rqOverdue(r) ? 'rq-late' : '') + '">' + rqDateTxt(r.target_date) + '</span>' : '')
+      + rqKv('Approved amount', rqMoney(r.approved_cost)) + rqKv('Spent so far', '<span class="' + (rqOverBudget(r) ? 'rq-late' : '') + '">' + rqMoney(r.spent || 0) + '</span>')
+      + (r.status === 'done' ? rqKv('Completed', rqDateTime(r.completed_at)) + rqKv('Final cost', '<b>' + rqMoney(r.final_cost) + '</b>') : '')
+      + '</div>' + (r.completion_note ? '<div class="rq-remarks" style="margin-top:8px">' + rqEsc(r.completion_note) + '</div>' : '') + '</div>';
+  }
+  h += '<div id="rq-actions">' + rqActionsHtml(r) + '</div>';
+  var ev = RQ.events[id];
+  h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
+    : '<div class="rq-hist">' + ev.slice().reverse().map(function(e){
+      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
+        + (e.note ? '<div class="rq-ev-note">' + rqEsc(e.note) + '</div>' : '') + '<div class="sub2">' + rqEsc(e.by_name || '') + ' &middot; ' + rqDateTime(e.at) + '</div></div></div>';
+    }).join('') + '</div>') + '</div>';
+  $('rq-body').innerHTML = h;
+  $('rq-foot').innerHTML = '<button class="btn" onclick="rqPrint(\'' + r.id + '\')">&#x1F5A8; Print / PDF</button><span style="flex:1"></span><button class="btn" onclick="closeModal(\'ov-rq\')">Close</button>';
+}
+function rqActionsHtml(r) {
+  var role = S.user.role, h = '';
+  var note = function(id, ph){ return '<textarea id="' + id + '" rows="2" placeholder="' + ph + '"></textarea>'; };
+  if (r.status === 'pending') {
+    if (role === 'audit' && !r.audit_status) {
+      h += '<div class="rq-act"><div class="rq-sec-h">Audit decision</div>' + note('rq-a-note', 'Comment (needed to return or reject)')
+        + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'audit\',\'approved\')">&#x2713; Approve</button><button class="btn" onclick="rqDecide(\'' + r.id + '\',\'audit\',\'returned\')">Return for changes</button><button class="btn danger" onclick="rqDecide(\'' + r.id + '\',\'audit\',\'rejected\')">Reject</button></div></div>';
+    }
+    if (role === 'management' && !r.mgmt_status) {
+      h += '<div class="rq-act"><div class="rq-sec-h">Management decision</div>'
+        + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>'
+        + note('rq-m-note', 'Comment (needed to return or reject)')
+        + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\')">&#x2713; Approve &mdash; start the work</button><button class="btn" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'returned\')">Return for changes</button><button class="btn danger" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'rejected\')">Reject</button></div></div>';
+    }
+    if (rqCanEditReq(r)) h += '<div class="rq-btns rq-own"><button class="btn" onclick="rqStartEdit(\'' + r.id + '\')">Change</button><button class="btn danger" onclick="rqCancelReq(\'' + r.id + '\')">Cancel requisition</button></div>';
+    else if (rqCanWork(r.dept)) h += '<div class="sub2 rq-own">Approval has started, so it can no longer be changed. Ask audit or management to return it if something is wrong.</div>';
+  } else if (r.status === 'returned') {
+    if (rqCanEditReq(r)) h += '<div class="rq-btns rq-own"><button class="btn pri" onclick="rqStartEdit(\'' + r.id + '\')">Change and send again</button><button class="btn danger" onclick="rqCancelReq(\'' + r.id + '\')">Cancel requisition</button></div>';
+  } else if (r.status === 'rejected') {
+    if (role === 'management' && r.mgmt_status !== 'rejected') {
+      h += '<div class="rq-act"><div class="rq-sec-h">Audit rejected this. Management can still approve it.</div>'
+        + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>'
+        + note('rq-m-note', 'Comment') + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\')">&#x2713; Approve anyway</button></div></div>';
+    }
+  } else if ((r.status === 'wip' || r.status === 'hold') && rqCanWork(r.dept)) {
+    var pct = Math.max(0, Math.min(100, Number(r.progress) || 0));
+    if (r.status === 'wip') {
+      h += '<div class="rq-act"><div class="rq-sec-h">Update progress</div>'
+        + '<div class="rq-slider"><input type="range" id="rq-p-pct" min="0" max="100" step="5" value="' + pct + '" oninput="$(\'rq-p-val\').textContent=this.value+\'%\'"><b id="rq-p-val">' + pct + '%</b></div>'
+        + note('rq-p-note', 'What was done (e.g. new cable laid, waiting for switch board)')
+        + '<div class="rq-btns"><button class="btn pri" onclick="rqSaveProgress(\'' + r.id + '\')">Save progress</button></div></div>'
+        + '<div class="rq-act"><div class="rq-sec-h">Add cost spent</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start"><div class="f" style="width:180px"><label>Amount (Tk)</label><input id="rq-c-amt" type="number" min="0" step="1"></div><div class="f" style="flex:1;min-width:200px"><label>What for</label><input id="rq-c-note" placeholder="e.g. cable 50 m, labour"></div></div>'
+        + '<div class="rq-btns"><button class="btn" onclick="rqAddCost(\'' + r.id + '\')">Add cost</button></div></div>'
+        + '<div class="rq-act"><div class="rq-sec-h">Finish</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start"><div class="f" style="width:180px"><label>Final cost (Tk)</label><input id="rq-d-cost" type="number" min="0" step="1" value="' + rqEsc(r.spent ? r.spent : (r.approved_cost == null ? '' : r.approved_cost)) + '"></div><div class="f" style="flex:1;min-width:200px"><label>Completion note</label><input id="rq-d-note" placeholder="What was done in the end"></div></div>'
+        + '<div class="rq-btns"><button class="btn pri" onclick="rqComplete(\'' + r.id + '\')">&#x2713; Mark complete</button><button class="btn" onclick="rqHold(\'' + r.id + '\',true)">Put on hold</button></div></div>';
+    } else {
+      h += '<div class="rq-act"><div class="rq-sec-h">This work is on hold</div>' + note('rq-p-note', 'Why it can start again (optional)') + '<div class="rq-btns"><button class="btn pri" onclick="rqHold(\'' + r.id + '\',false)">Resume work</button></div></div>';
+    }
+  } else if (r.status === 'done' && role === 'admin') {
+    h += '<div class="rq-btns rq-own"><button class="btn" onclick="rqReopen(\'' + r.id + '\')">Reopen (admin)</button></div>';
+  }
+  return h;
+}
+function rqStaleMsg(id) {
+  return rqRefreshOne(id).then(function(){ toast('Someone else has already acted on this — showing the latest', 'err'); renderRail(); rqRender(S.view); rqOpen(id); });
+}
+async function rqDecide(id, who, decision) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r) return;
+  if (who === 'audit' && S.user.role !== 'audit') return;
+  if (who === 'mgmt' && S.user.role !== 'management') return;
+  var noteEl = $(who === 'audit' ? 'rq-a-note' : 'rq-m-note');
+  var noteTxt = noteEl ? noteEl.value.trim() : '';
+  if (decision !== 'approved' && !noteTxt) { toast('Write a comment saying why', 'err'); if (noteEl) noteEl.focus(); return; }
+  var amt = null;
+  if (who === 'mgmt' && decision === 'approved') {
+    var ae = $('rq-m-amt'); amt = ae && ae.value !== '' ? Number(ae.value) : null;
+    if (amt == null || isNaN(amt) || amt < 0) { toast('Enter the approved amount', 'err'); return; }
+  }
+  var label = { approved: 'Approve', returned: 'Return', rejected: 'Reject' }[decision];
+  if (decision !== 'approved' && !(await appConfirm(label + ' ' + r.job_no + '?' + (decision === 'rejected' ? '\n\nA rejected requisition is closed. The department would have to raise a new one.' : '\n\nIt goes back to the ' + ((rqDept(r.dept) || {}).n || '') + ' department to change and send again.'), { title: label + ' requisition', okText: label, danger: decision === 'rejected' }))) return;
+  var now = new Date().toISOString();
+  var p = who === 'audit' ? 'audit_' : 'mgmt_';
+  var upd = { updated_at: now, updated_by: S.user.name };
+  upd[p + 'status'] = decision; upd[p + 'by'] = S.user.id; upd[p + 'by_name'] = S.user.name; upd[p + 'at'] = now; upd[p + 'note'] = noteTxt || null;
+  if (decision === 'returned') upd.status = 'returned';
+  if (decision === 'rejected') upd.status = 'rejected';
+  if (who === 'mgmt' && decision === 'approved') {
+    upd.status = 'wip'; upd.approved_cost = amt; upd.started_at = now; upd.progress = 0;
+    upd.target_date = rqTargetFrom(r, todayStr());
+  }
+  var q = db.from('rq_requisitions').update(upd).eq('id', id);
+  if (who === 'mgmt' && r.status === 'rejected') q = q.eq('status', 'rejected').neq('mgmt_status', 'rejected');
+  else q = q.eq('status', 'pending').is(p + 'status', null);
+  var res = await q.select();
+  if (res.error) { showSaveError('Could not save the decision', res.error); return; }
+  if (!res.data || !res.data.length) {
+    // "neq" leaves out rows where mgmt_status is empty; try that case on its own
+    if (who === 'mgmt' && r.status === 'rejected') res = await db.from('rq_requisitions').update(upd).eq('id', id).eq('status', 'rejected').is('mgmt_status', null).select();
+    if (!res.data || !res.data.length) return rqStaleMsg(id);
+  }
+  var kind = decision === 'approved' ? (who === 'audit' ? 'audit_approved' : 'mgmt_approved') : decision;
+  await rqEvent(id, kind, { note: (who === 'audit' ? 'Audit' : 'Management') + (noteTxt ? ': ' + noteTxt : ''), amount: amt });
+  r = rqPut(res.data[0]);
+  toast(r.job_no + ' — ' + (decision === 'approved' ? (who === 'mgmt' ? 'approved, work can start' : 'audit approval recorded') : decision), 'ok-t');
+  renderRail(); rqRender(S.view);
+  await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+async function rqSaveProgress(id) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqCanWork(r.dept)) return;
+  var pct = Number($('rq-p-pct').value), noteTxt = $('rq-p-note').value.trim();
+  if (pct === Number(r.progress) && !noteTxt) { toast('Move the slider or write what was done', 'err'); return; }
+  if (pct === 100 && !(await appConfirm('100% means the work is finished. Save 100% now? (Use "Mark complete" to close it with the final cost.)', { title: 'Progress 100%', okText: 'Save 100%' }))) return;
+  var res = await db.from('rq_requisitions').update({ progress: pct, updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).eq('status', 'wip').select();
+  if (res.error) { showSaveError('Could not save the progress', res.error); return; }
+  if (!res.data || !res.data.length) return rqStaleMsg(id);
+  await rqEvent(id, 'progress', { pct: pct, note: noteTxt });
+  r = rqPut(res.data[0]);
+  toast(r.job_no + ' — ' + pct + '% saved', 'ok-t');
+  renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+async function rqAddCost(id) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqCanWork(r.dept)) return;
+  var amt = $('rq-c-amt').value === '' ? null : Number($('rq-c-amt').value), noteTxt = $('rq-c-note').value.trim();
+  if (amt == null || isNaN(amt) || amt <= 0) { toast('Enter the amount spent', 'err'); return; }
+  if (!noteTxt) { toast('Write what the money was for', 'err'); return; }
+  var fresh = await rqRefreshOne(id); if (!fresh || fresh.status !== 'wip') return rqStaleMsg(id);
+  var before = Number(fresh.spent) || 0, after = Math.round((before + amt) * 100) / 100;
+  if (Number(fresh.approved_cost) > 0 && after > Number(fresh.approved_cost) * 1.1 && !(await appConfirm('This takes the spending to ' + rqMoneyTxt(after) + ', more than 10% over the approved ' + rqMoneyTxt(fresh.approved_cost) + '. Management will see it marked "over approved cost". Add it?', { title: 'Over the approved amount', okText: 'Add cost' }))) return;
+  var q = db.from('rq_requisitions').update({ spent: after, updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).eq('status', 'wip');
+  q = fresh.spent == null ? q.is('spent', null) : q.eq('spent', fresh.spent);
+  var res = await q.select();
+  if (res.error) { showSaveError('Could not add the cost', res.error); return; }
+  if (!res.data || !res.data.length) return rqStaleMsg(id);
+  await rqEvent(id, 'cost', { amount: amt, note: noteTxt });
+  r = rqPut(res.data[0]);
+  toast(rqMoneyTxt(amt) + ' added to ' + r.job_no, 'ok-t');
+  rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+async function rqComplete(id) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqCanWork(r.dept)) return;
+  var cost = $('rq-d-cost').value === '' ? null : Number($('rq-d-cost').value), noteTxt = $('rq-d-note').value.trim();
+  if (cost == null || isNaN(cost) || cost < 0) { toast('Enter the final cost', 'err'); return; }
+  if (!noteTxt) { toast('Write a short completion note', 'err'); return; }
+  var over = Number(r.approved_cost) > 0 && cost > Number(r.approved_cost) * 1.1;
+  if (!(await appConfirm('Mark ' + r.job_no + ' as complete with a final cost of ' + rqMoneyTxt(cost) + '?' + (over ? '\n\nThis is more than 10% over the approved ' + rqMoneyTxt(r.approved_cost) + '; it will be marked "over approved cost".' : ''), { title: 'Work complete', okText: 'Mark complete' }))) return;
+  var now = new Date().toISOString();
+  var res = await db.from('rq_requisitions').update({ status: 'done', progress: 100, final_cost: cost, completion_note: noteTxt, completed_at: now, updated_at: now, updated_by: S.user.name }).eq('id', id).eq('status', 'wip').select();
+  if (res.error) { showSaveError('Could not complete it', res.error); return; }
+  if (!res.data || !res.data.length) return rqStaleMsg(id);
+  await rqEvent(id, 'done', { pct: 100, amount: cost, note: noteTxt });
+  r = rqPut(res.data[0]);
+  toast(r.job_no + ' moved to Completed', 'ok-t');
+  renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+async function rqHold(id, hold) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqCanWork(r.dept)) return;
+  var noteEl = $('rq-p-note');
+  var noteTxt = noteEl ? noteEl.value.trim() : '';
+  if (hold && !noteTxt) { toast('Write why it is going on hold in the progress note box', 'err'); if (noteEl) noteEl.focus(); return; }
+  var res = await db.from('rq_requisitions').update({ status: hold ? 'hold' : 'wip', updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).eq('status', hold ? 'wip' : 'hold').select();
+  if (res.error) { showSaveError('Could not save', res.error); return; }
+  if (!res.data || !res.data.length) return rqStaleMsg(id);
+  await rqEvent(id, hold ? 'hold' : 'resumed', { note: noteTxt });
+  r = rqPut(res.data[0]);
+  toast(r.job_no + (hold ? ' put on hold' : ' resumed'), 'ok-t');
+  renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+async function rqCancelReq(id) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqCanEditReq(r)) return;
+  if (!(await appConfirm('Cancel ' + r.job_no + '? It stays on record under Returned / rejected, and its job number is not used again.', { title: 'Cancel requisition', okText: 'Cancel requisition', cancelText: 'Keep it', danger: true }))) return;
+  var q = db.from('rq_requisitions').update({ status: 'cancelled', updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).eq('status', r.status);
+  if (r.status === 'pending') q = q.is('audit_status', null).is('mgmt_status', null);
+  var res = await q.select();
+  if (res.error) { showSaveError('Could not cancel', res.error); return; }
+  if (!res.data || !res.data.length) return rqStaleMsg(id);
+  await rqEvent(id, 'cancelled');
+  r = rqPut(res.data[0]);
+  toast(r.job_no + ' cancelled', 'ok-t');
+  renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+async function rqReopen(id) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || S.user.role !== 'admin') return;
+  if (!(await appConfirm('Reopen ' + r.job_no + '? It goes back to Work in progress.', { title: 'Reopen', okText: 'Reopen' }))) return;
+  var res = await db.from('rq_requisitions').update({ status: 'wip', completed_at: null, updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).eq('status', 'done').select();
+  if (res.error) { showSaveError('Could not reopen', res.error); return; }
+  if (!res.data || !res.data.length) return rqStaleMsg(id);
+  await rqEvent(id, 'reopened');
+  r = rqPut(res.data[0]);
+  renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+
+// ─── PRINT ───
+async function rqPrint(id) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r) return;
+  var st = {};
+  try { st = await rqLoadSettings(true); } catch (e) {}
+  var ev = RQ.events[id] || await rqLoadEvents(id);
+  openReportPreview('Requisition ' + r.job_no, rqPrintHtml(r, st, ev));
+}
+function rqPrintHtml(r, st, ev) {
+  var E = rqEsc, d = rqDept(r.dept) || { n: r.dept };
+  var auditOk = r.audit_status === 'approved', mgmtOk = r.mgmt_status === 'approved';
+  var items = Array.isArray(r.items) && r.items.length ? '<table class="it"><thead><tr><th style="width:5%">#</th><th>Item / specification</th><th style="width:9%">Qty</th><th style="width:9%">Unit</th><th style="width:14%">Est. rate</th><th style="width:16%">Amount</th></tr></thead><tbody>'
+    + r.items.map(function(i, n){ return '<tr><td>' + (n + 1) + '</td><td>' + E(i.item) + '</td><td class="n">' + (i.qty == null ? '' : i.qty) + '</td><td>' + E(i.unit || '') + '</td><td class="n">' + E(rqMoneyTxt(i.rate)) + '</td><td class="n">' + (i.qty != null && i.rate != null ? E(rqMoneyTxt(i.qty * i.rate)) : '') + '</td></tr>'; }).join('')
+    + '<tr class="tot"><td colspan="5">Estimated total</td><td class="n">' + E(rqMoneyTxt(r.est_cost)) + '</td></tr></tbody></table>' : '';
+  function f(k, v) { return '<div class="fl"><div class="k">' + k + '</div><div class="v">' + (v || '&nbsp;') + '</div></div>'; }
+  var work = '';
+  if (['wip', 'hold', 'done'].indexOf(r.status) !== -1) {
+    var log = (ev || []).filter(function(e){ return ['progress', 'cost', 'hold', 'resumed', 'done'].indexOf(e.kind) !== -1; });
+    work = '<h3>Work record</h3><div class="grid g4">' + f('Started', E(rqDateTime(r.started_at))) + f('Target date', E(rqDateTxt(r.target_date))) + f('Progress', (Number(r.progress) || 0) + '%') + f(r.status === 'done' ? 'Completed' : 'Status', E(r.status === 'done' ? rqDateTime(r.completed_at) : r.status === 'hold' ? 'On hold' : 'In progress'))
+      + f('Approved amount', E(rqMoneyTxt(r.approved_cost))) + f('Spent', E(rqMoneyTxt(r.spent || 0))) + f('Final cost', E(rqMoneyTxt(r.final_cost))) + f('Completion note', E(r.completion_note || '')) + '</div>'
+      + (log.length ? '<table class="it"><thead><tr><th style="width:17%">Date</th><th style="width:16%">Update</th><th>Note</th><th style="width:14%">By</th></tr></thead><tbody>' + log.map(function(e){
+        return '<tr><td>' + E(rqDateTime(e.at)) + '</td><td>' + E(RQ_EVENT_TXT[e.kind] || e.kind) + (e.pct != null ? ' ' + e.pct + '%' : '') + (e.amount != null ? ' ' + E(rqMoneyTxt(e.amount)) : '') + '</td><td>' + E(e.note || '') + '</td><td>' + E(e.by_name || '') + '</td></tr>'; }).join('') + '</tbody></table>' : '');
+  }
+  var newton = (st && st.newton_line) || 'Mr. Newton, AGM (HR, Admin & Compliance)';
+  var head = (st && st['dept_head_' + r.dept]) || '';
+  function sig(title, name, img, stamp, cls) {
+    return '<div class="sg ' + (cls || '') + '"><div class="mark">' + (img ? '<img src="' + img + '" alt="">' : '') + '</div><div class="ln"></div><div class="t">' + title + '</div><div class="nm">' + (name || '&nbsp;') + '</div>' + (stamp ? '<div class="dt">' + stamp + '</div>' : '') + '</div>';
+  }
+  var logo = st && st.group_logo ? '<img class="logo" src="' + st.group_logo + '" alt="">' : '';
+  var status = { pending: 'Approval pending', returned: 'Returned for changes', rejected: 'Rejected', wip: 'Approved · work in progress', hold: 'Approved · on hold', done: 'Completed', cancelled: 'Cancelled' }[r.status] || r.status;
+  var css = '@page{size:A4 portrait;margin:10mm 11mm 12mm}*{box-sizing:border-box;margin:0;padding:0}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    + 'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;color:#141413;font-size:10.5px;line-height:1.4;background:#E9E6DE;padding:18px}'
+    + '.sheet{background:#fff;width:188mm;min-height:270mm;margin:0 auto;padding:9mm 9mm 8mm;box-shadow:0 4px 24px rgba(0,0,0,.12);display:flex;flex-direction:column}'
+    + '@media print{body{background:#fff;padding:0}.sheet{width:auto;min-height:273mm;box-shadow:none;padding:2mm 1mm 0}}.sgs,.ft{break-inside:avoid;page-break-inside:avoid}'
+    + '.hd{text-align:center;border-bottom:1.6px solid #141413;padding-bottom:3mm}.logo{height:13mm;display:block;margin:0 auto 1.5mm}'
+    + '.grp{font-family:"Playfair Display","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:24px;font-weight:600;letter-spacing:.14em}'
+    + '.co{font-size:12.5px;font-weight:600;margin-top:1mm}'
+    + '.tt{display:flex;justify-content:space-between;align-items:flex-end;margin-top:4mm}.tt h1{font-size:17px;font-weight:700;letter-spacing:-.01em}.tt .dp{font-size:10.5px;color:#55534d;margin-top:1px}'
+    + '.job{text-align:right}.job .k{font-size:8px;color:#6b6862;letter-spacing:.08em;text-transform:uppercase}.job .v{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}.job .s{font-size:9.5px;color:#55534d}'
+    + 'h3{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:#141413;margin:4.5mm 0 1.6mm;padding-bottom:1mm;border-bottom:1px solid #141413}'
+    + '.grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #d6d3cb;border-radius:6px;overflow:hidden}.grid.g4{grid-template-columns:repeat(4,1fr)}'
+    + '.fl{padding:4px 7px;border-right:1px solid #e6e3dc;border-bottom:1px solid #e6e3dc}.fl .k{font-size:7.6px;color:#6b6862;letter-spacing:.05em;text-transform:uppercase}.fl .v{font-size:10.5px;font-weight:500;min-height:13px;overflow-wrap:anywhere}'
+    + '.rm{border:1px solid #d6d3cb;border-radius:6px;padding:6px 8px;white-space:pre-wrap;overflow-wrap:anywhere;min-height:16mm}'
+    + 'table.it{width:100%;border-collapse:collapse;margin-top:2mm}table.it th{background:#f2f0ea;font-size:7.8px;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:3px 5px;border:1px solid #d6d3cb}table.it td{padding:3px 5px;border:1px solid #e3e0d8;vertical-align:top;overflow-wrap:anywhere}td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}tr.tot td{font-weight:700;background:#faf9f6}'
+    + '.ap{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.ap>div{border:1px solid #d6d3cb;border-radius:6px;padding:5px 8px}.ap .k{font-size:7.6px;color:#6b6862;letter-spacing:.05em;text-transform:uppercase}.ap b{font-size:10.5px}'
+    + '.sp{flex:1;min-height:6mm}'
+    + '.sgs{display:grid;grid-template-columns:repeat(5,1fr);gap:4mm;margin-top:3mm}.sg{text-align:center;position:relative}.sg .mark{height:21mm;display:flex;align-items:flex-end;justify-content:center}.sg .mark img{max-height:21mm;max-width:100%}'
+    + '.sg.seal .mark img{max-height:22mm;transform:rotate(-8deg);opacity:.92}'
+    + '.sg .ln{border-top:1px solid #141413;margin-top:1mm}.sg .t{font-size:8.6px;font-weight:700;margin-top:1.2mm}.sg .nm{font-size:8px;color:#55534d;line-height:1.3}.sg .dt{font-size:7.4px;color:#55534d}'
+    + '.ft{display:flex;justify-content:space-between;border-top:1px solid #d6d3cb;margin-top:4mm;padding-top:1.5mm;font-size:7.2px;color:#8a867d}';
+  var body = '<div class="sheet"><div class="hd">' + logo + '<div class="grp">SHAHANA GROUP</div><div class="co">' + E(rqCompany(r.company).n) + '</div></div>'
+    + '<div class="tt"><div><h1>Requisition Form</h1><div class="dp">' + E(d.n) + ' Department' + (r.kind === 'purchase' ? ' &middot; Purchase' : ' &middot; Work / service') + '</div></div><div class="job"><div class="k">Job no.</div><div class="v">' + E(r.job_no) + '</div><div class="s">' + E(status) + '</div></div></div>'
+    + '<h3>Details</h3><div class="grid">' + f('Date', E(rqDateTxt(r.req_date))) + f('Priority', E({ urgent: 'Urgent', low: 'Low' }[r.priority] || 'Normal')) + f('Type of work', E(r.work_type || ''))
+    + f('Building / area', E(r.location || '')) + f('Exact location', E(r.location_detail || '')) + f('Time required', E(rqTimeTxt(r)))
+    + f('Estimated cost', E(rqMoneyTxt(r.est_cost))) + f('Raised by', E(r.created_by_name || '')) + f('Raised on', E(rqDateTime(r.created_at))) + '</div>'
+    + (items ? '<h3>Items to buy</h3>' + items : '')
+    + '<h3>Detailed remarks</h3><div class="rm">' + E(r.remarks || '') + '</div>'
+    + '<h3>Approval</h3><div class="ap"><div><div class="k">Audit</div><b>' + E({ approved: 'Approved', returned: 'Returned', rejected: 'Rejected' }[r.audit_status] || 'Not yet') + '</b>' + (r.audit_by_name ? ' &middot; ' + E(r.audit_by_name) + ' &middot; ' + E(rqDateTime(r.audit_at)) : '') + (r.audit_note ? '<div>' + E(r.audit_note) + '</div>' : '') + '</div>'
+    + '<div><div class="k">Management</div><b>' + E({ approved: 'Approved', returned: 'Returned', rejected: 'Rejected' }[r.mgmt_status] || 'Not yet') + '</b>' + (r.mgmt_by_name ? ' &middot; ' + E(r.mgmt_by_name) + ' &middot; ' + E(rqDateTime(r.mgmt_at)) : '') + (mgmtOk ? '<div>Approved amount: <b>' + E(rqMoneyTxt(r.approved_cost)) + '</b></div>' : '') + (r.mgmt_note ? '<div>' + E(r.mgmt_note) + '</div>' : '') + '</div></div>'
+    + work
+    + '<div class="sp"></div>'
+    + '<div class="sgs">'
+    + sig('Prepared by', E(r.created_by_name || ''), '', '')
+    + sig('Department Head', (head ? E(head) + '<br>' : '') + E(d.n), '', '')
+    + sig('AGM', E(newton), '', '')
+    + sig('Audit', auditOk ? E(r.audit_by_name || '') : '', auditOk && st.audit_seal ? st.audit_seal : '', auditOk ? E(rqDateTime(r.audit_at)) : '', 'seal')
+    + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') : '', mgmtOk && st.mgmt_sign ? st.mgmt_sign : '', mgmtOk ? E(rqDateTime(r.mgmt_at)) : '', 'sign')
+    + '</div>'
+    + '<div class="ft"><span>Shahana Group &middot; Requisition ' + E(r.job_no) + ' &middot; system record, printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + E(rqCompany(r.company).n) + '</span></div>'
+    + '</div>';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Requisition ' + E(r.job_no.replace(/\//g, '-')) + '</title><style>' + css + '</style></head><body>' + body + '</body></html>';
+}
+
+// ─── ADMIN: seal, signature, logo, names ───
+async function rqRenderAdminCard() {
+  var box = $('admin-rq-body'); if (!box) return;
+  var st = {};
+  try { st = await rqLoadSettings(true); } catch (e) {}
+  var test = await db.from('rq_settings').select('key').limit(1);
+  if (test.error) { box.innerHTML = '<div class="adm-sub" style="padding:12px 16px">Run <b>requisitions-migration.sql</b> in Supabase to turn on requisitions.</div>'; return; }
+  function img(key, label, hint) {
+    return '<div class="rq-adm-img"><div class="adm-lbl">' + label + '</div><div class="rq-adm-prev">' + (st[key] ? '<img src="' + st[key] + '" alt="">' : '<span class="sub2">None yet</span>') + '</div>'
+      + '<div class="sub2" style="margin:3px 0 5px">' + hint + '</div>'
+      + '<label class="btn sm">Upload picture<input type="file" accept="image/*" style="display:none" onchange="rqUploadImg(\'' + key + '\',this)"></label>'
+      + (st[key] ? ' <button class="btn sm danger" onclick="rqClearImg(\'' + key + '\')">Remove</button>' : '') + '</div>';
+  }
+  box.innerHTML = '<div style="padding:12px 16px 16px"><div class="rq-adm-grid">'
+    + img('audit_seal', 'Audit seal', 'Printed in the Audit box once audit approves.')
+    + img('mgmt_sign', 'Management signature', 'Printed in the Management box once management approves.')
+    + img('group_logo', 'Shahana Group logo', 'Printed at the top of every requisition form.')
+    + '</div><div class="sub2" style="margin:8px 0 12px">A photo of a stamp or signature on white paper works: the paper is made see-through automatically.</div>'
+    + '<div class="adm-form" style="grid-template-columns:repeat(4,1fr) 120px">'
+    + RQ_DEPTS.map(function(d){ return '<div class="adm-field"><label class="adm-lbl">' + d.n + ' head (name)</label><input class="adm-inp" id="rq-head-' + d.k + '" value="' + rqEsc(st['dept_head_' + d.k] || '') + '" placeholder="Printed under Department Head"></div>'; }).join('')
+    + '<div class="adm-field"><label class="adm-lbl">AGM line</label><input class="adm-inp" id="rq-newton" value="' + rqEsc(st.newton_line || 'Mr. Newton, AGM (HR, Admin & Compliance)') + '"></div>'
+    + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" onclick="rqSaveNames()">Save</button></div></div></div>';
+}
+async function rqSetSetting(key, value) {
+  var res = await db.from('rq_settings').upsert({ key: key, value: value, updated_at: new Date().toISOString(), updated_by: S.user.name });
+  if (res.error) { showSaveError('Could not save', res.error); return false; }
+  if (RQ.settings) RQ.settings[key] = value;
+  return true;
+}
+async function rqSaveNames() {
+  if (S.user.role !== 'admin') return;
+  var ok = true;
+  for (var i = 0; i < RQ_DEPTS.length; i++) ok = (await rqSetSetting('dept_head_' + RQ_DEPTS[i].k, $('rq-head-' + RQ_DEPTS[i].k).value.trim())) && ok;
+  ok = (await rqSetSetting('newton_line', $('rq-newton').value.trim())) && ok;
+  if (ok) toast('Requisition names saved', 'ok-t');
+}
+async function rqClearImg(key) {
+  if (S.user.role !== 'admin') return;
+  if (!(await appConfirm('Remove this picture? Printed forms will no longer show it.', { title: 'Remove picture', okText: 'Remove', danger: true }))) return;
+  if (await rqSetSetting(key, null)) { toast('Removed', 'ok-t'); rqRenderAdminCard(); }
+}
+function rqUploadImg(key, input) {
+  if (S.user.role !== 'admin') return;
+  var file = input.files && input.files[0]; input.value = '';
+  if (!file) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    var im = new Image();
+    im.onload = async function(){
+      var max = key === 'group_logo' ? 500 : 420, sc = Math.min(1, max / Math.max(im.width, im.height));
+      var w = Math.max(1, Math.round(im.width * sc)), h = Math.max(1, Math.round(im.height * sc));
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h);
+      var px = x.getImageData(0, 0, w, h), a = px.data;
+      // paper -> transparent (only when the picture has no transparency of its own)
+      var hasAlpha = false; for (var i = 3; i < a.length; i += 4) if (a[i] < 250) { hasAlpha = true; break; }
+      if (!hasAlpha) {
+        var lum = []; for (var j = 0; j < a.length; j += 4) lum.push(0.299 * a[j] + 0.587 * a[j + 1] + 0.114 * a[j + 2]);
+        var sorted = lum.slice().sort(function(p, q){ return p - q; }), paper = sorted[Math.floor(sorted.length * 0.6)];
+        for (var k = 0, n = 0; k < a.length; k += 4, n++) {
+          var dk = paper - lum[n];
+          a[k + 3] = Math.max(0, Math.min(255, Math.round((dk - 12) / 50 * 255)));
+          a[k] = Math.round(a[k] * 0.7); a[k + 1] = Math.round(a[k + 1] * 0.7); a[k + 2] = Math.round(a[k + 2] * 0.8);
+        }
+        x.putImageData(px, 0, 0);
+      }
+      var url = c.toDataURL('image/png');
+      if (url.length > 400000) { toast('That picture is too large. Crop it closer and try again.', 'err'); return; }
+      if (await rqSetSetting(key, url)) { toast('Picture saved', 'ok-t'); rqRenderAdminCard(); }
+    };
+    im.onerror = function(){ toast('Could not read that picture', 'err'); };
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(file);
 }
 
 // ─── START ───
