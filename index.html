@@ -2056,7 +2056,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-14:23</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-15:12</p>
   </div>
 </div>
 
@@ -2098,7 +2098,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-14:23</div>
+  <div id="ver-stamp">Version:26-10-15:12</div>
 </div>
 
 
@@ -6348,15 +6348,105 @@ async function openDeleteShipped(ordId) {
 // ─── ORDER ACTIONS ───
 let orderForMerchant = null;
 
+// ─── COUNTRY LIST (with "Other") ───
+// The built-in list, plus every country / region someone has typed in with
+// "Other" (kept in app_settings.extra_countries, so the next person finds it
+// in the list). An order with a value that is in neither still shows it.
+var COUNTRY_OTHER = '__other__';
+function extraCountries() {
+  try { var a = JSON.parse((S.settings || {}).extra_countries || '[]'); return Array.isArray(a) ? a.filter(function(x){ return typeof x === 'string' && x.trim(); }) : []; }
+  catch (e) { return []; }
+}
+function countryList() {
+  var seen = {}, out = [];
+  WORLD_COUNTRIES_LIST.concat(extraCountries()).forEach(function(c){ var k = c.toLowerCase(); if (!seen[k]) { seen[k] = 1; out.push(c); } });
+  return out.sort(function(a, b){ return a.localeCompare(b); });
+}
+function normaliseCountry(txt) {
+  var t = String(txt || '').replace(/\s+/g, ' ').trim().slice(0, 60);
+  if (!t) return '';
+  var m = countryList().find(function(c){ return c.toLowerCase() === t.toLowerCase(); });
+  return m || t; // "germany" -> "Germany"; anything new is kept as typed
+}
+function countryOptionsHtml(selectedVal, blankLabel) {
+  var list = countryList();
+  if (selectedVal && list.indexOf(selectedVal) === -1) list = list.concat([selectedVal]).sort(function(a, b){ return a.localeCompare(b); });
+  // "Other" sits right under the blank line, so nobody has to scroll past
+  // every country to find it
+  return '<option value="">' + (blankLabel || '-- Select --') + '</option>'
+    + '<option value="' + COUNTRY_OTHER + '">+ Other country / province (type it)</option>'
+    + list.map(function(c){ return '<option value="' + htmlEsc(c) + '"' + (c === selectedVal ? ' selected' : '') + '>' + htmlEsc(c) + '</option>'; }).join('');
+}
+// "Other" chosen: a box to type the country / province appears under the list
+function onCountrySelect(sel) {
+  var box = sel.parentNode.querySelector('.country-other');
+  if (sel.value === COUNTRY_OTHER) {
+    if (!box) {
+      box = document.createElement('input');
+      box.className = 'country-other';
+      box.placeholder = 'Type the country / province / region';
+      box.maxLength = 60;
+      box.style.cssText = sel.style.cssText + ';margin-top:6px';
+      sel.parentNode.insertBefore(box, sel.nextSibling);
+    }
+    box.style.display = '';
+    box.focus();
+  } else if (box) { box.style.display = 'none'; box.value = ''; }
+}
+function readCountry(sel) {
+  if (!sel) return '';
+  if (sel.value !== COUNTRY_OTHER) return sel.value;
+  var box = sel.parentNode.querySelector('.country-other');
+  return normaliseCountry(box ? box.value : '');
+}
+// Add a typed-in country to the shared list (once; matched ignoring case)
+async function rememberCountry(name) {
+  name = normaliseCountry(name);
+  if (!name || WORLD_COUNTRIES_LIST.some(function(c){ return c.toLowerCase() === name.toLowerCase(); })) return;
+  try {
+    var cur = await db.from('app_settings').select('value').eq('key', 'extra_countries').maybeSingle();
+    var list = []; try { list = JSON.parse((cur.data && cur.data.value) || '[]'); } catch (e) {}
+    if (!Array.isArray(list)) list = [];
+    if (list.some(function(c){ return String(c).toLowerCase() === name.toLowerCase(); })) { S.settings.extra_countries = JSON.stringify(list); return; }
+    list.push(name); list.sort(function(a, b){ return String(a).localeCompare(String(b)); });
+    var v = JSON.stringify(list);
+    var res = await db.from('app_settings').upsert({ key: 'extra_countries', value: v, updated_at: new Date().toISOString(), updated_by: S.user.name });
+    if (!res.error) { S.settings = S.settings || {}; S.settings.extra_countries = v; }
+  } catch (e) { console.error('rememberCountry:', e); }
+}
 function populateCountryDropdown(selectId, selectedVal) {
   var sel = $(selectId);
   if (!sel) return;
-  sel.innerHTML = '<option value="">-- Select --</option>'
-    + WORLD_COUNTRIES_LIST.map(function(c){ return '<option value="'+c+'"' + (c===selectedVal?' selected':'') + '>'+c+'</option>'; }).join('');
+  sel.innerHTML = countryOptionsHtml(selectedVal || '');
+  sel.onchange = function(){ onCountrySelect(sel); };
+  onCountrySelect(sel); // hides and clears an "Other" box left from the last order
 }
 function getCountryFieldValue() {
-  var el = $('o_country');
-  return el ? el.value : '';
+  return readCountry($('o_country'));
+}
+// Board cell: choosing "Other" turns the list into a text box for that order
+function onCountryCellChange(sel) {
+  if (sel.value !== COUNTRY_OTHER) { onFieldInputChange(sel); return; }
+  var before = sel.getAttribute('data-was') || '';
+  var inp = document.createElement('input');
+  inp.className = sel.className; inp.dataset.oid = sel.dataset.oid; inp.dataset.key = sel.dataset.key;
+  inp.placeholder = 'Type country / region'; inp.maxLength = 60;
+  sel.parentNode.replaceChild(inp, sel);
+  inp.focus();
+  var done = false;
+  function finish(save) {
+    if (done) return; done = true;
+    var v = normaliseCountry(inp.value);
+    if (save && v && v !== before) { inp.value = v; onFieldInputChange(inp); rememberCountry(v); }
+    var back = document.createElement('select');
+    back.className = inp.className; back.dataset.oid = inp.dataset.oid; back.dataset.key = inp.dataset.key;
+    back.setAttribute('data-was', save && v ? v : before);
+    back.innerHTML = countryOptionsHtml(save && v ? v : before, '--');
+    back.onchange = function(){ onCountryCellChange(back); };
+    if (inp.parentNode) inp.parentNode.replaceChild(back, inp);
+  }
+  inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); finish(true); } else if (e.key === 'Escape') finish(false); });
+  inp.addEventListener('blur', function(){ finish(true); });
 }
 
 // ─── MULTIPLE-PO BATCH CREATION ───
@@ -6394,12 +6484,12 @@ function resetMultiPOState() {
 function addMultiPORow() {
   _mpoRowCounter++;
   var idx = _mpoRowCounter;
-  var countryOpts = '<option value="">-- Select --</option>' + WORLD_COUNTRIES_LIST.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+  var countryOpts = countryOptionsHtml('');
   var inputStyle = 'width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font-size:13px';
   var html = '<div class="mpo-row" data-idx="' + idx + '">'
     + '<div class="mpo-row-grid">'
     + '<div class="f"><label>PO Number <span style="color:var(--red)">*</span></label><input class="mpo-po" style="' + inputStyle + '" placeholder="e.g. PO-2026-002"></div>'
-    + '<div class="f"><label>Country <span style="color:var(--red)">*</span></label><select class="mpo-country" style="' + inputStyle + '">' + countryOpts + '</select></div>'
+    + '<div class="f"><label>Country <span style="color:var(--red)">*</span></label><select class="mpo-country" style="' + inputStyle + '" onchange="onCountrySelect(this)">' + countryOpts + '</select></div>'
     + '<div class="f"><label>Qty (pcs) <span style="color:var(--red)">*</span></label><input type="number" class="mpo-qty" style="' + inputStyle + '"></div>'
     + '<div class="f"><label>Ship Date <span style="color:var(--red)">*</span></label><input type="date" class="mpo-ship" style="' + inputStyle + '"></div>'
     + '<div class="f"><label>Article No</label><input class="mpo-article" style="' + inputStyle + '" placeholder="optional"></div>'
@@ -6467,7 +6557,7 @@ async function saveMultiPOOrders() {
   var rowErrLabels = [];
   rowEls.forEach(function(rowEl, i) {
     var po = rowEl.querySelector('.mpo-po').value.trim();
-    var country = rowEl.querySelector('.mpo-country').value;
+    var country = readCountry(rowEl.querySelector('.mpo-country'));
     var qty = Number(rowEl.querySelector('.mpo-qty').value) || 0;
     var ship = rowEl.querySelector('.mpo-ship').value;
     var article = rowEl.querySelector('.mpo-article').value.trim();
@@ -6552,6 +6642,7 @@ async function saveMultiPOOrders() {
     var newId = res.data.id;
     createdIds.push(newId);
     var extras = [['article_no', rd.article], ['country', rd.country], ['season', seasonVal], ['department', deptVal], ['avg_weight', avgWeightVal]];
+    if (rd.country) rememberCountry(rd.country);
     for (var j = 0; j < extras.length; j++) { if (extras[j][1]) await saveFieldValue(newId, extras[j][0], extras[j][1]); }
   }
 
@@ -6955,7 +7046,7 @@ async function saveOrderInner() {
     if (newOrderId) {
       var extraFields = [
         ['article_no', $('o_article_no').value.trim()],
-        ['country', $('o_country').value],
+        ['country', getCountryFieldValue()],
         ['season', $('o_season').value.trim()],
         ['department', $('o_department').value.trim()],
         ['avg_weight', $('o_avg_weight').value]
@@ -6963,6 +7054,7 @@ async function saveOrderInner() {
       for (const [fk, fv] of extraFields) {
         if (fv) await saveFieldValue(newOrderId, fk, fv);
       }
+      if ($('o_country') && $('o_country').value === COUNTRY_OTHER) rememberCountry(getCountryFieldValue());
     }
     // Attachment is style-wide — save it once for the whole style regardless of
     // which PO the order form happened to be opened from.
@@ -15868,6 +15960,11 @@ function renderFieldCell(field, orderId, canEdit) {
     return canEdit
       ? '<input class="cf-input" type="date" data-oid="' + orderId + '" data-key="' + field.key + '" value="' + htmlEsc(val||'') + '" onchange="onFieldInputChange(this)">'
       : '<span>' + (val?short(val):'&mdash;') + '</span>';
+  }
+  if (field.type === 'dropdown' && field.key === 'country') {
+    return canEdit
+      ? '<select class="cf-input" data-oid="' + orderId + '" data-key="country" data-was="' + htmlEsc(val || '') + '" onchange="onCountryCellChange(this)">' + countryOptionsHtml(val || '', '--') + '</select>'
+      : '<span>' + (val ? htmlEsc(val) : '&mdash;') + '</span>';
   }
   if (field.type === 'dropdown') {
     var opts = field.options || [];
