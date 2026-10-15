@@ -8,8 +8,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Production Tracker — Shahana Group</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F455;</text></svg>">
+<title>Shahana One — Factory operations</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABACAMAAADS6oI8AAAAYFBMVEUREREREREREREREREREREREREREREREREAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzGYEmAAAAIHRSTlP2AS2Rt8pSbQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKbRVdsAAAIQSURBVHjatZhRlsMgCEURQfa/40lsJ20EFal5nz2Wq6jwIqRvoWR6i++6fslYRxbJLiF8Rc8MM3Gp0Qm8KvAJ7xgu58gMC7oA4hl9ZkcYIgDPrPiIjwQQAWTn/AtACPBc/BfA9T8JxX8BPNvGR/4hCHAdoOP8UxQAvgVEElQBxgJY8FIpcgg7iaRccKgEeuUsyZD06sZEoDJE9kC2tsUDKL74xTkPDRC1m6YoGD8BudaN4JuHAWDXH8Woq1sBZPSFEKCX2mYBKW1eQXOGchzQSW6O7oA+ReTYAk4/AOxzyuEMqYtmEyI14v+vaHuT0TXDJYDRR/heg9Uhau7g0NkJzBtJe495eEXaycK8Jf8EIJg38/YanABcAcy6vgX4OkkOwIRgAj4ED2C80RaAPwQXYGhqOwBwn6J3weRVAK0BDkTnC6cHeCfJD6jfaMeXmG6/HQCvA96YuzdT7eAqr7VqlVY0Bcxa/uUjad6dfIDSc9q4CYCqntPAXfwOyFeQvAmQlPWQzQDlL3FgESIAUTmivQBU1rTsTVGbo/9tlm0Aw11zz8CEANb3AXdMcAigzE0l0EYAWm8vaSPAeDARJwA9suv+4QAdANeLAHatB1OrpuH43lAoBR9DvICacH4ScN4pfBRwbgM+CqgEfhJQOzA9CQBcffddBdTqufY2uwh4dRgsWRvArrtGWtH9uc1TY/4AvuURzjF+CccAAAAASUVORK5CYII=">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- SheetJS loaded on demand -->
 <style>
@@ -278,6 +278,14 @@ table.rq-items input{width:100%;padding:5px 7px;border:1px solid var(--line);bor
   .rq-filter input{min-width:0;flex:1}.rq-form .grid3,.rq-form .grid2{grid-template-columns:1fr}
 }
 
+.sg-mark{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:#111;color:#fff;font-weight:800;font-size:11.5px;letter-spacing:.02em;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif}
+[data-theme="dark"] .sg-mark{background:#f2f1ec;color:#111}
+.login-logo{display:block;height:96px;margin:0 auto 14px}.sg-logo{height:28px;width:auto;flex:0 0 auto;display:block}
+.sg-logo,.login-logo{filter:drop-shadow(0 2px 3px rgba(0,0,0,.28)) drop-shadow(0 6px 10px rgba(0,0,0,.12))}
+[data-theme="dark"] .sg-logo,[data-theme="dark"] .login-logo{filter:invert(1) drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.sg-mark-lg{width:46px;height:46px;border-radius:13px;font-size:16px;margin:0 auto 12px;display:flex}
+.login-card .login-title,.login-card .login-sub{text-align:center}
+.rail .brand{display:flex;align-items:center;gap:10px}.rail .brand .brand-name{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:none}.rail .brand .brand-sub{font-size:11px;color:var(--muted);letter-spacing:.02em;text-transform:none;margin-top:1px}
 /* ── LOGIN ── */
 #login-wrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200}
 .login-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:36px 36px 28px;
@@ -2039,35 +2047,54 @@ td.col-cm{min-width:96px;font-size:11px}
 .rc-btns .btn.disabled,.rc-btns .btn:disabled{opacity:.45;pointer-events:none}
 .rc-ok{margin-top:10px;background:var(--green-soft);color:var(--green);border-radius:8px;padding:8px 10px;font-size:12.5px;font-weight:600}
 .rc-status{margin-top:12px;font-size:12.5px;color:var(--muted);white-space:normal}
+/* Login 3: minimal */
+#login-wrap{background:#f6f6f4;flex-direction:column}
+#login-wrap .login-card{background:transparent;border:0;box-shadow:none;max-width:360px;padding:0 16px}
+#login-wrap .login-logo{height:104px;display:block;margin:0 auto 14px}
+#login-wrap .login-title{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:0}
+#login-wrap .login-sub{font-size:13.5px;color:#8b8b88;margin:4px 0 26px}
+#login-wrap .f input,#login-wrap .f select{background:#fff;border:1px solid #e4e4e1;border-radius:10px;padding:11px 13px}
+#login-wrap .btn.pri{width:100%;padding:12px;font-size:15px;margin-top:6px;background:#141414;border-color:#141414;color:#fff;border-radius:10px}
+#login-wrap .login-hint{font-size:12px;color:#8b8b88;text-align:center}
+.login-ver{font-size:12.5px;font-weight:600;color:#6b6b68;text-align:center;margin-top:12px;letter-spacing:.02em}
+.login-foot{position:fixed;bottom:14px;left:0;right:0;text-align:center;font-size:11.5px;color:#9a9a96;padding:0 16px}
+#ver-stamp{font-size:11px!important;font-weight:500;color:#6f6c66!important;background:rgba(0,0,0,.045);padding:2px 8px;border-radius:999px;opacity:1!important}
+[data-theme="dark"] #login-wrap{background:var(--bg)}
+[data-theme="dark"] #login-wrap .f input,[data-theme="dark"] #login-wrap .f select{background:#2A2828;border-color:var(--line)}
+[data-theme="dark"] #login-wrap .btn.pri{background:#f2f2f0;border-color:#f2f2f0;color:#141414}
+[data-theme="dark"] .login-ver{color:#a8a59e}
+[data-theme="dark"] #ver-stamp{color:#a8a59e!important;background:rgba(255,255,255,.07)}
 </style>
 </head>
 <body>
 
 <div id="login-wrap">
   <div class="login-card">
-    <h1 class="login-title">Production Tracker</h1>
-    <p class="login-sub">Shahana Group &mdash; Internal use only</p>
+    <img class="login-logo" src="data:image/png;base64,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" alt="Shahana Group">
+    <h1 class="login-title">Shahana One</h1>
+    <p class="login-sub">Factory operations</p>
     <div class="f"><label for="l_name">Your name</label>
       <select id="l_name"><option value="">Loading&hellip;</option></select></div>
     <div class="f"><label>Password</label>
       <div class="pwd-wrap"><input type="password" id="l_pwd" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"><button class="pwd-eye" tabindex="-1" onmousedown="showPwd('l_pwd',true)" onmouseup="showPwd('l_pwd',false)" onmouseleave="showPwd('l_pwd',false)" ontouchstart="showPwd('l_pwd',true)" ontouchend="showPwd('l_pwd',false)">&#x1F441;</button></div></div>
     <div class="form-err" id="l_err" style="display:none"></div>
     <div id="l_spin" style="display:none;text-align:center;padding:4px"><span class="spin"></span></div>
-    <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
+    <button class="btn pri" onclick="doLogin()">Sign in &rarr;</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-15:15</p>
+    <p class="login-ver">V.2026.10.16.1</p>
   </div>
+  <div class="login-foot">M.T. Sweaters Limited &middot; Banga Fashion Limited &middot; Banga Knitwear Limited</div>
 </div>
 
 <div class="shell" id="app" style="display:none">
   <div class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()">&#x25C0;</div>
   <nav class="rail">
     <div class="brand">
-      <span class="brand-icon">&#x1F455;</span>
+      <img class="sg-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAB4CAMAAABsOSjPAAAAYFBMVEUREREREREREREREREREREREREREREREREAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzGYEmAAAAIHRSTlP2AHGMTNEurwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdgqc4AAAQsSURBVHja1dzZYuMgDAVQrI3//+NJJ3HqJbUEXAjmpX2YsU+J2AQkLRfFhN6Fi0vOsn+amSDKsqS/wEJZU1PhjVm49Wmb5/6BFm5+Bdv7aZQTsnxGU3ul/EaGsabUHS2Al9D7YTnBSz6hEW/RNTKsA/kDmiEPBT7MR0NqhnEtI4JGRPM7nHNKI9CScGbRbuZd7yEJFxuU0hC0JVwb7Grehgfk87SevcYZDXmRDKjnDRoY0JJGoXHBYWkUGhIchPvzI70HpHZ0RCPcoHEV3T84VjTmTdZ38D6ioxWth3LuOop6O60pSV/oSNtRso8rX3mtfaWoFWomsaWu2P+FbaBjPayr/yqxjyxTrXctKfCqIDlU0cqt4ic6vODzSiCiEeQftAQXfICKzhDyD5pQZvL7qgWFziCz20fLgkOrP0EOFYkMPiC0Qdqg298p0LwkcedAkGYoCxJNoIqWhPrIAmgGhWEOJZ36o4uiI6HCLPKujKkfGRccD7Ri0DywomHoPLCiUWgbWdGXaMWENOHRGTIi8JjxO4KOT8t0WB/tDi4JgZYOaELMgG1odDjo6BtpaHQ4U9NoB8IDlivxRUCwonhoSHvLraBah4a0u7B9RIg0oZcuaD/96CZrbOQY/kzWBDKdTiZLqqJrcwKmrFiKpjpV86ciDpqr+nYn5RXNml7W5DfQ1IqmmileI7qlqrPTTfdDyx3RDTtF2VlrPdECRXNqPJ0RQ+uHrFg72rQTWl51cla3o6vVUfRZ3RzT9eow+qQG1HRtXGsYfZyGYNBVg0wB+jAPAaFrjkuVoPdjOgpd0WEXoXfLGBx6McaiaYfeNkYgupSdi9DbsIaiH48rOPAcQ/OHdS4Y/XRrF7R2RK8H7LUVzcf2TX3R6+WDyzsMVorWxiE4gG7eBsinnlQ2FWK2+XVfLrpfDJpL0OHkHvVFk5f34JqcU2e0eHlXqtnO+DZaapK/ndHm7dtITXqvM/oqB8FntEyPzuePguZAu6cCtGJzoDeavKDOE6LF2yGjCdHu1rhNiF5ySXzMgqaSbPAsaHN3UHU+9GWK+9gUp0GzW9V5thHRycsfRkWbBX29BbKbNekyDZr9cwE81dTU37fZrrpoHrSTKd6sym0itJMopvUf6TIR2tuNfO1zKU+F9nLyTy3gjgES7W78Fl6+GIP2N355PnRgq0kJFR4tx4xsk5GL7bGH75pdoU3rLtntLvflssvXyvyg/1meX/OSL9CY28cca4uYd6HQr/mm3Qut9Ruo30OvAZJvhV5nb3or9Gv6ZvdCv/Zj5VbodU0it0IPUnPCdlK5dY/wG+j3qjXfCf1W821iequmO6Hf6m7fxdQD/Xt+hu8S0zt1n69x64PeHjWgrHdB75awRsSB8y7xmVkv9Id8AejLNkUs/dTD+YtA665FbP7v48fSrfwD4T80Pr5dGscAAAAASUVORK5CYII=" alt="SG">
       <div>
-        <div class="brand-name">Shahana Group</div>
-        <div class="brand-sub">Production Tracker</div>
+        <div class="brand-name">Shahana One</div>
+        <div class="brand-sub">Factory operations</div>
       </div>
     </div>
     <div class="rail-search" style="position:relative;padding:0 12px 10px">
@@ -2098,7 +2125,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-15:15</div>
+  <div id="ver-stamp">V.2026.10.16.1</div>
 </div>
 
 
@@ -3766,7 +3793,7 @@ function buildMaterialReportHtml(meta, rows) {
       + '<tfoot class="sp-foot">' + printSpacer(9) + '</tfoot><tbody>' + body + '</tbody></table></section>';
   }).join('');
 
-  var css = '@page{size:A4 landscape;margin:7mm 7mm 9mm;@bottom-left{content:"Shahana Group Production Tracker \\B7  Confidential, internal use only";font-size:7px;color:#A09C93;font-family:Arial,sans-serif}@bottom-right{content:"Page " counter(page) " of " counter(pages);font-size:7px;color:#A09C93;font-family:Arial,sans-serif}}'
+  var css = '@page{size:A4 landscape;margin:7mm 7mm 9mm;@bottom-left{content:"Shahana One \\B7  Shahana Group \\B7  Confidential, internal use only";font-size:7px;color:#A09C93;font-family:Arial,sans-serif}@bottom-right{content:"Page " counter(page) " of " counter(pages);font-size:7px;color:#A09C93;font-family:Arial,sans-serif}}'
     + '*{box-sizing:border-box;margin:0;padding:0}'
     + 'html{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
     + 'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;color:#191817;font-size:9.5px;line-height:1.25;background:#E9E6DE;padding:18px}'
@@ -4152,7 +4179,7 @@ function buildMeetingReportHtml(meta, rows) {
     + '<div class="sum"><span>' + rows.length + ' order' + (rows.length === 1 ? '' : 's') + '</span><span class="late">' + nLate + ' late</span><span class="risk">' + nRisk + ' at risk</span><span class="ok">' + (rows.length - nLate - nRisk) + ' on track</span>'
     + '<span style="background:none;font-weight:400;color:#73706A">Status is worked out by the app: Late = a TNA date or the ship date has passed; At risk = due within 7 days, material overdue or not booked, a rejection, or a missing shipping-sample date.</span></div>'
     + (rows.length ? '<table>' + thead + '<tfoot class="sp-foot">' + printSpacer(9) + '</tfoot><tbody>' + body + '</tbody></table>' : '<p style="padding:30px 0;color:#73706A">No orders to show.</p>')
-    + '<div class="foot"><span>Shahana Group Production Tracker · Confidential, internal use only</span><span>Expected dates are the supplier’s / merchant’s latest promise</span></div>'
+    + '<div class="foot"><span>Shahana One · Shahana Group · Confidential, internal use only</span><span>Expected dates are the supplier’s / merchant’s latest promise</span></div>'
     + '</div></body></html>';
 }
 
@@ -7754,7 +7781,7 @@ function downloadPDF() {
     + '<div class="kpi"><div class="k">Value</div><div class="v">' + money(totVal) + '</div></div>'
     + '</div>'
     + (orders.length ? sections + grand : '<p style="color:#73706A;padding:30px 0">No live orders.</p>')
-    + '<div class="footer"><span>Shahana Group Production Tracker</span><span>Confidential — Internal use only</span></div>'
+    + '<div class="footer"><span>Shahana One · Shahana Group</span><span>Confidential — Internal use only</span></div>'
     + '</body></html>';
 
   // Shown inside the app, not in a separate pop-up window (which browsers
@@ -13351,7 +13378,7 @@ function renderDashPdf() {
 
   // ── Footer
   html += '<div style="margin:24px 28px 0;padding-top:14px;border-top:1px solid #E5E2D9;display:flex;justify-content:space-between;padding-bottom:24px;font-size:10px;color:#A0A09A">'
-    + '<span>Shahana Group Production Tracker \u00b7 ' + genDate + '</span>'
+    + '<span>Shahana One \u00b7 Shahana Group \u00b7 ' + genDate + '</span>'
     + '<span>Confidential \u2014 Internal use only</span></div>'
     + '</div>'; // end white card
 
@@ -18606,7 +18633,7 @@ function printFrameCss(printExtra) {
 function printSpacer(n) { return '<tr class="sp"><td colspan="' + n + '"></td></tr>'; }
 function printDocCss(orientation, base, footLeft) {
   var land = orientation !== 'portrait';
-  footLeft = footLeft == null ? 'Shahana Group Production Tracker' : String(footLeft).replace(/["\\]/g, '');
+  footLeft = footLeft == null ? 'Shahana One \u00b7 Shahana Group' : String(footLeft).replace(/["\\]/g, '');
   return '@page{size:A4 ' + (land ? 'landscape' : 'portrait') + ';margin:9mm 9mm 13mm;'
     + '@bottom-left{content:"' + footLeft + '";font-size:7px;color:#8a867d;font-family:Arial,sans-serif}'
     + '@bottom-right{content:"Page " counter(page) " of " counter(pages);font-size:7px;color:#8a867d;font-family:Arial,sans-serif}}'
@@ -19521,6 +19548,7 @@ async function recoveryRestore() {
 // admin, management, audit and the department staff (their own department).
 // Nothing here reads or writes order data.
 // ═══════════════════════════════════════════════════════════════════════════
+var SG_MARK_IMG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAB4CAMAAABsOSjPAAAAYFBMVEUREREREREREREREREREREREREREREREREAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzGYEmAAAAIHRSTlP2AHGMTNEurwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALdgqc4AAAQsSURBVHja1dzZYuMgDAVQrI3//+NJJ3HqJbUEXAjmpX2YsU+J2AQkLRfFhN6Fi0vOsn+amSDKsqS/wEJZU1PhjVm49Wmb5/6BFm5+Bdv7aZQTsnxGU3ul/EaGsabUHS2Al9D7YTnBSz6hEW/RNTKsA/kDmiEPBT7MR0NqhnEtI4JGRPM7nHNKI9CScGbRbuZd7yEJFxuU0hC0JVwb7Grehgfk87SevcYZDXmRDKjnDRoY0JJGoXHBYWkUGhIchPvzI70HpHZ0RCPcoHEV3T84VjTmTdZ38D6ioxWth3LuOop6O60pSV/oSNtRso8rX3mtfaWoFWomsaWu2P+FbaBjPayr/yqxjyxTrXctKfCqIDlU0cqt4ic6vODzSiCiEeQftAQXfICKzhDyD5pQZvL7qgWFziCz20fLgkOrP0EOFYkMPiC0Qdqg298p0LwkcedAkGYoCxJNoIqWhPrIAmgGhWEOJZ36o4uiI6HCLPKujKkfGRccD7Ri0DywomHoPLCiUWgbWdGXaMWENOHRGTIi8JjxO4KOT8t0WB/tDi4JgZYOaELMgG1odDjo6BtpaHQ4U9NoB8IDlivxRUCwonhoSHvLraBah4a0u7B9RIg0oZcuaD/96CZrbOQY/kzWBDKdTiZLqqJrcwKmrFiKpjpV86ciDpqr+nYn5RXNml7W5DfQ1IqmmileI7qlqrPTTfdDyx3RDTtF2VlrPdECRXNqPJ0RQ+uHrFg72rQTWl51cla3o6vVUfRZ3RzT9eow+qQG1HRtXGsYfZyGYNBVg0wB+jAPAaFrjkuVoPdjOgpd0WEXoXfLGBx6McaiaYfeNkYgupSdi9DbsIaiH48rOPAcQ/OHdS4Y/XRrF7R2RK8H7LUVzcf2TX3R6+WDyzsMVorWxiE4gG7eBsinnlQ2FWK2+XVfLrpfDJpL0OHkHvVFk5f34JqcU2e0eHlXqtnO+DZaapK/ndHm7dtITXqvM/oqB8FntEyPzuePguZAu6cCtGJzoDeavKDOE6LF2yGjCdHu1rhNiF5ySXzMgqaSbPAsaHN3UHU+9GWK+9gUp0GzW9V5thHRycsfRkWbBX29BbKbNekyDZr9cwE81dTU37fZrrpoHrSTKd6sym0itJMopvUf6TIR2tuNfO1zKU+F9nLyTy3gjgES7W78Fl6+GIP2N355PnRgq0kJFR4tx4xsk5GL7bGH75pdoU3rLtntLvflssvXyvyg/1meX/OSL9CY28cca4uYd6HQr/mm3Qut9Ruo30OvAZJvhV5nb3or9Gv6ZvdCv/Zj5VbodU0it0IPUnPCdlK5dY/wG+j3qjXfCf1W821iequmO6Hf6m7fxdQD/Xt+hu8S0zt1n69x64PeHjWgrHdB75awRsSB8y7xmVkv9Id8AejLNkUs/dTD+YtA665FbP7v48fSrfwD4T80Pr5dGscAAAAASUVORK5CYII=';
 var RQ_DEPTS = [
   { k: 'maint', n: 'Maintenance', code: 'MNT', types: ['Machine repair', 'Electrical', 'Generator', 'Boiler / compressor', 'Water / plumbing', 'Fire safety', 'AC / ventilation', 'Other'] },
   { k: 'civil', n: 'Civil', code: 'CIV', types: ['Repair', 'New construction', 'Painting', 'Plumbing / drainage', 'Roof', 'Floor', 'Furniture / fixtures', 'Other'] },
@@ -19665,7 +19693,7 @@ function rqSubscribe() {
 // the order data is loaded for them.
 async function rqBoot() {
   var rs = document.querySelector('.rail-search'); if (rs) rs.style.display = 'none';
-  var bs = document.querySelector('.brand-sub'); if (bs) bs.textContent = 'Requisitions';
+  var bs = document.querySelector('.brand-sub'); if (bs) bs.textContent = 'Factory operations \u00b7 Requisitions';
   try { await rqLoad(); } catch (e) { console.error('rqLoad:', e); }
   rqSubscribe();
   var v = null; try { v = sessionStorage.getItem('pt_last_view'); } catch (e) {}
@@ -20365,7 +20393,7 @@ function rqTicks(pct, color) {
 }
 function rqBrandHtml(st, coName) {
   var E = rqEsc;
-  return '<div class="brand">' + (st && st.group_logo ? '<img class="logo" src="' + st.group_logo + '" alt="">' : '<div class="mark">SG</div>') + '<div><b>Shahana Group</b><span>' + E(coName) + '</span></div></div>';
+  return '<div class="brand">' + '<img class="logo" src="' + ((st && st.group_logo) || SG_MARK_IMG) + '" alt="">' + '<div><b>Shahana Group</b><span>' + E(coName) + '</span></div></div>';
 }
 // Requisition form, "T3" layout: letterhead, small detail cards, a big table of
 // what is required (most of the page), remarks, signatures. White page, thin
@@ -20468,7 +20496,7 @@ function rqPrintHtml(r, st, ev, formOnly) {
     + sig('Audit', auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : 'Date:', auditOk ? st.audit_seal : '', 'seal')
     + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : 'Date:', mgmtOk ? st.mgmt_sign : '', 'sign')
     + '</div>';
-  var body = '<div class="pg"><div class="lh">' + (st.group_logo ? '<img src="' + st.group_logo + '" alt="">' : '') + '<div class="g">SHAHANA GROUP</div><div class="c">' + E(co.n) + '</div><div class="a">' + E(rqCoAddr(st, r.company)) + ' &middot; info@shahanagroup.com</div></div>'
+  var body = '<div class="pg"><div class="lh">' + '<img src="' + (st.group_logo || SG_MARK_IMG) + '" alt="">' + '<div class="g">SHAHANA GROUP</div><div class="c">' + E(co.n) + '</div><div class="a">' + E(rqCoAddr(st, r.company)) + ' &middot; info@shahanagroup.com</div></div>'
     + '<div class="tt"><div><h1>Requisition &mdash; ' + E(d.n) + '</h1><div class="sub">' + (purchase ? 'Items to buy' : 'Work / service') + ' &middot; raised ' + E(rqDateTime(r.created_at)) + '</div></div>'
     + '<div class="job"><div class="k">Job no.</div><b>' + E(r.job_no) + '</b><div><span class="st">' + (formOnly ? 'For approval' : E(status)) + '</span></div></div></div>'
     + strip + table + extra + sigs
