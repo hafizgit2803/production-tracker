@@ -2056,7 +2056,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" style="width:100%;padding:11px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in</button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-15:12</p>
+    <p style="font-size:12px;font-weight:600;color:var(--muted);text-align:center;margin-top:10px">Version:26-10-15:15</p>
   </div>
 </div>
 
@@ -2098,7 +2098,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">Version:26-10-15:12</div>
+  <div id="ver-stamp">Version:26-10-15:15</div>
 </div>
 
 
@@ -19947,7 +19947,7 @@ function rqRenderForm(d, editId) {
     + '<label><input type="radio" name="rqf-kind" value="purchase"' + (r.kind === 'purchase' ? ' checked' : '') + ' onchange="rqKindChange()"> Items to buy</label></div></div>'
     + '<div class="f"><label>Time required</label><div style="display:flex;gap:6px"><input id="rqf-time" type="number" min="0" step="0.5" style="flex:1" value="' + rqEsc(r.time_value == null ? '' : r.time_value) + '"><select id="rqf-unit" style="width:100px">' + ['hours', 'days', 'weeks'].map(function(u){ return '<option' + ((r.time_unit || 'days') === u ? ' selected' : '') + '>' + u + '</option>'; }).join('') + '</select></div></div>'
     + '</div>'
-    + '<div id="rqf-items-wrap" style="margin-top:12px;display:' + (r.kind === 'purchase' ? 'block' : 'none') + '"><label class="rq-lbl">Items to buy</label><table class="rq-items"><thead><tr><th style="width:44%">Item / specification</th><th>Qty</th><th>Unit</th><th>Est. rate (Tk)</th><th>Amount</th><th></th></tr></thead><tbody id="rqf-items">'
+    + '<div id="rqf-items-wrap" style="margin-top:12px"><label class="rq-lbl" id="rqf-items-lbl">' + (r.kind === 'purchase' ? 'Items required' : 'Work required') + ' <span style="font-weight:400">&mdash; one line each; these lines are the main part of the printed form</span></label><table class="rq-items"><thead><tr><th style="width:24%" id="rqf-items-h">' + (r.kind === 'purchase' ? 'Item' : 'Work') + '</th><th style="width:30%">Specification / purpose</th><th>Qty</th><th>Unit</th><th>Est. rate (Tk)</th><th>Amount</th><th></th></tr></thead><tbody id="rqf-items">'
     + items.map(rqItemRow).join('') + '</tbody></table><button class="btn sm" type="button" onclick="rqAddItem()" style="margin-top:6px">&#x002B; Add item</button></div>'
     + '<div class="grid3" style="margin-top:12px"><div class="f"><label>Estimated cost (Tk) <span class="rq-req">*</span></label><input id="rqf-cost" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"><div class="sub2" id="rqf-cost-note"></div></div></div>'
     + '<div class="f" style="margin-top:12px"><label>Detailed remarks <span class="rq-req">*</span></label><textarea id="rqf-remarks" rows="5" placeholder="What is wrong or what is needed, why, and anything the approvers should know">' + rqEsc(r.remarks || '') + '</textarea></div>'
@@ -19960,7 +19960,8 @@ function rqRenderForm(d, editId) {
 }
 function rqItemRow(it) {
   it = it || {};
-  return '<tr><td><input class="rqi-item" value="' + rqEsc(it.item || '') + '" placeholder="e.g. 4 TB hard disk, Seagate"></td>'
+  return '<tr><td><input class="rqi-item" value="' + rqEsc(it.item || '') + '" placeholder="e.g. LED tube light 20W"></td>'
+    + '<td><input class="rqi-spec" value="' + rqEsc(it.spec || '') + '" placeholder="e.g. for line 4, replacing dead tubes"></td>'
     + '<td><input class="rqi-qty" type="number" min="0" step="any" value="' + rqEsc(it.qty == null ? '' : it.qty) + '" oninput="rqItemsChanged()"></td>'
     + '<td><input class="rqi-unit" value="' + rqEsc(it.unit || '') + '" placeholder="pcs"></td>'
     + '<td><input class="rqi-rate" type="number" min="0" step="any" value="' + rqEsc(it.rate == null ? '' : it.rate) + '" oninput="rqItemsChanged()"></td>'
@@ -19969,19 +19970,20 @@ function rqItemRow(it) {
 function rqAddItem() { var tb = $('rqf-items'); if (!tb) return; tb.insertAdjacentHTML('beforeend', rqItemRow({})); rqItemsChanged(); }
 function rqKindChange() {
   var k = document.querySelector('input[name="rqf-kind"]:checked');
-  $('rqf-items-wrap').style.display = k && k.value === 'purchase' ? 'block' : 'none';
+  var pur = k && k.value === 'purchase';
+  $('rqf-items-lbl').firstChild.textContent = pur ? 'Items required ' : 'Work required ';
+  $('rqf-items-h').textContent = pur ? 'Item' : 'Work';
   rqItemsChanged();
 }
 function rqReadItems() {
   var tb = $('rqf-items'); if (!tb) return [];
   return Array.prototype.map.call(tb.querySelectorAll('tr'), function(tr){
     var g = function(c){ var e = tr.querySelector('.' + c); return e ? e.value.trim() : ''; };
-    return { item: g('rqi-item'), qty: g('rqi-qty') === '' ? null : Number(g('rqi-qty')), unit: g('rqi-unit'), rate: g('rqi-rate') === '' ? null : Number(g('rqi-rate')) };
-  }).filter(function(x){ return x.item || x.qty != null || x.rate != null; });
+    return { item: g('rqi-item'), spec: g('rqi-spec'), qty: g('rqi-qty') === '' ? null : Number(g('rqi-qty')), unit: g('rqi-unit'), rate: g('rqi-rate') === '' ? null : Number(g('rqi-rate')) };
+  }).filter(function(x){ return x.item || x.spec || x.qty != null || x.rate != null; });
 }
 function rqItemsChanged() {
   var k = document.querySelector('input[name="rqf-kind"]:checked');
-  var purchase = k && k.value === 'purchase';
   var tb = $('rqf-items'), total = 0, any = false;
   if (tb) Array.prototype.forEach.call(tb.querySelectorAll('tr'), function(tr){
     var q = Number(tr.querySelector('.rqi-qty').value), rt = Number(tr.querySelector('.rqi-rate').value);
@@ -19991,7 +19993,7 @@ function rqItemsChanged() {
   });
   var c = $('rqf-cost'), n = $('rqf-cost-note');
   if (!c) return;
-  if (purchase && any) { c.value = Math.round(total * 100) / 100; c.readOnly = true; if (n) n.textContent = 'Added up from the items'; }
+  if (any) { c.value = Math.round(total * 100) / 100; c.readOnly = true; if (n) n.textContent = 'Added up from the items'; }
   else { c.readOnly = false; if (n) n.textContent = ''; }
 }
 async function rqCancelForm(dk) {
@@ -20019,7 +20021,8 @@ async function rqSubmitForm(dk) {
     est_cost: $('rqf-cost').value === '' ? null : Number($('rqf-cost').value),
     remarks: $('rqf-remarks').value.trim()
   };
-  v.items = v.kind === 'purchase' ? rqReadItems() : null;
+  v.items = rqReadItems();
+  if (!v.items.length) v.items = null;
   if (!v.company) return fail('Choose the company.');
   if (!v.req_date) return fail('Enter the date.');
   if (!v.location) return fail('Enter the building / area.');
@@ -20029,10 +20032,10 @@ async function rqSubmitForm(dk) {
   if (v.est_cost == null || isNaN(v.est_cost)) return fail('Enter the estimated cost (0 if there is no cost).');
   if (v.est_cost < 0) return fail('Estimated cost cannot be negative.');
   if (v.kind === 'purchase') {
-    if (!v.items.length) return fail('Add the items to buy.');
-    if (v.items.some(function(i){ return !i.item; })) return fail('Every item needs a name or specification.');
-    if (v.items.some(function(i){ return (i.qty != null && i.qty < 0) || (i.rate != null && i.rate < 0); })) return fail('Quantities and rates cannot be negative.');
+    if (!v.items || !v.items.length) return fail('Add the items to buy.');
   }
+  if (v.items && v.items.some(function(i){ return !i.item; })) return fail('Every line needs the ' + (v.kind === 'purchase' ? 'item' : 'work') + ' filled in.');
+  if (v.items && v.items.some(function(i){ return (i.qty != null && i.qty < 0) || (i.rate != null && i.rate < 0); })) return fail('Quantities and rates cannot be negative.');
   if (!v.remarks) return fail('Write the detailed remarks.');
   if (v.req_date > rqAddDays(todayStr(), 1) && !(await appConfirm('The date is in the future (' + rqDateTxt(v.req_date) + '). Submit anyway?', { title: 'Check the date', okText: 'Submit' }))) return;
   btn.disabled = true;
@@ -20111,8 +20114,8 @@ function rqRenderDetail(id, withEvents) {
   var d = rqDept(r.dept) || { n: r.dept };
   $('rq-title').textContent = r.job_no;
   $('rq-sub').innerHTML = rqEsc(d.n) + ' &middot; ' + rqEsc(rqCompany(r.company).n) + ' &middot; ' + rqStatusChip(r) + (rqOverdue(r) ? ' <span class="chip bad">Overdue</span>' : '') + (rqOverBudget(r) ? ' <span class="chip bad">Over approved cost</span>' : '');
-  var items = Array.isArray(r.items) && r.items.length ? '<div class="rq-sec"><div class="rq-sec-h">Items to buy</div><table class="rq-t"><thead><tr><th>Item / specification</th><th>Qty</th><th>Unit</th><th>Est. rate</th><th>Amount</th></tr></thead><tbody>'
-    + r.items.map(function(i){ return '<tr><td style="white-space:normal">' + rqEsc(i.item) + '</td><td class="num">' + (i.qty == null ? '' : i.qty) + '</td><td>' + rqEsc(i.unit || '') + '</td><td class="num">' + rqMoney(i.rate) + '</td><td class="num">' + (i.qty != null && i.rate != null ? rqMoney(i.qty * i.rate) : '') + '</td></tr>'; }).join('') + '</tbody></table></div>' : '';
+  var items = Array.isArray(r.items) && r.items.length ? '<div class="rq-sec"><div class="rq-sec-h">' + (r.kind === 'purchase' ? 'Items required' : 'Work required') + '</div><table class="rq-t"><thead><tr><th>' + (r.kind === 'purchase' ? 'Item' : 'Work') + '</th><th>Specification / purpose</th><th>Qty</th><th>Unit</th><th>Est. rate</th><th>Amount</th></tr></thead><tbody>'
+    + r.items.map(function(i){ return '<tr><td style="white-space:normal"><b>' + rqEsc(i.item) + '</b></td><td style="white-space:normal">' + rqEsc(i.spec || '') + '</td><td class="num">' + (i.qty == null ? '' : i.qty) + '</td><td>' + rqEsc(i.unit || '') + '</td><td class="num">' + rqMoney(i.rate) + '</td><td class="num">' + (i.qty != null && i.rate != null ? rqMoney(i.qty * i.rate) : '') + '</td></tr>'; }).join('') + '</tbody></table></div>' : '';
   var h = '<div class="rq-grid">'
     + rqKv('Date', rqDateTxt(r.req_date)) + rqKv('Company', rqEsc(rqCompany(r.company).n)) + rqKv('Priority', rqPriChip(r.priority))
     + rqKv('Building / area', rqEsc(r.location)) + rqKv('Exact location', rqEsc(r.location_detail)) + rqKv('Type of work', rqEsc(r.work_type) + (r.kind === 'purchase' ? ' &middot; items to buy' : ''))
@@ -20364,86 +20367,113 @@ function rqBrandHtml(st, coName) {
   var E = rqEsc;
   return '<div class="brand">' + (st && st.group_logo ? '<img class="logo" src="' + st.group_logo + '" alt="">' : '<div class="mark">SG</div>') + '<div><b>Shahana Group</b><span>' + E(coName) + '</span></div></div>';
 }
+// Requisition form, "T3" layout: letterhead, small detail cards, a big table of
+// what is required (most of the page), remarks, signatures. White page, thin
+// lines, small colour tick bars only: kind to the printer.
+// formOnly: empty boxes for signing on paper. Full record: adds the approvals,
+// the work record, and the audit seal / management signature once approved.
+var RQ_CO_ADDR = {
+  MTS: 'Gacha, Plot # 1703-1704, Post: Gacha, Gazipur Sadar, Gazipur, Bangladesh',
+  BFL: 'Gacha, Plot # 1595, Post: Gacha, Gazipur Sadar, Gazipur, Bangladesh',
+  BKL: 'Gacha, Gazipur Sadar, Gazipur, Bangladesh'
+};
+function rqCoAddr(st, c) { return (st && st['co_addr_' + c]) || RQ_CO_ADDR[c] || ''; }
+function rqFormCss() {
+  return '@page{size:A4 portrait;margin:0}*{box-sizing:border-box;margin:0;padding:0}html{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    + 'body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:#111;font-size:9px;line-height:1.4;background:#d9d8d3;padding:18px}'
+    + '.pg{background:#fff;width:210mm;min-height:297mm;margin:0 auto;padding:10mm 11mm 9mm;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(0,0,0,.14)}'
+    + '@media print{body{background:#fff;padding:0}.pg{margin:0;box-shadow:none}}'
+    + '.lh{text-align:center;padding-bottom:2mm}.lh img{height:12mm;max-width:60mm;object-fit:contain;display:block;margin:0 auto 1.5mm}.lh .g{font-size:9px;letter-spacing:.3em;font-weight:600;color:#555}'
+    + '.lh .c{font-family:"Playfair Display",Georgia,serif;font-size:21px;font-weight:600;margin-top:1px}.lh .a{font-size:8.4px;color:#444;margin-top:2px}'
+    + '.tt{display:flex;justify-content:space-between;align-items:flex-end;margin-top:4mm}.tt h1{font-size:17px;font-weight:700;letter-spacing:-.01em}.tt .sub{font-size:8.6px;color:#666;margin-top:1px}'
+    + '.job{text-align:right}.job b{font-size:14px}.k{font-size:7.2px;color:#666;text-transform:uppercase;letter-spacing:.05em}'
+    + '.st{display:inline-block;margin-top:3px;font-size:7.6px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid #cfcfcb}'
+    + '.strip{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:3mm}.strip>div{border:1px solid #e2e2df;border-radius:12px;padding:7px 9px}.strip .v{font-size:9.6px;font-weight:600;margin-top:1px;overflow-wrap:anywhere}'
+    + '.bar{display:flex;margin-top:4px}.tk{height:7px;background:repeating-linear-gradient(90deg,var(--c) 0 2px,transparent 2px 4px)}'
+    + '.main{flex:1;display:flex;flex-direction:column;margin-top:4mm;border:1px solid #e2e2df;border-radius:14px;padding:4mm 4mm 3mm}.main h2{font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:2mm}'
+    + 'table{width:100%;border-collapse:collapse}th{font-size:8px;text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:6px 7px;border-bottom:1.4px solid #111}'
+    + 'td{padding:4px 7px;border-bottom:1px solid #d0d0d0;font-size:11.5px;height:10.2mm;vertical-align:middle;overflow-wrap:anywhere}td.d{font-size:9.6px;color:#333}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}td.e{color:#bbb}'
+    + 'tr{break-inside:avoid}tr.f td{font-weight:800;font-size:12.5px;border-top:1.4px solid #111;border-bottom:0}'
+    + '.rm{margin-top:3mm;border:1px solid #e2e2df;border-radius:12px;padding:6px 8px;font-size:9.8px;white-space:pre-wrap;overflow-wrap:anywhere;break-inside:avoid}.rm .k{margin-bottom:2px}'
+    + '.box{margin-top:3mm;border:1px solid #e2e2df;border-radius:12px;padding:7px 9px;break-inside:avoid}.box h3{font-size:9px;font-weight:700;letter-spacing:.06em;margin-bottom:4px}'
+    + '.ap{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ap>div{font-size:9.4px}.ap b{font-size:9.6px}'
+    + '.box table td{height:auto;font-size:9px;padding:3px 6px}.box table th{font-size:7.2px;padding:3px 6px;border-bottom:1px solid #111}'
+    + '.sigs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:5mm;break-inside:avoid}.sg{border:1px solid #e2e2df;border-radius:12px;padding:6px 8px;height:25mm;display:flex;flex-direction:column}'
+    + '.sg .ar{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}.sg .ar img{max-height:15mm;max-width:95%}.sg.seal .ar img{transform:rotate(-8deg)}'
+    + '.sg .ln{border-top:1px solid #111;padding-top:3px}.sg b{font-size:8.6px}.sg .nm{font-size:7.4px;color:#555;line-height:1.35;min-height:20px}'
+    + '.ft{display:flex;justify-content:space-between;font-size:7px;color:#777;margin-top:3mm}';
+}
 function rqPrintHtml(r, st, ev, formOnly) {
   var E = rqEsc, d = rqDept(r.dept) || { n: r.dept };
   st = st || {};
+  var co = rqCompany(r.company);
   var auditOk = !formOnly && r.audit_status === 'approved', mgmtOk = !formOnly && r.mgmt_status === 'approved';
   var items = Array.isArray(r.items) ? r.items : [];
+  var purchase = r.kind === 'purchase';
   var started = !formOnly && ['wip', 'hold', 'done'].indexOf(r.status) !== -1;
-  var prog = Math.max(0, Math.min(100, Number(r.progress) || 0));
   var head = st['dept_head_' + r.dept] || '';
   var newton = st.newton_line || 'Mr. Newton, AGM (HR, Admin & Compliance)';
-  var status = { pending: 'Approval pending', returned: 'Returned for changes', rejected: 'Rejected', wip: 'In progress', hold: 'On hold', done: 'Completed', cancelled: 'Cancelled' }[r.status] || r.status;
-  // figure cards
-  var costPct = 100, costRow = '<span>' + (items.length ? items.length + (items.length === 1 ? ' item' : ' items') : 'Work / service') + '</span><span>' + (formOnly ? 'For approval' : r.approved_cost != null ? 'Approved ' + E(rqMoneyTxt(r.approved_cost)) : 'Estimate') + '</span>';
-  if (started && Number(r.approved_cost) > 0) {
-    var spentNow = r.status === 'done' && r.final_cost != null ? Number(r.final_cost) : Number(r.spent) || 0;
-    costPct = spentNow / Number(r.approved_cost) * 100;
-    costRow = '<span>' + (r.status === 'done' ? 'Final ' : 'Spent ') + E(rqMoneyTxt(spentNow)) + '</span><span>of ' + E(rqMoneyTxt(r.approved_cost)) + '</span>';
-  }
-  var priPct = { low: 25, normal: 55, urgent: 100 }[r.priority] || 55;
-  var apprBig = formOnly ? 'For approval' : mgmtOk ? 'Approved' : r.status === 'rejected' ? 'Rejected' : r.status === 'returned' ? 'Returned' : r.status === 'cancelled' ? 'Cancelled' : 'Pending';
-  var apprPct = formOnly ? 20 : mgmtOk ? 100 : auditOk ? 60 : 20;
-  var apprCol = mgmtOk ? '#3fae6a' : (r.status === 'rejected' || r.status === 'cancelled') ? '#d1584b' : '#e0a33c';
-  var apprRow = formOnly ? '<span>Needs</span><span>Audit, Management</span>'
-    : mgmtOk ? '<span>' + (auditOk ? 'Audit &middot; Management' : 'Management') + '</span><span>' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) + '</span>'
-    : '<span>' + (auditOk ? 'Audit approved' : 'Waiting for') + '</span><span>' + (auditOk ? 'Management' : 'Audit, Management') + '</span>';
-  var tiles = '<div class="tiles">'
-    + '<div class="card tile"><div class="k">Estimated cost</div><div class="big">' + E(rqMoneyTxt(r.est_cost) || 'Tk 0') + '</div>' + rqTicks(costPct, costPct > 110 ? '#d1584b' : '#9aa05a') + '<div class="row">' + costRow + '</div></div>'
-    + '<div class="card tile"><div class="k">Time required</div><div class="big">' + E(rqTimeTxt(r) || '—') + '</div>' + rqTicks(started ? prog : 0, '#4f7fa8') + '<div class="row"><span>' + (started ? 'Progress ' + prog + '%' : 'Target') + '</span><span>' + (r.target_date ? E(rqDateTxt(r.target_date)) : 'after approval') + '</span></div></div>'
-    + '<div class="card tile"><div class="k">Priority</div><div class="big">' + E({ urgent: 'Urgent', low: 'Low' }[r.priority] || 'Normal') + '</div>' + rqTicks(priPct, r.priority === 'urgent' ? '#d1584b' : '#8f84cf') + '<div class="row"><span>Low</span><span>Urgent</span></div></div>'
-    + '<div class="card tile"><div class="k">Approval</div><div class="big">' + apprBig + '</div>' + rqTicks(apprPct, apprCol) + '<div class="row">' + apprRow + '</div></div></div>';
-  function kv(k, v) { return '<div><div class="k">' + k + '</div><div class="v">' + (v || '&nbsp;') + '</div></div>'; }
-  var details = '<div class="g2"><div class="card"><div class="h">Details</div><div class="kv">'
-    + kv('Date', E(rqDateTxt(r.req_date))) + kv('Type of work', E(r.work_type || '')) + kv('Building / area', E(r.location || '')) + kv('Exact location', E(r.location_detail || ''))
-    + kv('Company', E(rqCompany(r.company).n)) + kv('Department', E(d.n)) + '</div></div>'
-    + '<div class="card"><div class="h">Detailed remarks</div><div class="txt">' + E(r.remarks || '') + '</div></div></div>';
-  var itemsHtml = items.length ? '<div class="card mt"><div class="h">Items to buy <span class="mut" style="font-weight:500">' + items.length + (items.length === 1 ? ' item' : ' items') + '</span></div><table><tr><th style="width:5%">#</th><th>Item / specification</th><th class="num" style="width:9%">Qty</th><th style="width:9%">Unit</th><th class="num" style="width:14%">Rate (Tk)</th><th class="num" style="width:16%">Amount (Tk)</th></tr>'
-    + items.map(function(i, n){ return '<tr><td>' + (n + 1) + '</td><td>' + E(i.item) + '</td><td class="num">' + (i.qty == null ? '' : E(i.qty)) + '</td><td>' + E(i.unit || '') + '</td><td class="num">' + (i.rate == null ? '' : Number(i.rate).toLocaleString('en-IN')) + '</td><td class="num">' + (i.qty != null && i.rate != null ? (i.qty * i.rate).toLocaleString('en-IN') : '') + '</td></tr>'; }).join('')
-    + '<tr class="t"><td></td><td>Estimated total</td><td></td><td></td><td></td><td class="num">' + E(rqMoneyTxt(r.est_cost)) + '</td></tr></table></div>' : '';
-  // approval path: department head and AGM sign on paper; audit and management in the app
-  var green = '#3fae6a', grey = '#dededb';
-  var steps = [
-    ['Raised', green, E(r.created_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.created_at)))],
-    ['Department head', grey, formOnly ? E(head) : 'Signed on paper'],
-    ['AGM', grey, formOnly ? 'Mr. Newton' : 'Signed on paper'],
-    ['Audit', auditOk ? green : (!formOnly && r.audit_status) ? '#d1584b' : grey, auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : (!formOnly && r.audit_status ? E({ returned: 'Returned', rejected: 'Rejected' }[r.audit_status] || '') : '')],
-    ['Management', mgmtOk ? green : (!formOnly && r.mgmt_status) ? '#d1584b' : grey, mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : (!formOnly && r.mgmt_status ? E({ returned: 'Returned', rejected: 'Rejected' }[r.mgmt_status] || '') : '')]
-  ];
-  var path = '<div class="card mt"><div class="h">Approval path</div><div class="path">' + steps.map(function(s, i){
-    return '<div class="st"><div class="n">' + (i + 1) + '. ' + s[0] + '</div><div class="ticks" style="--c:' + s[1] + '"></div><div class="w">' + (s[2] || '&nbsp;') + '</div></div>'; }).join('') + '</div></div>';
-  // work record (full record only)
-  var work = '';
-  if (started) {
-    var log = (ev || []).filter(function(e){ return ['progress', 'cost', 'hold', 'resumed', 'done'].indexOf(e.kind) !== -1; });
-    work = '<div class="card mt"><div class="h">Work record <span class="mut" style="font-weight:500">' + E(status) + '</span></div><div class="kv4">'
-      + kv('Started', E(rqDateTime(r.started_at))) + kv('Target date', E(rqDateTxt(r.target_date))) + kv('Progress', prog + '%') + kv(r.status === 'done' ? 'Completed' : 'Spent so far', E(r.status === 'done' ? rqDateTime(r.completed_at) : rqMoneyTxt(r.spent || 0)))
-      + '</div>' + (r.completion_note ? '<div class="txt" style="margin-top:6px">' + E(r.completion_note) + '</div>' : '')
-      + (log.length ? '<table style="margin-top:6px"><tr><th style="width:18%">Date</th><th style="width:20%">Update</th><th>Note</th><th style="width:15%">By</th></tr>' + log.map(function(e){
-        return '<tr><td>' + E(rqDateTime(e.at)) + '</td><td>' + E(RQ_EVENT_TXT[e.kind] || e.kind) + (e.pct != null ? ' ' + e.pct + '%' : '') + (e.amount != null ? ' ' + E(rqMoneyTxt(e.amount)) : '') + '</td><td>' + E(e.note || '') + '</td><td>' + E(e.by_name || '') + '</td></tr>'; }).join('') + '</table>' : '') + '</div>';
-  }
-  // comments: ruled lines on the form; the approvers' recorded notes on the full record
-  var notes = [];
+  var status = { pending: 'Approval pending', returned: 'Returned for changes', rejected: 'Rejected', wip: 'Approved · in progress', hold: 'Approved · on hold', done: 'Completed', cancelled: 'Cancelled' }[r.status] || r.status;
+  function tick(pct, col) { pct = Math.max(0, Math.min(100, Math.round(pct))); return '<div class="bar"><div class="tk" style="--c:' + col + ';width:' + pct + '%"></div><div class="tk" style="--c:#dededb;width:' + (100 - pct) + '%"></div></div>'; }
+  function cell(k, v, bar) { return '<div><div class="k">' + k + '</div><div class="v">' + (v || '&nbsp;') + '</div>' + (bar || '') + '</div>'; }
+  var pri = { urgent: 'Urgent', low: 'Low' }[r.priority] || 'Normal';
+  var strip = '<div class="strip">'
+    + cell('Date', E(rqDateTxt(r.req_date)), tick(100, '#4f7fa8'))
+    + cell('Building / area', E(r.location || ''))
+    + cell('Exact location', E(r.location_detail || ''))
+    + cell('Type of work', E(r.work_type || ''), tick(100, '#9aa05a'))
+    + cell('Time / priority', E((rqTimeTxt(r) ? rqTimeTxt(r) + ' · ' : '') + pri), tick({ low: 25, normal: 55, urgent: 100 }[r.priority] || 55, r.priority === 'urgent' ? '#c0473b' : '#8f84cf'))
+    + cell('Raised by', E(r.created_by_name || ''))
+    + '</div>';
+  // the requisitioned lines, padded with numbered empty rows to fill the page
+  var minRows = formOnly ? 15 : (started ? 6 : 9);
+  var rows = items.map(function(i, n){
+    var amt = i.qty != null && i.rate != null ? i.qty * i.rate : null;
+    return '<tr><td>' + (n + 1) + '</td><td><b>' + E(i.item || '') + '</b></td><td class="d">' + E(i.spec || '') + '</td><td class="n"><b>' + (i.qty == null ? '' : E(i.qty)) + '</b></td><td>' + E(i.unit || '') + '</td><td class="n">' + (i.rate == null ? '' : Number(i.rate).toLocaleString('en-IN')) + '</td><td class="n"><b>' + (amt == null ? '' : amt.toLocaleString('en-IN')) + '</b></td></tr>';
+  }).join('');
+  for (var n = items.length; n < minRows; n++) rows += '<tr><td class="e">' + (n + 1) + '</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+  var table = '<div class="main"><h2>' + (purchase ? 'ITEMS REQUIRED' : 'WORK REQUIRED') + '</h2><table><tr><th style="width:5%">#</th><th style="width:26%">' + (purchase ? 'Item' : 'Work') + '</th><th>Specification / purpose</th><th class="n" style="width:7%">Qty</th><th style="width:7%">Unit</th><th class="n" style="width:11%">Rate (Tk)</th><th class="n" style="width:13%">Amount (Tk)</th></tr>'
+    + rows + '<tr class="f"><td></td><td colspan="5">Estimated total</td><td class="n">' + E(rqMoneyTxt(r.est_cost) || 'Tk 0') + '</td></tr></table>'
+    + '<div class="rm"><div class="k">Remarks</div>' + E(r.remarks || '') + '</div></div>';
+  // full record: approvals and the work done
+  var extra = '';
   if (!formOnly) {
-    if (r.audit_note) notes.push('<div class="note"><b>Audit</b> &middot; ' + E(r.audit_by_name || '') + ': ' + E(r.audit_note) + '</div>');
-    if (r.mgmt_note) notes.push('<div class="note"><b>Management</b> &middot; ' + E(r.mgmt_by_name || '') + ': ' + E(r.mgmt_note) + '</div>');
+    function ap(who, stt, by, at, note, amt) {
+      var lbl = { approved: 'Approved', returned: 'Returned', rejected: 'Rejected' }[stt] || 'Not yet';
+      return '<div><div class="k">' + who + '</div><b>' + lbl + '</b>' + (by ? ' &middot; ' + E(by) + ' &middot; ' + E(rqDateTime(at)) : '') + (amt != null ? '<div>Approved amount: <b>' + E(rqMoneyTxt(amt)) + '</b></div>' : '') + (note ? '<div>' + E(note) + '</div>' : '') + '</div>';
+    }
+    extra += '<div class="box"><h3>APPROVAL</h3><div class="ap">' + ap('Audit', r.audit_status, r.audit_by_name, r.audit_at, r.audit_note, null)
+      + ap('Management', r.mgmt_status, r.mgmt_by_name, r.mgmt_at, r.mgmt_note, mgmtOk ? r.approved_cost : null) + '</div></div>';
+    if (started) {
+      var log = (ev || []).filter(function(e){ return ['progress', 'cost', 'hold', 'resumed', 'done'].indexOf(e.kind) !== -1; });
+      var prog = Math.max(0, Math.min(100, Number(r.progress) || 0));
+      extra += '<div class="box"><h3>WORK RECORD</h3><div class="strip" style="grid-template-columns:repeat(5,1fr);margin-top:0">'
+        + cell('Started', E(rqDateTime(r.started_at))) + cell('Target date', E(rqDateTxt(r.target_date)))
+        + cell('Progress', prog + '%', tick(prog, '#4f7fa8'))
+        + cell('Spent', E(rqMoneyTxt(r.spent || 0)), tick(Number(r.approved_cost) > 0 ? (Number(r.spent) || 0) / Number(r.approved_cost) * 100 : 0, '#9aa05a'))
+        + cell(r.status === 'done' ? 'Final cost' : 'Status', E(r.status === 'done' ? rqMoneyTxt(r.final_cost) : status)) + '</div>'
+        + (r.completion_note ? '<div style="margin-top:5px;font-size:9.4px">' + E(r.completion_note) + '</div>' : '')
+        + (log.length ? '<table style="margin-top:5px"><tr><th style="width:19%">Date</th><th style="width:21%">Update</th><th>Note</th><th style="width:16%">By</th></tr>' + log.map(function(e){
+          return '<tr><td>' + E(rqDateTime(e.at)) + '</td><td>' + E(RQ_EVENT_TXT[e.kind] || e.kind) + (e.pct != null ? ' ' + e.pct + '%' : '') + (e.amount != null ? ' ' + E(rqMoneyTxt(e.amount)) : '') + '</td><td>' + E(e.note || '') + '</td><td>' + E(e.by_name || '') + '</td></tr>'; }).join('') + '</table>' : '')
+        + '</div>';
+    }
   }
-  var comments = '<div class="card mt grow"><div class="h">Comments by approvers</div>' + notes.join('') + '<div class="lines"></div></div>';
   function sig(title, name, img, cls) {
-    return '<div class="card sg ' + (cls || '') + '"><div class="area">' + (img ? '<img src="' + img + '" alt="">' : '') + '</div><div class="ln"><div class="t">' + title + '</div><div class="nm">' + (name || '&nbsp;') + '</div></div></div>';
+    return '<div class="sg ' + (cls || '') + '"><div class="ar">' + (img ? '<img src="' + img + '" alt="">' : '') + '</div><div class="ln"><b>' + title + '</b><div class="nm">' + (name || '&nbsp;') + '</div></div></div>';
   }
   var sigs = '<div class="sigs">'
     + sig('Prepared by', E(r.created_by_name || ''))
-    + sig('Department head', (head ? E(head) + '<br>' : '') + E(d.n))
+    + sig('Department head', head ? E(head) : E(d.n))
     + sig('AGM', E(newton))
     + sig('Audit', auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : 'Date:', auditOk ? st.audit_seal : '', 'seal')
     + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : 'Date:', mgmtOk ? st.mgmt_sign : '', 'sign')
     + '</div>';
-  var body = '<div class="pg"><div class="card top">' + rqBrandHtml(st, rqCompany(r.company).n) + '<div class="job"><div class="k">JOB NO.</div><div class="v">' + E(r.job_no) + '</div></div></div>'
-    + '<h1>Requisition &mdash; ' + E(d.n) + '</h1><div class="sub">' + (r.kind === 'purchase' ? 'Items to buy' : 'Work / service') + ' &middot; raised by ' + E(r.created_by_name || '') + ' on ' + E(rqDateTime(r.created_at)) + (formOnly ? '' : ' &middot; ' + E(status)) + '</div>'
-    + tiles + details + itemsHtml + path + work + comments + sigs
-    + '<div class="ft"><span>Shahana Group &middot; Requisition ' + E(r.job_no) + (formOnly ? ' &middot; form for signing' : ' &middot; full record') + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + E(rqCompany(r.company).n) + '</span></div></div>';
-  return '<!doctype html><html><head><meta charset="utf-8"><title>Requisition ' + E(r.job_no.replace(/\//g, '-')) + '</title><style>' + rqDocCss() + '</style></head><body>' + body + '</body></html>';
+  var body = '<div class="pg"><div class="lh">' + (st.group_logo ? '<img src="' + st.group_logo + '" alt="">' : '') + '<div class="g">SHAHANA GROUP</div><div class="c">' + E(co.n) + '</div><div class="a">' + E(rqCoAddr(st, r.company)) + ' &middot; info@shahanagroup.com</div></div>'
+    + '<div class="tt"><div><h1>Requisition &mdash; ' + E(d.n) + '</h1><div class="sub">' + (purchase ? 'Items to buy' : 'Work / service') + ' &middot; raised ' + E(rqDateTime(r.created_at)) + '</div></div>'
+    + '<div class="job"><div class="k">Job no.</div><b>' + E(r.job_no) + '</b><div><span class="st">' + (formOnly ? 'For approval' : E(status)) + '</span></div></div></div>'
+    + strip + table + extra + sigs
+    + '<div class="ft"><span>Shahana Group &middot; Requisition ' + E(r.job_no) + (formOnly ? ' &middot; form for signing' : ' &middot; full record') + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + E(co.n) + '</span></div></div>';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Requisition ' + E(r.job_no.replace(/\//g, '-')) + '</title><style>' + rqFormCss() + '</style></head><body>' + body + '</body></html>';
 }
 
 // ─── MONTHLY SPEND REPORT ───
@@ -20554,8 +20584,9 @@ async function rqRenderAdminCard() {
     + img('mgmt_sign', 'Management signature', 'Printed in the Management box once management approves.')
     + img('group_logo', 'Shahana Group logo', 'Printed at the top of every requisition form.')
     + '</div><div class="sub2" style="margin:8px 0 12px">A photo of a stamp or signature on white paper works: the paper is made see-through automatically.</div>'
-    + '<div class="adm-form" style="grid-template-columns:repeat(4,1fr) 120px">'
+    + '<div class="adm-form" style="grid-template-columns:repeat(4,1fr)">'
     + RQ_DEPTS.map(function(d){ return '<div class="adm-field"><label class="adm-lbl">' + d.n + ' head (name)</label><input class="adm-inp" id="rq-head-' + d.k + '" value="' + rqEsc(st['dept_head_' + d.k] || '') + '" placeholder="Printed under Department Head"></div>'; }).join('')
+    + RQ_COMPANIES.map(function(c){ return '<div class="adm-field" style="grid-column:span 2"><label class="adm-lbl">' + c.n + ' address</label><input class="adm-inp" id="rq-addr-' + c.c + '" value="' + rqEsc(rqCoAddr(st, c.c)) + '"></div>'; }).join('')
     + '<div class="adm-field"><label class="adm-lbl">AGM line</label><input class="adm-inp" id="rq-newton" value="' + rqEsc(st.newton_line || 'Mr. Newton, AGM (HR, Admin & Compliance)') + '"></div>'
     + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" onclick="rqSaveNames()">Save</button></div></div></div>';
 }
@@ -20570,6 +20601,7 @@ async function rqSaveNames() {
   var ok = true;
   for (var i = 0; i < RQ_DEPTS.length; i++) ok = (await rqSetSetting('dept_head_' + RQ_DEPTS[i].k, $('rq-head-' + RQ_DEPTS[i].k).value.trim())) && ok;
   ok = (await rqSetSetting('newton_line', $('rq-newton').value.trim())) && ok;
+  for (var j = 0; j < RQ_COMPANIES.length; j++) { var ae = $('rq-addr-' + RQ_COMPANIES[j].c); if (ae) ok = (await rqSetSetting('co_addr_' + RQ_COMPANIES[j].c, ae.value.trim())) && ok; }
   if (ok) toast('Requisition names saved', 'ok-t');
 }
 async function rqClearImg(key) {
