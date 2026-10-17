@@ -2081,6 +2081,103 @@ td.col-cm{min-width:96px;font-size:11px}
 [data-theme="dark"] #login-wrap .f input,[data-theme="dark"] #login-wrap .f select{background:#2f2b24;border-color:#4a4333;color:#EEE6D0}
 [data-theme="dark"] .login-ver{color:#D9B45A}
 [data-theme="dark"] #ver-stamp{color:#a8a59e!important;background:rgba(255,255,255,.07)}
+/* Buyer profiles */
+.bp-page{max-width:1500px}
+.bp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.bp-h1{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:0}
+.bp-sub{color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.5}
+.bp-warn{background:var(--amber-soft);color:var(--amber);border:1px solid rgba(183,121,31,.25);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;line-height:1.5}
+.bp-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bp-filters input[type=search]{flex:1;min-width:220px;max-width:380px;padding:8px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink)}
+.bp-filters select{padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink)}
+.bp-chips{display:flex;gap:6px;flex-wrap:wrap}
+.bp-chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer}
+.bp-chip span{color:var(--muted);margin-left:2px}.bp-chip.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}.bp-chip.on span{color:inherit;opacity:.7}
+.bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.bp-card{display:flex;gap:12px;align-items:center;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;color:var(--ink);font:inherit;transition:border-color .15s,box-shadow .15s}
+.bp-card:hover{border-color:#cfcabd;box-shadow:0 4px 14px -8px rgba(0,0,0,.18)}
+.bp-card:focus-visible,.bp-tab:focus-visible,.bp-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bp-card-main{flex:1;min-width:0}.bp-card-name{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bp-card-sub{font-size:12px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bp-card-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.bp-card-side{text-align:right;font-size:12px;flex-shrink:0;max-width:120px}.bp-card-side>div:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bp-card-n{color:var(--muted);margin-top:3px}
+.bp-none{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:30px;text-align:center;color:var(--muted)}
+.bp-logo{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:10px;object-fit:contain;background:#fff;border:1px solid var(--line);font-weight:800;letter-spacing:.02em;vertical-align:middle}
+.bp-logo-txt{border:0}
+.bp-logo-btn{position:relative;border:0;background:none;padding:0;cursor:pointer;border-radius:12px}
+.bp-logo-btn .bp-logo-cap{position:absolute;left:0;right:0;bottom:0;font-size:10px;font-weight:600;color:#fff;background:rgba(0,0,0,.55);border-radius:0 0 10px 10px;padding:2px 0;opacity:0;transition:opacity .15s}
+.bp-logo-btn:hover .bp-logo-cap,.bp-logo-btn:focus-visible .bp-logo-cap{opacity:1}
+.bp-pill{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.bp-g{background:var(--green-soft);color:var(--green)}.bp-a{background:var(--amber-soft);color:var(--amber)}.bp-r{background:var(--red-soft);color:var(--red)}
+.bp-b{background:#E6EEF6;color:#2F5F8A}.bp-gr{background:#EFEDE7;color:var(--muted)}
+.bp-back{border:0;background:none;color:var(--muted);font:inherit;font-size:12.5px;cursor:pointer;padding:0;margin-bottom:10px}
+.bp-back:hover{color:var(--ink)}
+.bp-head{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.bp-head-main{min-width:0}.bp-head-name{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.bp-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+.bp-tab{border:0;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--muted);padding:9px 12px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.bp-tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+.bp-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber);vertical-align:middle}
+.bp-cols{display:grid;grid-template-columns:1fr 1fr 300px;gap:12px;align-items:start}
+.bp-cols-2{grid-template-columns:1fr 1fr}
+.bp-col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.bp-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-width:0}
+.bp-ch{display:flex;align-items:center;gap:6px;margin-bottom:6px}.bp-ch b{font-size:14px}
+.bp-own{font-size:10.5px;font-weight:600;color:var(--muted);background:#EFEDE7;border-radius:5px;padding:1px 6px}
+.bp-link{border:0;background:none;color:var(--accent);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:2px 4px}
+.bp-link:hover{text-decoration:underline}
+.bp-kv{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.bp-kv:last-child{border-bottom:0}.bp-kv>span{color:var(--muted);flex-shrink:0}.bp-kv>b{font-weight:600;text-align:right;overflow-wrap:anywhere}
+.bp-kv select{max-width:60%;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.bp-empty{color:#ADA89D;font-weight:400;font-style:normal}
+.bp-empty-box{color:var(--muted);font-size:12.5px;padding:8px 0}
+.bp-note-txt{font-size:12.5px;color:var(--ink);background:var(--bg);border-radius:8px;padding:8px 10px;margin-top:8px;white-space:pre-wrap}
+.bp-hint{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.45}
+.bp-small{font-size:11.5px;color:var(--muted);line-height:1.45}
+.bp-li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.bp-li:last-child{border-bottom:0}.bp-li>div{min-width:0}.bp-li b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bp-li span{font-size:11.5px;color:var(--muted)}
+.bp-li-r{text-align:right;flex-shrink:0;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bp-person{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.bp-person:last-child{border-bottom:0}.bp-person b{display:block;font-size:13px;font-weight:600}.bp-person div span{font-size:11.5px;color:var(--muted)}
+.bp-av{width:30px;height:30px;border-radius:50%;background:#ECEAE4;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#55524c;flex-shrink:0}
+.bp-alert{border-radius:8px;padding:8px 10px;font-size:12.5px;margin-top:6px}
+.bp-alert-a{background:var(--amber-soft);color:var(--amber)}.bp-alert-r{background:var(--red-soft);color:var(--red)}
+.bp-note-li{font-size:12.5px;line-height:1.5;padding:6px 0;border-bottom:1px solid var(--line)}.bp-note-li:last-child{border-bottom:0}
+.bp-log{display:flex;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)}.bp-log:last-child{border-bottom:0}
+.bp-log>span{color:var(--muted);width:78px;flex-shrink:0}.bp-log b{font-weight:600;display:block}.bp-log i{font-style:normal;color:var(--muted);font-size:11.5px}
+.bp-scroll{overflow-x:auto}
+.bp-table{width:100%;border-collapse:collapse;font-size:13px}
+.bp-table th{text-align:left;font-size:11px;color:var(--muted);font-weight:600;padding:7px 8px;border-bottom:1px solid var(--line)}
+.bp-table td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+.bp-pending{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--amber-soft);border:1px solid rgba(183,121,31,.25);color:#6f4b0c;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;line-height:1.5}
+.bp-pending-btns{display:flex;gap:6px;flex-shrink:0;align-items:center}
+.bp-addr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;align-items:start}
+.bp-addr.def{border:2px solid var(--green)}
+.bp-addr-txt{font-size:12px;color:var(--muted);white-space:pre-wrap;padding:2px 0 6px;border-bottom:1px solid var(--line)}
+.bp-addr-btns{display:flex;gap:4px;justify-content:flex-end;margin-top:6px}
+.bp-note-form{display:flex;gap:8px;flex-wrap:wrap}
+.bp-note-form select,.bp-note-form input{padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink);font:inherit;font-size:13px}
+.bp-note-form #bpn-text{flex:1;min-width:220px}
+.bp-note-row{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start}.bp-note-row:last-child{border-bottom:0}
+.bp-note-when{width:96px;flex-shrink:0;font-size:12.5px;font-weight:600}.bp-note-when span{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+.bp-note-body{flex:1;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.bp-form{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.bp-f{display:flex;flex-direction:column;gap:5px;min-width:0}.bp-f.wide{grid-column:1/-1}
+.bp-f label{font-size:12px;font-weight:600;color:var(--muted)}
+.bp-f input,.bp-f select,.bp-f textarea{padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#FCFBF7;color:var(--ink);font:inherit;font-size:13.5px;width:100%}
+.bp-f input:focus,.bp-f select:focus,.bp-f textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.bp-f input:disabled{opacity:.5}
+.bp-fixed{font-weight:600;font-size:13.5px}.bp-fixed span{font-weight:400;color:var(--muted);font-size:11.5px}
+.bp-checks{display:flex;gap:14px;flex-wrap:wrap;padding-top:6px}.bp-checks label,.bp-inline{font-size:13px;color:var(--ink);font-weight:500;display:flex;gap:6px;align-items:center}
+.bp-checks input,.bp-inline input{width:auto}
+.buyer-section-hdr .bp-logo{width:22px;height:22px;border-radius:6px}
+@media (max-width:1180px){.bp-cols{grid-template-columns:1fr 1fr}.bp-side{grid-column:1/-1}}
+@media (max-width:760px){.bp-cols,.bp-cols-2,.bp-form{grid-template-columns:1fr}.bp-pending{flex-direction:column;align-items:flex-start}.bp-card-side{display:none}}
+[data-theme="dark"] .bp-own,[data-theme="dark"] .bp-gr,[data-theme="dark"] .bp-av{background:#2c2a2e;color:var(--muted)}
+[data-theme="dark"] .bp-b{background:#1d2a38;color:#8fb4d9}
+[data-theme="dark"] .bp-f input,[data-theme="dark"] .bp-f select,[data-theme="dark"] .bp-f textarea{background:#2A2828;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .bp-pending{color:var(--amber)}
+[data-theme="dark"] .bp-card:hover{border-color:#4a4750}
 </style>
 </head>
 <body>
@@ -2103,7 +2200,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.16.2</p>
+    <p class="login-ver">V.2026.10.17.3</p>
   </div></div>
 </div>
 
@@ -2145,7 +2242,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.16.2</div>
+  <div id="ver-stamp">V.2026.10.17.3</div>
 </div>
 
 
@@ -2989,6 +3086,15 @@ td.col-cm{min-width:96px;font-size:11px}
       <button class="btn" onclick="closeModal('ov-rq')">Close</button></div>
     <div class="m-b" id="rq-body"></div>
     <div class="m-f" id="rq-foot"></div>
+  </div>
+</div>
+
+<div class="ov" id="ov-bp" onclick="if(event.target===this)closeModal('ov-bp')">
+  <div class="modal wide" onkeydown="bpModalKey(event)">
+    <div class="m-h"><div><h3 id="bp-m-title">Buyer</h3><div class="msub" id="bp-m-sub"></div></div>
+      <button class="btn" onclick="closeModal('ov-bp')">Close</button></div>
+    <div class="m-b" id="bp-m-body"></div>
+    <div class="m-f" id="bp-m-foot"></div>
   </div>
 </div>
 
@@ -4458,7 +4564,9 @@ async function startApp() {
     ['loadBuyerSettings',    loadBuyerSettings],
     ['probeCommercialSchema', probeCommercialSchema],
     ['loadCompanies',        loadCompanies],
-    ['rqLoad',               function(){ return rqCanSee() ? rqLoad() : Promise.resolve(); }]
+    ['rqLoad',               function(){ return rqCanSee() ? rqLoad() : Promise.resolve(); }],
+    // logos load in the background so a slow connection never holds up opening the app
+    ['bpLoadLogos',          function(){ bpLoadLogos().then(function(){ try { if (bpIsView(S.view) && !document.querySelector('#ov-bp.open')) bpRender(S.view); else renderRail(); } catch (e) { console.error('logos:', e); } }); return Promise.resolve(); }]
   ];
   await Promise.all(wave1.map(function(p){
     // Each is individually caught, exactly as before — one failing load must not
@@ -5298,6 +5406,7 @@ function render() {
   if (S.user && S.user.role === 'dept' && !(typeof S.view === 'string' && S.view.indexOf('rq:') === 0)) { setView(rqHomeView()); return; }
   renderRail();
   if (typeof S.view === 'string' && S.view.indexOf('rq:') === 0) { rqRender(S.view); return; }
+  if (bpIsView(S.view)) { bpRender(S.view); return; }
   if (S.view === 'dashboard') renderDashboard();
   else if (S.view === 'shipped' || S.view === 'archive') renderShippedPage();
   else if (S.view === 'trash') renderTrashPage();
@@ -5328,6 +5437,17 @@ function setView(v) {
     try { sessionStorage.setItem('pt_last_view', v); } catch(e) {}
     renderRail();
     rqRender(v);
+    return;
+  }
+  if (bpIsView(v)) {
+    if (!bpOpen(v)) return;
+    if (BP.cur && v.split(':')[1] !== BP.cur.id) BP.cur = null;
+    if (v === 'buyers') { BP.cur = null; bpRefreshPending(); }
+    S.view = v;
+    var _bc = document.getElementById('content'); if (_bc) delete _bc.dataset.page;
+    try { sessionStorage.setItem('pt_last_view', v); } catch(e) {}
+    renderRail();
+    bpRender(v);
     return;
   }
   var isJMOverview = typeof v === 'string' && v.indexOf('jm_') === 0;
@@ -5750,6 +5870,7 @@ async function renderBoard(uid, skipDataReload) {
     allHtml += '<div style="margin-bottom:12px" >'
       + '<div class="buyer-section-hdr" data-sk="' + sk + '" onclick="toggleBuyerSection(this.dataset.sk)">'
       + '<div style="display:flex;align-items:center;gap:10px">'
+      + bpLogoTag(b.id, 22, b.name, true)
       + '<span style="font-family:var(--serif);font-size:16px;font-weight:600">' + htmlEsc(b.name) + '</span>'
       + '<span class="chip" style="font-size:10px">' + bOrders.length + ' orders</span>'
       + (bOrders.length ? '<span style="font-size:11px;color:var(--muted)">' + fmt(bQty) + ' pcs &middot; ' + money(bVal) + '</span>' : '')
@@ -13592,11 +13713,12 @@ function renderRail() {
   if (r === 'commercial') {
     var ab=(S.alerts||[]).filter(function(a){return !a.dismissed;}).length + getMyThreads().filter(function(t2){ return t2.unread; }).length;
     var late0 = S._cbLate || 0;
-    html=ni('comm-board','&#x1F4CB;','Commercial Board',late0,late0>0)+ni('pay-received','&#x1F4B0;','Payment received');
+    html=ni('comm-board','&#x1F4CB;','Commercial Board',late0,late0>0)+ni('pay-received','&#x1F4B0;','Payment received')+bpRailItem();
     html+='<div class="rail-sep"></div>'+ni('inbox','&#x1F4EC;','Inbox',ab,ab>0);
     var rt0 = rb.scrollTop; rb.innerHTML = html; rb.scrollTop = rt0; return;
   }
   html+=ni('developments','&#x1F9EA;','Developments',S.developments.length);
+  html+=bpRailItem();
   if(seeAll){
     var sw=S.users.filter(function(u2){return u2.role==='merchant'&&u2.division!=='knit';});
     var kn=S.users.filter(function(u2){return u2.role==='merchant'&&u2.division==='knit';});
@@ -15014,6 +15136,7 @@ async function runTransferBuyer(assignOnly) {
     if (ids.length) await step('Orders', function(){ return db.from('orders').update({ merchant_id: C, updated_at: now, updated_by: S.user.name }).in('id', ids).eq('merchant_id', A); });
   }
   await step('Buyer assignment', function(){ return db.from('buyer_assignments').upsert({ buyer_id: B, merchant_id: C }); });
+  bpMerchantChanged(B, A, C);
   if (!errs.length || assignOnly) ids.forEach(function(id){ logActivity(id, 'Transferred', bname + ': ' + fromN + ' \u2192 ' + toN); });
   _tb.busy = false;
   S.buyerAssignments[B] = C; S.boardCache = {}; S.layingLoaded = false; S.archiveLoaded = false; S.developmentsLoaded = false;
@@ -15024,6 +15147,7 @@ async function runTransferBuyer(assignOnly) {
   } else {
     toast(assignOnly ? bname + ' assigned to ' + toN : bname + ': ' + ids.length + ' order(s) moved to ' + toN, 'ok-t');
     closeModal('ov-transfer-buyer');
+    if (bpIsView(S.view)) { BP.cur = null; bpRender(S.view); }
   }
 }
 
@@ -15427,8 +15551,11 @@ async function baApproveBuyerRequest(reqId) {
     if (res.error || !res.data) { toast('Error creating buyer', 'err'); return; }
     buyerId = res.data.id;
     S.buyers.push(res.data);
+    // a buyer requested by a merchant starts as a prospect (only once buyer profiles are switched on)
+    if (BP.missing === false) db.from('buyers').update({ status: 'prospect' }).eq('id', buyerId).then(function(u){ if (!u.error) res.data.status = 'prospect'; });
   }
   await db.from('buyer_assignments').upsert({ buyer_id: buyerId, merchant_id: req.merchant_id });
+  bpMerchantChanged(buyerId, null, req.merchant_id);
   S.buyerAssignments[buyerId] = req.merchant_id;
 
   // Several developments from the same merchant may be waiting on this same
@@ -15474,9 +15601,11 @@ async function baAssign(merchantId) {
   if (!sel || !sel.value) return;
   var buyerId = sel.value;
   var buyer = S.buyers.find(function(b){ return b.id === buyerId; });
+  var _prevM = S.buyerAssignments[buyerId] || null;
   var { error } = await db.from('buyer_assignments').upsert({ buyer_id: buyerId, merchant_id: merchantId });
   if (error) { toast('Error: ' + error.message, 'err'); return; }
   S.buyerAssignments[buyerId] = merchantId;
+  bpMerchantChanged(buyerId, _prevM, merchantId);
   toast((buyer ? buyer.name : 'Buyer') + ' assigned');
   renderBuyerAssign();
 }
@@ -15486,6 +15615,7 @@ async function baRemove(buyerId, merchantId) {
   var buyer = S.buyers.find(function(b){ return b.id === buyerId; });
   var { error } = await db.from('buyer_assignments').delete().eq('buyer_id', buyerId);
   if (error) { toast('Error: ' + error.message, 'err'); return; }
+  bpMerchantChanged(buyerId, S.buyerAssignments[buyerId] || null, null);
   delete S.buyerAssignments[buyerId];
   toast((buyer ? buyer.name : 'Buyer') + ' unassigned');
   renderBuyerAssign();
@@ -17883,6 +18013,7 @@ async function openCommercialInvoice() {
   if (!o || !cmCanCommercial(o)) { toast('Only the commercial team makes the commercial invoice', 'err'); return; }
   // saved values plus anything typed (not yet saved) in the shipment window
   var rec = Object.assign({}, S.comm.rows[o.id] || {}, _cm.id === o.id ? _cm.draft : {}), mem = await ciMemLoad(o.buyer_id || o.buyer || 'x');
+  mem = await bpInvoiceDefaults(buyerIdOfOrder(o), mem);
   if (_cm.id !== o.id) return; // the shipment window changed while reading
   _ci = { id: o.id, lines: [ciLineFor(o)] };
   if (mem.hs) _ci.lines[0].hs = mem.hs;
@@ -18943,6 +19074,7 @@ var BACKUP_TABLES = [ // known tables, parents before children (restore goes in 
   'approvals','pp_colour_approvals','tna_requests','shipment_alerts','alert_dismissals','messages',
   'developments','development_options','development_samples','dev_colour_approvals','dev_price_history','order_commercial','commercial_payments',
   'buyer_invoice_details',
+  'buyer_logos','buyer_team','buyer_contacts','buyer_notes','buyer_payment','buyer_banking','buyer_bank_changes','buyer_addresses','buyer_change_log',
   'rq_settings','rq_counters','rq_requisitions','rq_events'
 ];
 var BACKUP_EXCLUDE = ['user_password_view'];
@@ -18954,7 +19086,8 @@ var BACKUP_KEYS = {
   buyer_field_visibility: ['buyer_id', 'field_key'], memo: ['field', 'value'], order_commercial: ['order_id'],
   style_attachments: ['merchant_id', 'style'], style_images: ['merchant_id', 'style'], order_field_values: ['order_id', 'field_key'],
   user_password_view: ['user_id'],
-  rq_settings: ['key'], rq_counters: ['dept', 'yr']
+  rq_settings: ['key'], rq_counters: ['dept', 'yr'],
+  buyer_logos: ['buyer_id'], buyer_payment: ['buyer_id'], buyer_banking: ['buyer_id']
 };
 function backupStamp() { var d = new Date(); function z(n){ return String(n).padStart(2,'0'); } return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'_'+z(d.getHours())+z(d.getMinutes()); }
 function downloadBlob(blob, name) {
@@ -19039,7 +19172,7 @@ async function collectBackup(progress) {
     } catch (e) {
       // Requisition tables only exist once requisitions-migration.sql is run;
       // until then there is simply nothing to back up there.
-      if (/^rq_/.test(t) && isTableMissing(e)) { tables.splice(i, 1); i--; continue; }
+      if ((/^rq_/.test(t) || BP_TABLES.indexOf(t) !== -1) && isTableMissing(e)) { tables.splice(i, 1); i--; continue; }
       problems.push(t + ': ' + (e.message || e));
     }
   }
@@ -19322,7 +19455,16 @@ var SETUP_KNOWN = { // every column the app uses: for tables a backup has no row
   buyer_field_visibility: 'buyer_id:uuid,col_order:numeric,field_key:text,id:uuid,in_laying:boolean,in_live:boolean,in_shipped:boolean,label:text,visible:boolean',
   buyer_requests: 'created_at:timestamptz,development_id:uuid,id:uuid,merchant_id:uuid,requested_by:text,requested_name:text,resulting_buyer_id:uuid,reviewed_at:timestamptz,reviewed_by:text,status:text',
   buyer_settings: 'accessory_mode:text,buyer_id:uuid,fit_mode:text,labdip_mode:text,pay_days:integer,pay_terms:text,pp_mode:text,sizeset_mode:text,updated_at:timestamptz,updated_by:text,yarn_mode:text',
-  buyers: 'created_at:timestamptz,freeze_count:integer,id:uuid,name:text',
+  buyers: 'agent:text,brands:text,code:text,companies:text,country:text,created_at:timestamptz,customer_since:date,freeze_count:integer,id:uuid,legal_name:text,name:text,parent_group:text,products:text,profile_note:text,profile_updated_at:timestamptz,profile_updated_by:text,status:text,tier:text,website:text',
+  buyer_logos: 'buyer_id:uuid,logo:text,updated_at:timestamptz,updated_by:text',
+  buyer_team: 'buyer_id:uuid,id:uuid,role:text,updated_at:timestamptz,updated_by:text,user_id:uuid',
+  buyer_contacts: 'brand:text,buyer_id:uuid,created_at:timestamptz,created_by:text,email:text,id:uuid,name:text,notes:text,phone:text,role:text,updated_at:timestamptz,updated_by:text',
+  buyer_notes: 'buyer_id:uuid,by_id:uuid,by_name:text,created_at:timestamptz,id:uuid,kind:text,note:text,note_date:date',
+  buyer_payment: 'agent_name:text,buyer_id:uuid,commission_pct:numeric,currency:text,docs_required:text,incoterm:text,invoice_to:text,notes:text,port_loading:text,updated_at:timestamptz,updated_by:text',
+  buyer_banking: 'approved_by:text,buyer_id:uuid,data:jsonb,updated_at:timestamptz,updated_by:text',
+  buyer_bank_changes: 'buyer_id:uuid,data:jsonb,decided_at:timestamptz,decided_by:text,decision_note:text,id:uuid,note:text,old_data:jsonb,requested_at:timestamptz,requested_by:text,requested_by_id:uuid,status:text',
+  buyer_addresses: 'buyer_id:uuid,consignee:text,consignee_address:text,country:text,created_at:timestamptz,created_by:text,forwarder:text,id:uuid,is_default:boolean,label:text,marks:text,mode:text,notify_party:text,port:text,updated_at:timestamptz,updated_by:text',
+  buyer_change_log: 'at:timestamptz,buyer_id:uuid,by_id:uuid,by_name:text,id:uuid,new_data:jsonb,old_data:jsonb,section:text,summary:text',
   commercial_payments: 'amount:numeric,created_by:text,deduction:numeric,deduction_reason:text,id:uuid,note:text,order_id:text,received_on:date',
   dev_colour_approvals: 'approved_on:date,colour:text,comment:text,created_at:timestamptz,created_by:text,development_option_id:text,id:uuid,rejected_on:date,round:integer,sent_to_supplier_on:date,submitted_on:date,supplier_name:text,tracking_ref:text',
   dev_price_history: 'created_at:timestamptz,created_by:text,development_option_id:text,id:uuid,kind:text,note:text,price:numeric',
@@ -20694,6 +20836,904 @@ function rqUploadImg(key, input) {
 
 // ─── START ───
 init();
+
+// ═══════════════════════════════════════════════════════════════════
+// BUYER PROFILES
+// One profile per buyer, built on the existing buyers table: the buyer keeps
+// its id, so orders, developments, merchant assignment (buyer_assignments),
+// default payment terms (buyer_settings) and invoice details stay linked.
+// The profile only ADDS columns to buyers and its own buyer_* tables
+// (buyer-profile-migration.sql). Until that SQL is run, the Buyers page still
+// lists buyers by name and everything else keeps working as before.
+// Views: 'buyers' (the list) and 'buyer:<id>:<tab>' (one profile).
+// ═══════════════════════════════════════════════════════════════════
+var BP = { missing: null, logos: {}, pendingBank: 0, cur: null, q: '', fStatus: '', fTier: '', edit: null, saving: false };
+var BP_TABS = [
+  { k: 'overview', n: 'Overview' }, { k: 'team', n: 'Our team' }, { k: 'contacts', n: 'Contacts' },
+  { k: 'payment', n: 'Payment & banking' }, { k: 'shipping', n: 'Shipping' }, { k: 'notes', n: 'Notes' }
+];
+var BP_STATUS = [
+  { k: 'prospect', n: 'Prospect', c: 'b' }, { k: 'active', n: 'Active', c: 'g' },
+  { k: 'on_hold', n: 'On hold', c: 'a' }, { k: 'inactive', n: 'Inactive', c: 'gr' }
+];
+var BP_TIERS = ['A', 'B', 'C'];
+var BP_TEAM_ROLES = [
+  { k: 'backup', n: 'Backup merchant', roles: ['merchant', 'jm'] },
+  { k: 'commercial', n: 'Commercial', roles: ['commercial'] },
+  { k: 'planning', n: 'Planning contact', roles: null }
+];
+var BP_NOTE_KINDS = [{ k: 'visit', n: 'Visit' }, { k: 'call', n: 'Call' }, { k: 'meeting', n: 'Meeting' }, { k: 'email', n: 'Email' }, { k: 'note', n: 'Note' }];
+var BP_MODES = ['Sea', 'Air', 'Sea / air', 'Road', 'Courier'];
+var BP_INCOTERMS = ['FOB', 'FCA', 'CFR', 'CIF', 'DAP', 'DDP', 'EXW'];
+var BP_CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'];
+var BP_BANK_FIELDS = [
+  { k: 'lc_bank', n: 'LC-issuing bank' },
+  { k: 'lc_bank_swift', n: 'LC bank SWIFT' },
+  { k: 'buyer_bank', n: 'Buyer’s bank' },
+  { k: 'buyer_account', n: 'Buyer’s account no.', secret: true },
+  { k: 'buyer_iban', n: 'IBAN', secret: true },
+  { k: 'buyer_swift', n: 'Buyer’s bank SWIFT' },
+  { k: 'buyer_bank_address', n: 'Bank address', area: true }
+];
+var BP_LOGO_MAX = 24000; // characters of the stored data URI (about 18 KB)
+
+// ─── who may do what ───
+function bpUse() { return !!S.user && S.user.role !== 'dept'; }
+function bpMerchantOf(id) { return (S.buyerAssignments || {})[id] || null; }
+function bpIsMine(id) { var m = bpMerchantOf(id); return !!m && actsAsMerchant(m); }
+function bpManages(id) { var m = bpMerchantOf(id); return !!S.user && S.user.role === 'manager' && !!m && (S.myAssignments || []).indexOf(m) !== -1; }
+function bpCanSee(id) {
+  if (!bpUse()) return false;
+  var r = S.user.role;
+  if (['admin', 'management', 'hod', 'audit', 'commercial'].indexOf(r) !== -1) return true;
+  if (r === 'manager') return bpManages(id);
+  if (r === 'merchant' || r === 'jm') return bpIsMine(id);
+  return false;
+}
+function bpCan(what, id) {
+  if (!bpCanSee(id)) return false;
+  var r = S.user.role, admin = r === 'admin', boss = r === 'management' || r === 'hod';
+  var mine = bpIsMine(id), mgr = bpManages(id), com = r === 'commercial', aud = r === 'audit';
+  switch (what) {
+    case 'edit_overview': case 'edit_team': case 'logo': return admin;
+    case 'see_contacts': case 'see_payment': case 'see_shipping': return admin || boss || mine || mgr || com || aud;
+    case 'edit_contacts': return admin || mine;
+    case 'see_notes': return admin || boss || mine || mgr;
+    case 'add_note': return admin || mine;
+    case 'edit_payment': return admin || com;
+    case 'bank_full': return admin || boss || mine || mgr || com;
+    case 'bank_propose': return admin || com;
+    case 'bank_approve': return admin;
+    case 'edit_shipping': return admin || com || mine;
+    case 'see_log': return admin || boss;
+  }
+  return false;
+}
+function bpTabAllowed(k, id) {
+  if (k === 'overview' || k === 'team') return true;
+  if (k === 'contacts') return bpCan('see_contacts', id);
+  if (k === 'payment') return bpCan('see_payment', id);
+  if (k === 'shipping') return bpCan('see_shipping', id);
+  if (k === 'notes') return bpCan('see_notes', id);
+  return false;
+}
+function bpVisibleBuyers() { return (S.buyers || []).filter(function(b){ return bpCanSee(b.id); }); }
+
+// ─── small helpers ───
+function bpEsc(s) { return htmlEsc(s == null ? '' : String(s)); }
+function bpBuyer(id) { return (S.buyers || []).find(function(b){ return b.id === id; }) || null; }
+function bpStatus(k) { return BP_STATUS.find(function(s){ return s.k === (k || 'active'); }) || BP_STATUS[1]; }
+function bpUserName(id) { var u = id ? userById(id) : null; return u ? u.name : ''; }
+function bpNow() { return new Date().toISOString(); }
+function bpDate(d) { if (!d) return ''; var p = String(d).slice(0, 10).split('-'); if (p.length !== 3) return String(d); var m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(p[1]) - 1] || p[1]; return Number(p[2]) + ' ' + m + ' ' + p[0]; }
+function bpLogoOk(s) { return typeof s === 'string' && s.length <= 200000 && /^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+\/=]+$/.test(s); }
+function bpHue(s) { var h = 0; s = String(s || ''); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360; return h; }
+function bpInitials(n) { var w = String(n || '?').trim().split(/\s+/); return ((w[0] || '?')[0] + (w[1] ? w[1][0] : (w[0] || '').slice(1, 2))).toUpperCase(); }
+function bpLogoTag(id, size, name, onlyLogo) {
+  var l = BP.logos[id], s = size || 40;
+  if (bpLogoOk(l)) return '<img class="bp-logo" src="' + l + '" alt="" style="width:' + s + 'px;height:' + s + 'px">';
+  if (onlyLogo) return '';
+  var h = bpHue(name || id);
+  return '<span class="bp-logo bp-logo-txt" style="width:' + s + 'px;height:' + s + 'px;font-size:' + Math.round(s * 0.36) + 'px;background:hsl(' + h + ',32%,90%);color:hsl(' + h + ',45%,28%)">' + bpEsc(bpInitials(name)) + '</span>';
+}
+function bpPill(text, c) { return '<span class="bp-pill bp-' + c + '">' + text + '</span>'; }
+function bpMask(v) { var s = String(v || '').replace(/\s+/g, ''); if (!s) return ''; return '•••• ' + s.slice(-4); }
+function bpRow(k, v) { return '<div class="bp-kv"><span>' + k + '</span><b>' + (v === '' || v == null ? '<i class="bp-empty">Not set</i>' : v) + '</b></div>'; }
+function bpOwner(t) { return '<span class="bp-own">' + t + '</span>'; }
+function bpField(id, label, value, opts) {
+  opts = opts || {};
+  var v = value == null ? '' : value, inner;
+  if (opts.options) inner = '<select id="' + id + '">' + opts.options.map(function(o){ var k = typeof o === 'string' ? o : o.k, n = typeof o === 'string' ? o : o.n; return '<option value="' + bpEsc(k) + '"' + (String(k) === String(v) ? ' selected' : '') + '>' + bpEsc(n) + '</option>'; }).join('') + '</select>';
+  else if (opts.area) inner = '<textarea id="' + id + '" rows="' + (opts.rows || 3) + '" maxlength="' + (opts.max || 2000) + '">' + bpEsc(v) + '</textarea>';
+  else inner = '<input id="' + id + '" type="' + (opts.type || 'text') + '" value="' + bpEsc(v) + '" maxlength="' + (opts.max || 200) + '"' + (opts.ph ? ' placeholder="' + bpEsc(opts.ph) + '"' : '') + (opts.step ? ' step="' + opts.step + '"' : '') + '>';
+  return '<div class="bp-f' + (opts.wide ? ' wide' : '') + '"><label for="' + id + '">' + label + '</label>' + inner + '</div>';
+}
+function bpSameTs(q, col, v) { return v ? q.eq(col, v) : q.is(col, null); }
+function bpVal(id) { var e = $(id); return e ? String(e.value || '').trim() : ''; }
+function bpNull(v) { return v === '' ? null : v; }
+function bpMissingCol(err) { return !!err && (err.code === '42703' || err.code === 'PGRST204' || /column .* does not exist|Could not find the .* column/i.test(err.message || '')); }
+function bpErr(err) {
+  if (!err) return '';
+  if (isTableMissing(err) || bpMissingCol(err)) return 'The buyer profile database update (buyer-profile-migration.sql) has not been run yet.';
+  return err.message || String(err);
+}
+async function bpLog(id, section, summary, oldD, newD) {
+  try { await db.from('buyer_change_log').insert({ buyer_id: id, section: section, summary: summary, old_data: oldD || null, new_data: newD || null, by_id: S.user.id, by_name: S.user.name }); } catch (e) {}
+}
+
+// ─── loading ───
+async function bpLoadLogos() {
+  if (!bpUse()) return;
+  try {
+    var r = await db.from('buyer_logos').select('buyer_id,logo');
+    if (r.error) { if (isTableMissing(r.error)) BP.missing = true; else console.error('bpLoadLogos:', r.error); return; }
+    BP.missing = false;
+    var m = {}; (r.data || []).forEach(function(x){ if (bpLogoOk(x.logo)) m[x.buyer_id] = x.logo; }); BP.logos = m;
+    if (S.user.role === 'admin') {
+      var p = await db.from('buyer_bank_changes').select('id').eq('status', 'pending');
+      BP.pendingBank = p.error ? 0 : (p.data || []).length;
+    }
+  } catch (e) { console.error('bpLoadLogos:', e); }
+}
+async function bpLoadOne(id) {
+  var b = bpBuyer(id) || { id: id, name: '' };
+  var q = function(p){ return p.then(function(r){ return r; }, function(e){ return { error: e }; }); };
+  var fresh = await q(db.from('buyers').select('*').eq('id', id).maybeSingle());
+  if (fresh.data) { Object.assign(b, fresh.data); }
+  var cur = { id: id, team: [], contacts: [], notes: [], payment: null, banking: null, bankChange: null, addresses: [], log: [], manager: null, missing: !!BP.missing };
+  if (BP.missing) { BP.cur = cur; return cur; }
+  var mid = bpMerchantOf(id);
+  var res = await Promise.all([
+    q(db.from('buyer_team').select('*').eq('buyer_id', id)),
+    bpCan('see_contacts', id) ? q(db.from('buyer_contacts').select('*').eq('buyer_id', id).order('created_at')) : Promise.resolve({ data: [] }),
+    bpCan('see_notes', id) ? q(db.from('buyer_notes').select('*').eq('buyer_id', id).order('note_date', { ascending: false }).order('created_at', { ascending: false }).limit(200)) : Promise.resolve({ data: [] }),
+    bpCan('see_payment', id) ? q(db.from('buyer_payment').select('*').eq('buyer_id', id).maybeSingle()) : Promise.resolve({ data: null }),
+    bpCan('see_payment', id) ? q(db.from('buyer_banking').select('*').eq('buyer_id', id).maybeSingle()) : Promise.resolve({ data: null }),
+    bpCan('see_payment', id) ? q(db.from('buyer_bank_changes').select('*').eq('buyer_id', id).eq('status', 'pending').order('requested_at', { ascending: false }).limit(1)) : Promise.resolve({ data: [] }),
+    bpCan('see_shipping', id) ? q(db.from('buyer_addresses').select('*').eq('buyer_id', id).order('created_at')) : Promise.resolve({ data: [] }),
+    bpCan('see_log', id) ? q(db.from('buyer_change_log').select('*').eq('buyer_id', id).order('at', { ascending: false }).limit(40)) : Promise.resolve({ data: [] }),
+    mid ? q(db.from('manager_assignments').select('manager_id').eq('merchant_id', mid)) : Promise.resolve({ data: [] })
+  ]);
+  if (res[0].error && isTableMissing(res[0].error)) { BP.missing = true; cur.missing = true; BP.cur = cur; return cur; }
+  cur.team = res[0].data || []; cur.contacts = res[1].data || []; cur.notes = res[2].data || [];
+  cur.payment = res[3].data || null; cur.banking = res[4].data || null; cur.bankChange = (res[5].data || [])[0] || null;
+  if (!bpCan('bank_full', id)) {
+    if (cur.banking) cur.banking = Object.assign({}, cur.banking, { data: bpMaskData(cur.banking.data) });
+    if (cur.bankChange) cur.bankChange = Object.assign({}, cur.bankChange, { data: bpMaskData(cur.bankChange.data), old_data: bpMaskData(cur.bankChange.old_data) });
+  }
+  cur.addresses = res[6].data || []; cur.log = res[7].data || [];
+  cur.manager = ((res[8].data || [])[0] || {}).manager_id || null;
+  BP.cur = cur;
+  return cur;
+}
+
+// ─── routing ───
+function bpIsView(v) { return typeof v === 'string' && (v === 'buyers' || v.indexOf('buyer:') === 0); }
+function bpOpen(v) {
+  if (!bpUse()) { toast('You don’t have access to this page'); return false; }
+  if (v !== 'buyers') {
+    var id = v.split(':')[1];
+    if (!bpBuyer(id)) { toast('That buyer was not found'); return false; }
+    if (!bpCanSee(id)) { toast('This buyer is not assigned to you'); return false; }
+  }
+  return true;
+}
+function bpRender(v) {
+  var c = $('content'); if (!c) return;
+  c.dataset.page = 'buyers';
+  if (v === 'buyers') return bpRenderList();
+  var p = v.split(':'), id = p[1], tab = p[2] || 'overview';
+  if (!bpBuyer(id) || !bpCanSee(id)) { S.view = 'buyers'; BP.cur = null; return bpRenderList(); }
+  if (!bpTabAllowed(tab, id)) tab = 'overview';
+  bpRenderProfile(id, tab);
+}
+function bpGo(id, tab) { setView('buyer:' + id + ':' + (tab || 'overview')); }
+
+// ─── the list ───
+function bpLiveOrders(id) {
+  return (S.orders || []).filter(function(o){ return buyerIdOfOrder(o) === id; });
+}
+function bpRenderList() {
+  var all = bpVisibleBuyers(), q = BP.q.toLowerCase();
+  var shown = all.filter(function(b){
+    if (BP.fStatus && (b.status || 'active') !== BP.fStatus) return false;
+    if (BP.fTier && (b.tier || '') !== BP.fTier) return false;
+    if (!q) return true;
+    return [b.name, b.code, b.country, b.legal_name, b.brands, bpUserName(bpMerchantOf(b.id))].join(' ').toLowerCase().indexOf(q) !== -1;
+  }).sort(function(a, b){ return (a.name || '').localeCompare(b.name || ''); });
+  var admin = S.user.role === 'admin';
+  var warn = BP.missing ? '<div class="bp-warn">' + (admin
+      ? 'Buyer profiles are not switched on yet. Take a backup, run <b>buyer-profile-migration.sql</b> in Supabase, then reload. Your buyers and orders are not affected either way.'
+      : 'Buyer profiles are being set up. You can see the buyer list; the details will appear once Admin finishes the setup.') + '</div>' : '';
+  var bank = admin && BP.pendingBank ? '<div class="bp-warn" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span><b>' + BP.pendingBank + ' bank detail change' + (BP.pendingBank === 1 ? '' : 's') + '</b> waiting for your approval.</span><button class="btn" onclick="bpShowPendingBank()">Show</button></div>' : '';
+  var chips = '<button class="bp-chip' + (!BP.fStatus ? ' on' : '') + '" onclick="BP.fStatus=\'\';bpRenderList()">All</button>' + BP_STATUS.map(function(s){
+    var n = all.filter(function(b){ return (b.status || 'active') === s.k; }).length;
+    return '<button class="bp-chip' + (BP.fStatus === s.k ? ' on' : '') + '" onclick="BP.fStatus=\'' + s.k + '\';bpRenderList()">' + s.n + ' <span>' + n + '</span></button>';
+  }).join('');
+  var tiers = '<select id="bp-tier" onchange="BP.fTier=this.value;bpRenderList()"><option value="">Any tier</option>' + BP_TIERS.map(function(t){ return '<option' + (BP.fTier === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>';
+  var cards = shown.map(function(b){
+    var st = bpStatus(b.status), mid = bpMerchantOf(b.id), lo = bpLiveOrders(b.id);
+    return '<button class="bp-card" onclick="bpGo(\'' + b.id + '\')">' + bpLogoTag(b.id, 44, b.name)
+      + '<div class="bp-card-main"><div class="bp-card-name">' + bpEsc(b.name) + '</div>'
+      + '<div class="bp-card-sub">' + [b.code ? bpEsc(b.code) : '', b.country ? bpEsc(b.country) : ''].filter(Boolean).join(' &middot; ') + '</div>'
+      + '<div class="bp-card-tags">' + bpPill(st.n, st.c) + (b.tier ? bpPill('Tier ' + bpEsc(b.tier), 'b') : '') + '</div></div>'
+      + '<div class="bp-card-side"><div>' + (mid ? bpEsc(bpUserName(mid)) : '<span style="color:var(--red)">No merchant</span>') + '</div>'
+      + (lo.length ? '<div class="bp-card-n">' + lo.length + ' live order' + (lo.length === 1 ? '' : 's') + '</div>' : '') + '</div></button>';
+  }).join('');
+  rqSetHead('Customers', 'Buyers', all.length + ' buyer' + (all.length === 1 ? '' : 's') + (S.user.role === 'merchant' || S.user.role === 'jm' ? ' assigned to you' : ''), admin ? '<button class="btn pri" onclick="bpNewBuyer()">+ New buyer</button>' : '');
+  $('content').innerHTML = '<div class="bp-page">'
+    + warn + bank
+    + '<div class="bp-filters"><input id="bp-q" type="search" placeholder="Search name, code, country, merchant…" value="' + bpEsc(BP.q) + '" oninput="BP.q=this.value;bpRenderList();var e=$(\'bp-q\');e.focus();e.setSelectionRange(e.value.length,e.value.length)">' + tiers + '<div class="bp-chips">' + chips + '</div></div>'
+    + (cards ? '<div class="bp-grid">' + cards + '</div>' : '<div class="bp-none">' + (all.length ? 'No buyer matches.' : 'No buyers to show.') + '</div>')
+    + '</div>';
+}
+function bpNewBuyer() {
+  if (S.user.role !== 'admin') return;
+  bpModal('New buyer', 'Add the rest of the profile after it is created', '<div class="bp-form">' + bpField('bpnew-name', 'Buyer name, as it should appear on orders', '', { wide: true, ph: 'e.g. Gemo', max: 120 }) + '</div>', 'Add buyer', async function(){
+    if (!S.user || S.user.role !== 'admin') return 'Only Admin can add buyers.';
+    var name = bpVal('bpnew-name');
+    if (!name) return 'Enter the buyer\u2019s name.';
+    if ((S.buyers || []).some(function(b){ return (b.name || '').trim().toLowerCase() === name.toLowerCase(); })) return 'A buyer with this name already exists.';
+    var r = await db.from('buyers').insert({ name: name }).select().single();
+    if (r.error) return 'Buyer not added: ' + r.error.message;
+    S.buyers.push(r.data); S.buyers.sort(function(a, b){ return (a.name || '').localeCompare(b.name || ''); });
+    BP._goAfter = r.data.id;
+  });
+}
+
+// ─── one profile ───
+async function bpRenderProfile(id, tab) {
+  var b = bpBuyer(id);
+  if (!BP.cur || BP.cur.id !== id) {
+    rqSetHead('Buyers', 'Buyer profile', '', '');
+    $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading buyer…</div>';
+    await bpLoadOne(id);
+    if (S.view.indexOf('buyer:' + id) !== 0) return; // moved away while loading
+  }
+  var cur = BP.cur, st = bpStatus(b.status), mid = bpMerchantOf(id);
+  var sub = [b.code ? 'Code ' + bpEsc(b.code) : '', b.country ? bpEsc(b.country) : '', b.customer_since ? 'Customer since ' + bpEsc(String(b.customer_since).slice(0, 4)) : '',
+    b.companies ? 'Buys from ' + bpEsc(String(b.companies).split(',').join(', ')) : '', 'Main merchant: ' + (mid ? bpEsc(bpUserName(mid)) : '<span style="color:var(--red)">not assigned</span>')].filter(Boolean).join(' &middot; ');
+  var logo = bpCan('logo', id) && !cur.missing
+    ? '<button class="bp-logo-btn" title="Change logo" onclick="bpLogoPick(\'' + id + '\')">' + bpLogoTag(id, 56, b.name) + '<span class="bp-logo-cap">Change</span></button>'
+    : bpLogoTag(id, 56, b.name);
+  var tabs = BP_TABS.filter(function(t){ return bpTabAllowed(t.k, id); }).map(function(t){
+    var extra = t.k === 'payment' && cur.bankChange ? ' <span class="bp-dot"></span>' : '';
+    return '<button class="bp-tab' + (t.k === tab ? ' on' : '') + '" onclick="bpGo(\'' + id + '\',\'' + t.k + '\')">' + t.n + extra + '</button>';
+  }).join('');
+  var body = cur.missing && tab !== 'overview' ? '' : ({ overview: bpTabOverview, team: bpTabTeam, contacts: bpTabContacts, payment: bpTabPayment, shipping: bpTabShipping, notes: bpTabNotes }[tab] || bpTabOverview)(id, b, cur);
+  rqSetHead('Buyers', 'Buyer profile', '', '<button class="btn" onclick="setView(\'buyers\')">&larr; All buyers</button>');
+  $('content').innerHTML = '<div class="bp-page">'
+    + '<div class="bp-head">' + logo + '<div class="bp-head-main"><div class="bp-head-name"><h1 class="bp-h1">' + bpEsc(b.name) + '</h1>' + bpPill(st.n, st.c) + (b.tier ? bpPill('Tier ' + bpEsc(b.tier), 'b') : '') + '</div><div class="bp-sub">' + sub + '</div></div></div>'
+    + (cur.missing ? '<div class="bp-warn">Buyer profile details are not switched on yet' + (S.user.role === 'admin' ? ': run <b>buyer-profile-migration.sql</b> in Supabase, then reload.' : '.') + '</div>' : '')
+    + '<div class="bp-tabs">' + tabs + '</div>' + body + '</div>'
+    + '<input type="file" id="bp-logo-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display:none" onchange="bpLogoChosen(this)">';
+}
+function bpCardHead(title, owner, action) {
+  return '<div class="bp-ch"><b>' + title + '</b>' + (owner ? bpOwner(owner) : '') + '<span style="flex:1"></span>' + (action || '') + '</div>';
+}
+function bpLinkBtn(label, js) { return '<button class="bp-link" onclick="' + js + '">' + label + '</button>'; }
+
+// Overview
+function bpTabOverview(id, b, cur) {
+  var editBtn = bpCan('edit_overview', id) && !cur.missing ? bpLinkBtn('Edit', 'bpEditOverview(\'' + id + '\')') : '';
+  var company = '<div class="bp-box">' + bpCardHead('Company', 'Admin', editBtn)
+    + bpRow('Legal name', bpEsc(b.legal_name)) + bpRow('Brands', bpEsc(b.brands)) + bpRow('Parent group', bpEsc(b.parent_group))
+    + bpRow('Head office', bpEsc(b.country)) + bpRow('Website', b.website ? bpEsc(b.website) : '') + bpRow('Products', bpEsc(b.products))
+    + bpRow('Buying agent', bpEsc(b.agent)) + bpRow('Buys from', bpEsc(b.companies ? String(b.companies).split(',').join(', ') : ''))
+    + bpRow('Customer since', b.customer_since ? bpDate(b.customer_since) : '')
+    + (b.profile_note ? '<div class="bp-note-txt">' + bpEsc(b.profile_note) + '</div>' : '') + '</div>';
+  var team = '<div class="bp-box">' + bpCardHead('Our team', 'Admin', bpLinkBtn('Open', 'bpGo(\'' + id + '\',\'team\')')) + bpTeamList(id, cur, true) + '</div>';
+  var contacts = bpCan('see_contacts', id) ? '<div class="bp-box">' + bpCardHead('Buyer contacts', 'Merchant', bpLinkBtn(cur.contacts.length ? 'All ' + cur.contacts.length : 'Add', 'bpGo(\'' + id + '\',\'contacts\')'))
+    + (cur.contacts.length ? cur.contacts.slice(0, 5).map(function(c){ return '<div class="bp-li"><div><b>' + bpEsc(c.name) + '</b><span>' + bpEsc(c.role || '') + '</span></div><span class="bp-li-r">' + bpEsc(c.email || c.phone || '') + '</span></div>'; }).join('') : '<div class="bp-empty-box">No contacts yet.</div>') + '</div>' : '';
+  var notes = bpCan('see_notes', id) ? '<div class="bp-box">' + bpCardHead('Latest notes', 'Merchant', bpLinkBtn('All notes', 'bpGo(\'' + id + '\',\'notes\')'))
+    + (cur.notes.length ? cur.notes.slice(0, 3).map(function(n){ return '<div class="bp-note-li"><b>' + bpEsc(bpDate(n.note_date || n.created_at)) + ' &middot; ' + bpEsc((BP_NOTE_KINDS.find(function(k){ return k.k === n.kind; }) || { n: 'Note' }).n) + '</b> &mdash; ' + bpEsc(n.note) + '</div>'; }).join('') : '<div class="bp-empty-box">No notes yet.</div>') + '</div>' : '';
+  var lo = bpLiveOrders(id), pcs = lo.reduce(function(s, o){ return s + (Number(o.qty) || 0); }, 0), val = lo.reduce(function(s, o){ return s + (Number(o.qty) || 0) * (Number(o.fob) || 0); }, 0);
+  var glance = '<div class="bp-box">' + bpCardHead('At a glance')
+    + bpRow('Live orders', lo.length ? lo.length + ' &middot; ' + fmt(pcs) + ' pcs' : (S.user.role === 'commercial' ? '' : '0'))
+    + bpRow('Live order value', lo.length ? money(val) : '')
+    + (bpCan('see_payment', id) ? bpRow('Payment terms', bpEsc(payTermsLabel(buyerDefaultTerms(id).terms, buyerDefaultTerms(id).days))) : '')
+    + (bpCan('see_shipping', id) ? bpRow('Ship-to addresses', String(cur.addresses.length)) : '') + '</div>';
+  var alerts = [];
+  if (!bpMerchantOf(id)) alerts.push(['r', 'No main merchant assigned']);
+  if (cur.bankChange && bpCan('see_payment', id)) alerts.push(['a', 'A bank detail change is waiting for Admin approval']);
+  if (bpCan('see_shipping', id) && !cur.missing && !cur.addresses.length) alerts.push(['a', 'No ship-to address yet']);
+  var al = alerts.length ? '<div class="bp-box">' + bpCardHead('Alerts') + alerts.map(function(a){ return '<div class="bp-alert bp-alert-' + a[0] + '">' + a[1] + '</div>'; }).join('') + '</div>' : '';
+  var orders = lo.length ? '<div class="bp-box">' + bpCardHead('Live orders') + lo.slice().sort(function(a, c){ return String(a.ship_date || '').localeCompare(String(c.ship_date || '')); }).slice(0, 8).map(function(o){
+      return '<div class="bp-li"><div><b>' + bpEsc(o.style || '') + '</b><span>' + bpEsc(o.po_number || '') + '</span></div><span class="bp-li-r">' + fmt(o.qty) + ' pcs' + (o.ship_date ? ' &middot; ' + bpEsc(bpDate(o.ship_date)) : '') + '</span></div>';
+    }).join('') + '</div>' : '';
+  return '<div class="bp-cols"><div class="bp-col">' + company + team + '</div><div class="bp-col">' + contacts + notes + '</div><div class="bp-col bp-side">' + glance + al + orders + '</div></div>';
+}
+function bpTeamList(id, cur, compact) {
+  var mid = bpMerchantOf(id), rows = [];
+  rows.push(['Main merchant', mid]);
+  BP_TEAM_ROLES.forEach(function(r){ var t = cur.team.find(function(x){ return x.role === r.k; }); rows.push([r.n, t ? t.user_id : null]); });
+  rows.splice(2, 0, ['Merchant manager', cur.manager]);
+  return rows.filter(function(r){ return !compact || r[1]; }).map(function(r){
+    var n = bpUserName(r[1]);
+    return '<div class="bp-person"><span class="bp-av">' + (n ? bpEsc(bpInitials(n)) : '&ndash;') + '</span><div><b>' + (n ? bpEsc(n) : '<i class="bp-empty">Not set</i>') + '</b><span>' + r[0] + '</span></div></div>';
+  }).join('') || '<div class="bp-empty-box">Nobody assigned yet.</div>';
+}
+function bpEditOverview(id) {
+  if (!bpCan('edit_overview', id)) return;
+  var b = bpBuyer(id);
+  var comps = (S.companies && S.companies.length ? S.companies.map(function(c){ return c.code; }) : ['MTS', 'BFL', 'BKL']);
+  var have = String(b.companies || '').split(',');
+  var body = '<div class="bp-form">'
+    + '<div class="bp-f wide"><label>Display name</label><div class="bp-fixed">' + bpEsc(b.name) + ' <span>(shown on orders; not changed here so old orders stay linked)</span></div></div>'
+    + bpField('bpo-legal', 'Legal name', b.legal_name, { wide: true }) + bpField('bpo-code', 'Short code', b.code, { max: 12, ph: 'e.g. GEM' })
+    + bpField('bpo-country', 'Head office country', b.country) + bpField('bpo-brands', 'Brands', b.brands, { ph: 'e.g. Gemo, Gemo Kids' })
+    + bpField('bpo-group', 'Parent group', b.parent_group) + bpField('bpo-web', 'Website', b.website, { ph: 'www…' })
+    + bpField('bpo-agent', 'Buying agent', b.agent, { ph: 'Direct, or the agent’s name' })
+    + bpField('bpo-products', 'Products', b.products, { wide: true, ph: 'e.g. Ladies, kids · 3, 7, 12 GG' })
+    + bpField('bpo-status', 'Status', b.status || 'active', { options: BP_STATUS })
+    + bpField('bpo-tier', 'Tier', b.tier || '', { options: [{ k: '', n: 'Not set' }].concat(BP_TIERS.map(function(t){ return { k: t, n: t }; })) })
+    + bpField('bpo-since', 'Customer since', b.customer_since ? String(b.customer_since).slice(0, 10) : '', { type: 'date' })
+    + '<div class="bp-f"><label>Buys from</label><div class="bp-checks">' + comps.map(function(c){ return '<label><input type="checkbox" class="bpo-co" value="' + bpEsc(c) + '"' + (have.indexOf(c) !== -1 ? ' checked' : '') + '> ' + bpEsc(c) + '</label>'; }).join('') + '</div></div>'
+    + bpField('bpo-note', 'Note', b.profile_note, { area: true, wide: true, rows: 2 })
+    + '</div>';
+  bpModal('Edit company details', b.name, body, 'Save', function(){ return bpSaveOverview(id); });
+}
+async function bpSaveOverview(id) {
+  if (!bpCan('edit_overview', id)) return 'You don\u2019t have permission to change this.';
+  var b = bpBuyer(id);
+  var cos = Array.from(document.querySelectorAll('.bpo-co')).filter(function(e){ return e.checked; }).map(function(e){ return e.value; }).join(',');
+  var since = bpVal('bpo-since');
+  if (since && !/^\d{4}-\d{2}-\d{2}$/.test(since)) return 'Check the date.';
+  var row = { legal_name: bpNull(bpVal('bpo-legal')), code: bpNull(bpVal('bpo-code').toUpperCase()), country: bpNull(bpVal('bpo-country')), brands: bpNull(bpVal('bpo-brands')),
+    parent_group: bpNull(bpVal('bpo-group')), website: bpNull(bpVal('bpo-web')), agent: bpNull(bpVal('bpo-agent')), products: bpNull(bpVal('bpo-products')),
+    status: bpVal('bpo-status') || 'active', tier: bpNull(bpVal('bpo-tier')), customer_since: bpNull(since), companies: bpNull(cos), profile_note: bpNull(bpVal('bpo-note')),
+    profile_updated_at: bpNow(), profile_updated_by: S.user.name };
+  if (row.code && (S.buyers || []).some(function(x){ return x.id !== id && (x.code || '').toUpperCase() === row.code; })) return 'Another buyer already uses the code ' + row.code + '.';
+  var qy = db.from('buyers').update(row).eq('id', id);
+  qy = b.profile_updated_at ? qy.eq('profile_updated_at', b.profile_updated_at) : qy.is('profile_updated_at', null);
+  var r = await qy.select('id');
+  if (r.error) return bpErr(r.error);
+  if (!r.data || !r.data.length) { await bpLoadOne(id); bpRender(S.view); return 'Someone else changed this buyer a moment ago. The latest details are now shown — please make your change again.'; }
+  var old = {}; Object.keys(row).forEach(function(k){ old[k] = b[k] == null ? null : b[k]; });
+  Object.assign(b, row);
+  bpLog(id, 'overview', 'Company details updated', old, row);
+}
+
+// Our team
+function bpTabTeam(id, b, cur) {
+  var admin = bpCan('edit_team', id), mid = bpMerchantOf(id);
+  var main = '<div class="bp-box">' + bpCardHead('Main merchant', 'Admin', admin ? bpLinkBtn(mid ? 'Change / transfer' : 'Assign', 'bpChangeMain(\'' + id + '\')') : '')
+    + '<div class="bp-person"><span class="bp-av">' + (mid ? bpEsc(bpInitials(bpUserName(mid))) : '&ndash;') + '</span><div><b>' + (mid ? bpEsc(bpUserName(mid)) : '<i class="bp-empty">Not assigned</i>') + '</b><span>Sees and works this buyer’s orders</span></div></div>'
+    + '<div class="bp-hint">Changing the main merchant uses the same Transfer buyer step as before, so the buyer’s live orders and bookings move together.</div>'
+    + bpRow('Merchant manager', cur.manager ? bpEsc(bpUserName(cur.manager)) : '') + '</div>';
+  var others = '<div class="bp-box">' + bpCardHead('Team', 'Admin', '') + BP_TEAM_ROLES.map(function(r){
+    var t = cur.team.find(function(x){ return x.role === r.k; }), uid = t ? t.user_id : '';
+    if (!admin || cur.missing) return bpRow(r.n, uid ? bpEsc(bpUserName(uid)) : '');
+    var people = (S.users || []).filter(function(u){ return u.role !== 'dept' && (!r.roles || r.roles.indexOf(u.role) !== -1); }).sort(function(a, c){ return a.name.localeCompare(c.name); });
+    return '<div class="bp-kv"><span>' + r.n + '</span><select id="bpt-' + r.k + '" onchange="bpSaveTeam(\'' + id + '\',\'' + r.k + '\')"><option value="">Not set</option>' + people.map(function(u){ return '<option value="' + u.id + '"' + (u.id === uid ? ' selected' : '') + '>' + bpEsc(u.name) + ' (' + bpEsc(roleLabel(u.role)) + ')</option>'; }).join('') + '</select></div>';
+  }).join('') + (admin ? '<div class="bp-hint">The backup merchant is shown on the profile only; it does not change who can open the buyer’s orders.</div>' : '') + '</div>';
+  return '<div class="bp-cols bp-cols-2"><div class="bp-col">' + main + others + '</div><div class="bp-col">' + bpHistoryBox(id, cur, ['team', 'overview', 'logo']) + '</div></div>';
+}
+function bpChangeMain(id) {
+  if (S.user.role !== 'admin') return;
+  if (!bpMerchantOf(id)) { // nobody to transfer from: a simple assignment
+    var ms = (S.users || []).filter(function(u){ return u.role === 'merchant'; }).sort(function(a, b){ return a.name.localeCompare(b.name); });
+    bpModal('Assign main merchant', bpBuyer(id).name, '<div class="bp-form">' + bpField('bpm-merchant', 'Merchant', '', { wide: true, options: [{ k: '', n: 'Choose a merchant' }].concat(ms.map(function(u){ return { k: u.id, n: u.name + (u.division ? ' (' + u.division + ')' : '') }; })) }) + '</div>', 'Assign', async function(){
+      if (S.user.role !== 'admin') return 'Only Admin can assign buyers.';
+      var mid = bpVal('bpm-merchant');
+      if (!mid) return 'Choose a merchant.';
+      if (bpMerchantOf(id)) return 'Someone assigned this buyer a moment ago. Close this and use Change / transfer.';
+      var r = await db.from('buyer_assignments').upsert({ buyer_id: id, merchant_id: mid });
+      if (r.error) return 'Not saved: ' + r.error.message;
+      S.buyerAssignments[id] = mid; S.boardCache = {};
+      bpMerchantChanged(id, null, mid); BP.cur = null; renderRail();
+    });
+    return;
+  }
+  openTransferBuyer();
+  setTimeout(function(){ try { _tb.buyerId = id; _tb.fromId = bpMerchantOf(id) || ''; renderTransferBuyer(); } catch (e) {} }, 300);
+}
+async function bpSaveTeam(id, role) {
+  if (!bpCan('edit_team', id)) return;
+  var cur = BP.cur, sel = $('bpt-' + role), uid = sel ? sel.value : '';
+  var old = cur.team.find(function(x){ return x.role === role; });
+  var r = uid ? await db.from('buyer_team').upsert({ buyer_id: id, role: role, user_id: uid, updated_at: bpNow(), updated_by: S.user.name }, { onConflict: 'buyer_id,role' }).select()
+              : await db.from('buyer_team').delete().eq('buyer_id', id).eq('role', role);
+  if (r.error) { showSaveError('Not saved: ' + bpErr(r.error)); bpRender(S.view); return; }
+  cur.team = cur.team.filter(function(x){ return x.role !== role; }); if (uid) cur.team.push((r.data || [])[0] || { buyer_id: id, role: role, user_id: uid });
+  var rn = (BP_TEAM_ROLES.find(function(x){ return x.k === role; }) || {}).n;
+  bpLog(id, 'team', rn + ': ' + (old ? bpUserName(old.user_id) : 'not set') + ' → ' + (uid ? bpUserName(uid) : 'not set'), old ? { user_id: old.user_id } : null, uid ? { user_id: uid } : null);
+  toast(rn + ' saved', 'ok-t');
+}
+function bpHistoryBox(id, cur, sections) {
+  if (!bpCan('see_log', id)) return '';
+  var rows = cur.log.filter(function(l){ return !sections || sections.indexOf(l.section) !== -1; }).slice(0, 15);
+  return '<div class="bp-box">' + bpCardHead('Change history', 'Admin & management') + (rows.length ? rows.map(function(l){
+    return '<div class="bp-log"><span>' + bpEsc(bpDate(l.at)) + '</span><div><b>' + bpEsc(l.summary || l.section) + '</b><i>' + bpEsc(l.by_name || '') + '</i></div></div>';
+  }).join('') : '<div class="bp-empty-box">No changes recorded yet.</div>') + '</div>';
+}
+
+// Contacts
+function bpTabContacts(id, b, cur) {
+  var can = bpCan('edit_contacts', id);
+  var rows = cur.contacts.map(function(c){
+    return '<tr><td><b>' + bpEsc(c.name) + '</b>' + (c.brand ? '<div class="bp-small">' + bpEsc(c.brand) + '</div>' : '') + '</td><td>' + bpEsc(c.role || '') + '</td><td>' + bpEsc(c.email || '') + '</td><td>' + bpEsc(c.phone || '') + '</td><td class="bp-small">' + bpEsc(c.notes || '') + '</td>'
+      + '<td style="white-space:nowrap;text-align:right">' + (can ? bpLinkBtn('Edit', 'bpEditContact(\'' + id + '\',\'' + c.id + '\')') + ' ' + bpLinkBtn('Remove', 'bpDelContact(\'' + id + '\',\'' + c.id + '\')') : '') + '</td></tr>';
+  }).join('');
+  return '<div class="bp-box">' + bpCardHead('Buyer contacts', 'Merchant', can ? '<button class="btn" onclick="bpEditContact(\'' + id + '\')">+ Add contact</button>' : '')
+    + (rows ? '<div class="bp-scroll"><table class="bp-table"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Phone</th><th>Notes</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' : '<div class="bp-empty-box">No contacts yet.' + (can ? ' Add the buyer, designer, technologist, QA, logistics and accounts people here.' : '') + '</div>') + '</div>';
+}
+function bpEditContact(id, cid) {
+  if (!bpCan('edit_contacts', id)) return;
+  var c = cid ? BP.cur.contacts.find(function(x){ return x.id === cid; }) : {};
+  if (!c) return;
+  var body = '<div class="bp-form">' + bpField('bpc-name', 'Name', c.name, { ph: 'Full name' }) + bpField('bpc-role', 'Role', c.role, { ph: 'Buyer, designer, QA, logistics…' })
+    + bpField('bpc-email', 'Email', c.email, { type: 'email' }) + bpField('bpc-phone', 'Phone', c.phone)
+    + bpField('bpc-brand', 'Brand', c.brand) + bpField('bpc-notes', 'Notes', c.notes, { area: true, wide: true, rows: 2 }) + '</div>';
+  bpModal(cid ? 'Edit contact' : 'Add contact', bpBuyer(id).name, body, cid ? 'Save' : 'Add contact', function(){ return bpSaveContact(id, cid); });
+}
+async function bpSaveContact(id, cid) {
+  if (!bpCan('edit_contacts', id)) return 'You don\u2019t have permission to change this.';
+  var row = { name: bpVal('bpc-name'), role: bpNull(bpVal('bpc-role')), email: bpNull(bpVal('bpc-email')), phone: bpNull(bpVal('bpc-phone')), brand: bpNull(bpVal('bpc-brand')), notes: bpNull(bpVal('bpc-notes')), updated_at: bpNow(), updated_by: S.user.name };
+  if (!row.name) return 'Enter the contact’s name.';
+  if (row.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email)) return 'Check the email address.';
+  var r;
+  if (cid) {
+    var old = BP.cur.contacts.find(function(x){ return x.id === cid; });
+    if (!old) { await bpLoadOne(id); bpRender(S.view); return 'This contact was removed a moment ago. The latest list is now shown.'; }
+    r = await bpSameTs(db.from('buyer_contacts').update(row).eq('id', cid), 'updated_at', old.updated_at).select();
+    if (!r.error && (!r.data || !r.data.length)) { await bpLoadOne(id); bpRender(S.view); return 'Someone else changed or removed this contact a moment ago. The latest list is now shown.'; }
+  } else {
+    row.buyer_id = id; row.created_by = S.user.name;
+    r = await db.from('buyer_contacts').insert(row).select();
+  }
+  if (r.error) return bpErr(r.error);
+  var saved = r.data[0];
+  BP.cur.contacts = BP.cur.contacts.filter(function(x){ return x.id !== saved.id; }).concat([saved]);
+  bpLog(id, 'contacts', (cid ? 'Contact updated: ' : 'Contact added: ') + saved.name);
+}
+async function bpDelContact(id, cid) {
+  if (!bpCan('edit_contacts', id)) return;
+  var c = BP.cur.contacts.find(function(x){ return x.id === cid; }); if (!c) return;
+  var ok = await appConfirm('Remove ' + c.name + ' from this buyer’s contacts?', { title: 'Remove contact', okText: 'Remove', danger: true });
+  if (!ok) return;
+  var r = await db.from('buyer_contacts').delete().eq('id', cid);
+  if (r.error) { showSaveError('Not removed: ' + bpErr(r.error)); return; }
+  BP.cur.contacts = BP.cur.contacts.filter(function(x){ return x.id !== cid; });
+  bpLog(id, 'contacts', 'Contact removed: ' + c.name, c, null);
+  bpRender(S.view);
+}
+
+// Payment & banking
+function bpCompanyBank(code) { var c = (S.companies || []).find(function(x){ return x.code === code; }); return c ? { bank: c.bank_name || '', account: c.bank_account || '' } : { bank: '', account: '' }; }
+function bpTabPayment(id, b, cur) {
+  var canPay = bpCan('edit_payment', id), full = bpCan('bank_full', id), p = cur.payment || {}, dt = buyerDefaultTerms(id);
+  var bd = (cur.banking && cur.banking.data) || {};
+  var pend = '';
+  if (cur.bankChange) {
+    var ch = cur.bankChange;
+    pend = '<div class="bp-pending"><div><b>Bank change waiting for Admin approval.</b> ' + bpEsc(ch.requested_by || '') + ' asked to change the bank details on ' + bpEsc(bpDate(ch.requested_at)) + '. Nothing changes until Admin approves.'
+      + (ch.note ? '<div class="bp-small">Reason: ' + bpEsc(ch.note) + '</div>' : '') + '</div><div class="bp-pending-btns">'
+      + (full ? bpLinkBtn('See change', 'bpShowBankChange(\'' + id + '\')') : '')
+      + (bpCan('bank_approve', id) ? '<button class="btn" onclick="bpDecideBank(\'' + id + '\',false)">Reject</button><button class="btn pri" onclick="bpDecideBank(\'' + id + '\',true)">Approve</button>' : '') + '</div></div>';
+  }
+  var terms = '<div class="bp-box">' + bpCardHead('Payment terms', 'Commercial', canPay && !cur.missing ? bpLinkBtn('Edit', 'bpEditPayment(\'' + id + '\')') : '')
+    + bpRow('Terms', bpEsc(payTermsLabel(dt.terms, dt.days))) + bpRow('Currency', bpEsc(p.currency)) + bpRow('Default Incoterm', bpEsc([p.incoterm, p.port_loading].filter(Boolean).join(' ')))
+    + bpRow('Agent commission', p.commission_pct != null ? bpEsc(p.commission_pct) + '%' + (p.agent_name ? ' &middot; ' + bpEsc(p.agent_name) : '') : bpEsc(p.agent_name))
+    + bpRow('Invoice to', bpEsc(p.invoice_to)) + bpRow('Documents required', bpEsc(p.docs_required))
+    + (p.notes ? '<div class="bp-note-txt">' + bpEsc(p.notes) + '</div>' : '')
+    + '<div class="bp-hint">The payment terms here are the same buyer default used for new orders and the commercial due dates.</div></div>';
+  var bankRows = BP_BANK_FIELDS.map(function(f){ var v = bd[f.k]; return bpRow(f.n, v ? bpEsc(f.secret && !full ? bpMask(v) : v) : ''); }).join('');
+  var comps = (S.companies && S.companies.length ? S.companies : [{ code: 'MTS' }, { code: 'BFL' }, { code: 'BKL' }]);
+  var recv = comps.map(function(c){
+    var o = (bd.recv || {})[c.code] || {}, def = bpCompanyBank(c.code), bank = o.bank || def.bank, acc = o.account || def.account;
+    if (!bank && !acc) return '';
+    return bpRow('We receive at &middot; ' + bpEsc(c.code), bpEsc([bank, acc ? 'a/c ' + (full ? acc : bpMask(acc)) : ''].filter(Boolean).join(' · ')) + (o.bank || o.account ? '' : ' <span class="bp-small">(company default)</span>'));
+  }).join('');
+  var bankBtn = bpCan('bank_propose', id) && !cur.missing && !cur.bankChange ? bpLinkBtn(S.user.role === 'admin' ? 'Edit' : 'Request change', 'bpEditBank(\'' + id + '\')') : '';
+  var bank = '<div class="bp-box">' + bpCardHead('Banking', 'Commercial · Admin approves', bankBtn) + bankRows + recv
+    + '<div class="bp-hint">' + (full ? 'Full account numbers are shown to Commercial, the buyer’s merchants, managers, HOD, management and Admin.' : 'Account numbers are hidden except the last 4 digits.') + ' Every change is logged.'
+    + (cur.banking && cur.banking.approved_by ? ' Last approved by ' + bpEsc(cur.banking.approved_by) + ' on ' + bpEsc(bpDate(cur.banking.updated_at)) + '.' : '') + '</div></div>';
+  return pend + '<div class="bp-cols bp-cols-2"><div class="bp-col">' + terms + '</div><div class="bp-col">' + bank + bpHistoryBox(id, cur, ['payment', 'banking']) + '</div></div>';
+}
+function bpEditPayment(id) {
+  if (!bpCan('edit_payment', id)) return;
+  var p = BP.cur.payment || {}, dt = buyerDefaultTerms(id), def = payTermDef(dt.terms);
+  var body = '<div class="bp-form">'
+    + '<div class="bp-f"><label for="bpp-terms">Payment terms</label><select id="bpp-terms" onchange="bpTermsChanged()">' + payTermsOptions(dt.terms) + '</select></div>'
+    + bpField('bpp-days', 'Days', def && def.needDays ? (dt.days != null ? dt.days : def.days) : '', { type: 'number' })
+    + bpField('bpp-cur', 'Currency', p.currency || 'USD', { options: BP_CURRENCIES })
+    + bpField('bpp-inco', 'Default Incoterm', p.incoterm || 'FOB', { options: BP_INCOTERMS })
+    + bpField('bpp-port', 'Port / place', p.port_loading, { ph: 'e.g. Chattogram' })
+    + bpField('bpp-comm', 'Agent commission %', p.commission_pct, { type: 'number', step: '0.01' })
+    + bpField('bpp-agent', 'Agent / commission paid to', p.agent_name)
+    + bpField('bpp-inv', 'Invoice to', p.invoice_to, { area: true, wide: true, rows: 2 })
+    + bpField('bpp-docs', 'Documents required', p.docs_required, { area: true, wide: true, rows: 2, ph: 'Invoice, packing list, BL, certificate of origin…' })
+    + bpField('bpp-notes', 'Notes', p.notes, { area: true, wide: true, rows: 2 }) + '</div>';
+  bpModal('Edit payment terms', bpBuyer(id).name, body, 'Save', function(){ return bpSavePayment(id); });
+  setTimeout(bpTermsChanged, 0);
+}
+function bpTermsChanged() { var d = payTermDef(bpVal('bpp-terms')), e = $('bpp-days'); if (!e) return; e.disabled = !(d && d.needDays); if (e.disabled) e.value = ''; else if (e.value === '') e.value = d.days; }
+async function bpSavePayment(id) {
+  if (!bpCan('edit_payment', id)) return 'You don\u2019t have permission to change this.';
+  var k = bpVal('bpp-terms') || null, def = payTermDef(k), dv = bpVal('bpp-days');
+  var days = def && def.needDays ? (dv === '' ? def.days : Number(dv)) : null;
+  if (days != null && (isNaN(days) || days < 0 || days > 720)) return 'Check the number of days.';
+  var comm = bpVal('bpp-comm'), commN = comm === '' ? null : Number(comm);
+  if (commN != null && (isNaN(commN) || commN < 0 || commN > 50)) return 'Commission should be between 0 and 50%.';
+  var now = bpNow(), old = BP.cur.payment;
+  var row = { buyer_id: id, currency: bpNull(bpVal('bpp-cur')), incoterm: bpNull(bpVal('bpp-inco')), port_loading: bpNull(bpVal('bpp-port')), commission_pct: commN, agent_name: bpNull(bpVal('bpp-agent')),
+    invoice_to: bpNull(bpVal('bpp-inv')), docs_required: bpNull(bpVal('bpp-docs')), notes: bpNull(bpVal('bpp-notes')), updated_at: now, updated_by: S.user.name };
+  var r;
+  if (old) {
+    r = await bpSameTs(db.from('buyer_payment').update(row).eq('buyer_id', id), 'updated_at', old.updated_at).select();
+    if (!r.error && (!r.data || !r.data.length)) { await bpLoadOne(id); bpRender(S.view); return 'Someone else changed the payment details a moment ago. The latest details are now shown — please make your change again.'; }
+  } else {
+    r = await db.from('buyer_payment').insert(row).select();
+    if (r.error && /duplicate|unique/i.test(r.error.message || '')) { await bpLoadOne(id); bpRender(S.view); return 'Someone else saved payment details for this buyer a moment ago. The latest details are now shown.'; }
+  }
+  if (r.error) return bpErr(r.error);
+  BP.cur.payment = r.data[0];
+  var dt = buyerDefaultTerms(id);
+  if (k !== dt.terms || days !== dt.days) {
+    var srow = { buyer_id: id, pay_terms: k, pay_days: days, updated_at: now, updated_by: S.user.name };
+    var s = await db.from('buyer_settings').upsert(srow, { onConflict: 'buyer_id' });
+    if (s.error) return 'Details saved, but the payment terms were not: ' + s.error.message;
+    S.buyerSettings[id] = Object.assign({}, S.buyerSettings[id] || {}, srow);
+  }
+  bpLog(id, 'payment', 'Payment details updated', old ? Object.assign({ pay_terms: dt.terms, pay_days: dt.days }, old) : null, Object.assign({ pay_terms: k, pay_days: days }, row));
+}
+function bpEditBank(id) {
+  if (!bpCan('bank_propose', id)) return;
+  if (BP.cur.bankChange) { toast('A change is already waiting for Admin approval', 'err'); return; }
+  var bd = (BP.cur.banking && BP.cur.banking.data) || {}, recv = bd.recv || {};
+  var comps = (S.companies && S.companies.length ? S.companies : [{ code: 'MTS' }, { code: 'BFL' }, { code: 'BKL' }]);
+  var admin = S.user.role === 'admin';
+  var body = '<div class="bp-form">' + BP_BANK_FIELDS.map(function(f){ return bpField('bpb-' + f.k, f.n, bd[f.k], { area: f.area, wide: f.area, rows: 2 }); }).join('')
+    + '<div class="bp-f wide"><label>We receive payment at (leave empty to use the company’s own bank)</label></div>'
+    + comps.map(function(c){ var o = recv[c.code] || {}, d = bpCompanyBank(c.code);
+        return bpField('bpb-rb-' + c.code, bpEsc(c.code) + ' bank', o.bank, { ph: d.bank || '' }) + bpField('bpb-ra-' + c.code, bpEsc(c.code) + ' account no.', o.account, { ph: d.account ? 'Company default' : '' }); }).join('')
+    + (admin ? '' : bpField('bpb-why', 'Reason for the change', '', { area: true, wide: true, rows: 2, ph: 'e.g. Buyer’s letter dated 12 Oct, confirmed by phone with their accounts team' }))
+    + '</div><div class="bp-hint" style="margin-top:8px">' + (admin ? 'As Admin, your change applies straight away and is logged.' : 'Your change is sent to Admin. Nothing changes until Admin approves it.') + ' Always confirm bank changes with the buyer by phone; a request by email alone can be a scam.</div>';
+  bpModal(admin ? 'Edit bank details' : 'Request a bank detail change', bpBuyer(id).name, body, admin ? 'Save' : 'Send for approval', function(){ return bpSaveBank(id); });
+}
+function bpReadBank() {
+  var d = {};
+  BP_BANK_FIELDS.forEach(function(f){ var v = bpVal('bpb-' + f.k); if (v) d[f.k] = v; });
+  var comps = (S.companies && S.companies.length ? S.companies : [{ code: 'MTS' }, { code: 'BFL' }, { code: 'BKL' }]), recv = {};
+  comps.forEach(function(c){ var bk = bpVal('bpb-rb-' + c.code), ac = bpVal('bpb-ra-' + c.code); if (bk || ac) recv[c.code] = { bank: bk, account: ac }; });
+  if (Object.keys(recv).length) d.recv = recv;
+  return d;
+}
+async function bpSaveBank(id) {
+  if (!bpCan('bank_propose', id)) return 'You don\u2019t have permission to change this.';
+  var d = bpReadBank(), old = (BP.cur.banking && BP.cur.banking.data) || {};
+  if (!bpDiffRows(old, d).length) return 'Nothing was changed.';
+  if (S.user.role === 'admin') {
+    var row = { buyer_id: id, data: d, updated_at: bpNow(), updated_by: S.user.name, approved_by: S.user.name };
+    var pend = await db.from('buyer_bank_changes').select('id').eq('buyer_id', id).eq('status', 'pending');
+    if (!pend.error && pend.data && pend.data.length) { await bpLoadOne(id); bpRender(S.view); return 'A requested change is waiting. Approve or reject it first, then edit.'; }
+    var r = BP.cur.banking ? await bpSameTs(db.from('buyer_banking').update(row).eq('buyer_id', id), 'updated_at', BP.cur.banking.updated_at).select()
+                           : await db.from('buyer_banking').insert(row).select();
+    if (r.error) return /duplicate|unique/i.test(r.error.message || '') ? 'Someone else saved bank details a moment ago. Close this and open it again.' : bpErr(r.error);
+    if (!r.data || !r.data.length) { await bpLoadOne(id); bpRender(S.view); return 'Someone else changed the bank details a moment ago. The latest details are now shown.'; }
+    BP.cur.banking = r.data[0];
+    bpLog(id, 'banking', 'Bank details changed by Admin', old, d);
+    return;
+  }
+  var why = bpVal('bpb-why');
+  if (!why) return 'Write the reason for the change, so Admin can check it.';
+  var chk = await db.from('buyer_bank_changes').select('id').eq('buyer_id', id).eq('status', 'pending');
+  if (!chk.error && chk.data && chk.data.length) { await bpLoadOne(id); bpRender(S.view); return 'Another change is already waiting for Admin approval.'; }
+  var ins = await db.from('buyer_bank_changes').insert({ buyer_id: id, data: d, old_data: old, status: 'pending', note: why, requested_by_id: S.user.id, requested_by: S.user.name }).select();
+  if (ins.error) return bpErr(ins.error);
+  BP.cur.bankChange = ins.data[0];
+  bpLog(id, 'banking', 'Bank change requested by ' + S.user.name, old, d);
+}
+function bpDiffRows(oldD, newD) {
+  oldD = oldD || {}; newD = newD || {};
+  var rows = [];
+  BP_BANK_FIELDS.forEach(function(f){ var a = oldD[f.k] || '', b = newD[f.k] || ''; if (a !== b) rows.push([f.n, a, b]); });
+  var codes = {}; Object.keys(oldD.recv || {}).concat(Object.keys(newD.recv || {})).forEach(function(c){ codes[c] = 1; });
+  Object.keys(codes).forEach(function(c){ var a = (oldD.recv || {})[c] || {}, b = (newD.recv || {})[c] || {};
+    if ((a.bank || '') !== (b.bank || '')) rows.push(['We receive at · ' + c + ' bank', a.bank || '', b.bank || '']);
+    if ((a.account || '') !== (b.account || '')) rows.push(['We receive at · ' + c + ' account', a.account || '', b.account || '']); });
+  return rows;
+}
+function bpShowBankChange(id) {
+  var ch = BP.cur.bankChange; if (!ch || !bpCan('bank_full', id)) return;
+  var rows = bpDiffRows(ch.old_data, ch.data);
+  var body = '<div class="bp-small" style="margin-bottom:8px">Requested by <b>' + bpEsc(ch.requested_by || '') + '</b> on ' + bpEsc(bpDate(ch.requested_at)) + (ch.note ? '<br>Reason: ' + bpEsc(ch.note) : '') + '</div>'
+    + '<table class="bp-table"><thead><tr><th>Field</th><th>Now</th><th>Changes to</th></tr></thead><tbody>' + (rows.map(function(r){ return '<tr><td>' + bpEsc(r[0]) + '</td><td>' + (r[1] ? bpEsc(r[1]) : '<i class="bp-empty">empty</i>') + '</td><td><b>' + (r[2] ? bpEsc(r[2]) : '<i class="bp-empty">empty</i>') + '</b></td></tr>'; }).join('') || '<tr><td colspan="3">No differences.</td></tr>') + '</tbody></table>';
+  if (bpCan('bank_approve', id)) bpModal('Bank detail change', bpBuyer(id).name, body, 'Approve', function(){ return bpApplyDecision(id, true, ''); }, { extraBtn: '<button class="btn" onclick="closeModal(\'ov-bp\');bpDecideBank(\'' + id + '\',false)">Reject</button>' });
+  else bpModal('Bank detail change', bpBuyer(id).name, body, null);
+}
+async function bpDecideBank(id, approve) {
+  if (!bpCan('bank_approve', id)) return;
+  if (approve) { var ok = await appConfirm('Approve the new bank details? Check you have confirmed them with the buyer by phone.', { title: 'Approve bank change', okText: 'Approve' }); if (!ok) return; var e = await bpApplyDecision(id, true, ''); if (e) showSaveError(e); return; }
+  bpModal('Reject bank change', bpBuyer(id).name, '<div class="bp-form">' + bpField('bprej-why', 'Why is it rejected? (shown to the person who asked)', '', { wide: true, ph: 'e.g. Could not confirm with the buyer by phone' }) + '</div>', 'Reject change', function(){ return bpApplyDecision(id, false, bpVal('bprej-why')); });
+}
+async function bpApplyDecision(id, approve, note) {
+  if (!bpCan('bank_approve', id)) return 'Only Admin can approve or reject bank changes.';
+  var ch = BP.cur.bankChange; if (!ch) return 'There is no change waiting.';
+  var now = bpNow();
+  var u = await db.from('buyer_bank_changes').update({ status: approve ? 'approved' : 'rejected', decided_by: S.user.name, decided_at: now, decision_note: note || null }).eq('id', ch.id).eq('status', 'pending').select();
+  if (u.error) return bpErr(u.error);
+  if (!u.data || !u.data.length) { await bpLoadOne(id); bpRender(S.view); return 'This change was already decided by someone else.'; }
+  if (approve) {
+    var row = { buyer_id: id, data: ch.data, updated_at: now, updated_by: ch.requested_by, approved_by: S.user.name };
+    var r = await db.from('buyer_banking').upsert(row, { onConflict: 'buyer_id' }).select();
+    if (r.error) return 'The change was marked approved but the bank details were not saved: ' + r.error.message + '. Open the buyer and save the details again.';
+    BP.cur.banking = r.data[0];
+  }
+  BP.cur.bankChange = null; BP.pendingBank = Math.max(0, BP.pendingBank - 1);
+  bpLog(id, 'banking', (approve ? 'Bank change approved' : 'Bank change rejected') + ' (asked by ' + (ch.requested_by || '') + ')', ch.old_data, approve ? ch.data : null);
+  toast(approve ? 'Bank details updated' : 'Change rejected', 'ok-t');
+  await bpLoadOne(id); renderRail(); bpRender(S.view);
+}
+async function bpShowPendingBank() {
+  if (!S.user || S.user.role !== 'admin') return;
+  var r = await db.from('buyer_bank_changes').select('buyer_id').eq('status', 'pending');
+  var ids = (r.data || []).map(function(x){ return x.buyer_id; }).filter(function(x, i, a){ return a.indexOf(x) === i && bpBuyer(x); });
+  if (!ids.length) { BP.pendingBank = 0; bpRenderList(); renderRail(); return; }
+  bpGo(ids[0], 'payment');
+}
+
+// Shipping
+function bpTabShipping(id, b, cur) {
+  var can = bpCan('edit_shipping', id);
+  var cards = cur.addresses.slice().sort(function(a, c){ return (c.is_default ? 1 : 0) - (a.is_default ? 1 : 0); }).map(function(a){
+    return '<div class="bp-box bp-addr' + (a.is_default ? ' def' : '') + '"><div class="bp-ch"><b>' + bpEsc(a.label) + '</b><span style="flex:1"></span>' + (a.is_default ? bpPill('Default', 'g') : '') + '</div>'
+      + '<div class="bp-small" style="margin:-4px 0 6px">' + bpEsc(a.country || '') + '</div>'
+      + bpRow('Consignee', bpEsc(a.consignee)) + (a.consignee_address ? '<div class="bp-addr-txt">' + bpEsc(a.consignee_address) + '</div>' : '')
+      + bpRow('Notify party', bpEsc(a.notify_party)) + bpRow('Destination port', bpEsc(a.port)) + bpRow('Mode', bpEsc(a.mode)) + bpRow('Forwarder', bpEsc(a.forwarder))
+      + (a.marks ? '<div class="bp-note-txt">Marks / labels: ' + bpEsc(a.marks) + '</div>' : '')
+      + (can ? '<div class="bp-addr-btns">' + bpLinkBtn('Edit', 'bpEditAddr(\'' + id + '\',\'' + a.id + '\')') + (a.is_default ? '' : bpLinkBtn('Make default', 'bpDefaultAddr(\'' + id + '\',\'' + a.id + '\')')) + bpLinkBtn('Remove', 'bpDelAddr(\'' + id + '\',\'' + a.id + '\')') + '</div>' : '') + '</div>';
+  }).join('');
+  return '<div class="bp-ch" style="margin:4px 0 10px"><b style="font-size:15px">Ship-to addresses</b>' + bpOwner('Commercial &amp; merchant') + '<span style="flex:1"></span>' + (can ? '<button class="btn" onclick="bpEditAddr(\'' + id + '\')">+ Add address</button>' : '') + '</div>'
+    + (cards ? '<div class="bp-addr-grid">' + cards + '</div>' : '<div class="bp-box"><div class="bp-empty-box">No ship-to addresses yet.' + (can ? ' Add one for each country or warehouse this buyer ships to.' : '') + '</div></div>');
+}
+function bpEditAddr(id, aid) {
+  if (!bpCan('edit_shipping', id)) return;
+  var a = aid ? BP.cur.addresses.find(function(x){ return x.id === aid; }) : { mode: 'Sea', is_default: !BP.cur.addresses.length };
+  if (!a) return;
+  var body = '<div class="bp-form">' + bpField('bpa-label', 'Name for this address', a.label, { ph: 'e.g. Main DC France' }) + bpField('bpa-country', 'Country', a.country)
+    + bpField('bpa-cons', 'Consignee', a.consignee, { wide: true }) + bpField('bpa-caddr', 'Consignee address', a.consignee_address, { area: true, wide: true, rows: 3 })
+    + bpField('bpa-notify', 'Notify party', a.notify_party, { area: true, wide: true, rows: 2, ph: 'Same as consignee' })
+    + bpField('bpa-port', 'Destination port', a.port) + bpField('bpa-mode', 'Mode', a.mode || 'Sea', { options: BP_MODES })
+    + bpField('bpa-fw', 'Forwarder', a.forwarder) + bpField('bpa-marks', 'Carton marks / labelling', a.marks, { area: true, wide: true, rows: 2 })
+    + '<div class="bp-f wide"><label class="bp-inline"><input type="checkbox" id="bpa-def"' + (a.is_default ? ' checked' : '') + '> Default address for new orders</label></div></div>';
+  bpModal(aid ? 'Edit ship-to address' : 'Add ship-to address', bpBuyer(id).name, body, aid ? 'Save' : 'Add address', function(){ return bpSaveAddr(id, aid); });
+}
+async function bpSaveAddr(id, aid) {
+  if (!bpCan('edit_shipping', id)) return 'You don\u2019t have permission to change this.';
+  var row = { label: bpVal('bpa-label'), country: bpNull(bpVal('bpa-country')), consignee: bpNull(bpVal('bpa-cons')), consignee_address: bpNull(bpVal('bpa-caddr')), notify_party: bpNull(bpVal('bpa-notify')),
+    port: bpNull(bpVal('bpa-port')), mode: bpNull(bpVal('bpa-mode')), forwarder: bpNull(bpVal('bpa-fw')), marks: bpNull(bpVal('bpa-marks')), is_default: !!($('bpa-def') && $('bpa-def').checked), updated_at: bpNow(), updated_by: S.user.name };
+  if (!row.label) return 'Give the address a name, e.g. "Main DC France".';
+  var r;
+  if (aid) {
+    var old = BP.cur.addresses.find(function(x){ return x.id === aid; });
+    if (!old) { await bpLoadOne(id); bpRender(S.view); return 'This address was removed a moment ago. The latest list is now shown.'; }
+    if (old.is_default && !row.is_default) {
+      if (BP.cur.addresses.length > 1) return 'This is the default address. To change the default, use "Make default" on another address.';
+      row.is_default = true; // the only address stays the default
+    }
+    r = await bpSameTs(db.from('buyer_addresses').update(row).eq('id', aid), 'updated_at', old.updated_at).select();
+    if (!r.error && (!r.data || !r.data.length)) { await bpLoadOne(id); bpRender(S.view); return 'Someone else changed or removed this address a moment ago. The latest list is now shown.'; }
+  } else {
+    if (!BP.cur.addresses.length) row.is_default = true; // the first address is always the default
+    row.buyer_id = id; row.created_by = S.user.name; r = await db.from('buyer_addresses').insert(row).select();
+  }
+  if (r.error) return bpErr(r.error);
+  var saved = r.data[0];
+  if (saved.is_default) await db.from('buyer_addresses').update({ is_default: false }).eq('buyer_id', id).neq('id', saved.id).eq('is_default', true);
+  bpLog(id, 'shipping', (aid ? 'Address updated: ' : 'Address added: ') + saved.label);
+  await bpLoadOne(id);
+}
+async function bpDefaultAddr(id, aid) {
+  if (!bpCan('edit_shipping', id)) return;
+  var r = await db.from('buyer_addresses').update({ is_default: true }).eq('id', aid).eq('buyer_id', id).select('id');
+  if (r.error) { showSaveError('Not saved: ' + bpErr(r.error)); return; }
+  if (!r.data || !r.data.length) { await bpLoadOne(id); bpRender(S.view); toast('That address was removed a moment ago', 'err'); return; }
+  await db.from('buyer_addresses').update({ is_default: false }).eq('buyer_id', id).neq('id', aid).eq('is_default', true);
+  var a = BP.cur.addresses.find(function(x){ return x.id === aid; });
+  bpLog(id, 'shipping', 'Default address: ' + (a ? a.label : ''));
+  await bpLoadOne(id); bpRender(S.view);
+}
+async function bpDelAddr(id, aid) {
+  if (!bpCan('edit_shipping', id)) return;
+  var a = BP.cur.addresses.find(function(x){ return x.id === aid; }); if (!a) return;
+  var ok = await appConfirm('Remove the address "' + a.label + '"?', { title: 'Remove address', okText: 'Remove', danger: true });
+  if (!ok) return;
+  var r = await db.from('buyer_addresses').delete().eq('id', aid);
+  if (r.error) { showSaveError('Not removed: ' + bpErr(r.error)); return; }
+  bpLog(id, 'shipping', 'Address removed: ' + a.label, a, null);
+  if (a.is_default) {
+    var rest = BP.cur.addresses.filter(function(x){ return x.id !== aid; }).sort(function(x, y){ return String(x.created_at).localeCompare(String(y.created_at)); });
+    if (rest.length) await db.from('buyer_addresses').update({ is_default: true }).eq('id', rest[0].id);
+  }
+  await bpLoadOne(id); bpRender(S.view);
+}
+
+// Notes
+function bpTabNotes(id, b, cur) {
+  var can = bpCan('add_note', id);
+  var form = can ? '<div class="bp-box"><div class="bp-note-form" id="bp-note-form">'
+    + '<select id="bpn-kind">' + BP_NOTE_KINDS.map(function(k){ return '<option value="' + k.k + '">' + k.n + '</option>'; }).join('') + '</select>'
+    + '<input id="bpn-date" type="date" value="' + new Date(Date.now() + 6 * 3600e3).toISOString().slice(0, 10) + '">'
+    + '<input id="bpn-text" maxlength="2000" placeholder="What happened? e.g. Visited factory, liked the cable range" onkeydown="if(event.key===\'Enter\'){event.preventDefault();bpAddNote(\'' + id + '\')}">'
+    + '<button class="btn pri" onclick="bpAddNote(\'' + id + '\')">Add note</button></div></div>' : '';
+  var list = cur.notes.map(function(n){
+    var mineN = n.by_id === S.user.id || S.user.role === 'admin';
+    return '<div class="bp-note-row"><div class="bp-note-when">' + bpEsc(bpDate(n.note_date || n.created_at)) + '<span>' + bpEsc((BP_NOTE_KINDS.find(function(k){ return k.k === n.kind; }) || { n: 'Note' }).n) + '</span></div>'
+      + '<div class="bp-note-body">' + bpEsc(n.note) + '<div class="bp-small">' + bpEsc(n.by_name || '') + '</div></div>'
+      + (mineN ? bpLinkBtn('Remove', 'bpDelNote(\'' + id + '\',\'' + n.id + '\')') : '') + '</div>';
+  }).join('');
+  return form + '<div class="bp-box">' + bpCardHead('Visits, calls and notes', 'Merchant') + (list || '<div class="bp-empty-box">No notes yet.</div>') + '</div>';
+}
+async function bpAddNote(id) {
+  if (!bpCan('add_note', id) || BP.saving) return;
+  var text = bpVal('bpn-text'), d = bpVal('bpn-date');
+  if (!text) { toast('Write the note first', 'err'); return; }
+  BP.saving = true;
+  var r = await db.from('buyer_notes').insert({ buyer_id: id, kind: bpVal('bpn-kind') || 'note', note_date: d || null, note: text, by_id: S.user.id, by_name: S.user.name }).select();
+  BP.saving = false;
+  if (r.error) { showSaveError('Note not saved: ' + bpErr(r.error)); return; }
+  BP.cur.notes.unshift(r.data[0]);
+  BP.cur.notes.sort(function(a, c){ return String(c.note_date || c.created_at).localeCompare(String(a.note_date || a.created_at)); });
+  toast('Note added', 'ok-t'); bpRender(S.view);
+  var t = $('bpn-text'); if (t) t.focus();
+}
+async function bpDelNote(id, nid) {
+  if (!bpCanSee(id)) return;
+  var n = BP.cur.notes.find(function(x){ return x.id === nid; }); if (!n) return;
+  if (!(n.by_id === S.user.id || S.user.role === 'admin')) return;
+  var ok = await appConfirm('Remove this note?', { title: 'Remove note', okText: 'Remove', danger: true });
+  if (!ok) return;
+  var r = await db.from('buyer_notes').delete().eq('id', nid);
+  if (r.error) { showSaveError('Not removed: ' + bpErr(r.error)); return; }
+  BP.cur.notes = BP.cur.notes.filter(function(x){ return x.id !== nid; });
+  bpRender(S.view);
+}
+
+// ─── logo ───
+var _bpLogoFor = null;
+function bpLogoPick(id) {
+  if (!bpCan('logo', id)) return;
+  var has = bpLogoOk(BP.logos[id]);
+  if (!has) { _bpLogoFor = id; $('bp-logo-file').click(); return; }
+  bpModal('Buyer logo', bpBuyer(id).name, '<div style="display:flex;gap:16px;align-items:center">' + bpLogoTag(id, 96, bpBuyer(id).name) + '<div class="bp-small">The logo is made small (under 18 KB) before it is saved, and is shown on the buyer list, the profile and the buyer headings on merchant boards.</div></div>',
+    null, null, { extraBtn: '<button class="btn" onclick="bpLogoRemove(\'' + id + '\')">Remove logo</button><button class="btn pri" onclick="_bpLogoFor=\'' + id + '\';$(\'bp-logo-file\').click()">Upload a new logo</button>' });
+}
+function bpCompressLogo(file) {
+  return new Promise(function(resolve, reject){
+    if (!file || !/^image\/(png|jpeg|webp|svg\+xml|gif)$/.test(file.type)) { reject(new Error('Choose a PNG, JPG, WebP or SVG image.')); return; }
+    if (file.size > 15 * 1024 * 1024) { reject(new Error('That image is too large (over 15 MB).')); return; }
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function(){
+      var w = img.naturalWidth || img.width || 256, h = img.naturalHeight || img.height || 256, out = null;
+      [160, 128, 96, 72].some(function(max){
+        var s = Math.min(1, max / Math.max(w, h)), cw = Math.max(1, Math.round(w * s)), ch = Math.max(1, Math.round(h * s));
+        var c = document.createElement('canvas'); c.width = cw; c.height = ch;
+        var x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, cw, ch);
+        return [0.88, 0.78, 0.66, 0.54].some(function(q){
+          var d = c.toDataURL('image/webp', q);
+          if (d.indexOf('data:image/webp') !== 0) {
+            d = c.toDataURL('image/png');
+            if (d.length > BP_LOGO_MAX) { var c2 = document.createElement('canvas'); c2.width = cw; c2.height = ch; var x2 = c2.getContext('2d'); x2.fillStyle = '#fff'; x2.fillRect(0, 0, cw, ch); x2.drawImage(c, 0, 0); d = c2.toDataURL('image/jpeg', q); }
+          }
+          out = d; return d.length <= BP_LOGO_MAX;
+        });
+      });
+      URL.revokeObjectURL(url);
+      if (!bpLogoOk(out) || out.length > BP_LOGO_MAX) { reject(new Error('That image could not be made small enough. Try a simpler logo file.')); return; }
+      resolve(out);
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('That file could not be read as an image.')); };
+    img.src = url;
+  });
+}
+async function bpLogoChosen(input) {
+  var id = _bpLogoFor, f = input.files && input.files[0]; input.value = '';
+  if (!id || !f || !bpCan('logo', id)) return;
+  closeModal('ov-bp');
+  try {
+    var data = await bpCompressLogo(f);
+    var r = await db.from('buyer_logos').upsert({ buyer_id: id, logo: data, updated_at: bpNow(), updated_by: S.user.name }, { onConflict: 'buyer_id' });
+    if (r.error) { showSaveError('Logo not saved: ' + bpErr(r.error)); return; }
+    BP.logos[id] = data;
+    bpLog(id, 'logo', 'Logo changed (' + Math.round(data.length * 0.75 / 1024) + ' KB)');
+    toast('Logo saved', 'ok-t'); bpRender(S.view);
+  } catch (e) { showSaveError(e.message || String(e)); }
+}
+async function bpLogoRemove(id) {
+  if (!bpCan('logo', id)) return;
+  closeModal('ov-bp');
+  var ok = await appConfirm('Remove this buyer’s logo?', { title: 'Remove logo', okText: 'Remove', danger: true });
+  if (!ok) return;
+  var r = await db.from('buyer_logos').delete().eq('buyer_id', id);
+  if (r.error) { showSaveError('Not removed: ' + bpErr(r.error)); return; }
+  delete BP.logos[id]; bpLog(id, 'logo', 'Logo removed'); bpRender(S.view);
+}
+
+// ─── the edit window (Enter saves, like the rest of the app) ───
+var _bpModalSave = null;
+function bpModal(title, sub, body, okText, onSave, opts) {
+  opts = opts || {};
+  _bpModalSave = onSave || null;
+  $('bp-m-title').textContent = title; $('bp-m-sub').textContent = sub || '';
+  $('bp-m-body').innerHTML = body + '<div class="form-err" id="bp-m-err" style="display:none"></div>';
+  $('bp-m-foot').innerHTML = '<button class="btn" onclick="closeModal(\'ov-bp\')">' + (okText ? 'Cancel' : 'Close') + '</button>' + (opts.extraBtn || '') + (okText ? '<button class="btn pri" id="bp-m-ok" onclick="bpModalOk()">' + okText + '</button>' : '');
+  openModal('ov-bp');
+  setTimeout(function(){
+    var body = $('bp-m-body'), act = document.activeElement;
+    if (act && body.contains(act)) return; // the person is already typing in a field
+    var f = body.querySelector('input:not([type=checkbox]):not([disabled]),textarea,select'); if (f) f.focus();
+  }, 30);
+}
+async function bpModalOk() {
+  if (!_bpModalSave || BP.mSaving || !$('ov-bp').classList.contains('open')) return;
+  var ok = $('bp-m-ok'), err = $('bp-m-err');
+  BP.mSaving = true; if (ok) { ok.disabled = true; ok.dataset.t = ok.textContent; ok.textContent = 'Saving…'; }
+  var msg;
+  try { msg = await _bpModalSave(); } catch (e) { msg = e.message || String(e); }
+  BP.mSaving = false; if (ok) { ok.disabled = false; ok.textContent = ok.dataset.t || 'Save'; }
+  if (msg) { if (err) { err.textContent = msg; err.style.display = 'block'; } return; }
+  closeModal('ov-bp'); toast('Saved', 'ok-t');
+  if (BP._goAfter) { var g = BP._goAfter; BP._goAfter = null; bpGo(g); return; }
+  if (bpIsView(S.view)) bpRender(S.view);
+}
+function bpModalKey(e) {
+  if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+  var t = e.target; if (!t || t.tagName === 'TEXTAREA' || t.tagName === 'BUTTON') return;
+  e.preventDefault(); bpModalOk();
+}
+
+function bpMaskData(d) {
+  if (!d || typeof d !== 'object') return d;
+  var o = JSON.parse(JSON.stringify(d));
+  BP_BANK_FIELDS.forEach(function(f){ if (f.secret && o[f.k]) o[f.k] = bpMask(o[f.k]); });
+  if (o.recv) Object.keys(o.recv).forEach(function(c){ if (o.recv[c] && o.recv[c].account) o.recv[c].account = bpMask(o.recv[c].account); });
+  return o;
+}
+// every change of a buyer's main merchant (transfer, assignment screen, approved request) goes into the buyer's history
+function bpMerchantChanged(buyerId, fromId, toId) {
+  if (!buyerId || BP.missing !== false || fromId === toId) return;
+  bpLog(buyerId, 'team', 'Main merchant: ' + (fromId ? bpUserName(fromId) || 'unknown' : 'not set') + ' → ' + (toId ? bpUserName(toId) || 'unknown' : 'not set'), fromId ? { merchant_id: fromId } : null, toId ? { merchant_id: toId } : null);
+  if (BP.cur && BP.cur.id === buyerId) BP.cur = null;
+}
+// the commercial invoice keeps what was typed for the buyer; anything never typed is taken from the buyer profile
+async function bpInvoiceDefaults(buyerId, mem) {
+  mem = Object.assign({}, mem || {});
+  if (!buyerId || BP.missing !== false) return mem;
+  try {
+    var r = await Promise.all([
+      db.from('buyer_addresses').select('*').eq('buyer_id', buyerId).eq('is_default', true).limit(1),
+      db.from('buyer_payment').select('*').eq('buyer_id', buyerId).maybeSingle()
+    ]);
+    var a = ((r[0] && r[0].data) || [])[0], p = r[1] && r[1].data;
+    if (a) {
+      if (!mem.cons && (a.consignee || a.consignee_address)) mem.cons = [a.consignee, a.consignee_address].filter(Boolean).join('\n');
+      if (!mem.notify && a.notify_party) mem.notify = a.notify_party;
+      if (!mem.pod && a.port) mem.pod = a.port;
+      if (!mem.dest && a.country) mem.dest = a.country;
+    }
+    if (p && !mem.terms && p.incoterm) mem.terms = p.incoterm + (p.port_loading ? ' ' + p.port_loading : '');
+  } catch (e) {}
+  return mem;
+}
+// Admin: the count of bank changes waiting is refreshed whenever the buyer list is opened
+async function bpRefreshPending() {
+  if (!S.user || S.user.role !== 'admin' || BP.missing !== false) return;
+  try {
+    var p = await db.from('buyer_bank_changes').select('id').eq('status', 'pending');
+    if (p.error) return;
+    var n = (p.data || []).length;
+    if (n !== BP.pendingBank) { BP.pendingBank = n; renderRail(); if (S.view === 'buyers' && !document.querySelector('#ov-bp.open')) bpRenderList(); }
+  } catch (e) {}
+}
+var BP_TABLES = ['buyer_logos','buyer_team','buyer_contacts','buyer_notes','buyer_payment','buyer_banking','buyer_bank_changes','buyer_addresses','buyer_change_log'];
+function bpRailItem() {
+  if (!bpUse()) return '';
+  var on = bpIsView(S.view) ? ' on' : '', n = bpVisibleBuyers().length, hot = S.user.role === 'admin' && BP.pendingBank > 0;
+  var cnt = hot ? '<span class="badge">' + BP.pendingBank + '</span>' : (n > 0 ? '<span class="ct">' + n + '</span>' : '');
+  return '<button class="ni' + on + '" onclick="setView(\'buyers\')"><span class="av" style="font-size:12px">&#x1F465;</span><span class="nm">Buyers</span>' + cnt + '</button>';
+}
 </script>
 </body>
 </html>
