@@ -1848,6 +1848,10 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
   body{font-size:11px}
   td,th{white-space:normal}
   @page{margin:12mm;size:A4 landscape}
+  /* TNA sheets print portrait, one order per page */
+  @page tnasheet{size:A4 portrait;margin:8mm}
+  .ov.printing .tna-sheet{page:tnasheet;margin:0!important;box-shadow:none!important;border-radius:0!important;font-size:12px}
+  .ov.printing #tnapdf-body,.ov.printing #btnapdf-body{background:#fff!important}
 }
 
 /* Copy for Excel */
@@ -2226,7 +2230,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.17.4</p>
+    <p class="login-ver">V.2026.10.18.1</p>
   </div></div>
 </div>
 
@@ -2268,7 +2272,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.17.4</div>
+  <div id="ver-stamp">V.2026.10.18.1</div>
 </div>
 
 
@@ -2497,6 +2501,10 @@ td.col-cm{min-width:96px;font-size:11px}
         <input type="number" id="tna-buffer-days" min="0" max="60" value="3" style="width:100%;margin-top:6px;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:15px;font-family:var(--mono);color:var(--ink)">
         <div class="hint" style="margin-top:6px">Only affects this printout — the real dates in the system never change.</div>
       </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:9px;font-size:13.5px">
+        <label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="tna-print-progress" checked style="margin-top:2px;width:16px;height:16px"><span><b>Include progress</b><br><span style="color:var(--muted);font-size:12px">Actual dates, status of each step, done / late summary</span></span></label>
+        <label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="tna-print-prod" checked style="margin-top:2px;width:16px;height:16px"><span><b>Include production quantities</b><br><span style="color:var(--muted);font-size:12px">Knitting, linking and packing pieces done so far</span></span></label>
+      </div>
     </div>
     <div class="m-f"><button class="btn pri" id="tna-print-generate-btn" style="width:100%" disabled onclick="generateTNAPrint()">Generate</button></div>
   </div>
@@ -2633,6 +2641,10 @@ td.col-cm{min-width:96px;font-size:11px}
       <div id="btna-buffer-row" style="display:none">
         <label style="font-size:12.5px;font-weight:600;color:var(--muted)">Show Final Inspection &amp; Ship Date this many days earlier</label>
         <input type="number" id="btna-buffer-days" min="0" max="60" value="3" style="width:100%;margin-top:6px;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:15px;font-family:var(--mono);color:var(--ink)">
+      </div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px">
+        <label style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" id="btna-progress" checked style="width:16px;height:16px"><span><b>Include progress</b> <span style="color:var(--muted)">(one full TNA page per order)</span></span></label>
+        <label style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" id="btna-prod" checked style="width:16px;height:16px"><b>Include production quantities</b></label>
       </div>
       <button class="btn pri" id="btna-generate-btn" style="width:100%" disabled onclick="generateBulkTNAPrint()">Generate</button>
     </div>
@@ -9732,6 +9744,16 @@ async function generateBulkTNAPrint() {
   var VMILES = getMiles(division);
   var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
   var audienceLabel = _btnaAudience === 'planning' ? 'Planning Team' : 'Management';
+  var bWithProg = !!($('btna-progress') && $('btna-progress').checked), bWithProd = !!($('btna-prod') && $('btna-prod').checked);
+  if (bWithProg) {
+    // same sheet as the single-order print, one page per order, grouped by buyer
+    var sorted = orders.slice().sort(function(a, b){ return String(a.buyer || '').localeCompare(String(b.buyer || '')) || String(a.ship_date || '9999').localeCompare(String(b.ship_date || '9999')); });
+    $('btnapdf-sub').textContent = genDate + ' \u00b7 For: ' + audienceLabel + ' \u00b7 ' + orders.length + ' orders';
+    $('btnapdf-body').innerHTML = sorted.map(function(o, i){ return '<div class="tna-sheet-page" style="' + (i < sorted.length - 1 ? 'break-after:page;page-break-after:always;' : '') + '">' + tnaPrintSheet(o, _btnaAudience, buffer, true, bWithProd) + '</div>'; }).join('');
+    closeModal('ov-bulk-tna');
+    openModal('ov-bulk-tna-print');
+    return;
+  }
 
   var headerCells = VMILES.map(function(x){ return '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817;white-space:nowrap">'+x.n+'</th>'; }).join('');
   // Grouped by buyer, matching how the live board itself separates orders —
@@ -9828,62 +9850,108 @@ function shiftDate(dateStr, days) {
 
 function generateTNAPrint() {
   var ordId = S._tnaCurrentOrdId;
-  var o = findOrderAnywhere(ordId);
+  var o = findOrderAnywhere(ordId) || (S.orders || []).find(function(x){ return x.id === ordId; });
   if (!o) return;
+  var buffer = _tnaPrintAudience === 'planning' ? Math.abs(parseInt(document.getElementById('tna-buffer-days').value) || 0) : 0;
+  var html = tnaPrintSheet(o, _tnaPrintAudience, buffer, !!($('tna-print-progress') && $('tna-print-progress').checked), !!($('tna-print-prod') && $('tna-print-prod').checked));
+  $('tnapdf-sub').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'}) + ' \u00b7 For: ' + (_tnaPrintAudience === 'planning' ? 'Planning Team' : 'Management');
+  $('tnapdf-body').innerHTML = html;
+  closeModal('ov-tna-print-opts');
+  openModal('ov-tna-print');
+}
+// One order's TNA sheet (used by the single print and by the bulk print).
+function tnaPrintSheet(o, audience, buffer, withProg, withProd) {
+  var ordId = o.id;
   var merch = S.users.find(function(u){ return u.id === o.merchant_id; });
   var division = merch ? (merch.division||'sweater') : 'sweater';
   var VMILES = getMiles(division);
-  var buffer = _tnaPrintAudience === 'planning' ? Math.abs(parseInt(document.getElementById('tna-buffer-days').value) || 0) : 0;
   var countryVal = getFieldValue(ordId, 'country') || '';
   var photoUrl = getStyleImage(o.merchant_id, o.style);
   var attachList = ((S.boardSummaries[o.merchant_id]||{})[o.id]||{}).attach || [];
   var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
-  var audienceLabel = _tnaPrintAudience === 'planning' ? 'Planning Team' : 'Management';
+  var audienceLabel = audience === 'planning' ? 'Planning Team' : 'Management';
+  var nowStamp = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + ', ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
   function infoItem(label, val) {
     if (!val) return '';
     return '<div style="min-width:0"><div style="font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700">'+label+'</div><div style="font-size:13px;font-weight:600;color:#191817;margin-top:2px">'+htmlEsc(String(val))+'</div></div>';
   }
 
+  // progress is worked out against the date printed on the paper (with the
+  // planning buffer applied), so the sheet always agrees with itself
+  var td = 'padding:9px 12px;border-bottom:1px solid #E5E2D9;vertical-align:middle';
+  var chipS = function(t, bg, fg){ return '<span style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:700;background:' + bg + ';color:' + fg + ';-webkit-print-color-adjust:exact;print-color-adjust:exact">' + t + '</span>'; };
   var rows = VMILES.map(function(x) {
     var p = tnaPlanFor(o, x.k);
-    // Only Final Inspection & Shipment get the buffer applied — every other
-    // milestone always prints its real, unmodified plan date.
+    // Only Final Inspection & Shipment get the buffer applied
     if (buffer && (x.k === 'insp' || x.k === 'ship')) p = shiftDate(p, buffer);
-    return '<tr><td style="padding:10px 14px;border-bottom:1px solid #E5E2D9;font-weight:600">'+x.n+'</td>'
-      + '<td style="padding:10px 14px;border-bottom:1px solid #E5E2D9;font-family:Georgia,serif;font-size:15px">'+(p?short(p):'\u2014')+'</td></tr>';
+    var a = o['act_' + x.k] || null;
+    // same columns and words as the TNA window; counted against the printed date
+    var left = '—', delay = '', st = chipS('No plan', '#ECE9E1', '#55524C');
+    if (a) left = '<span style="color:#1D7A46;font-weight:700">&#x2713; Done</span>';
+    if (p) {
+      if (a) { var dd = Math.round((toDate(a) - toDate(p)) / 86400000); if (dd > 0) { delay = '<span style="color:#B42318;font-weight:700">+' + dd + 'd</span>'; st = chipS('Late', '#FBE4E1', '#B42318'); } else st = chipS('On time', '#E3F2E8', '#1D7A46'); }
+      else { var d2 = daysTo(p); left = d2 < 0 ? '<span style="color:#B42318;font-weight:700">' + (-d2) + 'd overdue</span>' : '<span style="color:' + (d2 <= 3 ? '#9A6700' : '#55524C') + ';font-weight:600">' + d2 + 'd left</span>';
+        st = d2 < 0 ? chipS('Overdue', '#FBE4E1', '#B42318') : d2 <= 3 ? chipS('Due soon', '#FDF0D5', '#9A6700') : chipS('Pending', '#ECE9E1', '#55524C'); }
+    }
+    var mono = ';font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px';
+    return '<tr><td style="' + td + ';font-weight:600">' + x.n + '</td>'
+      + '<td style="' + td + mono + '">' + (p ? short(p) : '—') + '</td>'
+      + (withProg ? '<td style="' + td + mono + '">' + (a ? short(a) : '—') + '</td><td style="' + td + mono + '">' + left + '</td><td style="' + td + mono + '">' + delay + '</td><td style="' + td + '">' + st + '</td>' : '')
+      + '</tr>';
   }).join('');
+  var qty = Number(o.qty) || 0, shipShown = tnaPlanFor(o, 'ship'); if (buffer) shipShown = shiftDate(shipShown, buffer); var dShip = daysTo(shipShown); // same date as printed on the sheet
+  var progHtml = '';
+  if (withProg) {
+    var locked = isTNALocked(o.id, o.merchant_id);
+    var tile = function(k, v, extra){ return '<div style="flex:1;min-width:120px;padding:12px 14px;border:1px solid #E5E2D9;border-radius:12px;background:#fff"><div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;font-weight:700">' + k + '</div><div style="font-size:19px;font-weight:600;margin-top:3px;' + (extra || '') + '">' + v + '</div></div>'; };
+    progHtml = '<div style="padding:16px 28px 0"><div style="display:flex;gap:10px;flex-wrap:wrap">'
+      + tile('Shipment', shipShown ? short(shipShown) : '—')
+      + tile('Days remaining to ship', dShip == null ? '—' : String(dShip), dShip != null && dShip <= 5 ? 'color:#B42318' : '')
+      + tile('Packed', pctPacked(o) + '%')
+      + tile('TNA lock', locked ? chipS('Locked', '#FBE4DA', '#B25A2E') : chipS('Open', '#E3F2E8', '#1D7A46'))
+      + '</div>'
+      + (locked ? '<div style="margin-top:10px;font-size:12.5px;background:#FFF6D6;border:1px solid #F2DB8A;border-radius:8px;padding:8px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact">&#x1F512; <b>TNA Locked</b> — ' + (o.stage === 'shipped' ? 'Order has shipped. Dates are view-only.' : 'Fit approved. Plan dates require HOD/Manager approval to change.') + '</div>' : '')
+      + (buffer ? '<div style="margin-top:8px;font-size:11px;color:#73706A">Final Inspection and Shipment are shown ' + buffer + ' day' + (buffer === 1 ? '' : 's') + ' earlier on this sheet; days left and status are counted against the dates shown.</div>' : '')
+      + '<div style="margin-top:6px;font-size:11px;color:#73706A">Progress as of ' + nowStamp + '</div></div>';
+  }
+  var prodHtml = '';
+  if (withProd && qty > 0) {
+    var bar = function(label, n){ n = Math.max(0, Number(n) || 0); var pc = Math.min(100, Math.round(n / qty * 100));
+      return '<div style="flex:1;min-width:150px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><b>' + label + '</b><span>' + fmt(n) + ' / ' + fmt(qty) + ' <b>(' + pc + '%)</b></span></div><div style="height:7px;border-radius:99px;background:#ECE9E1;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact"><div style="height:100%;width:' + pc + '%;background:#3E5C76;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div></div></div>'; };
+    prodHtml = '<div style="padding:14px 28px 0"><div style="font-size:13px;font-weight:700;margin-bottom:8px">Production</div><div style="display:flex;gap:18px;flex-wrap:wrap">'
+      + bar('Knitting', o.prod_knitting) + bar('Linking', o.prod_linking) + bar('Packing', o.prod_packing) + '</div></div>';
+  }
 
-  $('tnapdf-sub').textContent = genDate + ' \u00b7 For: ' + audienceLabel;
 
-  var html = '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;color:#191817;background:#fff;margin:20px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">'
+  var html = '<div class="tna-sheet" style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;color:#191817;background:#fff;margin:20px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">'
     + '<div style="padding:24px 28px 20px;border-bottom:2px solid #191817;display:flex;justify-content:space-between;align-items:flex-start">'
     + '<div><div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#73706A;font-weight:700;margin-bottom:6px">Shahana Group</div>'
-    + '<div style="font-family:Georgia,serif;font-size:26px;font-weight:600;letter-spacing:-.4px">TNA Plan \u2014 ' + htmlEsc(o.style) + '</div></div>'
+    + '<div style="font-family:Georgia,serif;font-size:26px;font-weight:600;letter-spacing:-.4px">' + (withProg ? 'TNA Progress' : 'TNA Plan') + ' \u2014 ' + htmlEsc(o.style) + '</div></div>'
     + '<div style="text-align:right"><div style="font-size:12px;color:#73706A">' + genDate + '</div>'
     + '<div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#A0A09A;margin-top:3px;font-weight:700">For: ' + audienceLabel + '</div></div>'
     + '</div>'
     + '<div style="display:flex;gap:16px;align-items:flex-start;padding:20px 28px;background:#F7F5EF;border-bottom:1px solid #E5E2D9">'
-    + (photoUrl ? '<img src="'+photoUrl+'" style="width:70px;height:70px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid #E5E2D9">' : '')
+    + (photoUrl ? '<img src="'+photoUrl+'" style="width:96px;height:96px;border-radius:12px;object-fit:contain;background:#fff;flex-shrink:0;border:1px solid #E5E2D9">' : '<div style="width:96px;height:96px;border-radius:12px;border:1px dashed #D5D1C6;display:flex;align-items:center;justify-content:center;font-size:11px;color:#A0A09A;flex-shrink:0">No photo</div>')
     + '<div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px 16px">'
-    + infoItem('PO Number', o.po_number) + infoItem('Buyer', o.buyer) + infoItem('Buying House', o.house)
+    + infoItem('Style', o.style) + infoItem('PO Number', o.po_number) + infoItem('Buyer', o.buyer) + infoItem('Buying House', o.house)
     + infoItem('Country', countryVal) + infoItem('Merchant', merch?merch.name:'')
-    + infoItem('Order Confirmed', o.confirm_date?short(o.confirm_date):'') + infoItem('Quantity', o.qty?fmt(o.qty)+' pcs':'')
+    + infoItem('Order Confirmed', o.confirm_date?short(o.confirm_date):'') + infoItem('Quantity', o.qty?fmt(o.qty)+' pcs':'') + infoItem('Ship Date', o.ship_date?short(o.ship_date):'')
     + '</div></div>'
     + '<div style="padding:12px 28px;background:#FBEFE8;border-bottom:2px solid #E8CFC2;font-size:15px;font-weight:700;color:#191817">'
     + '<span style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#B25A2E;margin-right:6px">&#x1F9F5; Attachment:</span>'
     + (attachList.length ? attachList.join(', ') : 'No attachment')
     + '</div>'
+    + progHtml + prodHtml
     + '<div style="padding:20px 28px"><table style="width:100%;border-collapse:collapse"><thead><tr>'
-    + '<th style="text-align:left;padding:0 14px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Milestone</th>'
-    + '<th style="text-align:left;padding:0 14px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Target Date</th>'
+    + '<th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Milestone</th>'
+    + '<th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Plan Date</th>'
+    + (withProg ? '<th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Actual Date</th><th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Days Left</th><th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Delay</th><th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Status</th>' : '')
     + '</tr></thead><tbody>' + rows + '</tbody></table></div>'
     + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + htmlEsc(S.user.name) + '</div>'
     + '</div>';
 
-  $('tnapdf-body').innerHTML = html;
-  closeModal('ov-tna-print-opts');
-  openModal('ov-tna-print');
+  return html;
 }
 function closeTNAPrint() {
   $('ov-tna-print').classList.remove('printing');
