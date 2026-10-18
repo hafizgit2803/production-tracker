@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self' blob: https://cdn.jsdelivr.net;">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1463,13 +1463,103 @@ table.adm-users tr.adm-editrow td{background:var(--accent-soft);padding:4px 12px
 .mode-chip.sea{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
 .mode-chip.air{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
 .lg-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+/* Document scanner window (also used later by other sections) */
+.ds-ov{padding:0!important;align-items:center;justify-content:center;z-index:300}
+.ds-win{background:var(--panel);width:min(760px,96vw);max-height:94vh;display:flex;flex-direction:column;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.ds-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.ds-title{font-family:var(--serif);font-size:18px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ds-x{border:0;background:none;font-size:20px;cursor:pointer;color:var(--ink);padding:4px 8px}
+.ds-body{flex:1;overflow-y:auto;padding:14px 16px;min-height:0}
+.ds-foot{display:flex;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);background:var(--panel)}
+.ds-foot .btn{min-height:42px}
+.ds-pick{text-align:center;padding:10px 0}.ds-pick-h{font-weight:700;font-size:15px;margin-bottom:12px}
+.ds-pick-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.ds-big{flex:1;min-width:150px;max-width:240px;border:1.5px solid var(--line);background:var(--panel);border-radius:14px;padding:20px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--ink);font:inherit}
+.ds-big:hover{border-color:var(--accent);background:var(--accent-soft)}.ds-big b{font-size:15px}.ds-big span{font-size:12px;color:var(--muted)}.ds-big .ds-ic{font-size:28px;color:inherit}
+.ds-hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+.ds-busy{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;font-size:13px;color:var(--muted)}
+.ds-ov[data-step="crop"] .ds-win{background:#141414;color:#eee}.ds-ov[data-step="crop"] .ds-head,.ds-ov[data-step="crop"] .ds-foot{background:#141414;border-color:#2a2a2a}.ds-ov[data-step="crop"] .ds-x{color:#eee}
+.ds-ov[data-step="crop"] .ds-hint{color:#aaa}
+.ds-crop-tip{text-align:center;font-weight:600;margin-bottom:8px}
+.ds-stage{position:relative;width:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+.ds-stage canvas#ds-cv{position:absolute;top:0}
+.ds-stage svg{position:absolute;left:0;top:0;pointer-events:none}
+.ds-dot{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:3px solid #F5C451;background:rgba(245,196,81,.3);box-shadow:0 0 0 2px rgba(0,0,0,.35);pointer-events:none}
+.ds-dot.on{width:36px;height:36px;margin:-18px 0 0 -18px;background:rgba(245,196,81,.15)}
+.ds-mag{position:absolute;display:none;width:120px;height:120px;border-radius:50%;border:3px solid #fff;box-shadow:0 6px 20px rgba(0,0,0,.6);pointer-events:none}
+.ds-pages{display:flex;flex-direction:column;gap:10px}
+.ds-page{display:flex;gap:10px;align-items:flex-start}
+.ds-pimg{position:relative;flex:1;min-width:0;max-width:420px}
+.ds-pimg img{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:zoom-in;display:block}
+.ds-ptag{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;border-radius:6px;padding:2px 7px}
+.ds-pbtns{display:flex;flex-direction:column;gap:6px;width:130px}.ds-pbtns .btn{justify-content:flex-start}
+.ds-addrow{display:flex;gap:8px;flex-wrap:wrap}
+.ds-form{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.ds-fgrid{display:grid;grid-template-columns:2fr 1fr;gap:10px}.ds-fgrid .ds-wide{grid-column:1/-1}
+.ds-fgrid input,.ds-fgrid select{width:100%}
+.ds-is-busy .ds-foot .btn{opacity:.6;pointer-events:none}
+@media (max-width:760px){
+  .ds-win{width:100vw;max-height:none;height:100%;border-radius:0}
+  .ds-ov{align-items:stretch}
+  .ds-body{padding:12px}
+  .ds-page{flex-direction:column}.ds-pimg{max-width:none;width:100%}.ds-pbtns{flex-direction:row;flex-wrap:wrap;width:auto}
+  .ds-fgrid input,.ds-fgrid select{font-size:16px;min-height:46px}
+  .ds-foot .btn{flex:1;min-height:48px;font-size:15px}
+  .ds-foot span[style*="flex:1"]{display:none}
+}
+/* Requisition quotations */
+.rqq-sec{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.rqq-h{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13px;margin-bottom:8px}
+.rqq-card{display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:8px}
+.rqq-card img{width:46px;height:60px;object-fit:cover;object-position:top;border-radius:5px;border:1px solid var(--line);background:#fff}
+.rqq-noimg{width:46px;height:60px;border-radius:5px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.rqq-cm{flex:1;min-width:0}.rqq-cm b{overflow-wrap:anywhere}
+.rqq-amt{font-weight:800;white-space:nowrap}
+.rqq-low{display:inline-block;background:var(--green-soft);color:var(--green);font-size:10.5px;font-weight:800;border-radius:99px;padding:1px 8px}
+.rqq-add{display:flex;gap:8px;flex-wrap:wrap}
+.rqq-big{flex:1;min-width:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 8px;gap:2px;text-align:center}.rqq-big span{font-size:20px;line-height:1.1}.rqq-big small{display:block;font-size:11px;color:var(--muted);font-weight:400}
+.rqq-t td{vertical-align:middle}.rqq-th{cursor:pointer;white-space:nowrap}
+.rqq-t img{width:38px;height:50px;object-fit:cover;object-position:top;border-radius:5px;border:1px solid var(--line);background:#fff;vertical-align:middle}
+.rqq-t .rqq-noimg{width:38px;height:50px;display:inline-flex}
+.rqq-lowrow td{background:var(--green-soft)}
+.rqq-warn{font-size:11.5px;color:var(--amber)}
+.rqq-banner{background:var(--amber-soft);color:var(--amber);border-radius:10px;padding:9px 12px;font-size:13px;margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rqq-n{color:var(--accent)!important;font-weight:600}
+.qv-ov{background:rgba(10,10,10,.88)!important;flex-direction:column;padding:0!important;z-index:320}
+.qv-ov.open{display:flex}
+.qv-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;color:#fff;width:100%}
+.qv-nav{display:flex;gap:6px;align-items:center}.qv-nav span{font-size:13px;min-width:90px;text-align:center}
+.qv-img{flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:0 12px 16px;width:100%}
+.qv-img img{max-width:100%;background:#fff;border-radius:4px}
+/* New requisition form on a phone (only this form; the rest of the app is unchanged) */
+@media (max-width:760px){
+  body.rq-form-phone .rail,body.rq-form-phone #sb-toggle,body.rq-form-phone .sb-toggle{display:none!important}
+  body.rq-form-phone .rq-form .grid2,body.rq-form-phone .rq-form .grid3{grid-template-columns:1fr!important}
+  body.rq-form-phone .rq-form input,body.rq-form-phone .rq-form select,body.rq-form-phone .rq-form textarea{font-size:16px;min-height:44px}
+  body.rq-form-phone .rq-form .card-h{flex-direction:column;align-items:flex-start;gap:2px}
+  body.rq-form-phone .rq-form .m-b{padding:12px}
+  body.rq-form-phone .rq-form .rq-seg{flex-wrap:wrap}
+  body.rq-form-phone .rq-items thead{display:none}
+  body.rq-form-phone .rq-items,body.rq-form-phone .rq-items tbody{display:block;width:100%}
+  body.rq-form-phone .rq-items tr{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg);position:relative}
+  body.rq-form-phone .rq-items td{display:block;padding:0;border:0}
+  body.rq-form-phone .rq-items td[data-l]::before{content:attr(data-l);display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px}
+  body.rq-form-phone .rq-items td:nth-child(1),body.rq-form-phone .rq-items td:nth-child(2){grid-column:1/-1}
+  body.rq-form-phone .rq-items td.rqi-amt{align-self:end;font-weight:700;font-size:15px}
+  body.rq-form-phone .rq-items td.rqi-x{position:absolute;right:6px;top:4px}
+  body.rq-form-phone .rq-items td input{width:100%}
+  body.rq-form-phone .rq-form .m-f{position:sticky;bottom:0;background:var(--panel);z-index:5;box-shadow:0 -6px 16px rgba(0,0,0,.06);padding:10px 12px}
+  body.rq-form-phone .rq-form .m-f .btn{flex:1;min-height:48px;font-size:15px}
+  body.rq-form-phone .rq-form .m-f .btn.pri{flex:2}
+  body.rq-form-phone .rqq-big{min-height:72px}
+}
 /* Requisition approval steps */
 .rq-minis{display:inline-flex;gap:3px;flex-wrap:nowrap}
 .rq-mini{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:99px;white-space:nowrap}
 .rq-mini.ok{background:var(--green-soft);color:var(--green)}.rq-mini.warn{background:var(--amber-soft);color:var(--amber)}.rq-mini.bad{background:var(--red-soft);color:var(--red)}.rq-mini.wait{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
 .rq-appr-arrow{align-self:center;color:var(--muted);font-size:16px}
-.rq-appr.rq-appr-3,.rq-appr.rq-appr-4{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap}
-.rq-appr.rq-appr-3 .rq-appr-box,.rq-appr.rq-appr-4 .rq-appr-box{flex:1;min-width:140px}
+.rq-appr.rq-appr-2,.rq-appr.rq-appr-3,.rq-appr.rq-appr-4{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap}
+.rq-appr.rq-appr-2 .rq-appr-box,.rq-appr.rq-appr-3 .rq-appr-box,.rq-appr.rq-appr-4 .rq-appr-box{flex:1;min-width:140px}
 .rq-appr-box.done{border-color:var(--green)}.rq-appr-box.stop{border-color:var(--amber)}
 .rq-warn{background:var(--amber-soft);color:var(--amber);border-radius:8px;padding:7px 10px;font-size:12.5px;margin-bottom:8px}
 /* Laying Goods */
@@ -2274,7 +2364,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.18.3</p>
+    <p class="login-ver">V.2026.10.18.4</p>
   </div></div>
 </div>
 
@@ -2316,7 +2406,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.18.3</div>
+  <div id="ver-stamp">V.2026.10.18.4</div>
 </div>
 
 
@@ -5506,6 +5596,7 @@ function render() {
 }
 
 function setView(v) {
+  if (document.body) document.body.classList.remove('rq-form-phone'); // the phone layout belongs to the requisition form only
   // Requisitions are a separate part: department staff never leave it, and
   // only admin / management / audit / department staff can open it.
   if (rqOnlyUser() && !(typeof v === 'string' && v.indexOf('rq:') === 0)) v = rqHomeView();
@@ -19200,7 +19291,7 @@ async function copyTableForExcel(table, btn) {
 function addCopyButtons(root) {
   (root || document).querySelectorAll('table').forEach(function(t){
     if (t.dataset.copyXl || t.closest('.float-thead') || t.closest('#login-wrap') || t.rows.length < 2) return;
-    if (t.closest('.pdf-wrap') || t.closest('#tnapdf-body') || t.closest('#btnapdf-body') || t.closest('#dpdf-body') || t.closest('#todo-body') || t.closest('.cm-clash')) return;
+    if (t.closest('.pdf-wrap') || t.closest('#tnapdf-body') || t.closest('#btnapdf-body') || t.closest('#dpdf-body') || t.closest('#todo-body') || t.closest('.cm-clash') || t.classList.contains('rq-items') || t.closest('.ds-win')) return; // not on input tables or the scanner
     t.dataset.copyXl = '1';
     var host = t.closest('.scroller') || t.closest('.dev-compare-wrap') || t;
     if (host.previousElementSibling && host.previousElementSibling.classList.contains('copy-xl-bar')) return;
@@ -19241,7 +19332,7 @@ var BACKUP_TABLES = [ // known tables, parents before children (restore goes in 
   'developments','development_options','development_samples','dev_colour_approvals','dev_price_history','order_commercial','commercial_payments',
   'buyer_invoice_details',
   'buyer_logos','buyer_team','buyer_contacts','buyer_notes','buyer_payment','buyer_banking','buyer_bank_changes','buyer_addresses','buyer_change_log',
-  'rq_settings','rq_counters','rq_requisitions','rq_events'
+  'rq_settings','rq_counters','rq_requisitions','rq_events','rq_quotations'
 ];
 var BACKUP_EXCLUDE = ['user_password_view'];
 var _backupBusy = false;
@@ -19606,6 +19697,7 @@ async function runRestore() {
 var SETUP_KNOWN = { // every column the app uses: for tables a backup has no rows of (when it has no saved layout)
   rq_requisitions: 'agm_at:timestamptz,agm_by:text,agm_by_name:text,agm_note:text,agm_status:text,cao_at:timestamptz,cao_by:text,cao_by_name:text,cao_note:text,cao_status:text,approved_cost:numeric,audit_at:timestamptz,audit_by:text,audit_by_name:text,audit_note:text,audit_status:text,company:text,completed_at:timestamptz,completion_note:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,est_cost:numeric,final_cost:numeric,id:uuid,items:jsonb,job_no:text,kind:text,location:text,location_detail:text,mgmt_at:timestamptz,mgmt_by:text,mgmt_by_name:text,mgmt_note:text,mgmt_status:text,priority:text,progress:integer,remarks:text,req_date:date,seq:integer,spent:numeric,started_at:timestamptz,status:text,target_date:date,time_unit:text,time_value:numeric,updated_at:timestamptz,updated_by:text,work_type:text,yr:integer',
   rq_events: 'amount:numeric,at:timestamptz,by_id:text,by_name:text,id:uuid,kind:text,note:text,pct:integer,req_id:uuid',
+  rq_quotations: 'amount:numeric,bytes:integer,created_at:timestamptz,created_by:text,created_by_name:text,currency:text,dept:text,id:uuid,images_deleted_at:timestamptz,keep_changed_by:text,keep_until:date,page_count:integer,pages:jsonb,req_id:uuid,supplier:text,valid_until:date',
   rq_counters: 'dept:text,last:integer,yr:integer',
   rq_settings: 'key:text,updated_at:timestamptz,updated_by:text,value:text',
   companies: 'address:text,bank_account:text,bank_branch:text,bank_name:text,bin:text,bond_licence:text,code:text,erc:text,invoice_prefix:text,irc:text,name:text,phone:text,signatory:text,signature_img:text,sort:integer,swift:text',
@@ -19775,6 +19867,10 @@ function buildSetupSql(b) {
   out.push("  INSERT INTO storage.buckets (id, name, public) VALUES ('product-images', 'product-images', true) ON CONFLICT (id) DO UPDATE SET public = true;");
   [['read', 'SELECT', 'USING'], ['upload', 'INSERT', 'WITH CHECK'], ['change', 'UPDATE', 'USING'], ['remove', 'DELETE', 'USING']].forEach(function(p){
     out.push("  BEGIN EXECUTE 'CREATE POLICY \"tracker photos " + p[0] + "\" ON storage.objects FOR " + p[1] + ' ' + p[2] + " (bucket_id = ''product-images'')'; EXCEPTION WHEN duplicate_object THEN NULL; END;");
+  });
+  out.push("  INSERT INTO storage.buckets (id, name, public) VALUES ('rq-quotations', 'rq-quotations', true) ON CONFLICT (id) DO NOTHING;");
+  [['read', 'SELECT', 'USING'], ['upload', 'INSERT', 'WITH CHECK'], ['change', 'UPDATE', 'USING'], ['remove', 'DELETE', 'USING']].forEach(function(p){
+    out.push("  BEGIN EXECUTE 'CREATE POLICY \"quotation pages " + p[0] + "\" ON storage.objects FOR " + p[1] + ' ' + p[2] + " (bucket_id = ''rq-quotations'')'; EXCEPTION WHEN duplicate_object THEN NULL; END;");
   });
   out.push('END IF; END $$;');
   out.push('');
@@ -20012,6 +20108,7 @@ async function rqLoad() {
     var pr = await db.from('rq_requisitions').select('agm_status,cao_status').limit(1);
     RQ.stagesOk = !pr.error;
   }
+  try { await rqqLoad(); } catch (e) { console.error('quotations:', e); }
 }
 async function rqLoadSettings(force) {
   if (RQ.settings && !force) return RQ.settings;
@@ -20107,7 +20204,10 @@ function rqRailHtml() {
     h += item('rq:overview', '&#x25A6;', 'Overview', all.overdue, all.overdue > 0);
     h += item('rq:all', '&#x2630;', 'All requisitions', RQ.rows.length);
     h += item('rq:report', '&#x25A4;', 'Monthly spend report');
+    var dueQ = S.user.role === 'admin' ? rqqDueSoon(null).length : 0;
+    if (dueQ) h += item('rq:quotes', '&#x26A0;', 'Quotations to be deleted', dueQ, true);
   }
+  if (rqIsDeptUser()) { var dueD = rqqDueSoon(S.user.division).length; if (dueD) h += item('rq:quotes', '&#x26A0;', 'Quotations to be deleted', dueD, true); }
   rqMyDepts().forEach(function(d){
     var c = rqCounts(d.k);
     var key = 'rq_' + d.k;
@@ -20149,7 +20249,9 @@ function rqRender(view) {
     $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>requisitions-migration.sql</b> once in Supabase &rarr; SQL Editor, then refresh this page.</div></div>';
     return;
   }
+  document.body.classList.remove('rq-form-phone');
   var p = String(view).split(':');
+  if (p[1] === 'quotes') { if (!rqqOn() || (S.user.role !== 'admin' && !rqIsDeptUser())) { setView(rqHomeView()); return; } return rqqRenderDue(); }
   if (p[1] === 'approvals') return rqRenderApprovals();
   if (p[1] === 'overview') return rqRenderOverview();
   if (p[1] === 'all') return rqRenderAll(null);
@@ -20186,7 +20288,8 @@ function rqTable(list, tab, showDept) {
   if (showDept) cols.splice(1, 0, 'Department');
   var body = list.map(function(r){
     var loc = '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '');
-    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>';
+    var nq = rqqOn() ? rqqList(r.id).length : 0;
+    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>' + (nq ? '<div class="sub2 rqq-n">' + nq + ' quote' + (nq === 1 ? '' : 's') + '</div>' : '');
     var co = '<span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span>';
     var cells;
     if (tab === 'pending') {
@@ -20227,7 +20330,7 @@ function rqRenderList(d, tab) {
   var acts = rqCanWork(d.k) ? '<button class="btn pri" onclick="setView(\'rq:' + d.k + ':new\')">&#x002B; New requisition</button>' : '';
   var sub = tab === 'pending' ? 'Waiting for audit and management. Management approval starts the work.' : tab === 'wip' ? 'Approved work. Update the progress as the work goes on.' : tab === 'done' ? 'Finished work, kept on record.' : 'Returned for changes, rejected, or cancelled.';
   rqSetHead('Requisitions › ' + d.n, d.n + ' — ' + t.n, sub, acts);
-  $('content').innerHTML = '<div class="card">' + '<div class="card-h"><h3>' + t.n + ' <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, tab, false) + '</div>';
+  $('content').innerHTML = rqqDueBanner(d.k) + '<div class="card">' + '<div class="card-h"><h3>' + t.n + ' <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, tab, false) + '</div>';
 }
 // Every requisition with where it is now: a department's own list ("My
 // requisitions"), or all departments for admin / management / audit.
@@ -20336,7 +20439,7 @@ function rqRenderOverview() {
     : '<div class="empty" style="padding:18px">No place has needed the same work 3 or more times in the last 12 months.</div>';
   var overdue = rqSortForTab(rows.filter(rqOverdue), 'wip');
   rqSetHead('Requisitions', 'Requisitions overview', 'All departments' + (RQ.filter.co ? ' &middot; ' + rqEsc(rqCompany(RQ.filter.co).n) : ''), '<button class="btn" onclick="setView(\'rq:all\')">&#x2630; See all requisitions</button>');
-  $('content').innerHTML = '<div class="rq-ovbar">' + rqFilterBar() + '</div>' + tiles
+  $('content').innerHTML = rqqDueBanner(null) + '<div class="rq-ovbar">' + rqFilterBar() + '</div>' + tiles
     + '<div class="card"><div class="card-h"><h3>By department</h3></div><div class="scroller">' + byDept + '</div></div>'
     + '<div class="card"><div class="card-h"><h3>Overdue work <span class="rq-count">' + overdue.length + '</span></h3></div>' + rqTable(overdue, 'wip', true) + '</div>'
     + '<div class="card"><div class="card-h"><h3>Repeat problems</h3><span class="note">Same place, same type of work, 3+ times in a year &mdash; worth replacing rather than repairing</span></div><div class="scroller">' + repHtml + '</div></div>';
@@ -20345,7 +20448,7 @@ function rqRenderOverview() {
 // ─── NEW / EDIT FORM ───
 var _rqFormStart = null;
 function rqFormDirty() { var f = $('rq-form'); if (!f) return false; return _rqFormStart !== null && rqFormSnapshot() !== _rqFormStart; }
-function rqFormSnapshot() { var f = $('rq-form'); if (!f) return ''; return Array.prototype.map.call(f.querySelectorAll('input,select,textarea'), function(e){ return e.type === 'radio' ? (e.checked ? e.value : '') : e.value; }).join('\u0001'); }
+function rqFormSnapshot() { var f = $('rq-form'); if (!f) return ''; return Array.prototype.map.call(f.querySelectorAll('input,select,textarea'), function(e){ return e.type === 'radio' ? (e.checked ? e.value : '') : e.value; }).join('\u0001') + '\u0001q' + ((RQ.formQuotes || []).length); }
 function rqRenderForm(d, editId) {
   var r = editId ? RQ.rows.find(function(x){ return x.id === editId; }) : null;
   if (editId && !r) { setView('rq:' + d.k + ':pending'); return; }
@@ -20354,6 +20457,7 @@ function rqRenderForm(d, editId) {
   r = r || { company: '', req_date: todayStr(), kind: 'work', priority: 'normal', time_unit: 'days', items: [] };
   var locs = {}; RQ.rows.forEach(function(x){ if (x.location) locs[x.location] = 1; });
   var types = d.types.slice(); var isOther = r.work_type && types.indexOf(r.work_type) === -1;
+  (RQ.formQuotes || []).forEach(function(q){ (q.pages || []).forEach(dsFreePage); }); RQ.formQuotes = []; // a fresh form starts with no quotations
   var items = Array.isArray(r.items) && r.items.length ? r.items : [{}];
   var h = '<div class="card rq-form" id="rq-form"><div class="card-h"><h3>' + (editId ? 'Change requisition ' + rqEsc(r.job_no) : 'New ' + d.n + ' requisition') + '</h3><span class="note">' + (editId ? (r.status === 'returned' ? 'Saving sends it back to audit and management.' : 'No one has approved it yet.') : 'A job number is given when you submit.') + '</span></div><div class="m-b">'
     + '<div class="grid3">'
@@ -20369,27 +20473,29 @@ function rqRenderForm(d, editId) {
     + '<div class="f"><label>Work or purchase</label><div class="rq-seg">'
     + '<label><input type="radio" name="rqf-kind" value="work"' + (r.kind !== 'purchase' ? ' checked' : '') + ' onchange="rqKindChange()"> Work / service</label>'
     + '<label><input type="radio" name="rqf-kind" value="purchase"' + (r.kind === 'purchase' ? ' checked' : '') + ' onchange="rqKindChange()"> Items to buy</label></div></div>'
-    + '<div class="f"><label>Time required</label><div style="display:flex;gap:6px"><input id="rqf-time" type="number" min="0" step="0.5" style="flex:1" value="' + rqEsc(r.time_value == null ? '' : r.time_value) + '"><select id="rqf-unit" style="width:100px">' + ['hours', 'days', 'weeks'].map(function(u){ return '<option' + ((r.time_unit || 'days') === u ? ' selected' : '') + '>' + u + '</option>'; }).join('') + '</select></div></div>'
+    + '<div class="f"><label>Time required</label><div style="display:flex;gap:6px"><input id="rqf-time" type="number" inputmode="decimal" min="0" step="0.5" style="flex:1" value="' + rqEsc(r.time_value == null ? '' : r.time_value) + '"><select id="rqf-unit" style="width:100px">' + ['hours', 'days', 'weeks'].map(function(u){ return '<option' + ((r.time_unit || 'days') === u ? ' selected' : '') + '>' + u + '</option>'; }).join('') + '</select></div></div>'
     + '</div>'
     + '<div id="rqf-items-wrap" style="margin-top:12px"><label class="rq-lbl" id="rqf-items-lbl">' + (r.kind === 'purchase' ? 'Items required' : 'Work required') + ' <span style="font-weight:400">&mdash; one line each; these lines are the main part of the printed form</span></label><table class="rq-items"><thead><tr><th style="width:24%" id="rqf-items-h">' + (r.kind === 'purchase' ? 'Item' : 'Work') + '</th><th style="width:30%">Specification / purpose</th><th>Qty</th><th>Unit</th><th>Est. rate (Tk)</th><th>Amount</th><th></th></tr></thead><tbody id="rqf-items">'
     + items.map(rqItemRow).join('') + '</tbody></table><button class="btn sm" type="button" onclick="rqAddItem()" style="margin-top:6px">&#x002B; Add item</button></div>'
-    + '<div class="grid3" style="margin-top:12px"><div class="f"><label>Estimated cost (Tk) <span class="rq-req">*</span></label><input id="rqf-cost" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"><div class="sub2" id="rqf-cost-note"></div></div></div>'
+    + '<div class="grid3" style="margin-top:12px"><div class="f"><label>Estimated cost (Tk) <span class="rq-req">*</span></label><input id="rqf-cost" type="number" inputmode="decimal" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"><div class="sub2" id="rqf-cost-note"></div></div></div>'
     + '<div class="f" style="margin-top:12px"><label>Detailed remarks <span class="rq-req">*</span></label><textarea id="rqf-remarks" rows="5" placeholder="What is wrong or what is needed, why, and anything the approvers should know">' + rqEsc(r.remarks || '') + '</textarea></div>'
+    + rqqFormSection(editId ? r : null)
     + '<div class="adm-err" id="rqf-err" style="display:none;margin-top:10px"></div>'
     + '</div><div class="m-f"><button class="btn" onclick="rqCancelForm(\'' + d.k + '\')">Cancel</button><button class="btn pri" id="rqf-save" onclick="rqSubmitForm(\'' + d.k + '\')">' + (editId ? (r.status === 'returned' ? 'Save and send again' : 'Save changes') : 'Submit requisition') + '</button></div></div>';
   rqSetHead('Requisitions › ' + d.n, editId ? 'Change ' + r.job_no : 'New requisition', d.n + ' department', '');
   $('content').innerHTML = h;
+  document.body.classList.add('rq-form-phone');
   rqItemsChanged();
   _rqFormStart = rqFormSnapshot();
 }
 function rqItemRow(it) {
   it = it || {};
-  return '<tr><td><input class="rqi-item" value="' + rqEsc(it.item || '') + '" placeholder="e.g. LED tube light 20W"></td>'
-    + '<td><input class="rqi-spec" value="' + rqEsc(it.spec || '') + '" placeholder="e.g. for line 4, replacing dead tubes"></td>'
-    + '<td><input class="rqi-qty" type="number" min="0" step="any" value="' + rqEsc(it.qty == null ? '' : it.qty) + '" oninput="rqItemsChanged()"></td>'
-    + '<td><input class="rqi-unit" value="' + rqEsc(it.unit || '') + '" placeholder="pcs"></td>'
-    + '<td><input class="rqi-rate" type="number" min="0" step="any" value="' + rqEsc(it.rate == null ? '' : it.rate) + '" oninput="rqItemsChanged()"></td>'
-    + '<td class="num rqi-amt"></td><td><button class="btn sm ghost" type="button" title="Remove" onclick="this.closest(\'tr\').remove();rqItemsChanged()">&#x2715;</button></td></tr>';
+  return '<tr><td data-l="Item / work"><input class="rqi-item" value="' + rqEsc(it.item || '') + '" placeholder="e.g. LED tube light 20W"></td>'
+    + '<td data-l="Specification / purpose"><input class="rqi-spec" value="' + rqEsc(it.spec || '') + '" placeholder="e.g. for line 4, replacing dead tubes"></td>'
+    + '<td data-l="Qty"><input class="rqi-qty" type="number" inputmode="decimal" min="0" step="any" value="' + rqEsc(it.qty == null ? '' : it.qty) + '" oninput="rqItemsChanged()"></td>'
+    + '<td data-l="Unit"><input class="rqi-unit" value="' + rqEsc(it.unit || '') + '" placeholder="pcs"></td>'
+    + '<td data-l="Est. rate (Tk)"><input class="rqi-rate" type="number" inputmode="decimal" min="0" step="any" value="' + rqEsc(it.rate == null ? '' : it.rate) + '" oninput="rqItemsChanged()"></td>'
+    + '<td class="num rqi-amt" data-l="Amount"></td><td class="rqi-x"><button class="btn sm ghost" type="button" title="Remove" onclick="this.closest(\'tr\').remove();rqItemsChanged()">&#x2715;</button></td></tr>';
 }
 function rqAddItem() { var tb = $('rqf-items'); if (!tb) return; tb.insertAdjacentHTML('beforeend', rqItemRow({})); rqItemsChanged(); }
 function rqKindChange() {
@@ -20492,10 +20598,12 @@ async function rqCreate(d, v) {
   if (res.error) { showSaveError('Could not save the requisition', res.error); return; }
   await rqEvent(res.data.id, 'created', { amount: v.est_cost });
   RQ.rows.unshift(res.data);
+  var qErr = await rqqUploadForm(res.data);
   _rqFormStart = null;
   toast('Requisition ' + res.data.job_no + ' submitted \u2014 sent for approval. Print the form below if it needs signatures on paper.', 'ok-t');
   setView('rq:' + d.k + ':pending');
   rqOpen(res.data.id);
+  if (qErr) setTimeout(function(){ toast(qErr, 'err'); }, 50);
 }
 async function rqSaveEdit(d, v) {
   var r = RQ.rows.find(function(x){ return x.id === RQ.editId; });
@@ -20511,8 +20619,10 @@ async function rqSaveEdit(d, v) {
   if (!res.data || !res.data.length) { await rqRefreshOne(r.id); toast('Someone has already acted on this requisition — it was not changed', 'err'); _rqFormStart = null; RQ.editId = null; setView('rq:' + d.k + ':' + rqTabOf(RQ.rows.find(function(x){ return x.id === r.id; }) || r)); return; }
   await rqEvent(r.id, wasReturned ? 'resubmitted' : 'edited', { amount: v.est_cost });
   r = rqPut(res.data[0]);
+  var qErr2 = await rqqUploadForm(r);
   _rqFormStart = null; RQ.editId = null;
   toast(wasReturned ? r.job_no + ' sent again for approval' : r.job_no + ' saved', 'ok-t');
+  if (qErr2) setTimeout(function(){ toast(qErr2, 'err'); }, 50);
   setView('rq:' + d.k + ':pending');
 }
 function rqStartEdit(id) {
@@ -20528,11 +20638,11 @@ async function rqOpen(id) {
   RQ.openId = id;
   rqRenderDetail(id, false);
   openModal('ov-rq');
-  await rqLoadEvents(id);
+  await Promise.all([rqLoadEvents(id), rqqRefresh(id).catch(function(){})]);
   if (RQ.openId === id) rqRenderDetail(id, true);
 }
 function rqKv(k, v) { return '<div class="rq-kv"><div class="k">' + k + '</div><div class="v">' + (v == null || v === '' ? '&mdash;' : v) + '</div></div>'; }
-var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled' };
+var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled' };
 function rqRenderDetail(id, withEvents) {
   var r = RQ.rows.find(function(x){ return x.id === id; });
   if (!r) { closeModal('ov-rq'); return; }
@@ -20547,6 +20657,7 @@ function rqRenderDetail(id, withEvents) {
     + rqKv('Time required', rqEsc(rqTimeTxt(r))) + rqKv('Estimated cost', rqMoney(r.est_cost)) + rqKv('Raised by', rqEsc(r.created_by_name) + ' <span class="sub2">' + rqDateTime(r.created_at) + '</span>')
     + '</div>' + items
     + '<div class="rq-sec"><div class="rq-sec-h">Detailed remarks</div><div class="rq-remarks">' + rqEsc(r.remarks || '') + '</div></div>'
+    + rqqDetailHtml(r)
     + '<div class="rq-sec"><div class="rq-sec-h">Approval</div><div class="rq-appr rq-appr-' + rqStagesFor(r).length + '">'
     + rqStagesFor(r).map(function(st, i){
         var v = r[st.k + '_status'];
@@ -20570,7 +20681,7 @@ function rqRenderDetail(id, withEvents) {
   var ev = RQ.events[id];
   h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
     : '<div class="rq-hist">' + ev.slice().reverse().map(function(e){
-      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
+      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done', 'quote_added', 'quote_removed'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
         + (e.note ? '<div class="rq-ev-note">' + rqEsc(e.note) + '</div>' : '') + '<div class="sub2">' + rqEsc(e.by_name || '') + ' &middot; ' + rqDateTime(e.at) + '</div></div></div>';
     }).join('') + '</div>') + '</div>';
   $('rq-body').innerHTML = h;
@@ -20882,6 +20993,13 @@ function rqPrintHtml(r, st, ev, formOnly) {
     }
     var pst = rqStagesFor(r);
     extra += '<div class="box"><h3>APPROVAL</h3><div class="ap" style="grid-template-columns:repeat(' + pst.length + ',1fr)">' + pst.map(function(s2){ return ap(E(s2.full), r[s2.k + '_status'], r[s2.k + '_by_name'], r[s2.k + '_at'], r[s2.k + '_note'], s2.k === 'mgmt' && mgmtOk ? r.approved_cost : null); }).join('') + '</div></div>';
+    var pq = rqqOn() ? rqqList(r.id) : [];
+    if (pq.length) {
+      var pcmp = rqqCompare(pq);
+      extra += '<div class="box"><h3>QUOTATIONS</h3><table><tr><th>Supplier</th><th class="n" style="width:20%">Total</th><th style="width:18%">Valid until</th><th style="width:22%">Added by</th></tr>' + pq.map(function(q){
+        var low = pcmp.count > 1 && (q.currency || 'BDT') === pcmp.cur && Number(q.amount) === pcmp.low;
+        return '<tr><td><b>' + E(q.supplier) + '</b>' + (low ? ' &middot; lowest' : '') + '</td><td class="n"><b>' + rqqMoney(q.amount, q.currency) + '</b></td><td>' + E(rqDateTxt(q.valid_until) || '') + '</td><td>' + E(q.created_by_name || '') + '</td></tr>'; }).join('') + '</table></div>';
+    }
     if (started) {
       var log = (ev || []).filter(function(e){ return ['progress', 'cost', 'hold', 'resumed', 'done'].indexOf(e.kind) !== -1; });
       var prog = Math.max(0, Math.min(100, Number(r.progress) || 0));
@@ -22331,6 +22449,781 @@ function bhInsightsHtml(id, st) {
     + '<div class="bh-grid"><div class="bp-col">' + kpi + riskBox + '</div><div class="bp-col">' + biz + del + pay + '</div><div class="bp-col">' + gauges + apv + neg + '</div></div>'
     + '<div class="bp-hint" style="margin-top:10px">Worked out from the orders, commercial records, approvals and developments already in Shahana One. It updates by itself as new orders, shipments and payments are entered.</div>';
 }
+// ═══════════════════════════════════════════════════════════════════
+// DOCUMENT SCANNER (ds*): turns a photo or a PDF into small, readable
+// black-and-white page images. Works on a laptop (choose a file) and on a
+// phone (take a photo). The paper's corners are set by hand (4 dots); the
+// page is then straightened, the background cut off, shadows evened out and
+// the result saved as WebP (JPEG where the browser cannot make WebP).
+// Written to be reused by other sections later. Everything it shows lives in
+// its own window (#ov-ds); it never touches the page behind it.
+// ═══════════════════════════════════════════════════════════════════
+var DS_MAX_SIDE = 1600, DS_TARGET_BYTES = 150000, DS_MIN_SIDE = 1100, DS_SRC_SIDE = 2400;
+var DS_PDFJS = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+var DS_PDFJS_WORKER = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+var DS = { open: false, opts: null, pages: [], step: 'pick', crop: null, busy: false, pdfjs: null };
+
+function dsEsc(s) { return htmlEsc(s == null ? '' : String(s)); }
+function dsKB(n) { return Math.max(1, Math.round((n || 0) / 1024)) + ' KB'; }
+function dsEnsureDom() {
+  if ($('ov-ds')) return;
+  var ov = document.createElement('div');
+  ov.className = 'ov ds-ov'; ov.id = 'ov-ds';
+  ov.innerHTML = '<div class="ds-win" role="dialog" aria-modal="true"><div class="ds-head"><button type="button" class="ds-x" onclick="dsClose()" aria-label="Close">&#x2715;</button><div class="ds-title" id="ds-title"></div><span id="ds-headx"></span></div>'
+    + '<div class="ds-body" id="ds-body"></div><div class="ds-foot" id="ds-foot"></div></div>'
+    + '<input type="file" id="ds-file" accept="image/*,application/pdf,.pdf" multiple style="display:none" onchange="dsFilesChosen(this)">'
+    + '<input type="file" id="ds-cam" accept="image/*" capture="environment" style="display:none" onchange="dsFilesChosen(this)">';
+  document.body.appendChild(ov);
+  // own keys: Escape closes only this window (not the requisition behind it); Enter saves / finishes
+  document.addEventListener('keydown', function(e){
+    if (!DS.open || !$('ov-ds').classList.contains('open')) return;
+    if ($('ov-app-confirm') && $('ov-app-confirm').classList.contains('open')) return;
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); dsBack(); }
+    else if (e.key === 'Enter' && !e.shiftKey && !(document.activeElement && document.activeElement.tagName === 'TEXTAREA')) {
+      if (DS.step === 'crop') { e.preventDefault(); e.stopPropagation(); dsCropDone(); }
+      else if (DS.step === 'pages' && document.activeElement && /^(INPUT|SELECT)$/.test(document.activeElement.tagName) && $('ds-body').contains(document.activeElement)) { e.preventDefault(); e.stopPropagation(); dsSave(); }
+    }
+  }, true);
+}
+// opts: { title, maxPages, formHtml, onSave(pages) -> Promise<string|true> }
+function dsOpen(opts) {
+  dsEnsureDom();
+  DS.opts = opts || {}; DS.pages = []; DS.step = 'pick'; DS.crop = null; DS.busy = false; DS.open = true;
+  $('ds-title').textContent = DS.opts.title || 'Add document';
+  openModal('ov-ds');
+  dsRender();
+}
+async function dsClose(force) {
+  if (!DS.open) return;
+  if (!force && DS.pages.length && !(await appConfirm('Close without saving? The pages you added will be lost.', { title: 'Discard', okText: 'Discard', danger: true }))) return;
+  DS.open = false; DS.pages = []; DS.crop = null;
+  closeModal('ov-ds');
+}
+function dsBack() {
+  if (DS.busy) return;
+  if (DS.step === 'crop') { DS.crop = null; DS.step = DS.pages.length ? 'pages' : 'pick'; dsRender(); return; }
+  dsClose();
+}
+function dsSetFoot(html) { $('ds-foot').innerHTML = html; }
+function dsRender() {
+  var b = $('ds-body'); if (!b) return;
+  $('ov-ds').dataset.step = DS.step;
+  if (DS.step === 'pick') {
+    b.innerHTML = '<div class="ds-pick"><div class="ds-pick-h">Add the ' + dsEsc(DS.opts.what || 'document') + '</div>'
+      + '<div class="ds-pick-btns"><button type="button" class="ds-big" onclick="dsPick(\'cam\')"><span class="ds-ic">&#x1F4F7;</span><b>Take photo</b><span>with the phone camera</span></button>'
+      + '<button type="button" class="ds-big" onclick="dsPick(\'file\')"><span class="ds-ic">&#x1F4C4;</span><b>Choose file</b><span>photo or PDF</span></button></div>'
+      + '<div class="ds-hint">Photos: you set the 4 corners of the paper, the app straightens it. PDFs are turned into pages by themselves (up to ' + (DS.opts.maxPages || 10) + ').</div>'
+      + (DS.busy ? '<div class="ds-busy"><span class="spin"></span> <span id="ds-busy-t">Working&hellip;</span></div>' : '') + '</div>';
+    dsSetFoot('<button type="button" class="btn" onclick="dsClose()">Cancel</button>' + (DS.pages.length ? '<button type="button" class="btn pri" onclick="DS.step=\'pages\';dsRender()">Back to the pages</button>' : ''));
+  } else if (DS.step === 'crop') dsRenderCrop();
+  else dsRenderPages();
+}
+function dsPick(kind) {
+  if (DS.busy) return;
+  var max = DS.opts.maxPages || 10;
+  if (DS.pages.length >= max) { toast('Up to ' + max + ' pages', 'err'); return; }
+  var inp = $(kind === 'cam' ? 'ds-cam' : 'ds-file'); inp.value = ''; inp.click();
+}
+function dsBusy(on, txt) {
+  DS.busy = !!on;
+  var t = $('ds-busy-t'); if (t && txt) t.textContent = txt;
+  $('ov-ds').classList.toggle('ds-is-busy', !!on);
+  var bb = $('ds-busybar'); if (bb) bb.style.display = on ? 'flex' : 'none';
+  if (bb && txt) bb.querySelector('span:last-child').textContent = txt;
+}
+async function dsFilesChosen(inp) {
+  var files = Array.prototype.slice.call(inp.files || []); inp.value = '';
+  if (!files.length || DS.busy) return;
+  var max = DS.opts.maxPages || 10;
+  for (var i = 0; i < files.length; i++) {
+    var f = files[i];
+    if (DS.pages.length >= max) { toast('Up to ' + max + ' pages per quotation; the rest were left out', 'err'); break; }
+    var isPdf = f.type === 'application/pdf' || /\.pdf$/i.test(f.name || '');
+    if (isPdf) {
+      if (f.size > 25 * 1024 * 1024) { toast((f.name || 'PDF') + ' is too big (over 25 MB)', 'err'); continue; }
+      await dsAddPdf(f);
+      continue;
+    }
+    if (!/^image\//.test(f.type || '') && !/\.(jpe?g|png|webp|gif|bmp|heic|heif)$/i.test(f.name || '')) { toast((f.name || 'That file') + ' is not a photo or a PDF', 'err'); continue; }
+    if (f.size > 40 * 1024 * 1024) { toast((f.name || 'Photo') + ' is too big (over 40 MB)', 'err'); continue; }
+    var src = await dsLoadImage(f);
+    if (!src) { toast('Could not read ' + (f.name || 'that photo') + '. Try a JPG or PNG.', 'err'); continue; }
+    if (files.length === 1) { dsStartCrop(src, null); return; } // one photo: set the corners
+    await dsFinishPage(src, null); // several at once: added whole, each can be cropped after
+  }
+  DS.step = DS.pages.length ? 'pages' : 'pick'; dsRender();
+}
+// photo -> canvas (largest side up to 2400), turned the right way up
+function dsLoadImage(file) {
+  return new Promise(function(resolve){
+    var url = URL.createObjectURL(file), im = new Image();
+    im.onload = function(){
+      try {
+        var w = im.naturalWidth, h = im.naturalHeight; if (!w || !h) { URL.revokeObjectURL(url); return resolve(null); }
+        var sc = Math.min(1, DS_SRC_SIDE / Math.max(w, h));
+        var c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w * sc)); c.height = Math.max(1, Math.round(h * sc));
+        var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url); resolve(c);
+      } catch (e) { URL.revokeObjectURL(url); resolve(null); }
+    };
+    im.onerror = function(){ URL.revokeObjectURL(url); resolve(null); };
+    im.src = url;
+  });
+}
+function dsLoadScript(src) {
+  return new Promise(function(resolve, reject){
+    var s = document.createElement('script'); s.src = src; s.async = true;
+    s.onload = function(){ resolve(); }; s.onerror = function(){ s.remove(); reject(new Error('could not load ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+async function dsPdfLib() {
+  if (DS.pdfjs) return DS.pdfjs;
+  if (!window.pdfjsLib) await dsLoadScript(DS_PDFJS);
+  if (!window.pdfjsLib) throw new Error('PDF reader missing');
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = DS_PDFJS_WORKER;
+  DS.pdfjs = window.pdfjsLib; return DS.pdfjs;
+}
+async function dsAddPdf(file) {
+  var max = DS.opts.maxPages || 10;
+  DS.step = 'pick'; dsBusy(true, 'Reading the PDF…'); dsRender();
+  try {
+    var lib;
+    try { lib = await dsPdfLib(); } catch (e) { toast('The PDF reader could not be loaded. Check the internet, or add photos / screenshots instead.', 'err'); return; }
+    var buf = await file.arrayBuffer(), doc;
+    try { doc = await lib.getDocument({ data: buf, isEvalSupported: false }).promise; }
+    catch (e) { toast(/password/i.test(e && (e.name + e.message)) ? 'That PDF is locked with a password. Ask the supplier for an open copy, or add a photo.' : 'That PDF could not be read. Try another copy or add a photo.', 'err'); return; }
+    var n = doc.numPages, room = max - DS.pages.length, take = Math.min(n, room);
+    if (n > room) toast('The PDF has ' + n + ' pages; only the first ' + take + ' are added (up to ' + max + ' per quotation).', 'err');
+    for (var i = 1; i <= take; i++) {
+      dsBusy(true, 'Page ' + i + ' of ' + take + '…');
+      var pg = await doc.getPage(i), vp1 = pg.getViewport({ scale: 1 });
+      var sc = DS_MAX_SIDE / Math.max(vp1.width, vp1.height), vp = pg.getViewport({ scale: sc });
+      var c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+      var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+      await pg.render({ canvasContext: x, viewport: vp }).promise;
+      await dsFinishPage(c, null, true);
+    }
+    try { doc.destroy(); } catch (e) {}
+  } catch (e) { console.error('pdf:', e); toast('That PDF could not be read. Try another copy or add a photo.', 'err'); }
+  finally { dsBusy(false); }
+}
+
+// ── corners ──
+function dsStartCrop(src, pageIndex) {
+  var w = src.width, h = src.height, ix = w * 0.06, iy = h * 0.06;
+  var prev = pageIndex != null && DS.pages[pageIndex] ? DS.pages[pageIndex].corners : null;
+  DS.crop = { src: src, page: pageIndex, pts: prev ? prev.map(function(p){ return p.slice(); }) : [[ix, iy], [w - ix, iy], [w - ix, h - iy], [ix, h - iy]], drag: -1 };
+  DS.step = 'crop'; dsRender();
+}
+function dsRenderCrop() {
+  var cr = DS.crop; if (!cr) { DS.step = 'pick'; return dsRender(); }
+  $('ds-body').innerHTML = '<div class="ds-crop-tip">Drag the 4 dots onto the corners of the paper</div>'
+    + '<div class="ds-stage" id="ds-stage"><canvas id="ds-cv"></canvas><svg id="ds-svg"></svg>'
+    + [0, 1, 2, 3].map(function(i){ return '<div class="ds-dot" data-i="' + i + '" id="ds-dot' + i + '" tabindex="0" aria-label="Corner ' + (i + 1) + '"></div>'; }).join('')
+    + '<canvas id="ds-mag" class="ds-mag" width="120" height="120"></canvas></div>'
+    + '<div class="ds-hint" style="text-align:center">Done straightens the page and cuts off the background. Skip crop keeps the whole photo.</div>'
+    + '<div class="ds-busy" id="ds-busybar" style="display:none"><span class="spin"></span> <span>Working&hellip;</span></div>';
+  dsSetFoot('<button type="button" class="btn" onclick="dsRotate()" title="Turn the photo">&#x21BB; Turn</button><span style="flex:1"></span><button type="button" class="btn" onclick="dsCropSkip()">Skip crop</button><button type="button" class="btn pri" id="ds-done" onclick="dsCropDone()">Done</button>');
+  dsLayoutCrop();
+  var st = $('ds-stage');
+  st.addEventListener('pointerdown', dsPtrDown);
+  st.addEventListener('pointermove', dsPtrMove);
+  st.addEventListener('pointerup', dsPtrUp); st.addEventListener('pointercancel', dsPtrUp);
+  window.removeEventListener('resize', dsLayoutCrop); window.addEventListener('resize', dsLayoutCrop);
+}
+function dsLayoutCrop() {
+  var cr = DS.crop, st = $('ds-stage'), cv = $('ds-cv'); if (!cr || !st || !cv) { window.removeEventListener('resize', dsLayoutCrop); return; }
+  var maxW = st.clientWidth || 360, maxH = Math.max(220, Math.min(window.innerHeight - 230, 900));
+  var sc = Math.min(maxW / cr.src.width, maxH / cr.src.height);
+  cr.sc = sc;
+  cv.width = Math.round(cr.src.width * sc); cv.height = Math.round(cr.src.height * sc);
+  cv.style.width = cv.width + 'px'; cv.style.height = cv.height + 'px';
+  st.style.height = cv.height + 'px';
+  cr.ox = Math.round((st.clientWidth - cv.width) / 2); cv.style.left = cr.ox + 'px';
+  cv.getContext('2d').drawImage(cr.src, 0, 0, cv.width, cv.height);
+  dsDrawCrop();
+}
+function dsDrawCrop() {
+  var cr = DS.crop; if (!cr || !$('ds-svg')) return;
+  var cv = $('ds-cv'), svg = $('ds-svg');
+  svg.setAttribute('width', $('ds-stage').clientWidth); svg.setAttribute('height', cv.height);
+  var P = cr.pts.map(function(p){ return [cr.ox + p[0] * cr.sc, p[1] * cr.sc]; });
+  var poly = P.map(function(p){ return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ');
+  svg.innerHTML = '<path d="M' + cr.ox + ' 0H' + (cr.ox + cv.width) + 'V' + cv.height + 'H' + cr.ox + 'Z M' + P.map(function(p){ return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L') + ' Z" fill="rgba(0,0,0,.42)" fill-rule="evenodd"/>'
+    + '<polygon points="' + poly + '" fill="none" stroke="#F5C451" stroke-width="2.5"/>';
+  P.forEach(function(p, i){ var d = $('ds-dot' + i); if (d) { d.style.left = p[0] + 'px'; d.style.top = p[1] + 'px'; } });
+  $('ds-done').disabled = !dsConvex(cr.pts);
+}
+function dsPtrDown(e) {
+  var cr = DS.crop; if (!cr) return;
+  var r = $('ds-stage').getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, best = -1, bd = 1e9;
+  cr.pts.forEach(function(p, i){ var dx = cr.ox + p[0] * cr.sc - x, dy = p[1] * cr.sc - y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = i; } });
+  var reach = e.pointerType === 'touch' ? 48 : 28;
+  if (bd > reach * reach) return;
+  e.preventDefault(); cr.drag = best; cr.grab = [cr.ox + cr.pts[best][0] * cr.sc - x, cr.pts[best][1] * cr.sc - y];
+  try { $('ds-stage').setPointerCapture(e.pointerId); } catch (er) {}
+  $('ds-dot' + best).classList.add('on'); dsMag(best, true);
+}
+function dsPtrMove(e) {
+  var cr = DS.crop; if (!cr || cr.drag < 0) return;
+  e.preventDefault();
+  var r = $('ds-stage').getBoundingClientRect();
+  var x = (e.clientX - r.left + cr.grab[0] - cr.ox) / cr.sc, y = (e.clientY - r.top + cr.grab[1]) / cr.sc;
+  cr.pts[cr.drag] = [Math.max(0, Math.min(cr.src.width, x)), Math.max(0, Math.min(cr.src.height, y))];
+  dsDrawCrop(); dsMag(cr.drag, true);
+}
+function dsPtrUp(e) {
+  var cr = DS.crop; if (!cr || cr.drag < 0) return;
+  $('ds-dot' + cr.drag).classList.remove('on'); cr.drag = -1; dsMag(0, false);
+}
+// zoom bubble: shows the area under the finger, 3x
+function dsMag(i, on) {
+  var m = $('ds-mag'), cr = DS.crop; if (!m || !cr) return;
+  if (!on) { m.style.display = 'none'; return; }
+  var p = cr.pts[i], z = 3, s = 120 / z / cr.sc; // source pixels shown
+  var x = m.getContext('2d'); x.fillStyle = '#222'; x.fillRect(0, 0, 120, 120);
+  x.drawImage(cr.src, p[0] - s / 2, p[1] - s / 2, s, s, 0, 0, 120, 120);
+  x.strokeStyle = '#F5C451'; x.lineWidth = 2; x.beginPath(); x.arc(60, 60, 7, 0, Math.PI * 2); x.stroke();
+  var px = cr.ox + p[0] * cr.sc, py = p[1] * cr.sc, st = $('ds-stage');
+  m.style.display = 'block';
+  m.style.left = Math.max(0, Math.min(st.clientWidth - 124, px < st.clientWidth / 2 ? px + 30 : px - 150)) + 'px';
+  m.style.top = Math.max(0, py < 150 ? py + 30 : py - 150) + 'px';
+}
+function dsConvex(p) {
+  var sign = 0;
+  for (var i = 0; i < 4; i++) {
+    var a = p[i], b = p[(i + 1) % 4], c = p[(i + 2) % 4];
+    var z = (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]);
+    if (Math.abs(z) < 1e-6) return false;
+    if (!sign) sign = z > 0 ? 1 : -1; else if ((z > 0 ? 1 : -1) !== sign) return false;
+  }
+  return true;
+}
+function dsRotate() {
+  var cr = DS.crop; if (!cr || DS.busy) return;
+  var s = cr.src, c = document.createElement('canvas'); c.width = s.height; c.height = s.width;
+  var x = c.getContext('2d'); x.translate(c.width, 0); x.rotate(Math.PI / 2); x.drawImage(s, 0, 0);
+  var w = c.width, h = c.height, ix = w * 0.06, iy = h * 0.06;
+  cr.src = c; cr.pts = [[ix, iy], [w - ix, iy], [w - ix, h - iy], [ix, h - iy]];
+  dsLayoutCrop();
+}
+async function dsCropDone() {
+  var cr = DS.crop; if (!cr || DS.busy) return;
+  if (!dsConvex(cr.pts)) { toast('The corners cross each other. Put each dot on its own corner.', 'err'); return; }
+  dsBusy(true, 'Straightening…');
+  await new Promise(function(r){ setTimeout(r, 30); });
+  try { await dsFinishPage(cr.src, cr.pts.map(function(p){ return p.slice(); }), false, cr.page); }
+  finally { dsBusy(false); }
+  window.removeEventListener('resize', dsLayoutCrop);
+  DS.crop = null; DS.step = 'pages'; dsRender();
+}
+async function dsCropSkip() {
+  var cr = DS.crop; if (!cr || DS.busy) return;
+  dsBusy(true, 'Cleaning up…');
+  await new Promise(function(r){ setTimeout(r, 30); });
+  try { await dsFinishPage(cr.src, null, false, cr.page); }
+  finally { dsBusy(false); }
+  window.removeEventListener('resize', dsLayoutCrop);
+  DS.crop = null; DS.step = 'pages'; dsRender();
+}
+
+// ── image work ──
+function dsGray(canvas) {
+  var w = canvas.width, h = canvas.height, d = canvas.getContext('2d').getImageData(0, 0, w, h).data, g = new Uint8ClampedArray(w * h);
+  for (var i = 0, j = 0; j < g.length; i += 4, j++) g[j] = (d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000;
+  return { w: w, h: h, g: g };
+}
+// solve the 8 numbers that map one 4-point shape onto another
+function dsHomography(from, to) {
+  var A = [], b = [];
+  for (var i = 0; i < 4; i++) {
+    var x = from[i][0], y = from[i][1], u = to[i][0], v = to[i][1];
+    A.push([x, y, 1, 0, 0, 0, -u * x, -u * y]); b.push(u);
+    A.push([0, 0, 0, x, y, 1, -v * x, -v * y]); b.push(v);
+  }
+  for (var c = 0; c < 8; c++) { // Gaussian elimination with pivoting
+    var piv = c; for (var r = c + 1; r < 8; r++) if (Math.abs(A[r][c]) > Math.abs(A[piv][c])) piv = r;
+    var t = A[c]; A[c] = A[piv]; A[piv] = t; var tb = b[c]; b[c] = b[piv]; b[piv] = tb;
+    if (Math.abs(A[c][c]) < 1e-12) return null;
+    for (var r2 = c + 1; r2 < 8; r2++) { var f = A[r2][c] / A[c][c]; for (var k = c; k < 8; k++) A[r2][k] -= f * A[c][k]; b[r2] -= f * b[c]; }
+  }
+  var h = new Array(8);
+  for (var i2 = 7; i2 >= 0; i2--) { var s = b[i2]; for (var k2 = i2 + 1; k2 < 8; k2++) s -= A[i2][k2] * h[k2]; h[i2] = s / A[i2][i2]; }
+  return [h[0], h[1], h[2], h[3], h[4], h[5], h[6], h[7], 1];
+}
+function dsDist(a, b) { return Math.sqrt((a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1])); }
+// straighten: the 4 corners become a flat rectangle (largest side up to 1600)
+function dsWarp(src, pts) {
+  var gr = dsGray(src);
+  var W = Math.max(dsDist(pts[0], pts[1]), dsDist(pts[3], pts[2])), H = Math.max(dsDist(pts[0], pts[3]), dsDist(pts[1], pts[2]));
+  var sc = Math.min(1, DS_MAX_SIDE / Math.max(W, H)); W = Math.max(8, Math.round(W * sc)); H = Math.max(8, Math.round(H * sc));
+  var m = dsHomography([[0, 0], [W, 0], [W, H], [0, H]], pts);
+  if (!m) return null;
+  var out = new Uint8ClampedArray(W * H), sw = gr.w, sh = gr.h, g = gr.g;
+  for (var y = 0; y < H; y++) {
+    for (var x = 0; x < W; x++) {
+      var den = m[6] * x + m[7] * y + 1, sx = (m[0] * x + m[1] * y + m[2]) / den, sy = (m[3] * x + m[4] * y + m[5]) / den;
+      if (sx < 0) sx = 0; else if (sx > sw - 1.001) sx = sw - 1.001;
+      if (sy < 0) sy = 0; else if (sy > sh - 1.001) sy = sh - 1.001;
+      var x0 = sx | 0, y0 = sy | 0, fx = sx - x0, fy = sy - y0, i0 = y0 * sw + x0;
+      out[y * W + x] = (g[i0] * (1 - fx) + g[i0 + 1] * fx) * (1 - fy) + (g[i0 + sw] * (1 - fx) + g[i0 + sw + 1] * fx) * fy;
+    }
+  }
+  return { w: W, h: H, g: out };
+}
+function dsScaleGray(gr, maxSide) {
+  var sc = Math.min(1, maxSide / Math.max(gr.w, gr.h)); if (sc >= 1) return gr;
+  var c = document.createElement('canvas'); c.width = gr.w; c.height = gr.h; dsPutGray(c, gr);
+  var d = document.createElement('canvas'); d.width = Math.max(1, Math.round(gr.w * sc)); d.height = Math.max(1, Math.round(gr.h * sc));
+  var x = d.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(c, 0, 0, d.width, d.height);
+  return dsGray(d);
+}
+function dsPutGray(canvas, gr) {
+  var x = canvas.getContext('2d'), im = x.createImageData(gr.w, gr.h), d = im.data;
+  for (var i = 0, j = 0; j < gr.g.length; i += 4, j++) { d[i] = d[i + 1] = d[i + 2] = gr.g[j]; d[i + 3] = 255; }
+  x.putImageData(im, 0, 0);
+}
+// "scan" look: even out light and shadow (divide by the paper's own
+// brightness, measured in blocks), then whiten the paper and darken the ink.
+// level: 0 normal, 1 darker, 2 darkest. pdf: lighter touch (already clean).
+function dsEnhance(gr, level, pdf) {
+  var w = gr.w, h = gr.h, g = gr.g, n = w * h, out = new Uint8ClampedArray(n);
+  var B = Math.max(8, Math.round(Math.max(w, h) / 48)), bw = Math.ceil(w / B), bh = Math.ceil(h / B), bg = new Float32Array(bw * bh);
+  for (var by = 0; by < bh; by++) for (var bx = 0; bx < bw; bx++) {
+    var hist = new Uint32Array(32), cnt = 0;
+    for (var y = by * B; y < Math.min(h, (by + 1) * B); y += 2) for (var x = bx * B; x < Math.min(w, (bx + 1) * B); x += 2) { hist[g[y * w + x] >> 3]++; cnt++; }
+    var want = cnt * 0.9, acc = 0, v = 31; // 90th percentile = the paper
+    for (var k = 0; k < 32; k++) { acc += hist[k]; if (acc >= want) { v = k; break; } }
+    bg[by * bw + bx] = v * 8 + 4;
+  }
+  // spread the paper level (max of neighbours) so dark text blocks take the paper around them, then smooth
+  var bg2 = new Float32Array(bg.length);
+  for (var y2 = 0; y2 < bh; y2++) for (var x2 = 0; x2 < bw; x2++) {
+    var mx = 0; for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) { var yy = y2 + dy, xx = x2 + dx; if (yy >= 0 && yy < bh && xx >= 0 && xx < bw && bg[yy * bw + xx] > mx) mx = bg[yy * bw + xx]; }
+    bg2[y2 * bw + x2] = mx;
+  }
+  var bg3 = new Float32Array(bg.length);
+  for (var y3 = 0; y3 < bh; y3++) for (var x3 = 0; x3 < bw; x3++) {
+    var s = 0, c = 0; for (var dy2 = -1; dy2 <= 1; dy2++) for (var dx2 = -1; dx2 <= 1; dx2++) { var yy2 = y3 + dy2, xx2 = x3 + dx2; if (yy2 >= 0 && yy2 < bh && xx2 >= 0 && xx2 < bw) { s += bg2[yy2 * bw + xx2]; c++; } }
+    bg3[y3 * bw + x3] = Math.max(40, s / c);
+  }
+  var gamma = [1.25, 1.8, 2.5][level || 0], white = pdf ? 0.94 : [0.86, 0.82, 0.78][level || 0];
+  for (var y4 = 0; y4 < h; y4++) {
+    var fy = Math.min(bh - 1.001, Math.max(0, (y4 + 0.5) / B - 0.5)), y0 = fy | 0, ty = fy - y0;
+    for (var x4 = 0; x4 < w; x4++) {
+      var fx = Math.min(bw - 1.001, Math.max(0, (x4 + 0.5) / B - 0.5)), x0 = fx | 0, tx = fx - x0;
+      var p = bg3[y0 * bw + x0] * (1 - tx) * (1 - ty) + bg3[y0 * bw + x0 + 1] * tx * (1 - ty) + bg3[(y0 + 1) * bw + x0] * (1 - tx) * ty + bg3[(y0 + 1) * bw + x0 + 1] * tx * ty;
+      var r = g[y4 * w + x4] / p; // 1 = paper
+      r = r >= white ? 1 : Math.pow(r / white, gamma);
+      out[y4 * w + x4] = r >= 0.985 ? 255 : r * 255;
+    }
+  }
+  return { w: w, h: h, g: out };
+}
+function dsToBlob(canvas, type, q) { return new Promise(function(res){ try { canvas.toBlob(function(b){ res(b); }, type, q); } catch (e) { res(null); } }); }
+// smallest file that still reads well: WebP (or JPEG), lower quality first, then smaller size
+async function dsEncode(gr) {
+  var cur = gr, c, b = null, type = 'image/webp';
+  for (var round = 0; round < 6; round++) {
+    c = document.createElement('canvas'); c.width = cur.w; c.height = cur.h; dsPutGray(c, cur);
+    var qs = [0.62, 0.5, 0.4];
+    for (var i = 0; i < qs.length; i++) {
+      b = await dsToBlob(c, type, qs[i]);
+      if (b && type === 'image/webp' && b.type !== 'image/webp') { type = 'image/jpeg'; b = await dsToBlob(c, type, qs[i]); }
+      if (b && b.size <= DS_TARGET_BYTES) return { blob: b, w: cur.w, h: cur.h, type: b.type || type };
+    }
+    if (Math.max(cur.w, cur.h) <= DS_MIN_SIDE) break;
+    cur = dsScaleGray(cur, Math.max(DS_MIN_SIDE, Math.round(Math.max(cur.w, cur.h) * 0.85)));
+  }
+  return b ? { blob: b, w: cur.w, h: cur.h, type: b.type || type } : null;
+}
+// make the page from a source canvas (+ corners), add it or replace one
+async function dsFinishPage(src, pts, pdf, replaceAt) {
+  try {
+    var base;
+    if (pts) base = dsWarp(src, pts);
+    if (!base) base = dsScaleGray(dsGray(src), DS_MAX_SIDE);
+    var pg = { base: base, level: 0, corners: pts, pdf: !!pdf, srcBlob: null };
+    if (!pdf) pg.srcBlob = await dsToBlob(src, 'image/jpeg', 0.85); // kept only while this window is open, for "crop again"
+    await dsBuildPage(pg);
+    if (!pg.blob) { toast('Could not make that page', 'err'); return false; }
+    if (replaceAt != null && DS.pages[replaceAt]) { dsFreePage(DS.pages[replaceAt]); DS.pages[replaceAt] = pg; }
+    else DS.pages.push(pg);
+    return true;
+  } catch (e) { console.error('scan page:', e); toast('Could not make that page: ' + (e.message || e), 'err'); return false; }
+}
+async function dsBuildPage(pg) {
+  var enc = await dsEncode(dsEnhance(pg.base, pg.level, pg.pdf));
+  if (!enc) return;
+  if (pg.url) URL.revokeObjectURL(pg.url);
+  pg.blob = enc.blob; pg.w = enc.w; pg.h = enc.h; pg.type = enc.type; pg.bytes = enc.blob.size;
+  pg.url = URL.createObjectURL(enc.blob);
+}
+function dsFreePage(pg) { try { if (pg && pg.url) URL.revokeObjectURL(pg.url); } catch (e) {} }
+
+// ── pages + the caller's form ──
+function dsRenderPages() {
+  var max = DS.opts.maxPages || 10, total = DS.pages.reduce(function(s, p){ return s + (p.bytes || 0); }, 0);
+  var keep = {};
+  if ($('ds-form')) Array.prototype.forEach.call($('ds-form').querySelectorAll('input,select,textarea'), function(e){ if (e.id) keep[e.id] = e.value; });
+  $('ds-body').innerHTML = '<div class="ds-pages">'
+    + (DS.pages.length ? DS.pages.map(function(p, i){
+      return '<div class="ds-page"><div class="ds-pimg"><img src="' + p.url + '" alt="Page ' + (i + 1) + '" onclick="dsZoom(' + i + ')"><span class="ds-ptag">Page ' + (i + 1) + ' &middot; ' + dsKB(p.bytes) + '</span></div>'
+        + '<div class="ds-pbtns"><button type="button" class="btn sm" onclick="dsDarker(' + i + ')">&#x25D1; ' + (p.level >= 2 ? 'Lighter' : 'Darker') + '</button>'
+        + (p.srcBlob ? '<button type="button" class="btn sm" onclick="dsRecrop(' + i + ')">&#x2702; Crop again</button>' : '')
+        + (i > 0 ? '<button type="button" class="btn sm" onclick="dsMove(' + i + ',-1)" title="Move up">&#x2191;</button>' : '')
+        + '<button type="button" class="btn sm danger" onclick="dsRemovePage(' + i + ')">&#x2715; Remove</button></div></div>';
+    }).join('') : '<div class="ds-hint">No pages yet.</div>')
+    + (DS.pages.length < max ? '<div class="ds-addrow"><button type="button" class="btn" onclick="dsPick(\'cam\')">&#x1F4F7; Take photo</button><button type="button" class="btn" onclick="dsPick(\'file\')">&#x2B; Add page from file</button></div>' : '<div class="ds-hint">' + max + ' pages is the most for one quotation.</div>')
+    + '<div class="ds-hint">' + DS.pages.length + ' page' + (DS.pages.length === 1 ? '' : 's') + ' &middot; ' + dsKB(total) + ' in total</div></div>'
+    + '<div class="ds-form" id="ds-form">' + (DS.opts.formHtml || '') + '<div class="adm-err" id="ds-err" style="display:none"></div></div>'
+    + '<div class="ds-busy" id="ds-busybar" style="display:none"><span class="spin"></span> <span>Working&hellip;</span></div>';
+  Object.keys(keep).forEach(function(id){ var e = $(id); if (e) e.value = keep[id]; });
+  dsSetFoot('<button type="button" class="btn" onclick="dsClose()">Cancel</button><span style="flex:1"></span><button type="button" class="btn pri" id="ds-save" onclick="dsSave()"' + (DS.pages.length ? '' : ' disabled') + '>' + dsEsc(DS.opts.saveText || 'Save') + '</button>');
+  var first = $('ds-form') && $('ds-form').querySelector('input');
+  if (first && !first.value && window.innerWidth > 760) first.focus();
+}
+async function dsDarker(i) {
+  var p = DS.pages[i]; if (!p || DS.busy) return;
+  p.level = p.level >= 2 ? 0 : p.level + 1;
+  dsBusy(true, 'Working…');
+  try { await dsBuildPage(p); } finally { dsBusy(false); }
+  dsRenderPages();
+}
+async function dsRecrop(i) {
+  var p = DS.pages[i]; if (!p || !p.srcBlob || DS.busy) return;
+  var src = await dsLoadImage(p.srcBlob); if (!src) return;
+  dsStartCrop(src, i);
+}
+function dsMove(i, d) { var j = i + d; if (j < 0 || j >= DS.pages.length) return; var t = DS.pages[i]; DS.pages[i] = DS.pages[j]; DS.pages[j] = t; dsRenderPages(); }
+async function dsRemovePage(i) {
+  if (!(await appConfirm('Remove page ' + (i + 1) + '?', { title: 'Remove page', okText: 'Remove', danger: true }))) return;
+  dsFreePage(DS.pages[i]); DS.pages.splice(i, 1);
+  if (!DS.pages.length) { DS.step = 'pick'; dsRender(); } else dsRenderPages();
+}
+function dsZoom(i) { var p = DS.pages[i]; if (p) window.open(p.url, '_blank'); }
+async function dsSave() {
+  if (DS.busy || !DS.opts.onSave) return;
+  var err = $('ds-err'); if (err) err.style.display = 'none';
+  if (!DS.pages.length) { if (err) { err.textContent = 'Add at least one page.'; err.style.display = 'block'; } return; }
+  var btn = $('ds-save'); if (btn) btn.disabled = true;
+  dsBusy(true, 'Saving…');
+  var res;
+  try { res = await DS.opts.onSave(DS.pages.slice()); }
+  catch (e) { res = 'Not saved: ' + (e.message || e); }
+  finally { dsBusy(false); if (btn) btn.disabled = false; }
+  if (res === true) { DS.open = false; closeModal('ov-ds'); DS.pages = []; return; }
+  if (err && res) { err.textContent = res; err.style.display = 'block'; err.scrollIntoView({ block: 'nearest' }); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// REQUISITION QUOTATIONS (rqq*): supplier quotations on a requisition.
+// Needs requisition-quotations-migration.sql; until then nothing shows.
+// Pages live in the "rq-quotations" file store. Images are deleted 2 years
+// after upload (warning 30 days before, Admin can keep one more year); the
+// supplier, amount and dates stay on record.
+// ═══════════════════════════════════════════════════════════════════
+var RQQ_MAX = 5, RQQ_MAX_PAGES = 10, RQQ_CURRENCIES = ['BDT', 'USD', 'EUR', 'CNY', 'INR', 'GBP'];
+var RQQ_COLS = 'id,req_id,dept,supplier,amount,currency,valid_until,pages,page_count,bytes,created_at,created_by,created_by_name,keep_until,keep_changed_by,images_deleted_at';
+function rqqOn() { return RQ.qtOk === true; }
+function rqqList(reqId) { return (RQ.quotes || []).filter(function(q){ return q.req_id === reqId; }).sort(function(a, b){ return String(a.created_at).localeCompare(String(b.created_at)); }); }
+function rqqAddYears(d, n) { var p = String(d || todayStr()).slice(0, 10).split('-'); var y = +p[0] + n, m = p[1], dd = p[2]; if (m === '02' && dd === '29') dd = '28'; return y + '-' + m + '-' + dd; }
+function rqqUrl(path) { return db.storage.from('rq-quotations').getPublicUrl(path).data.publicUrl; }
+function rqqMoney(n, cur) { if (n == null || n === '' || isNaN(Number(n))) return '&mdash;'; return (cur && cur !== 'BDT' ? rqEsc(cur) + ' ' : 'Tk ') + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+async function rqqLoad() {
+  var res;
+  try { res = await fetchAllRows(function(){ var qq = db.from('rq_quotations').select(RQQ_COLS); if (rqIsDeptUser()) qq = qq.eq('dept', S.user.division); return qq.order('id'); }); }
+  catch (e) {
+    RQ.qtOk = !(e && (e.code === '42P01' || e.code === 'PGRST205' || /rq_quotations|does not exist|schema cache/i.test(e.message || '')));
+    if (RQ.qtOk) console.error('rqqLoad:', e);
+    RQ.quotes = []; return;
+  }
+  RQ.qtOk = true; RQ.quotes = res || [];
+  if (S.user.role === 'admin') rqqPurgeExpired();
+}
+async function rqqRefresh(reqId) {
+  if (!rqqOn()) return;
+  var r = await db.from('rq_quotations').select(RQQ_COLS).eq('req_id', reqId);
+  if (r.error) return;
+  RQ.quotes = (RQ.quotes || []).filter(function(q){ return q.req_id !== reqId; }).concat(r.data || []);
+}
+// which quotations are the cheapest / how far above it (same currency only)
+function rqqCompare(list) {
+  var cur = {}, top = null;
+  list.forEach(function(q){ if (q.amount != null && q.amount !== '') cur[q.currency || 'BDT'] = (cur[q.currency || 'BDT'] || 0) + 1; });
+  Object.keys(cur).forEach(function(c){ if (!top || cur[c] > cur[top]) top = c; });
+  var same = list.filter(function(q){ return (q.currency || 'BDT') === top && q.amount != null && q.amount !== ''; });
+  var low = same.length ? Math.min.apply(null, same.map(function(q){ return Number(q.amount); })) : null;
+  return { cur: top, low: low, mixed: Object.keys(cur).length > 1, count: same.length };
+}
+function rqqCanAdd(r) {
+  if (!rqqOn() || !r || !S.user) return false;
+  if (S.user.role === 'admin') return r.status !== 'cancelled';
+  return rqCanWork(r.dept) && (r.status === 'pending' || r.status === 'returned');
+}
+function rqqCanRemove(r, q) {
+  if (!rqqOn() || !r || !q || !S.user) return false;
+  if (S.user.role === 'admin') return true;
+  return rqCanWork(r.dept) && (r.status === 'pending' || r.status === 'returned') && q.created_by === S.user.id;
+}
+function rqqFormHtml(v) {
+  v = v || {};
+  return '<div class="ds-fgrid"><div class="f ds-wide"><label for="qtf-supplier">Supplier <span class="rq-req">*</span></label><input id="qtf-supplier" maxlength="120" autocomplete="off" placeholder="e.g. ABC Electric Traders" value="' + rqEsc(v.supplier || '') + '"></div>'
+    + '<div class="f"><label for="qtf-amount">Total amount <span class="rq-req">*</span></label><input id="qtf-amount" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 24500" value="' + rqEsc(v.amount == null ? '' : v.amount) + '"></div>'
+    + '<div class="f"><label for="qtf-currency">Currency</label><select id="qtf-currency">' + RQQ_CURRENCIES.map(function(c){ return '<option' + ((v.currency || 'BDT') === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div>'
+    + '<div class="f ds-wide"><label for="qtf-valid">Valid until</label><input id="qtf-valid" type="date" value="' + rqEsc(v.valid_until || '') + '"></div></div>';
+}
+function rqqReadForm() {
+  var sup = ($('qtf-supplier').value || '').trim().replace(/\s+/g, ' ');
+  var amtS = ($('qtf-amount').value || '').trim(), amt = amtS === '' ? null : Number(amtS);
+  var v = { supplier: sup, amount: amt, currency: $('qtf-currency').value || 'BDT', valid_until: $('qtf-valid').value || null };
+  if (!sup) return 'Enter the supplier’s name.';
+  if (amt == null || isNaN(amt)) return 'Enter the total amount quoted.';
+  if (amt <= 0) return 'The amount must be more than 0.';
+  if (amt > 1e12) return 'That amount is too large.';
+  if (v.valid_until && !/^\d{4}-\d{2}-\d{2}$/.test(v.valid_until)) return 'Check the "valid until" date.';
+  return v;
+}
+// upload the pages, then the row. Pages that were uploaded are removed again if the row fails.
+async function rqqSaveOne(r, v, pages) {
+  var id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('q' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+  var done = [], meta = [];
+  for (var i = 0; i < pages.length; i++) {
+    var p = pages[i], ext = p.type === 'image/jpeg' ? 'jpg' : 'webp';
+    var path = r.id + '/' + id + '/p' + (i + 1) + '.' + ext;
+    var up = await db.storage.from('rq-quotations').upload(path, p.blob, { contentType: p.type || 'image/webp', upsert: false });
+    if (up.error) { if (done.length) await db.storage.from('rq-quotations').remove(done); return 'The pages could not be uploaded (' + (up.error.message || 'network') + '). Nothing was saved; try again.'; }
+    done.push(path); meta.push({ path: path, w: p.w, h: p.h, bytes: p.bytes });
+  }
+  var row = { id: /^[0-9a-f-]{36}$/i.test(id) ? id : undefined, req_id: r.id, dept: r.dept, supplier: v.supplier, amount: v.amount, currency: v.currency, valid_until: v.valid_until,
+    pages: meta, page_count: meta.length, bytes: meta.reduce(function(s, m){ return s + (m.bytes || 0); }, 0),
+    created_by: S.user.id, created_by_name: S.user.name, keep_until: rqqAddYears(todayStr(), 2) };
+  if (!row.id) delete row.id;
+  var ins = await db.from('rq_quotations').insert(row).select(RQQ_COLS).single();
+  if (ins.error) { await db.storage.from('rq-quotations').remove(done); return 'The quotation could not be saved (' + (ins.error.message || 'network') + '). Try again.'; }
+  RQ.quotes = (RQ.quotes || []).filter(function(q){ return q.id !== ins.data.id; }).concat([ins.data]);
+  return ins.data;
+}
+
+// ── in the New / Change requisition form: kept here until the requisition is saved ──
+RQ.formQuotes = [];
+function rqqFormSection(r) {
+  if (!rqqOn()) return '';
+  var saved = r && r.id ? rqqList(r.id) : [];
+  var all = saved.length + RQ.formQuotes.length;
+  var allRows = saved.map(function(q){ return { q: q, saved: true }; }).concat(RQ.formQuotes.map(function(q, i){ return { q: q, i: i }; }));
+  var cmp = rqqCompare(allRows.map(function(x){ return x.q; }));
+  var cards = allRows.map(function(x){
+    var q = x.q, thumb = x.saved ? (q.pages && q.pages[0] ? rqqUrl(q.pages[0].path) : '') : (q.pages[0] && q.pages[0].url);
+    var low = cmp.count > 1 && (q.currency || 'BDT') === cmp.cur && Number(q.amount) === cmp.low;
+    return '<div class="rqq-card">' + (thumb ? '<img src="' + thumb + '" alt="">' : '<div class="rqq-noimg">&#x1F5CE;</div>')
+      + '<div class="rqq-cm"><b>' + rqEsc(q.supplier) + '</b><div class="sub2">' + (q.valid_until ? 'Valid until ' + rqDateTxt(q.valid_until) + ' &middot; ' : '') + (x.saved ? (q.page_count || 0) : q.pages.length) + ' page' + ((x.saved ? q.page_count : q.pages.length) === 1 ? '' : 's') + (x.saved ? ' &middot; saved' : ' &middot; ' + dsKB(q.pages.reduce(function(s, p){ return s + p.bytes; }, 0))) + '</div>' + (low ? '<span class="rqq-low">Lowest</span>' : '') + '</div>'
+      + '<div class="rqq-amt">' + rqqMoney(q.amount, q.currency) + '</div>'
+      + (x.saved ? '' : '<button type="button" class="btn sm ghost" title="Remove" onclick="rqqFormRemove(' + x.i + ')">&#x2715;</button>') + '</div>';
+  }).join('');
+  return '<div class="rqq-sec" id="rqq-formsec"><div class="rqq-h"><span>Quotations <span style="font-weight:400">(optional)</span></span><span class="sub2">' + all + ' of ' + RQQ_MAX + '</span></div>'
+    + cards
+    + (all < RQQ_MAX ? '<div class="rqq-add"><button type="button" class="btn rqq-big" onclick="rqqFormAdd(\'cam\')"><span>&#x1F4F7;</span>Take photo</button><button type="button" class="btn rqq-big" onclick="rqqFormAdd(\'file\')"><span>&#x1F4C4;</span>Choose file<small>photo or PDF</small></button></div>' : '')
+    + '<div class="sub2" style="margin-top:6px">You can also add quotations later, until the requisition is approved. Pages are kept for 2 years.</div>'
+    + (r && r.id && saved.length ? '<div class="sub2">Saved quotations are changed from the requisition window.</div>' : '') + '</div>';
+}
+function rqqFormRedraw() {
+  var el = $('rqq-formsec'); if (!el) return;
+  var r = RQ.editId ? RQ.rows.find(function(x){ return x.id === RQ.editId; }) : null;
+  el.outerHTML = rqqFormSection(r);
+}
+function rqqFormAdd(kind) {
+  var r = RQ.editId ? RQ.rows.find(function(x){ return x.id === RQ.editId; }) : null;
+  if ((r ? rqqList(r.id).length : 0) + RQ.formQuotes.length >= RQQ_MAX) { toast('Up to ' + RQQ_MAX + ' quotations per requisition', 'err'); return; }
+  dsOpen({ title: 'Add quotation', what: 'quotation', maxPages: RQQ_MAX_PAGES, formHtml: rqqFormHtml(), saveText: 'Add quotation', onSave: async function(pages){
+    var v = rqqReadForm(); if (typeof v === 'string') return v;
+    RQ.formQuotes.push(Object.assign(v, { pages: pages }));
+    rqqFormRedraw(); toast('Quotation added. It is saved with the requisition.', 'ok-t');
+    return true;
+  } });
+  setTimeout(function(){ dsPick(kind); }, 0);
+}
+async function rqqFormRemove(i) {
+  var q = RQ.formQuotes[i]; if (!q) return;
+  if (!(await appConfirm('Remove the quotation from ' + q.supplier + '?', { title: 'Remove quotation', okText: 'Remove', danger: true }))) return;
+  (q.pages || []).forEach(dsFreePage); RQ.formQuotes.splice(i, 1); rqqFormRedraw();
+}
+// after the requisition is created / saved: upload what was added in the form
+async function rqqUploadForm(r) {
+  if (!rqqOn() || !RQ.formQuotes.length || !r) { RQ.formQuotes = []; return null; }
+  var list = RQ.formQuotes.slice(), bad = [];
+  RQ.formQuotes = [];
+  for (var i = 0; i < list.length; i++) {
+    toast('Saving quotation ' + (i + 1) + ' of ' + list.length + '…');
+    var res = await rqqSaveOne(r, list[i], list[i].pages);
+    if (typeof res === 'string') bad.push(list[i].supplier);
+    else await rqEvent(r.id, 'quote_added', { note: list[i].supplier, amount: list[i].amount });
+    (list[i].pages || []).forEach(dsFreePage);
+  }
+  return bad.length ? bad.length + ' quotation' + (bad.length === 1 ? '' : 's') + ' could not be uploaded (' + bad.join(', ') + '). The requisition is saved: open it and add ' + (bad.length === 1 ? 'it' : 'them') + ' again.' : null;
+}
+
+// ── in the requisition window ──
+function rqqDetailHtml(r) {
+  if (!rqqOn()) return '';
+  var list = rqqList(r.id), cmp = rqqCompare(list), today = todayStr();
+  var add = rqqCanAdd(r) && list.length < RQQ_MAX ? '<button class="btn sm" onclick="rqqAdd(\'' + r.id + '\')">&#x002B; Add quotation</button>' : '';
+  if (!list.length && !add) return '';
+  var rows = list.map(function(q){
+    var low = cmp.count > 1 && (q.currency || 'BDT') === cmp.cur && Number(q.amount) === cmp.low;
+    var diff = cmp.low && (q.currency || 'BDT') === cmp.cur && q.amount != null && Number(q.amount) !== cmp.low ? '+' + (Math.round((Number(q.amount) - cmp.low) / cmp.low * 1000) / 10) + '%' : '';
+    var gone = !!q.images_deleted_at || !(q.pages && q.pages.length);
+    var thumb = gone ? '<div class="rqq-noimg" title="Pages deleted after 2 years">&#x2014;</div>' : '<img src="' + rqqUrl(q.pages[0].path) + '" alt="" loading="lazy">';
+    var exp = q.valid_until && q.valid_until < today;
+    var soon = !gone && q.keep_until && q.keep_until <= rqAddDays(today, 30);
+    return '<tr class="' + (low ? 'rqq-lowrow' : '') + '"><td class="rqq-th" onclick="' + (gone ? '' : 'rqqView(\'' + q.id + '\',0)') + '">' + thumb + (q.page_count > 1 ? '<span class="sub2">+' + (q.page_count - 1) + '</span>' : '') + '</td>'
+      + '<td><b>' + rqEsc(q.supplier) + '</b>' + (low ? ' <span class="rqq-low">Lowest</span>' : '') + (gone ? '<div class="sub2">Pages deleted after 2 years</div>' : soon ? '<div class="rqq-warn">Pages will be deleted on ' + rqDateTxt(q.keep_until) + '</div>' : '') + '</td>'
+      + '<td class="num"><b>' + rqqMoney(q.amount, q.currency) + '</b></td><td class="num sub2">' + diff + '</td>'
+      + '<td>' + (q.valid_until ? '<span class="' + (exp ? 'rq-late' : '') + '">' + (exp ? 'expired ' : '') + rqDateTxt(q.valid_until) + '</span>' : '&mdash;') + '</td>'
+      + '<td class="sub2">' + rqEsc(q.created_by_name || '') + ' &middot; ' + rqDateTxt(rqLocalDate(q.created_at)) + '</td>'
+      + '<td style="white-space:nowrap">' + (gone ? '' : '<button class="btn sm" onclick="rqqView(\'' + q.id + '\',0)">View</button> ')
+      + (S.user.role === 'admin' && !gone ? '<button class="btn sm" onclick="rqqKeep(\'' + q.id + '\')" title="Keep the pages one more year">Keep 1 more year</button> ' : '')
+      + (rqqCanRemove(r, q) ? '<button class="btn sm danger" onclick="rqqRemove(\'' + q.id + '\')">Remove</button>' : '') + '</td></tr>';
+  }).join('');
+  var note = '';
+  if (cmp.low != null && cmp.cur === 'BDT' && r.est_cost != null && cmp.count) {
+    var dlt = Number(r.est_cost) - cmp.low;
+    note = 'Lowest quote is ' + rqMoney(Math.abs(dlt)) + (dlt >= 0 ? ' under' : ' over') + ' the estimate. ';
+  }
+  if (cmp.mixed) note += 'Quotes in different currencies are not compared. ';
+  return '<div class="rq-sec rqq-dsec"><div class="rq-sec-h" style="display:flex;justify-content:space-between;align-items:center">Quotations' + (list.length ? ' (' + list.length + ')' : '') + add + '</div>'
+    + (list.length ? '<div class="scroller"><table class="rq-t rqq-t"><thead><tr><th>Pages</th><th>Supplier</th><th class="num">Total</th><th class="num">vs lowest</th><th>Valid until</th><th>Added by</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>'
+      : '<div class="sub2">No quotations yet.</div>')
+    + '<div class="sub2" style="margin-top:6px">' + note + 'Pages are deleted 2 years after upload (warning 30 days before); the supplier, amount and dates stay on record.</div></div>';
+}
+async function rqqFresh(reqId) {
+  var res = await db.from('rq_requisitions').select('*').eq('id', reqId).maybeSingle();
+  if (res.data) rqPut(res.data);
+  return res.data || null;
+}
+function rqqAdd(reqId) {
+  var r = RQ.rows.find(function(x){ return x.id === reqId; });
+  if (!rqqCanAdd(r)) { toast('Quotations can no longer be added to this requisition', 'err'); return; }
+  if (rqqList(reqId).length >= RQQ_MAX) { toast('Up to ' + RQQ_MAX + ' quotations per requisition', 'err'); return; }
+  dsOpen({ title: 'Add quotation — ' + r.job_no, what: 'quotation', maxPages: RQQ_MAX_PAGES, formHtml: rqqFormHtml(), saveText: 'Save quotation', onSave: async function(pages){
+    var v = rqqReadForm(); if (typeof v === 'string') return v;
+    var fresh = await rqqFresh(reqId); // someone may have approved it meanwhile
+    if (!fresh || !rqqCanAdd(fresh)) return 'This requisition has just been approved or closed, so quotations can no longer be added.';
+    await rqqRefresh(reqId);
+    if (rqqList(reqId).length >= RQQ_MAX) return 'This requisition already has ' + RQQ_MAX + ' quotations.';
+    var res = await rqqSaveOne(fresh, v, pages);
+    if (typeof res === 'string') return res;
+    await rqEvent(reqId, 'quote_added', { note: v.supplier, amount: v.amount });
+    pages.forEach(dsFreePage);
+    toast('Quotation from ' + v.supplier + ' saved', 'ok-t');
+    renderRail(); if (typeof S.view === 'string' && S.view.indexOf('rq:') === 0 && !rqFormDirty()) rqRender(S.view);
+    if (RQ.openId === reqId) { await rqLoadEvents(reqId); rqRenderDetail(reqId, true); }
+    return true;
+  } });
+}
+async function rqqRemove(qid) {
+  var q = (RQ.quotes || []).find(function(x){ return x.id === qid; }); if (!q) return;
+  var r = RQ.rows.find(function(x){ return x.id === q.req_id; });
+  if (!rqqCanRemove(r, q)) { toast('You cannot remove this quotation', 'err'); return; }
+  if (!(await appConfirm('Remove the quotation from ' + q.supplier + ' (' + rqqMoney(q.amount, q.currency).replace(/&mdash;/, '-') + ')? Its pages are deleted too.', { title: 'Remove quotation', okText: 'Remove', danger: true }))) return;
+  if (S.user.role !== 'admin') { var fresh = await rqqFresh(q.req_id); if (!fresh || !rqqCanRemove(fresh, q)) { toast('This requisition has just been approved, so its quotations are locked', 'err'); if (RQ.openId === q.req_id) rqRenderDetail(q.req_id, true); return; } }
+  var del = await db.from('rq_quotations').delete().eq('id', qid).select('id');
+  if (del.error) { showSaveError('Could not remove the quotation', del.error); return; }
+  var paths = (q.pages || []).map(function(p){ return p.path; }).filter(Boolean);
+  if (paths.length) { try { await db.storage.from('rq-quotations').remove(paths); } catch (e) {} }
+  RQ.quotes = RQ.quotes.filter(function(x){ return x.id !== qid; });
+  await rqEvent(q.req_id, 'quote_removed', { note: q.supplier, amount: q.amount });
+  toast('Quotation removed', 'ok-t');
+  renderRail(); if (typeof S.view === 'string' && S.view.indexOf('rq:') === 0 && !rqFormDirty()) rqRender(S.view);
+  if (RQ.openId === q.req_id) { await rqLoadEvents(q.req_id); rqRenderDetail(q.req_id, true); }
+}
+async function rqqKeep(qid) {
+  if (S.user.role !== 'admin') return;
+  var q = (RQ.quotes || []).find(function(x){ return x.id === qid; }); if (!q) return;
+  var from = q.keep_until && q.keep_until > todayStr() ? q.keep_until : todayStr(), nu = rqqAddYears(from, 1);
+  if (!(await appConfirm('Keep the pages of ' + q.supplier + '’s quotation until ' + rqDateTxt(nu) + '?', { title: 'Keep one more year', okText: 'Keep' }))) return;
+  var res = await db.from('rq_quotations').update({ keep_until: nu, keep_changed_by: S.user.name }).eq('id', qid).select(RQQ_COLS);
+  if (res.error || !res.data || !res.data.length) { showSaveError('Could not save', res.error || { message: 'not found' }); return; }
+  RQ.quotes = RQ.quotes.map(function(x){ return x.id === qid ? res.data[0] : x; });
+  toast('Pages kept until ' + rqDateTxt(nu), 'ok-t');
+  if (RQ.openId === q.req_id) rqRenderDetail(q.req_id, true);
+  if (S.view === 'rq:quotes') rqRender(S.view);
+  renderRail();
+}
+// 2 years after upload: the pages go (when Admin opens the app); the row stays.
+// Done in groups of 40 (one file-store call and one database call per group),
+// so a long backlog does not mean hundreds of requests.
+async function rqqPurgeExpired() {
+  if (RQ._purging || S.user.role !== 'admin') return;
+  RQ._purging = true;
+  try {
+    var today = todayStr(), due = (RQ.quotes || []).filter(function(q){ return !q.images_deleted_at && q.keep_until && q.keep_until < today; });
+    var n = 0;
+    for (var i = 0; i < due.length; i += 40) {
+      var grp = due.slice(i, i + 40), paths = [];
+      grp.forEach(function(q){ (q.pages || []).forEach(function(pg){ if (pg && pg.path) paths.push(pg.path); }); });
+      if (paths.length) { var rm = await db.storage.from('rq-quotations').remove(paths); if (rm.error) { console.error('quotation pages not removed:', rm.error); continue; } }
+      var up = await db.from('rq_quotations').update({ pages: [], images_deleted_at: new Date().toISOString() }).in('id', grp.map(function(q){ return q.id; })).is('images_deleted_at', null).lt('keep_until', today).select(RQQ_COLS);
+      if (!up.error && up.data) { n += up.data.length; var got = {}; up.data.forEach(function(x){ got[x.id] = x; }); RQ.quotes = RQ.quotes.map(function(x){ return got[x.id] || x; }); }
+    }
+    if (n) toast(n + ' quotation' + (n === 1 ? '' : 's') + ' older than 2 years: pages deleted (supplier and amount kept)', 'ok-t');
+  } catch (e) { console.error('rqqPurgeExpired:', e); }
+  finally { RQ._purging = false; }
+}
+// pages to be deleted within 30 days (for the department and Admin)
+function rqqDueSoon(dept) {
+  if (!rqqOn()) return [];
+  var lim = rqAddDays(todayStr(), 30);
+  return (RQ.quotes || []).filter(function(q){ return !q.images_deleted_at && q.keep_until && q.keep_until <= lim && (q.pages || []).length && (!dept || q.dept === dept); });
+}
+function rqqDueBanner(dept) {
+  if (!S.user || (S.user.role !== 'admin' && !rqIsDeptUser())) return '';
+  var due = rqqDueSoon(rqIsDeptUser() ? S.user.division : dept);
+  if (!due.length) return '';
+  var first = due.map(function(q){ return q.keep_until; }).sort()[0];
+  return '<div class="rqq-banner">&#x26A0; The pages of <b>' + due.length + ' quotation' + (due.length === 1 ? '' : 's') + '</b> will be deleted from ' + rqDateTxt(first) + ' (2 years after upload). The supplier and amount stay on record. <button class="btn sm" onclick="setView(\'rq:quotes\')">See them</button></div>';
+}
+function rqqRenderDue() {
+  var due = rqqDueSoon(rqIsDeptUser() ? S.user.division : null).sort(function(a, b){ return String(a.keep_until).localeCompare(String(b.keep_until)); });
+  rqSetHead('Requisitions', 'Quotation pages to be deleted', 'Pages are deleted 2 years after upload. ' + (S.user.role === 'admin' ? 'Keep any you still need for one more year.' : 'Admin can keep any you still need for one more year.'), '');
+  var rows = due.map(function(q){
+    var r = RQ.rows.find(function(x){ return x.id === q.req_id; }) || {};
+    return '<tr onclick="if(event.target.closest(\'button\'))return;rqOpen(\'' + q.req_id + '\')"><td><span class="rq-job">' + rqEsc(r.job_no || '') + '</span></td><td>' + rqEsc((rqDept(q.dept) || {}).n || q.dept) + '</td><td><b>' + rqEsc(q.supplier) + '</b></td><td class="num">' + rqqMoney(q.amount, q.currency) + '</td><td>' + rqDateTxt(rqLocalDate(q.created_at)) + '</td><td class="rq-late">' + rqDateTxt(q.keep_until) + '</td><td>'
+      + '<button class="btn sm" onclick="rqqView(\'' + q.id + '\',0)">View</button>' + (S.user.role === 'admin' ? ' <button class="btn sm" onclick="rqqKeep(\'' + q.id + '\')">Keep 1 more year</button>' : '') + '</td></tr>';
+  }).join('');
+  $('content').innerHTML = '<div class="card"><div class="card-h"><h3>To be deleted within 30 days <span class="rq-count">' + due.length + '</span></h3></div>'
+    + (due.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Job no.</th><th>Department</th><th>Supplier</th><th class="num">Total</th><th>Uploaded</th><th>Pages deleted on</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' : '<div class="empty"><h4>Nothing due</h4>No quotation pages are due to be deleted in the next 30 days.</div>') + '</div>';
+}
+
+// ── viewer ──
+var RQQV = { id: null, i: 0 };
+function rqqView(qid, i) {
+  var q = (RQ.quotes || []).find(function(x){ return x.id === qid; }); if (!q || !(q.pages || []).length) return;
+  if (!$('ov-qv')) {
+    var ov = document.createElement('div'); ov.className = 'ov qv-ov'; ov.id = 'ov-qv';
+    ov.innerHTML = '<div class="qv-top"><div id="qv-t"></div><div class="qv-nav"><button class="btn sm" onclick="rqqViewGo(-1)" aria-label="Previous page">&#x2039;</button><span id="qv-n"></span><button class="btn sm" onclick="rqqViewGo(1)" aria-label="Next page">&#x203A;</button><a class="btn sm" id="qv-open" target="_blank" rel="noopener">Open</a><button class="btn sm" onclick="rqqViewClose()">&#x2715; Close</button></div></div><div class="qv-img" onclick="if(event.target===this)rqqViewClose()"><img id="qv-img" alt=""></div>';
+    document.body.appendChild(ov);
+    document.addEventListener('keydown', function(e){
+      if (!$('ov-qv') || !$('ov-qv').classList.contains('open')) return;
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); rqqViewClose(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); rqqViewGo(1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); rqqViewGo(-1); }
+    }, true);
+  }
+  RQQV.id = qid; RQQV.i = Math.max(0, Math.min(q.pages.length - 1, i || 0));
+  rqqViewDraw(); openModal('ov-qv');
+}
+function rqqViewDraw() {
+  var q = (RQ.quotes || []).find(function(x){ return x.id === RQQV.id; }); if (!q) return rqqViewClose();
+  var p = q.pages[RQQV.i]; if (!p) return;
+  $('qv-t').innerHTML = '<b>' + rqEsc(q.supplier) + '</b> &middot; ' + rqqMoney(q.amount, q.currency) + (q.valid_until ? ' &middot; valid until ' + rqDateTxt(q.valid_until) : '');
+  $('qv-n').textContent = 'Page ' + (RQQV.i + 1) + ' of ' + q.pages.length;
+  var u = rqqUrl(p.path); $('qv-img').src = u; $('qv-open').href = u;
+}
+function rqqViewGo(d) { var q = (RQ.quotes || []).find(function(x){ return x.id === RQQV.id; }); if (!q) return; var n = RQQV.i + d; if (n < 0 || n >= q.pages.length) return; RQQV.i = n; rqqViewDraw(); }
+function rqqViewClose() { closeModal('ov-qv'); }
+
 function bhOpen(id) {
   var st = BH.calc[id], e = $('bh-want'), out = $('bh-open'); if (!st || !e || !out) return;
   var want = Number(e.value), s = st.quotes.settle;
