@@ -2173,6 +2173,32 @@ td.col-cm{min-width:96px;font-size:11px}
 .buyer-section-hdr .bp-logo{width:22px;height:22px;border-radius:6px}
 @media (max-width:1180px){.bp-cols{grid-template-columns:1fr 1fr}.bp-side{grid-column:1/-1}}
 @media (max-width:760px){.bp-cols,.bp-cols-2,.bp-form{grid-template-columns:1fr}.bp-pending{flex-direction:column;align-items:flex-start}.bp-card-side{display:none}}
+/* Buyer order history, insights and KPIs */
+.bh-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:12px}
+.bh-sum>div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.bh-sum span{display:block;font-size:11.5px;color:var(--muted)}.bh-sum b{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.bh-h2{font-size:13px;font-weight:700;color:var(--muted);margin:16px 2px 8px;text-transform:uppercase;letter-spacing:.04em}
+#bh-body>.bp-box{margin-bottom:12px}#bh-body>.bp-filters{margin-bottom:12px}
+.bp-table td.num,.bp-table th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bh-pay{font-size:11.5px;font-weight:600;white-space:nowrap}.bh-pay-ok{color:var(--green)}.bh-pay-soon{color:var(--amber)}.bh-pay-late{color:var(--red)}.bh-pay-info{color:var(--muted)}
+.bh-grid{display:grid;grid-template-columns:300px 1fr 1fr;gap:12px;align-items:start}
+.bh-kpi-n{font-size:46px;font-weight:800;line-height:1;margin:6px 0 4px;font-variant-numeric:tabular-nums}.bh-kpi-n span{font-size:15px;font-weight:600;color:var(--muted);margin-left:3px}
+.bh-g{color:var(--green)}.bh-a{color:var(--amber)}.bh-r{color:var(--red)}.bh-gr{color:var(--muted)}
+.bh-gb{background:var(--green)}.bh-ab{background:var(--amber)}.bh-rb{background:var(--red)}.bh-grb{background:var(--muted)}.bh-navy{background:#3E5C76}
+.bh-part{padding:8px 0;border-bottom:1px solid var(--line)}.bh-part:last-of-type{border-bottom:0}
+.bh-part>div:first-child{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}.bh-part>div:first-child b{font-variant-numeric:tabular-nums}
+.bh-bar{display:grid;grid-template-columns:minmax(80px,30%) 1fr auto;gap:8px;align-items:center;padding:5px 0;font-size:12.5px}
+.bh-bar-l{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bh-bar>b{font-weight:600;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.bh-bar-t{display:block;height:8px;border-radius:99px;background:var(--line);overflow:hidden}.bh-bar-t i{display:block;height:100%;border-radius:99px}
+.bh-calc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding:10px;border-radius:10px;background:var(--accent-soft);font-size:12.5px}
+.bh-calc input{width:90px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}.bh-calc b{font-size:15px}
+.bh-mini{display:inline-block;min-width:34px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.bh-kpi-row{cursor:pointer}.bh-kpi-row:hover td{background:var(--accent-soft)}
+.bh-kpi-b{display:flex;align-items:center;gap:9px}
+@media (max-width:1180px){.bh-grid{grid-template-columns:1fr 1fr}.bh-grid>.bp-col:first-child{grid-column:1/-1}}
+@media (max-width:760px){.bh-grid{grid-template-columns:1fr}.bh-kpi-n{font-size:38px}}
+[data-theme="dark"] .bh-navy{background:#7B9CBC}
+[data-theme="dark"] .bh-calc input{background:#2A2828}
 [data-theme="dark"] .bp-own,[data-theme="dark"] .bp-gr,[data-theme="dark"] .bp-av{background:#2c2a2e;color:var(--muted)}
 [data-theme="dark"] .bp-b{background:#1d2a38;color:#8fb4d9}
 [data-theme="dark"] .bp-f input,[data-theme="dark"] .bp-f select,[data-theme="dark"] .bp-f textarea{background:#2A2828;border-color:var(--line);color:var(--ink)}
@@ -2200,7 +2226,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.17.3</p>
+    <p class="login-ver">V.2026.10.17.4</p>
   </div></div>
 </div>
 
@@ -2242,7 +2268,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.17.3</div>
+  <div id="ver-stamp">V.2026.10.17.4</div>
 </div>
 
 
@@ -5442,7 +5468,8 @@ function setView(v) {
   if (bpIsView(v)) {
     if (!bpOpen(v)) return;
     if (BP.cur && v.split(':')[1] !== BP.cur.id) BP.cur = null;
-    if (v === 'buyers') { BP.cur = null; bpRefreshPending(); }
+    if (v === 'buyers' || v === 'buyers:kpi') { BP.cur = null; if (v === 'buyers') bpRefreshPending(); }
+    if (v.indexOf('buyer:') === 0 && v.split(':')[1] !== BH.last) { BH.last = v.split(':')[1]; BH.q = ''; BH.season = ''; }
     S.view = v;
     var _bc = document.getElementById('content'); if (_bc) delete _bc.dataset.page;
     try { sessionStorage.setItem('pt_last_view', v); } catch(e) {}
@@ -20850,7 +20877,8 @@ init();
 var BP = { missing: null, logos: {}, pendingBank: 0, cur: null, q: '', fStatus: '', fTier: '', edit: null, saving: false };
 var BP_TABS = [
   { k: 'overview', n: 'Overview' }, { k: 'team', n: 'Our team' }, { k: 'contacts', n: 'Contacts' },
-  { k: 'payment', n: 'Payment & banking' }, { k: 'shipping', n: 'Shipping' }, { k: 'notes', n: 'Notes' }
+  { k: 'payment', n: 'Payment & banking' }, { k: 'shipping', n: 'Shipping' }, { k: 'notes', n: 'Notes' },
+  { k: 'history', n: 'Order history' }, { k: 'insights', n: 'Insights' }
 ];
 var BP_STATUS = [
   { k: 'prospect', n: 'Prospect', c: 'b' }, { k: 'active', n: 'Active', c: 'g' },
@@ -20915,6 +20943,7 @@ function bpTabAllowed(k, id) {
   if (k === 'payment') return bpCan('see_payment', id);
   if (k === 'shipping') return bpCan('see_shipping', id);
   if (k === 'notes') return bpCan('see_notes', id);
+  if (k === 'history' || k === 'insights') return bpCanSee(id);
   return false;
 }
 function bpVisibleBuyers() { return (S.buyers || []).filter(function(b){ return bpCanSee(b.id); }); }
@@ -21008,9 +21037,10 @@ async function bpLoadOne(id) {
 }
 
 // ─── routing ───
-function bpIsView(v) { return typeof v === 'string' && (v === 'buyers' || v.indexOf('buyer:') === 0); }
+function bpIsView(v) { return typeof v === 'string' && (v === 'buyers' || v === 'buyers:kpi' || v.indexOf('buyer:') === 0); }
 function bpOpen(v) {
   if (!bpUse()) { toast('You don’t have access to this page'); return false; }
+  if (v === 'buyers:kpi') { if (!bhCanKpiPage()) { toast('Buyer KPIs are for Admin, management, HOD and audit'); return false; } return true; }
   if (v !== 'buyers') {
     var id = v.split(':')[1];
     if (!bpBuyer(id)) { toast('That buyer was not found'); return false; }
@@ -21022,6 +21052,7 @@ function bpRender(v) {
   var c = $('content'); if (!c) return;
   c.dataset.page = 'buyers';
   if (v === 'buyers') return bpRenderList();
+  if (v === 'buyers:kpi') { if (bhCanKpiPage()) return bhRenderKpiPage(); S.view = 'buyers'; return bpRenderList(); }
   var p = v.split(':'), id = p[1], tab = p[2] || 'overview';
   if (!bpBuyer(id) || !bpCanSee(id)) { S.view = 'buyers'; BP.cur = null; return bpRenderList(); }
   if (!bpTabAllowed(tab, id)) tab = 'overview';
@@ -21060,7 +21091,7 @@ function bpRenderList() {
       + '<div class="bp-card-side"><div>' + (mid ? bpEsc(bpUserName(mid)) : '<span style="color:var(--red)">No merchant</span>') + '</div>'
       + (lo.length ? '<div class="bp-card-n">' + lo.length + ' live order' + (lo.length === 1 ? '' : 's') + '</div>' : '') + '</div></button>';
   }).join('');
-  rqSetHead('Customers', 'Buyers', all.length + ' buyer' + (all.length === 1 ? '' : 's') + (S.user.role === 'merchant' || S.user.role === 'jm' ? ' assigned to you' : ''), admin ? '<button class="btn pri" onclick="bpNewBuyer()">+ New buyer</button>' : '');
+  rqSetHead('Customers', 'Buyers', all.length + ' buyer' + (all.length === 1 ? '' : 's') + (S.user.role === 'merchant' || S.user.role === 'jm' ? ' assigned to you' : ''), (bhCanKpiPage() ? '<button class="btn" onclick="setView(\'buyers:kpi\')">Buyer KPIs</button> ' : '') + (admin ? '<button class="btn pri" onclick="bpNewBuyer()">+ New buyer</button>' : ''));
   $('content').innerHTML = '<div class="bp-page">'
     + warn + bank
     + '<div class="bp-filters"><input id="bp-q" type="search" placeholder="Search name, code, country, merchant…" value="' + bpEsc(BP.q) + '" oninput="BP.q=this.value;bpRenderList();var e=$(\'bp-q\');e.focus();e.setSelectionRange(e.value.length,e.value.length)">' + tiers + '<div class="bp-chips">' + chips + '</div></div>'
@@ -21100,13 +21131,15 @@ async function bpRenderProfile(id, tab) {
     var extra = t.k === 'payment' && cur.bankChange ? ' <span class="bp-dot"></span>' : '';
     return '<button class="bp-tab' + (t.k === tab ? ' on' : '') + '" onclick="bpGo(\'' + id + '\',\'' + t.k + '\')">' + t.n + extra + '</button>';
   }).join('');
-  var body = cur.missing && tab !== 'overview' ? '' : ({ overview: bpTabOverview, team: bpTabTeam, contacts: bpTabContacts, payment: bpTabPayment, shipping: bpTabShipping, notes: bpTabNotes }[tab] || bpTabOverview)(id, b, cur);
+  var bhTab = tab === 'history' || tab === 'insights';
+  var body = bhTab ? bhLoadingBox() : cur.missing && tab !== 'overview' ? '' : ({ overview: bpTabOverview, team: bpTabTeam, contacts: bpTabContacts, payment: bpTabPayment, shipping: bpTabShipping, notes: bpTabNotes }[tab] || bpTabOverview)(id, b, cur);
   rqSetHead('Buyers', 'Buyer profile', '', '<button class="btn" onclick="setView(\'buyers\')">&larr; All buyers</button>');
   $('content').innerHTML = '<div class="bp-page">'
     + '<div class="bp-head">' + logo + '<div class="bp-head-main"><div class="bp-head-name"><h1 class="bp-h1">' + bpEsc(b.name) + '</h1>' + bpPill(st.n, st.c) + (b.tier ? bpPill('Tier ' + bpEsc(b.tier), 'b') : '') + '</div><div class="bp-sub">' + sub + '</div></div></div>'
     + (cur.missing ? '<div class="bp-warn">Buyer profile details are not switched on yet' + (S.user.role === 'admin' ? ': run <b>buyer-profile-migration.sql</b> in Supabase, then reload.' : '.') + '</div>' : '')
     + '<div class="bp-tabs">' + tabs + '</div>' + body + '</div>'
     + '<input type="file" id="bp-logo-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display:none" onchange="bpLogoChosen(this)">';
+  if (bhTab) bhFill(id, tab);
 }
 function bpCardHead(title, owner, action) {
   return '<div class="bp-ch"><b>' + title + '</b>' + (owner ? bpOwner(owner) : '') + '<span style="flex:1"></span>' + (action || '') + '</div>';
@@ -21128,7 +21161,7 @@ function bpTabOverview(id, b, cur) {
   var notes = bpCan('see_notes', id) ? '<div class="bp-box">' + bpCardHead('Latest notes', 'Merchant', bpLinkBtn('All notes', 'bpGo(\'' + id + '\',\'notes\')'))
     + (cur.notes.length ? cur.notes.slice(0, 3).map(function(n){ return '<div class="bp-note-li"><b>' + bpEsc(bpDate(n.note_date || n.created_at)) + ' &middot; ' + bpEsc((BP_NOTE_KINDS.find(function(k){ return k.k === n.kind; }) || { n: 'Note' }).n) + '</b> &mdash; ' + bpEsc(n.note) + '</div>'; }).join('') : '<div class="bp-empty-box">No notes yet.</div>') + '</div>' : '';
   var lo = bpLiveOrders(id), pcs = lo.reduce(function(s, o){ return s + (Number(o.qty) || 0); }, 0), val = lo.reduce(function(s, o){ return s + (Number(o.qty) || 0) * (Number(o.fob) || 0); }, 0);
-  var glance = '<div class="bp-box">' + bpCardHead('At a glance')
+  var glance = '<div class="bp-box">' + bpCardHead('At a glance', null, bpLinkBtn('Insights', 'bpGo(\'' + id + '\',\'insights\')'))
     + bpRow('Live orders', lo.length ? lo.length + ' &middot; ' + fmt(pcs) + ' pcs' : (S.user.role === 'commercial' ? '' : '0'))
     + bpRow('Live order value', lo.length ? money(val) : '')
     + (bpCan('see_payment', id) ? bpRow('Payment terms', bpEsc(payTermsLabel(buyerDefaultTerms(id).terms, buyerDefaultTerms(id).days))) : '')
@@ -21733,6 +21766,367 @@ function bpRailItem() {
   var on = bpIsView(S.view) ? ' on' : '', n = bpVisibleBuyers().length, hot = S.user.role === 'admin' && BP.pendingBank > 0;
   var cnt = hot ? '<span class="badge">' + BP.pendingBank + '</span>' : (n > 0 ? '<span class="ct">' + n + '</span>' : '');
   return '<button class="ni' + on + '" onclick="setView(\'buyers\')"><span class="av" style="font-size:12px">&#x1F465;</span><span class="nm">Buyers</span>' + cnt + '</button>';
+}
+// ═══════════════════════════════════════════════════════════════════
+// BUYER ORDER HISTORY, INSIGHTS AND KPI SCORE
+// Read-only: built from data already in the app (orders, commercial
+// records and payments, approvals, developments). Nothing is written and no
+// database change is needed. Every number says what it is based on.
+// ═══════════════════════════════════════════════════════════════════
+var BH = { cache: {}, all: null, allAt: 0, q: '', season: '', calc: {}, last: null, cols: null };
+var BH_ORDER_COLS = 'id,merchant_id,buyer,buyer_id,style,po_number,qty,fob,total_value,ship_date,plan_ship,shipped,shipped_on,shipped_qty,short_qty,stage,gauge,season,shipment_mode,confirm_date,created_at,company,payment_terms,payment_days,packing_list_qty,plan_yarn,plan_knit,plan_sew,plan_pack,plan_insp,act_yarn,act_knit,act_sew,act_pack,act_insp,act_ship,prod_knitting,prod_linking,prod_packing';
+var BH_MILESTONES = [['yarn', 'Yarn in-house'], ['knit', 'Knitting'], ['sew', 'Linking'], ['pack', 'Packing'], ['insp', 'Inspection']];
+var BH_KPI_W = { volume: 20, delivery: 25, payment: 25, speed: 15, stability: 15 };
+
+function bhCanKpiPage() { return !!S.user && ['admin', 'management', 'hod', 'audit'].indexOf(S.user.role) !== -1; }
+// the orders this person may see anyway (same rule as the boards)
+function bhCanSeeOrder(o) {
+  var r = S.user.role;
+  if (['admin', 'management', 'hod', 'audit', 'commercial'].indexOf(r) !== -1) return true;
+  if (r === 'manager') return (managerScopeIds() || []).indexOf(o.merchant_id) !== -1;
+  return actsAsMerchant(o.merchant_id);
+}
+function bhNum(v) { var n = Number(v); return isNaN(n) ? 0 : n; }
+function bhVal(o) { var tv = bhNum(o.total_value); return tv > 0 ? tv : bhNum(o.qty) * bhNum(o.fob); }
+function bhDays(a, b) { if (!a || !b) return null; var x = new Date(String(a).slice(0, 10) + 'T00:00:00Z'), y = new Date(String(b).slice(0, 10) + 'T00:00:00Z'); if (isNaN(x) || isNaN(y)) return null; return Math.round((y - x) / 86400000); }
+function bhShipDate(o) { return o.ship_date || o.plan_ship || null; } // the date agreed with the buyer
+function bhShippedOn(o) { return o.shipped_on || o.act_ship || null; }
+function bhIsShipped(o) { return o.stage === 'shipped' || !!o.shipped; }
+function bhSeason(o) {
+  var s = String(o.season || '').trim().toUpperCase();
+  if (s) return s;
+  var d = bhShipDate(o); if (!d) return 'No ship date';
+  var y = String(d).slice(0, 4), m = Number(String(d).slice(5, 7));
+  return 'Ship ' + y + (m <= 6 ? ' Jan–Jun' : ' Jul–Dec');
+}
+function bhPct(n, d) { return d ? Math.round(n / d * 1000) / 10 : null; }
+function bhClamp(x) { return Math.max(0, Math.min(100, Math.round(x))); }
+function bhMoney(n) { return n == null ? '' : money(n); }
+function bhLike(s) { return String(s || '').replace(/[\\%_]/g, '\\$&'); }
+async function bhSafe(fn) { try { return await fn(); } catch (e) { if (!isTableMissing(e)) console.warn('buyer history:', e && e.message); return []; } }
+async function bhOrderRows(f) {
+  try { return await fetchAllRows(function(){ return f(db.from('orders').select(BH.cols || BH_ORDER_COLS)); }); }
+  catch (e) {
+    if (!BH.cols && bpMissingCol(e)) { BH.cols = '*'; return bhOrderRows(f); }
+    if (!isTableMissing(e)) console.warn('buyer history orders:', e && e.message);
+    throw e;
+  }
+}
+async function bhChunks(table, cols, col, vals) {
+  var out = [], uniq = vals.filter(function(v, i, a){ return v != null && v !== '' && a.indexOf(v) === i; });
+  for (var i = 0; i < uniq.length; i += 120) {
+    var part = uniq.slice(i, i + 120);
+    out = out.concat(await bhSafe(function(){ return fetchAllRows(function(){ return db.from(table).select(cols).in(col, part); }); }));
+  }
+  return out;
+}
+
+// ─── reading ───
+async function bhLoadBuyer(id) {
+  var b = bpBuyer(id); if (!b) return null;
+  var c = BH.cache[id]; if (c && Date.now() - c.at < 120000) return c.data;
+  var name = String(b.name || '');
+  var linked = await bhOrderRows(function(q){ return q.eq('buyer_id', id); });
+  var unlinked = /[*,()]/.test(name)
+    ? await bhOrderRows(function(q){ return q.is('buyer_id', null); })
+    : await bhOrderRows(function(q){ return q.is('buyer_id', null).ilike('buyer', bhLike(name)); });
+  var seen = {}, orders = [];
+  linked.concat(unlinked).forEach(function(o){ if (seen[o.id]) return; seen[o.id] = 1; if (buyerIdOfOrder(o) === id) orders.push(o); });
+  var data = await bhLoadRest(orders, { buyerId: id, name: name });
+  BH.cache[id] = { at: Date.now(), data: data };
+  return data;
+}
+async function bhLoadRest(orders, who) {
+  var ids = orders.map(function(o){ return o.id; }), live = orders.filter(function(o){ return o.stage !== 'trash'; });
+  var styles = live.map(function(o){ return o.style; });
+  var res = await Promise.all([
+    bhChunks('order_commercial', '*', 'order_id', ids.map(String)),
+    bhChunks('commercial_payments', 'order_id,amount,deduction,deduction_reason,note,received_on', 'order_id', ids.map(String)),
+    bhChunks('approvals', 'order_id,type,round,submitted_on,approved_on,rejected_on', 'order_id', ids),
+    bhChunks('pp_colour_approvals', 'style,merchant_id,type,colour,round,submitted_on,approved_on,rejected_on', 'style', styles),
+    who.buyerId ? bhSafe(function(){ return fetchAllRows(function(){ return db.from('developments').select('id,buyer,buyer_id,merchant_id,season,created_at').eq('buyer_id', who.buyerId); }); }) : bhSafe(function(){ return fetchAllRows(function(){ return db.from('developments').select('id,buyer,buyer_id,merchant_id,season,created_at'); }); })
+  ]);
+  var devs = res[4];
+  if (who.buyerId && who.name && !/[*,()]/.test(who.name)) devs = devs.concat(await bhSafe(function(){ return fetchAllRows(function(){ return db.from('developments').select('id,buyer,buyer_id,merchant_id,season,created_at').is('buyer_id', null).ilike('buyer', bhLike(who.name)); }); }));
+  var opts = await bhChunks('development_options', 'id,development_id,status,target_price,quote_price,agreed_price,gauge,qty,confirmed_at,dropped_at,dropped_reason', 'development_id', devs.map(function(d){ return d.id; }));
+  var hist = await bhChunks('dev_price_history', 'development_option_id,kind,price,created_at', 'development_option_id', opts.map(function(o){ return String(o.id); }));
+  var rec = {}; res[0].forEach(function(r){ rec[String(r.order_id)] = r; });
+  var pays = {}; res[1].forEach(function(p){ (pays[String(p.order_id)] = pays[String(p.order_id)] || []).push(p); });
+  return { orders: orders, rec: rec, pays: pays, apv: res[2], ppc: res[3], devs: devs, opts: opts, hist: hist };
+}
+// everything for the KPI page (all buyers at once)
+async function bhLoadAll() {
+  if (BH.all && Date.now() - BH.allAt < 180000) return BH.all;
+  var orders = await bhOrderRows(function(q){ return q; });
+  var res = await Promise.all([
+    bhSafe(function(){ return fetchAllRows(function(){ return db.from('order_commercial').select('*'); }); }),
+    bhSafe(function(){ return fetchAllRows(function(){ return db.from('commercial_payments').select('order_id,amount,deduction,deduction_reason,note,received_on'); }); }),
+    bhSafe(function(){ return fetchAllRows(function(){ return db.from('approvals').select('order_id,type,round,submitted_on,approved_on,rejected_on'); }); }),
+    bhSafe(function(){ return fetchAllRows(function(){ return db.from('pp_colour_approvals').select('style,merchant_id,type,colour,round,submitted_on,approved_on,rejected_on'); }); }),
+    bhSafe(function(){ return fetchAllRows(function(){ return db.from('developments').select('id,buyer,buyer_id,merchant_id,season,created_at'); }); }),
+    bhSafe(function(){ return fetchAllRows(function(){ return db.from('development_options').select('id,development_id,status,target_price,quote_price,agreed_price,gauge,qty,confirmed_at,dropped_at,dropped_reason'); }); }),
+    bhSafe(function(){ return fetchAllRows(function(){ return db.from('dev_price_history').select('development_option_id,kind,price,created_at'); }); })
+  ]);
+  var rec = {}; res[0].forEach(function(r){ rec[String(r.order_id)] = r; });
+  var pays = {}; res[1].forEach(function(p){ (pays[String(p.order_id)] = pays[String(p.order_id)] || []).push(p); });
+  // index once so the page stays quick with many buyers and orders
+  var by = {}, nameId = {}, apv = {}, ppc = {}, opt = {}, hist = {}, dev = {};
+  (S.buyers || []).forEach(function(b){ nameId[String(b.name || '').toLowerCase()] = b.id; });
+  var bidOf = function(x){ return x.buyer_id || nameId[String(x.buyer || '').toLowerCase()] || null; };
+  orders.forEach(function(o){ var b = bidOf(o); if (b) (by[b] = by[b] || []).push(o); });
+  res[2].forEach(function(a){ (apv[a.order_id] = apv[a.order_id] || []).push(a); });
+  res[3].forEach(function(a){ var k = String(a.style || ''); (ppc[k] = ppc[k] || []).push(a); });
+  res[4].forEach(function(d){ var b = bidOf(d); if (b) (dev[b] = dev[b] || []).push(d); });
+  res[5].forEach(function(o){ (opt[o.development_id] = opt[o.development_id] || []).push(o); });
+  res[6].forEach(function(h){ var k = String(h.development_option_id); (hist[k] = hist[k] || []).push(h); });
+  BH.all = { rec: rec, pays: pays, by: by, apv: apv, ppc: ppc, dev: dev, opt: opt, hist: hist };
+  BH.allAt = Date.now();
+  return BH.all;
+}
+// one buyer's slice of the all-buyers data
+function bhSlice(all, id) {
+  var orders = all.by[id] || [], devs = all.dev[id] || [], cat = function(m, keys){ var out = []; keys.forEach(function(k){ if (m[k]) out = out.concat(m[k]); }); return out; };
+  var styles = orders.map(function(o){ return String(o.style || ''); }).filter(function(v, i, a){ return a.indexOf(v) === i; });
+  var opts = cat(all.opt, devs.map(function(d){ return d.id; }));
+  return { orders: orders, rec: all.rec, pays: all.pays, apv: cat(all.apv, orders.map(function(o){ return o.id; })), ppc: cat(all.ppc, styles), devs: devs, opts: opts, hist: cat(all.hist, opts.map(function(o){ return String(o.id); })) };
+}
+
+// ─── the numbers ───
+function bhRisk(o, lateRate) {
+  var reasons = [], today = todayStr(), sd = bhShipDate(o), dLeft = sd ? daysTo(sd) : null;
+  var qty = bhNum(o.qty), packed = qty > 0 ? bhNum(o.prod_packing) / qty : 0, overdue = [];
+  // a step counts as done when its actual date is in, its production count is complete,
+  // or a later step is already done (people do not always fill every date)
+  var prodDone = { knit: 'prod_knitting', sew: 'prod_linking', pack: 'prod_packing' }, last = -1;
+  BH_MILESTONES.forEach(function(m, i){ if (o['act_' + m[0]] || (prodDone[m[0]] && qty > 0 && bhNum(o[prodDone[m[0]]]) >= qty * 0.98)) last = i; });
+  if (o.stage === 'laying') last = BH_MILESTONES.length - 1; // production finished, waiting to ship
+  BH_MILESTONES.forEach(function(m, i){ var p = o['plan_' + m[0]]; if (i > last && p && String(p).slice(0, 10) < today) overdue.push(m[1]); });
+  if (o.stage === 'laying') packed = 1;
+  if (dLeft != null && dLeft < 0) reasons.push('ship date passed ' + (-dLeft) + ' day' + (dLeft === -1 ? '' : 's') + ' ago');
+  if (overdue.length) reasons.push(overdue.join(', ') + ' later than planned');
+  if (dLeft != null && dLeft >= 0 && dLeft <= 14 && qty > 0 && packed < 0.5) reasons.push(Math.round(packed * 100) + '% packed with ' + dLeft + ' day' + (dLeft === 1 ? '' : 's') + ' to go');
+  var level = 'low';
+  if ((dLeft != null && dLeft < 0) || overdue.length >= 2 || (dLeft != null && dLeft <= 7 && qty > 0 && packed < 0.5)) level = 'high';
+  else if (overdue.length === 1 || (dLeft != null && dLeft <= 14 && qty > 0 && packed < 0.3) || (lateRate >= 0.3 && dLeft != null && dLeft <= 21)) level = 'medium';
+  if (level === 'medium' && lateRate >= 0.3 && !reasons.length) reasons.push('this buyer’s orders often ship late (' + Math.round(lateRate * 100) + '%)');
+  return { level: level, reasons: reasons, dLeft: dLeft };
+}
+function bhStats(id, data) {
+  var all = data.orders.filter(bhCanSeeOrder);
+  var cancelled = all.filter(function(o){ return o.stage === 'trash'; });
+  var orders = all.filter(function(o){ return o.stage !== 'trash'; });
+  var shipped = orders.filter(bhIsShipped), live = orders.filter(function(o){ return !bhIsShipped(o); });
+  var st = { orders: orders, shipped: shipped, live: live, cancelled: cancelled.length, total: { n: orders.length, pcs: 0, value: 0 } };
+  orders.forEach(function(o){ st.total.pcs += bhNum(o.qty); st.total.value += bhVal(o); });
+  // seasons
+  var ss = {};
+  orders.forEach(function(o){ var k = bhSeason(o); var s = ss[k] = ss[k] || { k: k, n: 0, pcs: 0, value: 0, last: '' }; s.n++; s.pcs += bhNum(o.qty); s.value += bhVal(o); var d = bhShipDate(o) || ''; if (d > s.last) s.last = d; });
+  st.seasons = Object.keys(ss).map(function(k){ return ss[k]; }).sort(function(a, b){ return String(b.last).localeCompare(String(a.last)); });
+  // last 12 months vs the 12 before (by ship date)
+  var t = todayStr(), y1 = String(Number(t.slice(0, 4)) - 1) + t.slice(4), y2 = String(Number(t.slice(0, 4)) - 2) + t.slice(4);
+  st.v12 = 0; st.vPrev = 0;
+  orders.forEach(function(o){ var d = String(bhShipDate(o) || ''); if (!d) return; if (d > y1 && d <= String(Number(t.slice(0, 4)) + 1) + t.slice(4)) st.v12 += bhVal(o); else if (d > y2 && d <= y1) st.vPrev += bhVal(o); });
+  st.growth = st.vPrev > 0 ? Math.round((st.v12 - st.vPrev) / st.vPrev * 1000) / 10 : null;
+  // prices by gauge
+  var gg = {};
+  orders.forEach(function(o){ var g = String(o.gauge || '').trim() ? fmtGauge(String(o.gauge).trim()) : 'Gauge not set'; var x = gg[g] = gg[g] || { g: g, pcs: 0, value: 0, n: 0, last: null, lastD: '' }; var q = bhNum(o.qty); x.n++; x.pcs += q; x.value += q * bhNum(o.fob); var d = bhShipDate(o) || ''; if (bhNum(o.fob) > 0 && d >= x.lastD) { x.lastD = d; x.last = bhNum(o.fob); } });
+  st.gauges = Object.keys(gg).map(function(k){ var x = gg[k]; x.avg = x.pcs > 0 ? x.value / x.pcs : null; return x; }).sort(function(a, b){ return b.pcs - a.pcs; });
+  // delivery
+  var dv = { n: 0, onTime: 0, late: 0, sumLate: 0, air: 0, qty: 0, short: 0 };
+  shipped.forEach(function(o){
+    if (o.shipment_mode === 'air') dv.air++;
+    dv.qty += bhNum(o.qty); dv.short += Math.max(0, bhNum(o.short_qty));
+    var d = bhDays(bhShipDate(o), bhShippedOn(o)); if (d == null) return;
+    dv.n++; if (d <= 0) dv.onTime++; else { dv.late++; dv.sumLate += d; }
+  });
+  dv.onTimePct = bhPct(dv.onTime, dv.n); dv.avgLate = dv.late ? Math.round(dv.sumLate / dv.late * 10) / 10 : 0;
+  dv.airPct = bhPct(dv.air, shipped.length); dv.shortPct = dv.qty ? Math.round(dv.short / dv.qty * 1000) / 10 : 0;
+  dv.lateRate = (dv.late + 1) / (dv.n + 3);
+  st.delivery = dv;
+  // payment (same rules as the commercial board)
+  var pm = { invoices: 0, paid: 0, onTime: 0, sumLate: 0, lateN: 0, outstanding: 0, overdue: 0, overdueN: 0, shortVal: 0, paidVal: 0, reasons: {} };
+  st.pay = {};
+  shipped.forEach(function(o){
+    var rec = data.rec[String(o.id)], pays = data.pays[String(o.id)] || [];
+    if (!rec && !pays.length) return;
+    var s; try { s = commercialState(o, rec || {}, pays); } catch (e) { return; }
+    st.pay[o.id] = s;
+    if (!(s.value > 0)) return;
+    pm.invoices++;
+    if (s.payKey === 'paid') {
+      pm.paid++; pm.paidVal += s.value; pm.shortVal += s.short || 0;
+      (s.reasons || []).forEach(function(r){ pm.reasons[r] = (pm.reasons[r] || 0) + 1; });
+      var dl = s.due && s.lastPay ? bhDays(s.due, s.lastPay) : null;
+      if (dl != null) { pm.lateN++; pm.sumLate += Math.max(0, dl); if (dl <= 0) pm.onTime++; }
+    } else {
+      pm.outstanding += Math.max(0, s.outstanding);
+      if (s.dDue != null && s.dDue < 0 && s.outstanding > 0.5) { pm.overdue += s.outstanding; pm.overdueN++; }
+    }
+  });
+  pm.onTimePct = bhPct(pm.onTime, pm.lateN); pm.avgLate = pm.lateN ? Math.round(pm.sumLate / pm.lateN * 10) / 10 : null;
+  pm.shortPct = pm.paidVal ? Math.round(pm.shortVal / pm.paidVal * 1000) / 10 : 0;
+  st.payment = pm;
+  // approvals: days from sending to approval, and approved at the first try
+  var visIds = {}; all.forEach(function(o){ visIds[o.id] = 1; });
+  var styleKey = {}; all.forEach(function(o){ styleKey[String(o.style) + '|' + o.merchant_id] = 1; });
+  var ap = {};
+  function addAp(type, key, round, sub, appr) {
+    var x = ap[type] = ap[type] || { n: 0, sumDays: 0, items: {} };
+    if (sub && appr) { var d = bhDays(sub, appr); if (d != null && d >= 0) { x.n++; x.sumDays += d; } }
+    if (appr) { var it = x.items[key]; if (!it || round < it) x.items[key] = round || 1; }
+  }
+  (data.apv || []).forEach(function(a){ if (visIds[a.order_id]) addAp(a.type === 'sizeset' ? 'Size set' : a.type === 'fit' ? 'Fit' : String(a.type || 'Other'), a.order_id + '|' + a.type, bhNum(a.round) || 1, a.submitted_on, a.approved_on); });
+  (data.ppc || []).forEach(function(a){ if (styleKey[String(a.style) + '|' + a.merchant_id]) addAp(a.type === 'labdip' ? 'Lab dip' : a.type === 'pp' ? 'PP sample' : String(a.type || 'Other'), a.style + '|' + a.type + '|' + (a.colour || ''), bhNum(a.round) || 1, a.submitted_on, a.approved_on); });
+  st.approvals = Object.keys(ap).map(function(k){ var x = ap[k], items = Object.keys(x.items), first = items.filter(function(i){ return x.items[i] <= 1; }).length; return { type: k, n: x.n, avg: x.n ? Math.round(x.sumDays / x.n * 10) / 10 : null, items: items.length, firstPct: bhPct(first, items.length) }; })
+    .sort(function(a, b){ return ['Lab dip', 'Fit', 'Size set', 'PP sample'].indexOf(a.type) - ['Lab dip', 'Fit', 'Size set', 'PP sample'].indexOf(b.type); });
+  // quotes and negotiation (developments)
+  var devVis = {}; (data.devs || []).forEach(function(d){ if (bhCanSeeOrder({ merchant_id: d.merchant_id })) devVis[d.id] = 1; });
+  var opts = (data.opts || []).filter(function(o){ return devVis[o.development_id]; });
+  var hq = {}; (data.hist || []).forEach(function(h){ var k = String(h.development_option_id); (hq[k] = hq[k] || []).push(h); });
+  var qn = { options: opts.length, won: 0, lost: 0, vsQuote: [], vsTarget: [], rounds: [] , reasons: {} };
+  opts.forEach(function(o){
+    var won = o.status === 'confirmed' || !!o.confirmed_at, lost = o.status === 'dropped' || !!o.dropped_at;
+    if (won) qn.won++; else if (lost) { qn.lost++; if (o.dropped_reason) qn.reasons[o.dropped_reason] = (qn.reasons[o.dropped_reason] || 0) + 1; }
+    var h = (hq[String(o.id)] || []).slice().sort(function(a, b){ return String(a.created_at).localeCompare(String(b.created_at)); });
+    var quotes = h.filter(function(x){ return x.kind === 'quote' && bhNum(x.price) > 0; });
+    var firstQuote = quotes.length ? bhNum(quotes[0].price) : bhNum(o.quote_price);
+    var agreed = bhNum(o.agreed_price);
+    if (quotes.length) qn.rounds.push(quotes.length);
+    if (agreed > 0 && firstQuote > 0) qn.vsQuote.push((agreed - firstQuote) / firstQuote * 100);
+    if (agreed > 0 && bhNum(o.target_price) > 0) qn.vsTarget.push((agreed - bhNum(o.target_price)) / bhNum(o.target_price) * 100);
+  });
+  function avg(a) { return a.length ? Math.round(a.reduce(function(s, x){ return s + x; }, 0) / a.length * 10) / 10 : null; }
+  qn.winPct = bhPct(qn.won, qn.won + qn.lost); qn.settle = avg(qn.vsQuote); qn.vsTargetAvg = avg(qn.vsTarget); qn.avgRounds = avg(qn.rounds); qn.settleN = qn.vsQuote.length;
+  st.quotes = qn;
+  // live order risk
+  st.risk = live.map(function(o){ return { o: o, r: bhRisk(o, dv.lateRate) }; }).sort(function(a, b){ var w = { high: 0, medium: 1, low: 2 }; return w[a.r.level] - w[b.r.level] || (a.r.dLeft == null ? 999 : a.r.dLeft) - (b.r.dLeft == null ? 999 : b.r.dLeft); });
+  // KPI
+  st.kpi = bhKpi(st);
+  return st;
+}
+function bhKpi(st) {
+  var parts = [], dv = st.delivery, pm = st.payment;
+  if (st.vPrev > 0 || st.v12 > 0) parts.push({ k: 'volume', n: 'Business trend', score: st.vPrev > 0 ? bhClamp(50 + st.growth / 2) : 60, basis: st.vPrev > 0 ? 'last 12 months ' + (st.growth >= 0 ? '+' : '') + st.growth + '% vs the 12 before' : 'new: no orders in the 12 months before' });
+  if (dv.n >= 3) parts.push({ k: 'delivery', n: 'On-time delivery', score: bhClamp(dv.onTimePct - (dv.airPct || 0) * 0.5 - dv.shortPct * 2), basis: dv.onTimePct + '% on time from ' + dv.n + ' shipped orders' + (dv.airPct ? ', ' + dv.airPct + '% by air' : '') });
+  if (pm.lateN >= 3) parts.push({ k: 'payment', n: 'Payment', score: bhClamp(100 - pm.avgLate * 3 - pm.shortPct * 5), basis: 'paid ' + pm.avgLate + ' days late on average' + (pm.shortPct ? ', ' + pm.shortPct + '% short paid' : '') + ' (' + pm.lateN + ' invoices)' });
+  var apN = st.approvals.reduce(function(s, a){ return s + a.n; }, 0);
+  if (apN >= 3) {
+    var avgD = st.approvals.reduce(function(s, a){ return s + (a.avg || 0) * a.n; }, 0) / apN;
+    var it = st.approvals.reduce(function(s, a){ return s + a.items; }, 0), first = st.approvals.reduce(function(s, a){ return s + (a.firstPct || 0) * a.items / 100; }, 0);
+    var fp = it ? first / it * 100 : 0;
+    parts.push({ k: 'speed', n: 'Approval speed', score: bhClamp(0.7 * (100 - (avgD - 7) * 4) + 0.3 * fp), basis: Math.round(avgD * 10) / 10 + ' days to approve on average, ' + Math.round(fp) + '% approved first time' });
+  }
+  var nAll = st.orders.length + st.cancelled;
+  if (nAll >= 5) parts.push({ k: 'stability', n: 'Order stability', score: bhClamp(100 - (st.cancelled / nAll * 100) * 4), basis: st.cancelled + ' of ' + nAll + ' orders cancelled' });
+  var w = parts.reduce(function(s, p){ return s + BH_KPI_W[p.k]; }, 0);
+  // a score needs at least half of the weight (for example delivery and payment) to mean anything
+  var score = w >= 50 ? Math.round(parts.reduce(function(s, p){ return s + p.score * BH_KPI_W[p.k]; }, 0) / w) : null;
+  return { score: score, parts: parts, enough: w >= 50 };
+}
+
+// ─── drawing ───
+function bhPill(level) { return level === 'high' ? bpPill('High risk', 'r') : level === 'medium' ? bpPill('Watch', 'a') : bpPill('On track', 'g'); }
+function bhScoreCls(s) { return s == null ? 'gr' : s >= 75 ? 'g' : s >= 55 ? 'a' : 'r'; }
+function bhLoadingBox() { return '<div id="bh-body"><div class="loading"><span class="spin"></span> Reading this buyer’s orders…</div></div>'; }
+async function bhFill(id, tab) {
+  var data;
+  try { data = await bhLoadBuyer(id); } catch (e) { data = null; }
+  if (S.view !== 'buyer:' + id + ':' + tab) return;
+  var el = $('bh-body'); if (!el) return;
+  if (!data) { el.innerHTML = '<div class="bp-box"><div class="bp-empty-box">The order history could not be read just now. Reopen this tab to try again.</div></div>'; return; }
+  var st = bhStats(id, data); BH.calc[id] = st;
+  el.innerHTML = tab === 'history' ? bhHistoryHtml(id, st) : bhInsightsHtml(id, st);
+}
+function bhPayCell(st, o) {
+  var s = st.pay[o.id]; if (!s || !(s.value > 0)) return '<span class="bp-small">&ndash;</span>';
+  var p = cmPayStatus(s);
+  return '<span class="bh-pay bh-pay-' + p.cls + '">' + bpEsc(p.txt) + '</span>';
+}
+function bhHistoryHtml(id, st) {
+  var q = BH.q.toLowerCase(), sea = BH.season;
+  var match = function(o){ return (!sea || bhSeason(o) === sea) && (!q || (String(o.style || '') + ' ' + String(o.po_number || '')).toLowerCase().indexOf(q) !== -1); };
+  var seePay = bpCan('see_payment', id);
+  var sum = '<div class="bh-sum">'
+    + '<div><span>Orders</span><b>' + fmt(st.total.n) + '</b></div><div><span>Pieces</span><b>' + fmt(Math.round(st.total.pcs)) + '</b></div>'
+    + '<div><span>Value</span><b>' + money(st.total.value) + '</b></div><div><span>Live</span><b>' + st.live.length + '</b></div>'
+    + '<div><span>Shipped</span><b>' + st.shipped.length + '</b></div>' + (st.cancelled ? '<div><span>Cancelled</span><b>' + st.cancelled + '</b></div>' : '') + '</div>';
+  var risk = st.risk.filter(function(x){ return match(x.o); });
+  var liveT = risk.length ? '<div class="bp-box">' + bpCardHead('Live orders', null, '<span class="bp-small">risk is worked out from the plan dates, packing progress and this buyer’s record</span>')
+    + '<div class="bp-scroll"><table class="bp-table"><thead><tr><th>Style</th><th>PO</th><th class="num">Qty</th><th class="num">Value</th><th>Ship date</th><th>Risk</th><th>Why</th><th>Merchant</th></tr></thead><tbody>'
+    + risk.map(function(x){ var o = x.o, r = x.r; return '<tr><td><b>' + bpEsc(o.style || '') + '</b></td><td>' + bpEsc(o.po_number || '') + '</td><td class="num">' + fmt(o.qty) + '</td><td class="num">' + money(bhVal(o)) + '</td><td>' + bpEsc(bpDate(bhShipDate(o))) + (r.dLeft != null ? '<div class="bp-small">' + (r.dLeft < 0 ? (-r.dLeft) + ' days ago' : r.dLeft + ' days left') + '</div>' : '') + '</td><td>' + bhPill(r.level) + '</td><td class="bp-small">' + bpEsc(r.reasons.join('; ')) + '</td><td>' + bpEsc(bpUserName(o.merchant_id)) + '</td></tr>'; }).join('')
+    + '</tbody></table></div></div>' : '';
+  var seasons = st.seasons.filter(function(s){ return !sea || s.k === sea; }).map(function(s){
+    var rows = st.shipped.filter(function(o){ return bhSeason(o) === s.k && match(o); }).sort(function(a, b){ return String(bhShipDate(b) || '').localeCompare(String(bhShipDate(a) || '')); });
+    if (!rows.length) return '';
+    return '<div class="bp-box"><div class="bp-ch"><b>' + bpEsc(s.k) + '</b><span style="flex:1"></span><span class="bp-small">' + rows.length + ' shipped order' + (rows.length === 1 ? '' : 's') + ' &middot; ' + fmt(Math.round(rows.reduce(function(t, o){ return t + bhNum(o.qty); }, 0))) + ' pcs &middot; ' + money(rows.reduce(function(t, o){ return t + bhVal(o); }, 0)) + '</span></div>'
+      + '<div class="bp-scroll"><table class="bp-table"><thead><tr><th>Style</th><th>PO</th><th>Gauge</th><th class="num">Qty</th><th class="num">FOB</th><th class="num">Value</th><th>Ship date</th><th>Shipped</th><th>Delivery</th><th>Mode</th>' + (seePay ? '<th>Payment</th>' : '') + '</tr></thead><tbody>'
+      + rows.map(function(o){ var d = bhDays(bhShipDate(o), bhShippedOn(o)); var dl = d == null ? '<span class="bp-small">&ndash;</span>' : d <= 0 ? bpPill('On time', 'g') : bpPill(d + ' day' + (d === 1 ? '' : 's') + ' late', d > 7 ? 'r' : 'a');
+          return '<tr><td><b>' + bpEsc(o.style || '') + '</b></td><td>' + bpEsc(o.po_number || '') + '</td><td>' + bpEsc(o.gauge ? fmtGauge(String(o.gauge)) : '') + '</td><td class="num">' + fmt(o.qty) + (bhNum(o.short_qty) > 0 ? '<div class="bp-small">short ' + fmt(o.short_qty) + '</div>' : '') + '</td><td class="num">' + (bhNum(o.fob) ? money(o.fob) : '') + '</td><td class="num">' + money(bhVal(o)) + '</td><td>' + bpEsc(bpDate(bhShipDate(o))) + '</td><td>' + bpEsc(bpDate(bhShippedOn(o))) + '</td><td>' + dl + '</td><td>' + (o.shipment_mode === 'air' ? bpPill('Air', 'a') : 'Sea') + '</td>' + (seePay ? '<td>' + bhPayCell(st, o) + '</td>' : '') + '</tr>'; }).join('')
+      + '</tbody></table></div></div>';
+  }).join('');
+  var opts = '<option value="">All seasons</option>' + st.seasons.map(function(s){ return '<option value="' + bpEsc(s.k) + '"' + (s.k === sea ? ' selected' : '') + '>' + bpEsc(s.k) + '</option>'; }).join('');
+  var filters = '<div class="bp-filters"><input id="bh-q" type="search" placeholder="Search style or PO…" value="' + bpEsc(BH.q) + '" oninput="BH.q=this.value;bhRedraw(\'' + id + '\',\'history\');var e=$(\'bh-q\');e.focus();e.setSelectionRange(e.value.length,e.value.length)"><select id="bh-season" onchange="BH.season=this.value;bhRedraw(\'' + id + '\',\'history\')">' + opts + '</select></div>';
+  var none = !st.orders.length ? '<div class="bp-box"><div class="bp-empty-box">No orders for this buyer yet' + (['merchant', 'jm', 'manager'].indexOf(S.user.role) !== -1 ? ' that you can see' : '') + '.</div></div>' : (!liveT && !seasons ? '<div class="bp-box"><div class="bp-empty-box">No order matches.</div></div>' : '');
+  return sum + filters + liveT + (seasons ? '<div class="bh-h2">Shipped orders by season</div>' + seasons : '') + none;
+}
+function bhRedraw(id, tab) { var st = BH.calc[id], el = $('bh-body'); if (!st || !el) return; el.innerHTML = tab === 'history' ? bhHistoryHtml(id, st) : bhInsightsHtml(id, st); }
+function bhBar(label, v, max, txt, cls) { var w = max > 0 ? Math.max(2, Math.round(v / max * 100)) : 0; return '<div class="bh-bar"><span class="bh-bar-l">' + bpEsc(label) + '</span><span class="bh-bar-t"><i class="' + (cls || '') + '" style="width:' + w + '%"></i></span><b>' + txt + '</b></div>'; }
+function bhInsightsHtml(id, st) {
+  var dv = st.delivery, pm = st.payment, qn = st.quotes, k = st.kpi;
+  var mine = ['merchant', 'jm', 'manager'].indexOf(S.user.role) !== -1;
+  var kpi = '<div class="bp-box bh-kpi"><div class="bp-ch"><b>Buyer KPI score</b></div>'
+    + (k.score == null ? '<div class="bp-empty-box">Not enough history yet to score this buyer. A score needs at least 3 shipped orders with dates and 3 paid invoices, or similar.</div>' : '<div class="bh-kpi-n bh-' + bhScoreCls(k.score) + '">' + k.score + '<span>/100</span></div>')
+        + k.parts.map(function(p){ return '<div class="bh-part"><div><span>' + p.n + '</span><b>' + p.score + '</b></div><div class="bh-bar-t"><i class="bh-' + bhScoreCls(p.score) + 'b" style="width:' + p.score + '%"></i></div><div class="bp-small">' + bpEsc(p.basis) + '</div></div>'; }).join('')
+    + '<div class="bp-hint">Weights: delivery and payment 25 each, business trend 20, approval speed and order stability 15 each. Parts without enough data are left out. 75 and above is good, below 55 needs attention.</div></div>';
+  var seas = st.seasons.slice(0, 8).reverse(), maxV = Math.max.apply(null, seas.map(function(s){ return s.value; }).concat([0]));
+  var biz = '<div class="bp-box">' + bpCardHead('Business by season', null, st.growth != null ? bpPill((st.growth >= 0 ? '+' : '') + st.growth + '% last 12 months', st.growth >= 0 ? 'g' : 'r') : '')
+    + (seas.length ? seas.map(function(s){ return bhBar(s.k, s.value, maxV, money(s.value) + ' <span class="bp-small">' + fmt(Math.round(s.pcs)) + ' pcs</span>', 'bh-navy'); }).join('') : '<div class="bp-empty-box">No orders yet.</div>')
+    + '<div class="bp-hint">Last 12 months: ' + money(st.v12) + (st.vPrev ? ' &middot; the 12 before: ' + money(st.vPrev) : '') + ' (by ship date).</div></div>';
+  var gauges = '<div class="bp-box">' + bpCardHead('Prices by gauge') + (st.gauges.length ? '<table class="bp-table"><thead><tr><th>Gauge</th><th class="num">Orders</th><th class="num">Pieces</th><th class="num">Average FOB</th><th class="num">Latest FOB</th></tr></thead><tbody>'
+    + st.gauges.map(function(g){ return '<tr><td><b>' + bpEsc(g.g) + '</b></td><td class="num">' + g.n + '</td><td class="num">' + fmt(Math.round(g.pcs)) + '</td><td class="num">' + (g.avg ? money(g.avg) : '') + '</td><td class="num">' + (g.last ? money(g.last) : '') + '</td></tr>'; }).join('') + '</tbody></table><div class="bp-hint">Average FOB is weighted by quantity.</div>' : '<div class="bp-empty-box">No orders yet.</div>') + '</div>';
+  var del = '<div class="bp-box">' + bpCardHead('Delivery') + (dv.n ? bpRow('Shipped on time', dv.onTimePct + '% <span class="bp-small">(' + dv.onTime + ' of ' + dv.n + ')</span>') + bpRow('When late, by', dv.late ? dv.avgLate + ' days on average' : 'never late') + bpRow('Sent by air', (dv.airPct || 0) + '%') + bpRow('Short shipped', dv.shortPct + '% of pieces')
+      : '<div class="bp-empty-box">No shipped orders with both a ship date and a shipped date yet.</div>') + '</div>';
+  var reasons = Object.keys(pm.reasons).sort(function(a, b){ return pm.reasons[b] - pm.reasons[a]; }).slice(0, 3);
+  var pay = '<div class="bp-box">' + bpCardHead('Payment behaviour') + (pm.invoices ? bpRow('Invoices', pm.invoices + ' <span class="bp-small">(' + pm.paid + ' paid)</span>')
+      + bpRow('Paid on or before the due date', pm.onTimePct != null ? pm.onTimePct + '%' : '') + bpRow('Paid late by', pm.avgLate != null ? pm.avgLate + ' days on average' : '')
+      + bpRow('Outstanding', money(pm.outstanding)) + bpRow('Overdue now', pm.overdue > 0.5 ? '<span style="color:var(--red)">' + money(pm.overdue) + ' (' + pm.overdueN + ')</span>' : money(0))
+      + bpRow('Short paid', pm.shortVal > 0.5 ? money(pm.shortVal) + ' <span class="bp-small">(' + pm.shortPct + '% of paid invoices)</span>' : money(0))
+      + (reasons.length ? '<div class="bp-hint">Most common deductions: ' + reasons.map(bpEsc).join(', ') + '.</div>' : '')
+      : '<div class="bp-empty-box">No invoices recorded on the commercial board for this buyer yet.</div>') + '</div>';
+  var apv = '<div class="bp-box">' + bpCardHead('Approvals') + (st.approvals.length ? '<table class="bp-table"><thead><tr><th>Type</th><th class="num">Average days</th><th class="num">First-time approval</th></tr></thead><tbody>'
+    + st.approvals.map(function(a){ return '<tr><td><b>' + bpEsc(a.type) + '</b></td><td class="num">' + (a.avg != null ? a.avg : '') + '</td><td class="num">' + (a.firstPct != null ? a.firstPct + '% <span class="bp-small">of ' + a.items + '</span>' : '') + '</td></tr>'; }).join('') + '</tbody></table><div class="bp-hint">Days from sending to the buyer until approval.</div>' : '<div class="bp-empty-box">No approvals recorded yet.</div>') + '</div>';
+  var neg = '<div class="bp-box">' + bpCardHead('Quotes & negotiation') + (qn.options ? bpRow('Options quoted', String(qn.options)) + bpRow('Won', qn.winPct != null ? qn.winPct + '% <span class="bp-small">(' + qn.won + ' won, ' + qn.lost + ' dropped)</span>' : 'none decided yet')
+      + bpRow('Agreed price vs first quote', qn.settle != null ? (qn.settle > 0 ? '+' : '') + qn.settle + '% <span class="bp-small">(' + qn.settleN + ' options)</span>' : '') + bpRow('Agreed price vs buyer target', qn.vsTargetAvg != null ? (qn.vsTargetAvg > 0 ? '+' : '') + qn.vsTargetAvg + '%' : '') + bpRow('Quote rounds', qn.avgRounds != null ? qn.avgRounds + ' on average' : '')
+      + (qn.settle != null && qn.settle < 0 ? '<div class="bh-calc"><label for="bh-want">To end at</label><input id="bh-want" type="number" step="0.01" placeholder="8.00" oninput="bhOpen(\'' + id + '\')"><span>open at about</span><b id="bh-open">&ndash;</b></div><div class="bp-hint">Based on how far this buyer usually brings the price down from the first quote. Margins come once the costing sheet is in.</div>' : '')
+      : '<div class="bp-empty-box">No developments with prices for this buyer yet.</div>') + '</div>';
+  var r = { high: 0, medium: 0, low: 0 }; st.risk.forEach(function(x){ r[x.r.level]++; });
+  var riskBox = st.live.length ? '<div class="bp-box">' + bpCardHead('Live orders', null, bpLinkBtn('Open order history', 'bpGo(\'' + id + '\',\'history\')')) + bpRow('High risk', r.high ? '<span style="color:var(--red)">' + r.high + '</span>' : '0') + bpRow('Watch', String(r.medium)) + bpRow('On track', String(r.low)) + '</div>' : '';
+  return (mine ? '<div class="bp-hint" style="margin:-4px 0 10px">Based on the orders you can see for this buyer.</div>' : '')
+    + '<div class="bh-grid"><div class="bp-col">' + kpi + riskBox + '</div><div class="bp-col">' + biz + del + pay + '</div><div class="bp-col">' + gauges + apv + neg + '</div></div>'
+    + '<div class="bp-hint" style="margin-top:10px">Worked out from the orders, commercial records, approvals and developments already in Shahana One. It updates by itself as new orders, shipments and payments are entered.</div>';
+}
+function bhOpen(id) {
+  var st = BH.calc[id], e = $('bh-want'), out = $('bh-open'); if (!st || !e || !out) return;
+  var want = Number(e.value), s = st.quotes.settle;
+  out.textContent = want > 0 && s != null && s < 0 ? money(want / (1 + s / 100)) : '–';
+}
+
+// ─── KPI page: every buyer side by side ───
+async function bhRenderKpiPage() {
+  rqSetHead('Customers', 'Buyer KPIs', 'Scores worked out from orders, shipments, payments and approvals', '<button class="btn" onclick="setView(\'buyers\')">&larr; All buyers</button>');
+  if (!bhCanKpiPage()) { $('content').innerHTML = '<div class="bp-box"><div class="bp-empty-box">Buyer KPIs are for Admin, management, HOD and audit.</div></div>'; return; }
+  $('content').innerHTML = '<div class="loading"><span class="spin"></span> Working out the scores…</div>';
+  var all; try { all = await bhLoadAll(); } catch (e) { all = null; }
+  if (S.view !== 'buyers:kpi') return;
+  if (!all) { $('content').innerHTML = '<div class="bp-box"><div class="bp-empty-box">The data could not be read just now. Reopen this page to try again.</div></div>'; return; }
+  var total12 = 0;
+  var rows = bpVisibleBuyers().map(function(b){ var st = bhStats(b.id, bhSlice(all, b.id)); BH.calc[b.id] = st; total12 += st.v12; return { b: b, st: st }; });
+  rows.sort(function(a, c){ var x = a.st.kpi.score, y = c.st.kpi.score; if (x == null && y == null) return c.st.v12 - a.st.v12; if (x == null) return 1; if (y == null) return -1; return y - x || c.st.v12 - a.st.v12; });
+  var cell = function(st, key){ var p = st.kpi.parts.find(function(x){ return x.k === key; }); return p ? '<span class="bh-mini bh-' + bhScoreCls(p.score) + '">' + p.score + '</span>' : '<span class="bp-small">&ndash;</span>'; };
+  $('content').innerHTML = '<div class="bp-page"><div class="bp-box"><div class="bp-scroll"><table class="bp-table bh-kpi-table"><thead><tr><th>Buyer</th><th class="num">Score</th><th class="num">Trend</th><th class="num">Delivery</th><th class="num">Payment</th><th class="num">Approvals</th><th class="num">Stability</th><th class="num">Last 12 months</th><th class="num">Share</th><th class="num">Live</th></tr></thead><tbody>'
+    + rows.map(function(x){ var b = x.b, st = x.st, s = st.kpi.score;
+        return '<tr class="bh-kpi-row" onclick="bpGo(\'' + b.id + '\',\'insights\')"><td><div class="bh-kpi-b">' + bpLogoTag(b.id, 28, b.name) + '<b>' + bpEsc(b.name) + '</b></div></td><td class="num">' + (s == null ? '<span class="bp-small">not enough data</span>' : '<span class="bh-mini bh-' + bhScoreCls(s) + '" style="font-size:13px">' + s + '</span>') + '</td><td class="num">' + cell(st, 'volume') + '</td><td class="num">' + cell(st, 'delivery') + '</td><td class="num">' + cell(st, 'payment') + '</td><td class="num">' + cell(st, 'speed') + '</td><td class="num">' + cell(st, 'stability') + '</td><td class="num">' + money(st.v12) + '</td><td class="num">' + (total12 > 0 ? Math.round(st.v12 / total12 * 1000) / 10 + '%' : '') + '</td><td class="num">' + st.live.length + '</td></tr>'; }).join('')
+    + '</tbody></table></div><div class="bp-hint">Click a buyer to see how its score is made up. Scores need at least a few shipped orders, paid invoices and approvals; parts without enough data are left out.</div></div></div>';
 }
 </script>
 </body>
