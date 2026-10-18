@@ -1463,6 +1463,41 @@ table.adm-users tr.adm-editrow td{background:var(--accent-soft);padding:4px 12px
 .mode-chip.sea{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
 .mode-chip.air{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
 .lg-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+/* Laying Goods */
+.lg-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.lg-sum-t{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.lg-sum-t span{display:block;font-size:11px;color:var(--muted);font-weight:600}.lg-sum-t b{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.lg-sum-a b{color:var(--amber)}.lg-sum-r b{color:var(--red)}
+.lg-card{padding:0;overflow:hidden}
+.lg-t{border-collapse:separate;border-spacing:0}
+.lg-t td,.lg-t th{background:var(--panel)}
+.lg-t .lg-fz{position:sticky;z-index:2}
+.lg-t th.lg-fz{z-index:3}
+.lg-t .lg-f1{left:0;min-width:56px;width:56px;max-width:56px}
+.lg-t .lg-f2{left:56px;min-width:140px;width:140px;max-width:140px}
+.lg-t .lg-f3{left:196px;min-width:100px;width:100px;max-width:100px}
+.lg-t .lg-f4{left:296px;min-width:92px;width:92px;max-width:92px;white-space:nowrap}
+.lg-t .lg-f5{left:388px;min-width:56px;width:56px;max-width:56px}
+.lg-t .lg-fz-last{box-shadow:6px 0 8px -6px rgba(0,0,0,.18);border-right:1px solid var(--line)}
+.lg-t tr.lg-band th{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:7px 10px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);text-align:left;background:var(--bg)}
+.lg-t tr.lg-band th.lg-band-c{border-left:0}
+.lg-t tbody tr.lg-row td{border-bottom:1px solid var(--line)}
+.lg-t tbody tr.lg-row:hover td{background:var(--accent-soft)}
+.lg-t tr.lg-row td.lg-f1{box-shadow:inset 4px 0 0 var(--line)}
+.lg-t tr.lg-e-r td.lg-f1{box-shadow:inset 4px 0 0 var(--red)}.lg-t tr.lg-e-a td.lg-f1{box-shadow:inset 4px 0 0 var(--amber)}.lg-t tr.lg-e-g td.lg-f1{box-shadow:inset 4px 0 0 var(--green)}
+.lg-t tr.lg-grp td{padding:9px 12px;background:var(--bg);border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+.lg-t tr.lg-grp td.lg-grp-cell{max-width:none;width:auto;white-space:nowrap}
+.lg-grp-cell b{font-size:13px;margin-right:10px}.lg-grp-cell span{font-size:11.5px;color:var(--muted)}
+.lg-grp-r .lg-grp-cell b{color:var(--red)}.lg-grp-a .lg-grp-cell b{color:var(--amber)}.lg-grp-b .lg-grp-cell b{color:#3E5C76}
+/* room to type */
+.lg-t td input[type=text],.lg-t td input:not([type]){min-width:150px}
+.lg-t td input[type=number]{min-width:90px;text-align:right}
+.lg-t td input[type=date]{min-width:135px}
+.lg-t td select{min-width:110px}
+.lg-t td input:focus{min-width:190px}
+.lg-t td input[type=number]:focus,.lg-t td input[type=date]:focus{min-width:inherit}
+[data-theme="dark"] .lg-t .lg-fz-last{box-shadow:6px 0 8px -6px rgba(0,0,0,.6)}
+
 .lg-filter button{padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:var(--panel);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500;color:var(--muted)}
 .lg-filter button.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .pl-locked{background:#F3F4F6;border:1px solid var(--line);border-radius:9px;padding:20px;text-align:center;color:var(--muted);font-size:13px}
@@ -2230,7 +2265,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.18.1</p>
+    <p class="login-ver">V.2026.10.18.2</p>
   </div></div>
 </div>
 
@@ -2272,7 +2307,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.18.1</div>
+  <div id="ver-stamp">V.2026.10.18.2</div>
 </div>
 
 
@@ -14484,7 +14519,7 @@ async function renderLayingGoods(){
   var fHtml='<div class="lg-filter">'
     +['all','awaiting','done','air'].map(function(f){var lb={all:'All',awaiting:'Awaiting Inspection',done:'Inspection Done',air:'Air shipments'};return '<button class="'+((_lgFilter===f)?'on':'')+'" onclick="setLGFilter(\''+f+'\')">'+lb[f]+' <span class="lg-fc">'+fCount[f]+'</span></button>';}).join('')+'</div>';
   if(!filtered.length){$('content').innerHTML=fHtml+'<div class="card"><div class="empty"><h4>No orders'+(_lgFilter!=='all'?' in this filter':'')+'</h4><p>'+(_lgFilter!=='all'&&goods.length?goods.length+' order(s) in Laying Goods \u2014 <a href="#" onclick="setLGFilter(\'all\');return false">show all</a>':'Orders appear here once production is complete.')+'</p></div></div>';return;}
-  var html=fHtml;
+  var html=lgSummary(filtered)+fHtml;
   if(isMerchant){html+=lgTable(filtered,false);}
   else{
     // Group by the merchant each order actually belongs to. This used to loop
@@ -14507,6 +14542,12 @@ async function renderLayingGoods(){
   finishPageRender('laying', _scrollSnap);
 }
 
+function lgSummary(list){
+  var pcs=0,val=0,cbm=0,await_=0,week=0,over=0;
+  list.forEach(function(o){ var q=Number(o.packing_list_qty||o.qty)||0; pcs+=q; val+=q*(Number(o.fob)||0); cbm+=Number(o.cbm)||0; if(!o.inspection_result) await_++; var d=daysTo(o.ship_date); if(d!=null&&d<0) over++; else if(d!=null&&d<=6) week++; });
+  var t=function(k,v,c){ return '<div class="lg-sum-t'+(c?' lg-sum-'+c:'')+'"><span>'+k+'</span><b>'+v+'</b></div>'; };
+  return '<div class="lg-sum">'+t('Orders',fmt(list.length))+t('Pieces',fmt(pcs))+t('Value',money(val))+t('CBM',cbm?(Math.round(cbm*10)/10):'\u2014')+t('Awaiting inspection',String(await_),await_?'a':'')+t('Shipping this week',String(week),week?'a':'')+t('Overdue',String(over),over?'r':'')+'</div>';
+}
 function setLGFilter(f){_lgFilter=f;renderLayingGoods();}
 
 function lgTable(orders,showM){
@@ -14520,7 +14561,7 @@ function lgTable(orders,showM){
     });
   });
 
-  var rows=orders.map(function(o){
+  var lgRow=function(o){
     var dl=daysTo(o.ship_date);
     var dlH=dl===null?'--':dl<0?'<span class="chip bad" style="font-size:10px">'+dl+'d</span>':dl<=10?'<span class="chip warn" style="font-size:10px">'+dl+'d</span>':'<span style="font-size:11px">'+dl+'d</span>';
     var ir=o.inspection_result||'pending';
@@ -14532,17 +14573,18 @@ function lgTable(orders,showM){
     var modeH='<span class="mode-chip '+(o.shipment_mode||'sea')+'">'+(o.shipment_mode==='air'?'Air':'Sea')+'</span>';
     var shortH=o.short_qty?'<span class="chip warn" style="font-size:10px;margin-left:4px">Short '+fmt(o.short_qty)+'</span>':'';
     var customCells = buildFieldDataCells(customFields, o.id, canAct);
-    return '<tr id="row-'+o.id+'">'
-      +'<td style="text-align:center">'+styleThumbHtml(o)+'</td>'
-      +'<td class="sty">'+htmlEsc(o.style)+noteBadge(o)+(o.po_number?'<div style="font-size:10px;color:var(--muted);font-family:var(--mono)">'+htmlEsc(o.po_number)+'</div>':'')+'</td>'
-      +'<td>'+htmlEsc(o.buyer||'--')+'</td>'
+    var edge = dl!=null&&dl<0 ? 'r' : (dl!=null&&dl<=6) ? 'a' : (o.inspection_result==='pass' ? 'g' : 'n');
+    return '<tr id="row-'+o.id+'" class="lg-row lg-e-'+edge+'">'
+      +'<td class="lg-fz lg-f1" style="text-align:center">'+styleThumbHtml(o)+'</td>'
+      +'<td class="sty lg-fz lg-f2">'+htmlEsc(o.style)+noteBadge(o)+(o.po_number?'<div style="font-size:10px;color:var(--muted);font-family:var(--mono)">'+htmlEsc(o.po_number)+'</div>':'')+'</td>'
+      +'<td class="lg-fz lg-f3">'+htmlEsc(o.buyer||'--')+'</td>'
+      +'<td class="lg-fz lg-f4">'+short(o.ship_date)+'</td>'
+      +'<td class="lg-fz lg-f5 lg-fz-last">'+dlH+'</td>'
       +(companyOn()?'<td>'+companyCell(o)+'</td>':'')
       +'<td class="num">'+fmt(o.packing_list_qty||o.qty)+shortH+'</td>'
       +'<td class="num">'+((o.fob||0).toFixed(2))+'</td>'
       +'<td class="num">'+money((o.packing_list_qty||o.qty||0)*(o.fob||0))+'</td>'
       +'<td class="num">'+(o.cbm||'--')+'</td>'
-      +'<td>'+short(o.ship_date)+'</td>'
-      +'<td>'+dlH+'</td>'
       +'<td>'+(o.fri_date?short(o.fri_date):'--')+'</td>'
       +'<td>'+inspH+'</td>'
       +'<td>'+modeH+'</td>'
@@ -14555,10 +14597,23 @@ function lgTable(orders,showM){
       +(canAct?' <button class="btn sm pri" data-uid="'+o.id+'" onclick="openShipFromLaying(this.dataset.uid)">Ship</button>':'')
       +(canAct?' <button class="btn sm danger" data-uid="'+o.id+'" onclick="openDeleteLaying(this.dataset.uid)" title="Move to Trash">&#x1F5D1; Delete</button>':'')
       +'</td></tr>';
+  };
+  // grouped by ship week, each group sorted by ship date
+  var nCols = 15 + (companyOn()?1:0) + customFields.length;
+  var groups = [['over','Overdue','r'],['week','This week','a'],['next','Next week','b'],['later','Later','n'],['none','No ship date','n']];
+  var gOf = function(o){ var d=daysTo(o.ship_date); return d==null?'none':d<0?'over':d<=6?'week':d<=13?'next':'later'; };
+  var sorted = orders.slice().sort(function(a,b){ return String(a.ship_date||'9999').localeCompare(String(b.ship_date||'9999')); });
+  var rows = groups.map(function(g){
+    var list = sorted.filter(function(o){ return gOf(o)===g[0]; }); if(!list.length) return '';
+    var pcs = list.reduce(function(t,o){ return t+(Number(o.packing_list_qty||o.qty)||0); },0), val = list.reduce(function(t,o){ return t+(Number(o.packing_list_qty||o.qty)||0)*(Number(o.fob)||0); },0);
+    return '<tr class="lg-grp copy-heading lg-grp-'+g[2]+'"><td colspan="5" class="lg-fz lg-f1 lg-grp-cell"><b>'+g[1]+'</b><span>'+list.length+' order'+(list.length===1?'':'s')+' &middot; '+fmt(pcs)+' pcs &middot; '+money(val)+'</span></td><td colspan="'+(nCols-5)+'" class="lg-grp-rest"></td></tr>'
+      + list.map(lgRow).join('');
   }).join('');
   var customHeaders = buildFieldHeaderCells(customFields, divisionOf((orders[0]||{}).merchant_id));
-  return '<div class="card"><div class="scroller"><table>'
-    +'<thead><tr><th></th><th>Style/PO</th><th>Buyer</th>'+(companyOn()?'<th>Company</th>':'')+'<th class="num">PL Qty</th><th class="num">FOB</th><th class="num">Value</th><th class="num">CBM</th><th>Ship Date</th><th class="num">Days</th><th>FRI</th><th>Inspection</th><th>Mode</th><th>Booking</th><th></th>'+customHeaders+'<th></th></tr></thead>'
+  var nQ = 4 + (companyOn()?1:0);
+  return '<div class="card lg-card"><div class="scroller"><table class="lg-t">'
+    +'<thead><tr class="lg-band"><th colspan="5" class="lg-fz lg-f1 lg-band-c">Order</th><th colspan="'+nQ+'">Quantity &amp; value</th><th colspan="5">Inspection &amp; shipping</th>'+(customFields.length?'<th colspan="'+customFields.length+'">Buyer details</th>':'')+'<th></th></tr>'
+    +'<tr><th class="lg-fz lg-f1"></th><th class="lg-fz lg-f2">Style/PO</th><th class="lg-fz lg-f3">Buyer</th><th class="lg-fz lg-f4">Ship Date</th><th class="num lg-fz lg-f5 lg-fz-last">Days</th>'+(companyOn()?'<th>Company</th>':'')+'<th class="num">PL Qty</th><th class="num">FOB</th><th class="num">Value</th><th class="num">CBM</th><th>FRI</th><th>Inspection</th><th>Mode</th><th>Booking</th><th></th>'+customHeaders+'<th></th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div></div>';
 }
 
@@ -19063,6 +19118,8 @@ function tableGrid(table) {
   var grid = [], rows = Array.prototype.slice.call(table.rows).filter(function(tr){ return !tr.classList.contains('no-copy') && tr.style.display !== 'none'; });
   rows.forEach(function(tr, r){
     grid[r] = grid[r] || [];
+    // a group heading row (e.g. "This week") copies as one line of text
+    if (tr.classList.contains('copy-heading')) { grid[r].heading = cellText(tr.cells[0]); return; }
     var c = 0;
     Array.prototype.forEach.call(tr.cells, function(cell){
       while (grid[r][c] !== undefined) c++;
@@ -19093,6 +19150,7 @@ function tableGrid(table) {
   });
   var out = headRows ? [header] : [];
   grid.slice(headRows).forEach(function(r){
+    if (r.heading) { out.push([r.heading]); return; }
     if (!r.some(function(x){ return x && x.t; })) return;
     if (r.length === 1 || (r[0] && r.length < cols && r.filter(Boolean).length === 1 && cols > 2)) { out.push([r[0].t]); return; } // section heading rows
     out.push(keep.map(function(c4){ var x = r[c4]; return x && !x.skip ? x.t : ''; }));
