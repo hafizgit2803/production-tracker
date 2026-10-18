@@ -1463,6 +1463,15 @@ table.adm-users tr.adm-editrow td{background:var(--accent-soft);padding:4px 12px
 .mode-chip.sea{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
 .mode-chip.air{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
 .lg-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+/* Requisition approval steps */
+.rq-minis{display:inline-flex;gap:3px;flex-wrap:nowrap}
+.rq-mini{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:99px;white-space:nowrap}
+.rq-mini.ok{background:var(--green-soft);color:var(--green)}.rq-mini.warn{background:var(--amber-soft);color:var(--amber)}.rq-mini.bad{background:var(--red-soft);color:var(--red)}.rq-mini.wait{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.rq-appr-arrow{align-self:center;color:var(--muted);font-size:16px}
+.rq-appr.rq-appr-3,.rq-appr.rq-appr-4{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap}
+.rq-appr.rq-appr-3 .rq-appr-box,.rq-appr.rq-appr-4 .rq-appr-box{flex:1;min-width:140px}
+.rq-appr-box.done{border-color:var(--green)}.rq-appr-box.stop{border-color:var(--amber)}
+.rq-warn{background:var(--amber-soft);color:var(--amber);border-radius:8px;padding:7px 10px;font-size:12.5px;margin-bottom:8px}
 /* Laying Goods */
 .lg-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
 .lg-sum-t{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
@@ -2265,7 +2274,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.18.2</p>
+    <p class="login-ver">V.2026.10.18.3</p>
   </div></div>
 </div>
 
@@ -2307,7 +2316,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.18.2</div>
+  <div id="ver-stamp">V.2026.10.18.3</div>
 </div>
 
 
@@ -3345,10 +3354,11 @@ const DASH_COLS = [
 
 // ─── Helpers ───
 const $ = id => document.getElementById(id);
-var ROLE_ORDER = { management:1, audit:2, hod:3, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
+var ROLE_ORDER = { management:1, cao:1.5, audit:2, agm:2.5, hod:3, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
 const ROLE_LABELS = {
   admin: 'Administrator', management: 'Management', hod: 'Head of Dept',
   manager: 'Manager', audit: 'Audit', merchant: 'Merchandiser', jm: 'Junior Merchandiser', commercial: 'Commercial',
+  cao: 'CAO (Chief Administrative Officer)', agm: 'AGM (HR, Admin & Compliance)',
   dept: 'Department'
 };
 const roleLabel = function(r) { return ROLE_LABELS[r] || r; };
@@ -3370,14 +3380,14 @@ function can(action, merchantId) {
     case 'edit':        return r === 'admin' || (!!merchantId && actsAsMerchant(merchantId));
     // Managers may VIEW every board their dashboard lists (admin's "manager
     // scope" setting); editing stays with the merchant/JM/admin.
-    case 'view_board':  return ['admin','management','hod','audit'].includes(r) ||
+    case 'view_board':  return ['admin','management','hod','audit','cao'].includes(r) ||
                                (r === 'manager' && (function(){ var ms = managerScopeIds(); return !ms || ms.includes(uid); })()) ||
                                actsAsMerchant(uid);
     case 'send_notes':  return ['admin','management','hod','manager'].includes(r);
     case 'inbox':       return ['admin','management','hod','manager'].includes(r);
     case 'requests':    return ['admin','hod','manager'].includes(r);
     case 'admin_panel': return r === 'admin';
-    case 'see_all':     return ['admin','management','hod','audit','manager'].includes(r);
+    case 'see_all':     return ['admin','management','hod','audit','cao','manager'].includes(r);
     default: return false;
   }
 }
@@ -3393,10 +3403,10 @@ function can(action, merchantId) {
 function getMessageableUsers() {
   if (!S.user) return [];
   var role = S.user.role;
-  var others = S.users.filter(function(u){ return u.id !== S.user.id && u.role !== 'dept'; }); // department (requisition) logins have no messaging
+  var others = S.users.filter(function(u){ return u.id !== S.user.id && u.role !== 'dept' && u.role !== 'agm'; }); // requisition-only logins have no messaging
 
   if (['admin','management','hod'].includes(role)) return others;
-  if (role === 'audit') return [];
+  if (role === 'audit' || role === 'cao') return [];
 
   var bosses = others.filter(function(u){ return ['admin','management','hod'].includes(u.role); });
 
@@ -4615,7 +4625,7 @@ async function startApp() {
   $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading…</div>';
 
   // Department staff (requisitions only): none of the order data is loaded.
-  if (S.user.role === 'dept') { await rqBoot(); return; }
+  if (rqOnlyUser()) { await rqBoot(); return; }
 
   // These were 13 sequential awaits — each one a full network round trip that
   // waited for the previous to finish, so boot cost ~13 RTTs of pure latency.
@@ -4763,7 +4773,7 @@ async function loadDashOrders() {
 
 
 async function loadAlerts() {
-  const isSenior = ['admin','management','hod','manager','audit'].includes(S.user.role);
+  const isSenior = ['admin','management','hod','manager','audit','cao'].includes(S.user.role);
   const isOwnerRole = ['merchant','jm'].includes(S.user.role);
   const isCommercial = S.user.role === 'commercial';
   if (!isSenior && !isOwnerRole && !isCommercial) { S.alerts = []; return; }
@@ -5166,7 +5176,7 @@ function historyScopeIds() {
   if (r === 'merchant') return [S.user.id];
   if (r === 'jm') return S.myJMMerchants && S.myJMMerchants.length ? S.myJMMerchants : none;
   if (r === 'manager') return S.myAssignments && S.myAssignments.length ? S.myAssignments : none;
-  if (['admin','management','hod','audit','commercial'].includes(r)) return null; // commercial works across every merchant's export
+  if (['admin','management','hod','audit','cao','commercial'].includes(r)) return null; // commercial works across every merchant's export
   return none;
 }
 function inHistoryScope(merchantId) {
@@ -5476,7 +5486,7 @@ function subscribeRealtime() {
 
 // ─── RENDER ───
 function render() {
-  if (S.user && S.user.role === 'dept' && !(typeof S.view === 'string' && S.view.indexOf('rq:') === 0)) { setView(rqHomeView()); return; }
+  if (rqOnlyUser() && !(typeof S.view === 'string' && S.view.indexOf('rq:') === 0)) { setView(rqHomeView()); return; }
   renderRail();
   if (typeof S.view === 'string' && S.view.indexOf('rq:') === 0) { rqRender(S.view); return; }
   if (bpIsView(S.view)) { bpRender(S.view); return; }
@@ -5498,7 +5508,7 @@ function render() {
 function setView(v) {
   // Requisitions are a separate part: department staff never leave it, and
   // only admin / management / audit / department staff can open it.
-  if (S.user && S.user.role === 'dept' && !(typeof v === 'string' && v.indexOf('rq:') === 0)) v = rqHomeView();
+  if (rqOnlyUser() && !(typeof v === 'string' && v.indexOf('rq:') === 0)) v = rqHomeView();
   if (rqFormDirty() && v !== S.view) {
     appConfirm('Leave the requisition form? What you typed will be lost.', { title: 'Discard changes', okText: 'Leave', cancelText: 'Stay', danger: true }).then(function(ok){ if (ok) { _rqFormStart = null; RQ.editId = null; setView(v); } });
     return;
@@ -5801,7 +5811,7 @@ function renderDashboard() {
   </div>`;
 
   // By-merchant table (all non-merchant roles)
-  if (['admin','management','hod','manager','audit'].includes(S.user.role)) {
+  if (['admin','management','hod','manager','audit','cao'].includes(S.user.role)) {
     const merchants = S.users.filter(u => u.role === 'merchant' && can('view_board', u.id)); // a manager sees only their own merchants
     html += `<div class="card">
       <div class="card-h"><h3>By merchandiser</h3><span class="note">Click a row to open their board</span></div>
@@ -10331,14 +10341,14 @@ function buildAlertCardsHTML() {
   // Widened to every senior role — this used to be management-only, which
   // meant an admin or HOD looking at the same shared alert had no way to
   // dismiss it themselves at all.
-  const isSenior = ['admin','management','hod','manager','audit'].includes(S.user.role);
+  const isSenior = ['admin','management','hod','manager','audit','cao'].includes(S.user.role);
   const canDismiss = isSenior || ['merchant','jm','commercial'].includes(S.user.role);
   // Replying only makes sense senior-to-merchant — a merchant replying to
   // their own alert about their own order has no one to send it to.
   // Replying sends a message, so it follows the messaging rules: audit never
   // sends, and a manager can only message the merchants they manage.
   var _msgIds = {}; (typeof getMessageableUsers === 'function' ? getMessageableUsers() : []).forEach(function(u){ _msgIds[u.id] = 1; });
-  function canReplyTo(alertId) { var al = (S.alerts||[]).find(function(x){ return x.id === alertId; }); return isSenior && S.user.role !== 'audit' && !!al && !!_msgIds[al.merchant_id]; }
+  function canReplyTo(alertId) { var al = (S.alerts||[]).find(function(x){ return x.id === alertId; }); return isSenior && S.user.role !== 'audit' && S.user.role !== 'cao' && !!al && !!_msgIds[al.merchant_id]; }
   function actionButtons(alertId) {
     return (canReplyTo(alertId) ? '<button class="btn sm no-print" onclick="openAlertReply(\'' + alertId + '\')">Reply</button>' : '')
       + (canDismiss ? '<button class="btn sm ghost no-print" onclick="dismissAlert(\'' + alertId + '\')">Dismiss</button>' : '');
@@ -12909,6 +12919,7 @@ function renderAdminPage() {
   + '<option value="merchant">Merchant</option><option value="jm">Junior Merchandiser</option><option value="manager">Manager</option>'
   + '<option value="hod">HOD</option><option value="audit">Audit</option><option value="management">Management</option><option value="commercial">Commercial</option>'
   + '<option value="dept">Department (requisitions)</option>'
+  + '<option value="cao">CAO (views everything, approves requisitions)</option><option value="agm">AGM &ndash; HR, Admin &amp; Compliance (requisitions)</option>'
   + '</select></div>'
   + '<div class="adm-field" id="div-field"><label class="adm-lbl">Division</label>'
   + '<select id="a_div" ' + sel + '><option value="sweater">Sweater</option><option value="knit">Knit</option></select></div>'
@@ -12940,14 +12951,14 @@ function renderAdminPage() {
 }
 
 function renderAdminList() {
-  var roleOrder = { management:1, hod:2, audit:3, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
-  var roleGroup = { management:'Management', hod:'Heads of department', audit:'Audit', manager:'Managers', merchant:'Merchandisers', jm:'Junior merchandisers', commercial:'Commercial', dept:'Departments (requisitions)' };
+  var roleOrder = { management:1, cao:1.5, hod:2, audit:3, agm:3.5, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
+  var roleGroup = { management:'Management', cao:'CAO', hod:'Heads of department', audit:'Audit', agm:'AGM (HR, Admin & Compliance)', manager:'Managers', merchant:'Merchandisers', jm:'Junior merchandisers', commercial:'Commercial', dept:'Departments (requisitions)' };
   var staff = S.users.filter(function(u){ return u.role !== 'admin'; })
     .sort(function(a,b){
       var ra = roleOrder[a.role]||9, rb = roleOrder[b.role]||9;
       return ra !== rb ? ra - rb : a.name.localeCompare(b.name);
     });
-  var avColors = { management:'#7C3AED', hod:'#D97706', manager:'#059669', audit:'#0284C7', jm:'#DB2777', merchant:'#6B7280', dept:'#0F766E' };
+  var avColors = { management:'#7C3AED', cao:'#4338CA', hod:'#D97706', manager:'#059669', audit:'#0284C7', agm:'#0E7490', jm:'#DB2777', merchant:'#6B7280', dept:'#0F766E' };
   var sub = $('adm-users-sub');
   if (sub) sub.textContent = staff.length + ' accounts' + (_pwViewMissing ? ' · readable passwords need the database update (user-password-view-migration.sql)' : '');
   if (!staff.length) { $('admin-list').innerHTML = '<div class="empty" style="padding:18px">No users yet.</div>'; return; }
@@ -12983,7 +12994,7 @@ function renderAdminList() {
         + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" class="adm-inp" placeholder="Leave blank to keep">'
         +   '<button class="pwd-eye" type="button" tabindex="-1" onclick="var i=$(\'eu-pwd-' + m.id + '\');i.type=i.type===\'password\'?\'text\':\'password\'">&#x1F441;</button></div></div>'
         + '<div class="adm-field"><label class="adm-lbl">Role</label><select id="eu-role-' + m.id + '" class="adm-sel" onchange="var f=$(\'eu-rqdept-wrap-' + m.id + '\');if(f)f.style.display=this.value===\'dept\'?\'block\':\'none\'">'
-        + ['merchant','jm','manager','hod','audit','management','commercial','dept'].map(function(r){ return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>'; }).join('')
+        + ['merchant','jm','manager','hod','audit','management','commercial','dept','cao','agm'].map(function(r){ return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>'; }).join('')
         + '</select></div>'
         + '<div class="adm-field" id="eu-rqdept-wrap-' + m.id + '" style="display:' + (m.role === 'dept' ? 'block' : 'none') + '"><label class="adm-lbl">Department</label><select id="eu-rqdept-' + m.id + '" class="adm-sel">'
         + RQ_DEPTS.map(function(d){ return '<option value="' + d.k + '"' + (m.division === d.k ? ' selected' : '') + '>' + d.n + '</option>'; }).join('') + '</select></div>'
@@ -13330,7 +13341,7 @@ function openAlertReply(alertId) {
   if (!a) return;
   var merch = S.users.find(function(u){ return u.id === a.merchant_id; });
   if (!merch) { toast('Could not find that merchant', 'err'); return; }
-  if (S.user.role === 'audit' || !getMessageableUsers().some(function(u){ return u.id === merch.id; })) { toast('You can\u2019t message this merchant', 'err'); return; }
+  if (S.user.role === 'audit' || S.user.role === 'cao' || !getMessageableUsers().some(function(u){ return u.id === merch.id; })) { toast('You can\u2019t message this merchant', 'err'); return; }
   _alertReplyTarget = { alertId: alertId, merchantId: merch.id };
   $('ar-sub').textContent = 'To ' + merch.name;
   $('ar-subject').value = 'Re: ' + (a.style||'').toUpperCase() + (a.buyer?' \u2014 '+a.buyer:'');
@@ -13341,7 +13352,7 @@ function openAlertReply(alertId) {
 function closeAlertReply() { closeModal('ov-alert-reply'); _alertReplyTarget = null; }
 async function sendAlertReply() {
   if (!_alertReplyTarget) return;
-  if (S.user.role === 'audit' || !getMessageableUsers().some(function(u){ return u.id === _alertReplyTarget.merchantId; })) { toast('You can\u2019t message this merchant', 'err'); return; }
+  if (S.user.role === 'audit' || S.user.role === 'cao' || !getMessageableUsers().some(function(u){ return u.id === _alertReplyTarget.merchantId; })) { toast('You can\u2019t message this merchant', 'err'); return; }
   var body = $('ar-body').value.trim();
   if (!body) { toast('Write something first', 'err'); return; }
   var subject = $('ar-subject').value.trim();
@@ -13490,6 +13501,8 @@ async function addMerchant() {
     errEl.textContent='A user with that name already exists.'; errEl.style.display='block';
   } else if (type === 'dept' && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
     errEl.textContent='The Department role needs requisitions-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
+  } else if ((type === 'cao' || type === 'agm') && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
+    errEl.textContent='The CAO and AGM roles need requisition-approvals-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
   } else if (type === 'commercial' && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
     errEl.textContent='The Commercial role needs commercial-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
   } else {
@@ -13736,7 +13749,7 @@ async function runGlobalSearch(query) {
   else if (role === 'jm') q = q.in('merchant_id', S.myJMMerchants && S.myJMMerchants.length ? S.myJMMerchants : ['00000000-0000-0000-0000-000000000000']);
   else if (role === 'commercial') { /* every merchant's orders; a result opens the shipment file, never a board */ }
   else if (role === 'merchant') q = q.eq('merchant_id', S.user.id);
-  else if (!['admin','management','hod','audit'].includes(role)) {
+  else if (!['admin','management','hod','audit','cao'].includes(role)) {
     // Unrecognized role — deny by default rather than silently searching
     // everyone, matching how the rest of the app treats unknown roles.
     if (myToken === _gsearchToken) renderGlobalSearchResults([], query);
@@ -13811,7 +13824,7 @@ function renderRail() {
   var u=S.user; if(!u) return;
   var r=u.role;
   var isAdmin=r==='admin', isMgmt=r==='management', isHOD=r==='hod';
-  var isAudit=r==='audit', isManager=r==='manager', isMerchant=r==='merchant', isJM=r==='jm';
+  var isAudit=r==='audit'||r==='cao', isManager=r==='manager', isMerchant=r==='merchant', isJM=r==='jm';
   var seeAll=isAdmin||isMgmt||isHOD||isAudit;
   var rb=$('rail-body'); if(!rb) return;
   var tb=$('theme-btn');
@@ -13838,7 +13851,7 @@ function renderRail() {
     var on=S.view==='jm_'+j.id?'on':'';
     return '<button class="ni '+on+'" onclick="setView(\'jm_'+j.id+'\')" style="color:#DB2777"><span class="av" style="font-size:11px;background:#FCE7F3;color:#DB2777">'+initials(j.name)+'</span><span class="nm">'+htmlEsc(j.name)+'</span></button>';
   }
-  if (r === 'dept') { rqRenderRailForDept(); return; } // department staff see only their requisitions
+  if (r === 'dept' || r === 'agm') { rqRenderRailForDept(); return; } // department staff and the AGM see only requisitions
   var html=ni('dashboard','&#x2302;','Dashboard');
   if (r === 'commercial') {
     var ab=(S.alerts||[]).filter(function(a){return !a.dismissed;}).length + getMyThreads().filter(function(t2){ return t2.unread; }).length;
@@ -13993,7 +14006,7 @@ function renderInbox() {
 
   var tabs = getAvailableInboxTabs();
   if (!tabs.some(function(t){ return t.id === S.inboxTab; })) S.inboxTab = tabs[0].id;
-  var canCompose = S.user.role !== 'audit';
+  var canCompose = S.user.role !== 'audit' && S.user.role !== 'cao';
   $('act-row').innerHTML = (S.inboxTab === 'messages' && canCompose) ? '<button class="btn pri" onclick="openSendMessageModal()">+ Send Message</button>' : '';
 
   var tabBarHtml = '<div class="inbox-tabs">' + tabs.map(function(t){
@@ -14024,7 +14037,7 @@ function renderMessagesTabHTML() {
       + '<div class="msg-thread-preview">' + htmlEsc((a.first.body || '').slice(0, 90)) + ((a.first.body||'').length > 90 ? '\u2026' : '') + ' \u00b7 read by ' + a.read + ' of ' + a.rows.length + '</div></div>'
       + '<div class="msg-thread-time">' + relTime(a.first.created_at) + '</div></div>';
   }).join('');
-  if (!threads.length && !annHtml) return '<div class="empty"><h4>No messages yet</h4><div>' + (S.user.role==='audit' ? 'Messages sent to you will appear here.' : 'Use "+ Send Message" above to start a conversation.') + '</div></div>';
+  if (!threads.length && !annHtml) return '<div class="empty"><h4>No messages yet</h4><div>' + (S.user.role==='audit'||S.user.role==='cao' ? 'Messages sent to you will appear here.' : 'Use "+ Send Message" above to start a conversation.') + '</div></div>';
   return annHtml + threads.map(function(t) {
     var preview = (t.last.body || '').slice(0, 90);
     var badge = t.actionStatus ? '<span class="action-badge ' + t.actionStatus + '">' + (t.actionStatus==='open'?'Action needed':t.actionStatus==='done'?'Done \u2014 awaiting confirmation':'Resolved') + '</span>' : '';
@@ -14108,7 +14121,7 @@ function openMessageThread(threadId) {
   markThreadRead(threadId);
 }
 function renderMessageThreadBody(thread) {
-  var canReply = S.user.role !== 'audit';
+  var canReply = S.user.role !== 'audit' && S.user.role !== 'cao';
   var actionBarHtml = (thread.actions || []).filter(function(a){ return a.action_status !== 'resolved'; }).map(function(a){
     var isRequester = a.sender_id === S.user.id;
     var what = htmlEsc(a.subject || (a.body || '').slice(0, 50) + ((a.body || '').length > 50 ? '…' : ''));
@@ -14168,7 +14181,7 @@ async function markThreadRead(threadId) {
   renderRail();
 }
 async function sendThreadReply() {
-  if (S.user.role === 'audit') return; // audit reads, never sends
+  if (S.user.role === 'audit' || S.user.role === 'cao') return; // audit and CAO read, never send
   var threadId = _openThreadId;
   var thread = getMyThreads().find(function(t){ return t.thread_id === threadId; });
   if (!thread) return;
@@ -17789,7 +17802,7 @@ async function setPayStatus(orderId, key) {
 // Opens a shipment file from search (commercial): reads the order first if it isn't loaded.
 async function openCommercialById(orderId) {
   if (!findOrderAnywhere(orderId)) {
-    if (!['admin','management','hod','audit','commercial'].includes(S.user.role)) { toast('Order not found \u2014 refresh the page', 'err'); return; }
+    if (!['admin','management','hod','audit','cao','commercial'].includes(S.user.role)) { toast('Order not found \u2014 refresh the page', 'err'); return; }
     var r = await db.from('orders').select('*').eq('id', orderId).or('stage.is.null,stage.neq.trash').maybeSingle();
     if (r.error || !r.data) { toast('Order not found \u2014 refresh the page', 'err'); return; }
     var o = autolinkBuyerId([r.data])[0]; if (o.style) o.style = o.style.toUpperCase();
@@ -18481,7 +18494,7 @@ function cmAgo(ts) {
 var CM_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function cmMonthOf(d) { return d ? String(d).slice(0, 7) : ''; }                       // 2026-09
 function cmMonthName(ym) { if (!ym) return ''; return CM_MONTHS[Number(ym.slice(5, 7)) - 1] + '-' + ym.slice(2, 4); } // Sep-26
-function canSeeCommBoard() { return !!S.user && ['admin', 'management', 'hod', 'audit', 'commercial'].includes(S.user.role); }
+function canSeeCommBoard() { return !!S.user && ['admin', 'management', 'hod', 'audit', 'cao', 'commercial'].includes(S.user.role); }
 
 // ─── stage, progress, next step ───
 function cmIsDone(o, rec) {
@@ -19591,7 +19604,7 @@ async function runRestore() {
 // out from the rows when the backup has no layout. Run once in the new
 // Supabase project's SQL Editor; safe to run again.
 var SETUP_KNOWN = { // every column the app uses: for tables a backup has no rows of (when it has no saved layout)
-  rq_requisitions: 'approved_cost:numeric,audit_at:timestamptz,audit_by:text,audit_by_name:text,audit_note:text,audit_status:text,company:text,completed_at:timestamptz,completion_note:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,est_cost:numeric,final_cost:numeric,id:uuid,items:jsonb,job_no:text,kind:text,location:text,location_detail:text,mgmt_at:timestamptz,mgmt_by:text,mgmt_by_name:text,mgmt_note:text,mgmt_status:text,priority:text,progress:integer,remarks:text,req_date:date,seq:integer,spent:numeric,started_at:timestamptz,status:text,target_date:date,time_unit:text,time_value:numeric,updated_at:timestamptz,updated_by:text,work_type:text,yr:integer',
+  rq_requisitions: 'agm_at:timestamptz,agm_by:text,agm_by_name:text,agm_note:text,agm_status:text,cao_at:timestamptz,cao_by:text,cao_by_name:text,cao_note:text,cao_status:text,approved_cost:numeric,audit_at:timestamptz,audit_by:text,audit_by_name:text,audit_note:text,audit_status:text,company:text,completed_at:timestamptz,completion_note:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,est_cost:numeric,final_cost:numeric,id:uuid,items:jsonb,job_no:text,kind:text,location:text,location_detail:text,mgmt_at:timestamptz,mgmt_by:text,mgmt_by_name:text,mgmt_note:text,mgmt_status:text,priority:text,progress:integer,remarks:text,req_date:date,seq:integer,spent:numeric,started_at:timestamptz,status:text,target_date:date,time_unit:text,time_value:numeric,updated_at:timestamptz,updated_by:text,work_type:text,yr:integer',
   rq_events: 'amount:numeric,at:timestamptz,by_id:text,by_name:text,id:uuid,kind:text,note:text,pct:integer,req_id:uuid',
   rq_counters: 'dept:text,last:integer,yr:integer',
   rq_settings: 'key:text,updated_at:timestamptz,updated_by:text,value:text',
@@ -19880,12 +19893,60 @@ var RQ_TABS = [
   { k: 'done', n: 'Completed' },
   { k: 'closed', n: 'Returned / rejected' }
 ];
-var RQ = { rows: [], loaded: false, missing: false, settings: null, events: {}, openId: null, filter: { co: '', q: '', st: '', dp: '', mine: false }, channel: null, editId: null };
+var RQ = { rows: [], loaded: false, missing: false, stagesOk: null, settings: null, events: {}, openId: null, filter: { co: '', q: '', st: '', dp: '', mine: false, checked: false }, channel: null, editId: null };
 
 function rqDept(k) { return RQ_DEPTS.find(function(d){ return d.k === k; }) || null; }
 function rqCompany(c) { return RQ_COMPANIES.find(function(x){ return x.c === c; }) || { c: c, n: c || '' }; }
 function rqIsDeptUser() { return !!S.user && S.user.role === 'dept'; }
-function rqCanSee() { return !!S.user && (['admin', 'management', 'audit'].includes(S.user.role) || (rqIsDeptUser() && !!rqDept(S.user.division))); }
+// logins that only ever see requisitions: department staff and the AGM
+function rqOnlyUser() { return !!S.user && (S.user.role === 'dept' || S.user.role === 'agm'); }
+// The approval steps, in the order they are meant to check. Only management's
+// approval starts the work; the others are checks before it. AGM and CAO can
+// approve or return, not reject. Nobody approves a requisition they raised.
+var RQ_STAGES = [
+  { k: 'agm', role: 'agm', n: 'AGM', full: 'AGM (HR, Admin & Compliance)', reject: false, note: 'rq-agm-note' },
+  { k: 'cao', role: 'cao', n: 'CAO', full: 'CAO', reject: false, note: 'rq-cao-note' },
+  { k: 'audit', role: 'audit', n: 'Audit', full: 'Audit', reject: true, note: 'rq-a-note' },
+  { k: 'mgmt', role: 'management', n: 'Management', full: 'Management', reject: true, note: 'rq-m-note' }
+];
+function rqStage(k) { return RQ_STAGES.find(function(x){ return x.k === k; }) || null; }
+function rqStageOfRole(role) {
+  var st = RQ_STAGES.find(function(x){ return x.role === role; }) || null;
+  return st && rqStageOn(st) ? st : null;
+}
+// AGM and CAO steps exist once their database columns are there (requisition-
+// approvals-migration.sql) and someone has that login; before that, approval
+// works exactly as it always has (audit and management).
+function rqStageOn(st) {
+  if (st.k === 'audit' || st.k === 'mgmt') return true;
+  if (RQ.stagesOk !== true) return false;
+  return (S.users || []).some(function(u){ return u.role === st.role; });
+}
+function rqStagesFor(r) { return RQ_STAGES.filter(function(st){ return rqStageOn(st) || (r && r[st.k + '_status']); }); }
+function rqIsOwn(r) { return !!S.user && !!r && r.created_by === S.user.id; }
+// earlier steps that have not approved yet (shown as a reminder, never a block)
+function rqNotCheckedBefore(r, st) {
+  var out = [];
+  if (RQ.stagesOk !== true) return out; // before the approvals update: exactly as it always worked
+  for (var i = 0; i < RQ_STAGES.length && RQ_STAGES[i].k !== st.k; i++) { var e = RQ_STAGES[i]; if (rqStageOn(e) && r[e.k + '_status'] !== 'approved') out.push(e.n); }
+  return out;
+}
+// the step that returned / rejected it (latest)
+function rqDecider(r, status) {
+  var best = null;
+  RQ_STAGES.forEach(function(st){ if (r[st.k + '_status'] === status && (!best || String(r[st.k + '_at'] || '') > String(r[best.k + '_at'] || ''))) best = st; });
+  return best ? { st: best, by: r[best.k + '_by_name'], note: r[best.k + '_note'] } : null;
+}
+function rqApprMini(r) {
+  return '<span class="rq-minis">' + rqStagesFor(r).map(function(st){
+    var v = r[st.k + '_status'];
+    if (!v && r.status !== 'pending') return '';
+    var cls = v === 'approved' ? 'ok' : v === 'returned' ? 'warn' : v === 'rejected' ? 'bad' : 'wait';
+    var ic = v === 'approved' ? '&#x2713;' : v === 'returned' ? '&#x21A9;' : v === 'rejected' ? '&#x2715;' : '&middot;';
+    return '<span class="rq-mini ' + cls + '" title="' + rqEsc(st.full) + ': ' + ({ approved: 'approved', returned: 'returned', rejected: 'rejected' }[v] || 'waiting') + '">' + st.n + ' ' + ic + '</span>';
+  }).join('') + '</span>';
+}
+function rqCanSee() { return !!S.user && (['admin', 'management', 'audit', 'cao', 'agm'].includes(S.user.role) || (rqIsDeptUser() && !!rqDept(S.user.division))); }
 function rqMyDepts() { if (!rqCanSee()) return []; return rqIsDeptUser() ? [rqDept(S.user.division)] : RQ_DEPTS.slice(); }
 function rqCanWork(dept) { return !!S.user && (S.user.role === 'admin' || (rqIsDeptUser() && S.user.division === dept)); }
 function rqHomeView() { return rqIsDeptUser() ? 'rq:' + S.user.division + ':pending' : (S.user.role === 'admin' ? 'rq:overview' : 'rq:approvals'); }
@@ -19913,9 +19974,8 @@ function rqTabOf(r) {
 }
 function rqNeedsMe(r) {
   if (!S.user || r.status !== 'pending') return false;
-  if (S.user.role === 'audit') return !r.audit_status;
-  if (S.user.role === 'management') return !r.mgmt_status;
-  return false;
+  var st = rqStageOfRole(S.user.role);
+  return !!st && !r[st.k + '_status'] && !rqIsOwn(r);
 }
 function rqStatusChip(r) {
   var m = { pending: ['run', 'Approval pending'], returned: ['warn', 'Returned'], rejected: ['bad', 'Rejected'], wip: ['ok', 'In progress'], hold: ['warn', 'On hold'], done: ['ok', 'Completed'], cancelled: ['run', 'Cancelled'] }[r.status] || ['run', r.status];
@@ -19948,6 +20008,10 @@ async function rqLoad() {
   RQ.missing = false;
   RQ.rows = res.data || [];
   RQ.loaded = true;
+  if (RQ.stagesOk !== true) {
+    var pr = await db.from('rq_requisitions').select('agm_status,cao_status').limit(1);
+    RQ.stagesOk = !pr.error;
+  }
 }
 async function rqLoadSettings(force) {
   if (RQ.settings && !force) return RQ.settings;
@@ -20039,7 +20103,7 @@ function rqRailHtml() {
     h += '<div class="rail-sep"></div><div class="rail-label">Requisitions</div>';
     if (RQ.missing) return h + '<div class="rq-rail-note">Needs requisitions-migration.sql</div>';
     var all = rqCounts(null);
-    if (S.user.role === 'audit' || S.user.role === 'management') h += item('rq:approvals', '&#x270D;', 'Waiting for my approval', all.mine, all.mine > 0);
+    if (rqStageOfRole(S.user.role)) h += item('rq:approvals', '&#x270D;', 'Waiting for my approval', all.mine, all.mine > 0);
     h += item('rq:overview', '&#x25A6;', 'Overview', all.overdue, all.overdue > 0);
     h += item('rq:all', '&#x2630;', 'All requisitions', RQ.rows.length);
     h += item('rq:report', '&#x25A4;', 'Monthly spend report');
@@ -20062,8 +20126,11 @@ function rqRailHtml() {
 }
 function rqRenderRailForDept() {
   var rb = $('rail-body'); if (!rb) return;
-  var d = rqDept(S.user.division);
-  var h = d ? (RQ.missing ? '<div class="rail-label" style="color:var(--muted)">Requisitions need the database update</div>' : rqRailHtml())
+  var d = rqDept(S.user.division), h;
+  if (S.user.role === 'agm') {
+    h = (RQ.missing ? '<div class="rail-label" style="color:var(--muted)">Requisitions need the database update</div>' : rqRailHtml())
+      + '<div class="rail-sep"></div><div class="rail-label">HR &amp; Compliance</div><div class="rq-rail-note" style="white-space:normal">Certificates, audits and HR records will come here later.</div>';
+  } else h = d ? (RQ.missing ? '<div class="rail-label" style="color:var(--muted)">Requisitions need the database update</div>' : rqRailHtml())
             : '<div class="rail-label" style="color:var(--muted)">No department set for this login. Ask the admin.</div>';
   var top = rb.scrollTop; rb.innerHTML = h; rb.scrollTop = top;
 }
@@ -20076,7 +20143,7 @@ function rqSetHead(crumb, title, sub, actions) {
   var a = $('act-row'); if (a) a.innerHTML = actions || '';
 }
 function rqRender(view) {
-  if (!rqCanSee()) { $('content').innerHTML = '<div class="empty"><h4>No access</h4>Requisitions are only for management, audit, admin and the department staff.</div>'; return; }
+  if (!rqCanSee()) { $('content').innerHTML = '<div class="empty"><h4>No access</h4>Requisitions are only for management, CAO, AGM, audit, admin and the department staff.</div>'; return; }
   if (RQ.missing) {
     rqSetHead('Requisitions', 'Requisitions', '', '');
     $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>requisitions-migration.sql</b> once in Supabase &rarr; SQL Editor, then refresh this page.</div></div>';
@@ -20112,7 +20179,7 @@ function rqTable(list, tab, showDept) {
   if (!list.length) return '<div class="empty"><h4>Nothing here</h4>' + ({ pending: 'No requisitions waiting for approval.', wip: 'No work in progress.', done: 'No completed work yet.', closed: 'Nothing returned or rejected.' }[tab] || 'No requisitions.') + '</div>';
   var today = todayStr();
   var cols;
-  if (tab === 'pending') cols = ['Job no.', 'Date', 'Company', 'Location', 'Type of work', 'Priority', 'Est. cost', 'Audit', 'Management', 'Raised by', 'Waiting'];
+  if (tab === 'pending') cols = ['Job no.', 'Date', 'Company', 'Location', 'Type of work', 'Priority', 'Est. cost', 'Approvals', 'Raised by', 'Waiting'];
   else if (tab === 'wip') cols = ['Job no.', 'Company', 'Location', 'Type of work', 'Progress', 'Target date', 'Approved', 'Spent', 'Status'];
   else if (tab === 'done') cols = ['Job no.', 'Company', 'Location', 'Type of work', 'Completed', 'Days taken', 'Approved', 'Final cost'];
   else cols = ['Job no.', 'Date', 'Company', 'Location', 'Type of work', 'Status', 'By', 'Reason'];
@@ -20124,7 +20191,7 @@ function rqTable(list, tab, showDept) {
     var cells;
     if (tab === 'pending') {
       var age = rqDaysBetween(rqLocalDate(r.created_at), today);
-      cells = [job, rqDateTxt(r.req_date), co, loc, rqEsc(r.work_type || ''), rqPriChip(r.priority), '<span class="num">' + rqMoney(r.est_cost) + '</span>', rqApprChip(r.audit_status), rqApprChip(r.mgmt_status), rqEsc(r.created_by_name || ''), age <= 0 ? 'today' : age + (age === 1 ? ' day' : ' days')];
+      cells = [job, rqDateTxt(r.req_date), co, loc, rqEsc(r.work_type || ''), rqPriChip(r.priority), '<span class="num">' + rqMoney(r.est_cost) + '</span>', rqApprMini(r), rqEsc(r.created_by_name || ''), age <= 0 ? 'today' : age + (age === 1 ? ' day' : ' days')];
     } else if (tab === 'wip') {
       var pct = Math.max(0, Math.min(100, Number(r.progress) || 0));
       var od = rqOverdue(r);
@@ -20135,8 +20202,9 @@ function rqTable(list, tab, showDept) {
       var dt = r.completed_at ? rqLocalDate(r.completed_at) : null;
       cells = [job, co, loc, rqEsc(r.work_type || ''), dt ? rqDateTxt(dt) : '&mdash;', dt && r.started_at ? rqDaysBetween(rqLocalDate(r.started_at), dt) : '&mdash;', '<span class="num">' + rqMoney(r.approved_cost) + '</span>', '<span class="num' + (rqOverBudget(r) ? ' rq-late' : '') + '">' + rqMoney(r.final_cost) + '</span>'];
     } else {
-      var by = r.status === 'cancelled' ? (r.updated_by || '') : (r.mgmt_status === 'rejected' || r.mgmt_status === 'returned') ? r.mgmt_by_name : r.audit_by_name;
-      var why = (r.mgmt_status === 'rejected' || r.mgmt_status === 'returned') ? r.mgmt_note : r.audit_note;
+      var dec = rqDecider(r, r.status);
+      var by = r.status === 'cancelled' ? (r.updated_by || '') : dec ? dec.by : '';
+      var why = dec ? dec.note : '';
       cells = [job, rqDateTxt(r.req_date), co, loc, rqEsc(r.work_type || ''), rqStatusChip(r), rqEsc(by || ''), '<span class="rq-why">' + rqEsc(r.status === 'cancelled' ? '' : (why || '')) + '</span>'];
     }
     if (showDept) cells.splice(1, 0, rqEsc((rqDept(r.dept) || {}).n || r.dept));
@@ -20164,12 +20232,16 @@ function rqRenderList(d, tab) {
 // Every requisition with where it is now: a department's own list ("My
 // requisitions"), or all departments for admin / management / audit.
 function rqWhere(r) {
-  if (r.status === 'pending') return r.audit_status === 'approved' ? 'Audit approved &middot; waiting for management' : 'Waiting for audit / management';
+  if (r.status === 'pending') {
+    var done = [], wait = [];
+    rqStagesFor(r).forEach(function(st){ if (r[st.k + '_status'] === 'approved') done.push(st.n); else wait.push(st.n); });
+    return (done.length ? 'Checked by ' + done.join(', ') + ' &middot; ' : '') + 'waiting for ' + wait.join(', ').replace(/, ([^,]*)$/, ' and $1');
+  }
   if (r.status === 'wip') return 'Work in progress &middot; <b>' + (Number(r.progress) || 0) + '%</b>' + (rqOverdue(r) ? ' <span class="rq-late">overdue</span>' : '');
   if (r.status === 'hold') return 'On hold &middot; ' + (Number(r.progress) || 0) + '%';
   if (r.status === 'done') return 'Completed ' + (r.completed_at ? rqDateTxt(rqLocalDate(r.completed_at)) : '');
-  if (r.status === 'returned') return 'Returned by ' + rqEsc((r.mgmt_status === 'returned' ? r.mgmt_by_name : r.audit_by_name) || '') + ' &middot; needs changes';
-  if (r.status === 'rejected') return 'Rejected by ' + rqEsc((r.mgmt_status === 'rejected' ? r.mgmt_by_name : r.audit_by_name) || '');
+  if (r.status === 'returned') { var dr = rqDecider(r, 'returned'); return 'Returned by ' + rqEsc(dr ? (dr.by || dr.st.n) + ' (' + dr.st.n + ')' : '') + ' &middot; needs changes'; }
+  if (r.status === 'rejected') { var dj = rqDecider(r, 'rejected'); return 'Rejected by ' + rqEsc(dj ? (dj.by || dj.st.n) + ' (' + dj.st.n + ')' : ''); }
   if (r.status === 'cancelled') return 'Cancelled';
   return rqEsc(r.status);
 }
@@ -20208,11 +20280,20 @@ function rqRenderAll(d) {
       : '<div class="empty"><h4>Nothing here</h4>' + (base.length ? 'No requisition matches these filters.' : 'No requisitions yet.') + '</div>') + '</div>';
 }
 function rqRenderApprovals() {
-  var me = S.user.role;
-  var list = RQ.rows.filter(function(r){ return r.status === 'pending' && (me === 'admin' || rqNeedsMe(r)); });
+  var me = S.user.role, st = rqStageOfRole(me);
+  var all = RQ.rows.filter(function(r){ return r.status === 'pending' && (me === 'admin' || rqNeedsMe(r)); });
+  // audit / management: which ones the earlier steps have already checked
+  var earlier = st ? RQ_STAGES.slice(0, RQ_STAGES.indexOf(st)).filter(rqStageOn) : [];
+  var checked = function(r){ return earlier.every(function(e){ return r[e.k + '_status'] === 'approved'; }); };
+  var nChecked = all.filter(checked).length;
+  var list = RQ.filter.checked && earlier.length ? all.filter(checked) : all;
   list = rqSortForTab(rqFiltered(list), 'pending');
-  rqSetHead('Requisitions', me === 'admin' ? 'All requisitions waiting for approval' : 'Waiting for my approval', me === 'audit' ? 'Audit approval is recorded; management approval starts the work.' : me === 'management' ? 'Your approval moves the work straight to Work in progress.' : '', '');
-  $('content').innerHTML = '<div class="card"><div class="card-h"><h3>Waiting <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, 'pending', true) + '</div>';
+  var names = earlier.map(function(e){ return e.n; }).join(', ').replace(/, ([^,]*)$/, ' and $1');
+  var chips = earlier.length ? '<div class="rq-tallies"><button class="rq-tally' + (!RQ.filter.checked ? ' on' : '') + '" onclick="RQ.filter.checked=false;rqRender(S.view)">All waiting <b>' + all.length + '</b></button>'
+    + '<button class="rq-tally' + (RQ.filter.checked ? ' on' : '') + '" onclick="RQ.filter.checked=true;rqRender(S.view)">Checked by ' + names + ' <b>' + nChecked + '</b></button></div>' : '';
+  var sub = { audit: 'Audit approval is recorded; management approval starts the work.', management: 'Your approval moves the work straight to Work in progress.', agm: 'Your check is recorded before audit and management decide.', cao: 'Your check is recorded before audit and management decide.' }[me] || '';
+  rqSetHead('Requisitions', me === 'admin' ? 'All requisitions waiting for approval' : 'Waiting for my approval', sub, '');
+  $('content').innerHTML = chips + '<div class="card"><div class="card-h"><h3>Waiting <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, 'pending', true) + '</div>';
 }
 function rqRenderOverview() {
   var today = todayStr(), m0 = today.slice(0, 7);
@@ -20347,7 +20428,7 @@ async function rqCancelForm(dk) {
 function rqCanEditReq(r) {
   if (!rqCanWork(r.dept)) return false;
   if (r.status === 'returned') return true;
-  return r.status === 'pending' && !r.audit_status && !r.mgmt_status;
+  return r.status === 'pending' && RQ_STAGES.every(function(st){ return !r[st.k + '_status']; });
 }
 async function rqSubmitForm(dk) {
   var d = rqDept(dk), err = $('rqf-err'), btn = $('rqf-save');
@@ -20412,7 +20493,7 @@ async function rqCreate(d, v) {
   await rqEvent(res.data.id, 'created', { amount: v.est_cost });
   RQ.rows.unshift(res.data);
   _rqFormStart = null;
-  toast('Requisition ' + res.data.job_no + ' submitted \u2014 sent to audit and management. Print the form below if it needs signatures on paper.', 'ok-t');
+  toast('Requisition ' + res.data.job_no + ' submitted \u2014 sent for approval. Print the form below if it needs signatures on paper.', 'ok-t');
   setView('rq:' + d.k + ':pending');
   rqOpen(res.data.id);
 }
@@ -20421,9 +20502,10 @@ async function rqSaveEdit(d, v) {
   if (!r) return;
   var wasReturned = r.status === 'returned';
   var upd = Object.assign({}, v, { updated_at: new Date().toISOString(), updated_by: S.user.name });
-  if (wasReturned) Object.assign(upd, { status: 'pending', audit_status: null, audit_by: null, audit_by_name: null, audit_at: null, audit_note: null, mgmt_status: null, mgmt_by: null, mgmt_by_name: null, mgmt_at: null, mgmt_note: null });
+  var stepKeys = RQ.stagesOk === true ? ['agm', 'cao', 'audit', 'mgmt'] : ['audit', 'mgmt'];
+  if (wasReturned) { upd.status = 'pending'; stepKeys.forEach(function(k){ ['status', 'by', 'by_name', 'at', 'note'].forEach(function(f){ upd[k + '_' + f] = null; }); }); }
   var q = db.from('rq_requisitions').update(upd).eq('id', r.id).eq('status', r.status);
-  if (!wasReturned) q = q.is('audit_status', null).is('mgmt_status', null);
+  if (!wasReturned) stepKeys.forEach(function(k){ q = q.is(k + '_status', null); });
   var res = await q.select();
   if (res.error) { showSaveError('Could not save the changes', res.error); return; }
   if (!res.data || !res.data.length) { await rqRefreshOne(r.id); toast('Someone has already acted on this requisition — it was not changed', 'err'); _rqFormStart = null; RQ.editId = null; setView('rq:' + d.k + ':' + rqTabOf(RQ.rows.find(function(x){ return x.id === r.id; }) || r)); return; }
@@ -20450,7 +20532,7 @@ async function rqOpen(id) {
   if (RQ.openId === id) rqRenderDetail(id, true);
 }
 function rqKv(k, v) { return '<div class="rq-kv"><div class="k">' + k + '</div><div class="v">' + (v == null || v === '' ? '&mdash;' : v) + '</div></div>'; }
-var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled' };
+var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled' };
 function rqRenderDetail(id, withEvents) {
   var r = RQ.rows.find(function(x){ return x.id === id; });
   if (!r) { closeModal('ov-rq'); return; }
@@ -20465,9 +20547,14 @@ function rqRenderDetail(id, withEvents) {
     + rqKv('Time required', rqEsc(rqTimeTxt(r))) + rqKv('Estimated cost', rqMoney(r.est_cost)) + rqKv('Raised by', rqEsc(r.created_by_name) + ' <span class="sub2">' + rqDateTime(r.created_at) + '</span>')
     + '</div>' + items
     + '<div class="rq-sec"><div class="rq-sec-h">Detailed remarks</div><div class="rq-remarks">' + rqEsc(r.remarks || '') + '</div></div>'
-    + '<div class="rq-sec"><div class="rq-sec-h">Approval</div><div class="rq-appr">'
-    + '<div class="rq-appr-box"><div class="k">Audit</div>' + rqApprChip(r.audit_status) + (r.audit_by_name ? '<div class="sub2">' + rqEsc(r.audit_by_name) + ' &middot; ' + rqDateTime(r.audit_at) + '</div>' : '') + (r.audit_note ? '<div class="rq-note">' + rqEsc(r.audit_note) + '</div>' : '') + '</div>'
-    + '<div class="rq-appr-box"><div class="k">Management</div>' + rqApprChip(r.mgmt_status) + (r.mgmt_by_name ? '<div class="sub2">' + rqEsc(r.mgmt_by_name) + ' &middot; ' + rqDateTime(r.mgmt_at) + '</div>' : '') + (r.mgmt_status === 'approved' ? '<div class="rq-note">Approved amount: <b>' + rqMoney(r.approved_cost) + '</b></div>' : '') + (r.mgmt_note ? '<div class="rq-note">' + rqEsc(r.mgmt_note) + '</div>' : '') + '</div>'
+    + '<div class="rq-sec"><div class="rq-sec-h">Approval</div><div class="rq-appr rq-appr-' + rqStagesFor(r).length + '">'
+    + rqStagesFor(r).map(function(st, i){
+        var v = r[st.k + '_status'];
+        return (i ? '<div class="rq-appr-arrow">&rarr;</div>' : '') + '<div class="rq-appr-box' + (v === 'approved' ? ' done' : v ? ' stop' : '') + '"><div class="k">' + rqEsc(st.full) + (st.k === 'mgmt' ? ' <span class="sub2">(final)</span>' : '') + '</div>' + (!v && r.status !== 'pending' ? '<span class="rq-ap wait">Not recorded</span>' : rqApprChip(v))
+          + (r[st.k + '_by_name'] ? '<div class="sub2">' + rqEsc(r[st.k + '_by_name']) + ' &middot; ' + rqDateTime(r[st.k + '_at']) + '</div>' : '')
+          + (st.k === 'mgmt' && v === 'approved' ? '<div class="rq-note">Approved amount: <b>' + rqMoney(r.approved_cost) + '</b></div>' : '')
+          + (r[st.k + '_note'] ? '<div class="rq-note">' + rqEsc(r[st.k + '_note']) + '</div>' : '') + '</div>';
+      }).join('')
     + '</div></div>';
   if (['wip', 'hold', 'done'].indexOf(r.status) !== -1) {
     var pct = Math.max(0, Math.min(100, Number(r.progress) || 0));
@@ -20478,7 +20565,7 @@ function rqRenderDetail(id, withEvents) {
       + (r.status === 'done' ? rqKv('Completed', rqDateTime(r.completed_at)) + rqKv('Final cost', '<b>' + rqMoney(r.final_cost) + '</b>') : '')
       + '</div>' + (r.completion_note ? '<div class="rq-remarks" style="margin-top:8px">' + rqEsc(r.completion_note) + '</div>' : '') + '</div>';
   }
-  if ((r.status === 'pending' || r.status === 'returned') && rqCanWork(r.dept)) h += '<div class="rq-hint">Need signatures on paper first? Use <b>Print form for signing</b> below. Audit and management then record their approval here.</div>';
+  if ((r.status === 'pending' || r.status === 'returned') && rqCanWork(r.dept)) h += '<div class="rq-hint">Need signatures on paper first? Use <b>Print form for signing</b> below. The approvers then record their approval here.</div>';
   h += '<div id="rq-actions">' + rqActionsHtml(r) + '</div>';
   var ev = RQ.events[id];
   h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
@@ -20494,22 +20581,23 @@ function rqActionsHtml(r) {
   var role = S.user.role, h = '';
   var note = function(id, ph){ return '<textarea id="' + id + '" rows="2" placeholder="' + ph + '"></textarea>'; };
   if (r.status === 'pending') {
-    if (role === 'audit' && !r.audit_status) {
-      h += '<div class="rq-act"><div class="rq-sec-h">Audit decision</div>' + note('rq-a-note', 'Comment (needed to return or reject)')
-        + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'audit\',\'approved\')">&#x2713; Approve</button><button class="btn" onclick="rqDecide(\'' + r.id + '\',\'audit\',\'returned\')">Return for changes</button><button class="btn danger" onclick="rqDecide(\'' + r.id + '\',\'audit\',\'rejected\')">Reject</button></div></div>';
-    }
-    if (role === 'management' && !r.mgmt_status) {
-      h += '<div class="rq-act"><div class="rq-sec-h">Management decision</div>'
-        + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>'
-        + note('rq-m-note', 'Comment (needed to return or reject)')
-        + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\')">&#x2713; Approve &mdash; start the work</button><button class="btn" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'returned\')">Return for changes</button><button class="btn danger" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'rejected\')">Reject</button></div></div>';
+    var myStep = rqStageOfRole(role);
+    if (myStep && !r[myStep.k + '_status'] && rqIsOwn(r)) h += '<div class="rq-act"><div class="sub2">You raised this requisition, so you cannot approve it yourself.</div></div>';
+    else if (myStep && !r[myStep.k + '_status']) {
+      var notYet = rqNotCheckedBefore(r, myStep);
+      h += '<div class="rq-act"><div class="rq-sec-h">' + rqEsc(myStep.full) + ' decision</div>'
+        + (notYet.length ? '<div class="rq-warn">&#x26A0; Not yet checked by: <b>' + notYet.join(', ') + '</b></div>' : '')
+        + (myStep.k === 'mgmt' ? '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>' : '')
+        + note(myStep.note, myStep.reject ? 'Comment (needed to return or reject)' : 'Comment (needed to return)')
+        + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'approved\')">&#x2713; ' + (myStep.k === 'mgmt' ? 'Approve &mdash; start the work' : 'Approve') + '</button><button class="btn" onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'returned\')">Return for changes</button>'
+        + (myStep.reject ? '<button class="btn danger" onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'rejected\')">Reject</button>' : '') + '</div></div>';
     }
     if (rqCanEditReq(r)) h += '<div class="rq-btns rq-own"><button class="btn" onclick="rqStartEdit(\'' + r.id + '\')">Change</button><button class="btn danger" onclick="rqCancelReq(\'' + r.id + '\')">Cancel requisition</button></div>';
-    else if (rqCanWork(r.dept)) h += '<div class="sub2 rq-own">Approval has started, so it can no longer be changed. Ask audit or management to return it if something is wrong.</div>';
+    else if (rqCanWork(r.dept)) h += '<div class="sub2 rq-own">Approval has started, so it can no longer be changed. Ask an approver to return it if something is wrong.</div>';
   } else if (r.status === 'returned') {
     if (rqCanEditReq(r)) h += '<div class="rq-btns rq-own"><button class="btn pri" onclick="rqStartEdit(\'' + r.id + '\')">Change and send again</button><button class="btn danger" onclick="rqCancelReq(\'' + r.id + '\')">Cancel requisition</button></div>';
   } else if (r.status === 'rejected') {
-    if (role === 'management' && r.mgmt_status !== 'rejected') {
+    if (role === 'management' && r.mgmt_status !== 'rejected' && !rqIsOwn(r)) {
       h += '<div class="rq-act"><div class="rq-sec-h">Audit rejected this. Management can still approve it.</div>'
         + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>'
         + note('rq-m-note', 'Comment') + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\')">&#x2713; Approve anyway</button></div></div>';
@@ -20538,9 +20626,11 @@ function rqStaleMsg(id) {
 }
 async function rqDecide(id, who, decision) {
   var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r) return;
-  if (who === 'audit' && S.user.role !== 'audit') return;
-  if (who === 'mgmt' && S.user.role !== 'management') return;
-  var noteEl = $(who === 'audit' ? 'rq-a-note' : 'rq-m-note');
+  var step = rqStage(who);
+  if (!step || S.user.role !== step.role || !rqStageOn(step)) return;
+  if (rqIsOwn(r)) { toast('You raised this requisition, so you cannot approve it yourself', 'err'); return; }
+  if (decision === 'rejected' && !step.reject) return;
+  var noteEl = $(step.note);
   var noteTxt = noteEl ? noteEl.value.trim() : '';
   if (decision !== 'approved' && !noteTxt) { toast('Write a comment saying why', 'err'); if (noteEl) noteEl.focus(); return; }
   var amt = null;
@@ -20549,9 +20639,13 @@ async function rqDecide(id, who, decision) {
     if (amt == null || isNaN(amt) || amt < 0) { toast('Enter the approved amount', 'err'); return; }
   }
   var label = { approved: 'Approve', returned: 'Return', rejected: 'Reject' }[decision];
+  if (decision === 'approved' && r.status === 'pending') {
+    var notYet = rqNotCheckedBefore(r, step);
+    if (notYet.length && !(await appConfirm('Not yet checked by: ' + notYet.join(', ') + '.\n\nApprove ' + r.job_no + ' anyway?', { title: 'Approve before the others?', okText: 'Approve anyway' }))) return;
+  }
   if (decision !== 'approved' && !(await appConfirm(label + ' ' + r.job_no + '?' + (decision === 'rejected' ? '\n\nA rejected requisition is closed. The department would have to raise a new one.' : '\n\nIt goes back to the ' + ((rqDept(r.dept) || {}).n || '') + ' department to change and send again.'), { title: label + ' requisition', okText: label, danger: decision === 'rejected' }))) return;
   var now = new Date().toISOString();
-  var p = who === 'audit' ? 'audit_' : 'mgmt_';
+  var p = step.k + '_';
   var upd = { updated_at: now, updated_by: S.user.name };
   upd[p + 'status'] = decision; upd[p + 'by'] = S.user.id; upd[p + 'by_name'] = S.user.name; upd[p + 'at'] = now; upd[p + 'note'] = noteTxt || null;
   if (decision === 'returned') upd.status = 'returned';
@@ -20570,10 +20664,10 @@ async function rqDecide(id, who, decision) {
     if (who === 'mgmt' && r.status === 'rejected') res = await db.from('rq_requisitions').update(upd).eq('id', id).eq('status', 'rejected').is('mgmt_status', null).select();
     if (!res.data || !res.data.length) return rqStaleMsg(id);
   }
-  var kind = decision === 'approved' ? (who === 'audit' ? 'audit_approved' : 'mgmt_approved') : decision;
-  await rqEvent(id, kind, { note: (who === 'audit' ? 'Audit' : 'Management') + (noteTxt ? ': ' + noteTxt : ''), amount: amt });
+  var kind = decision === 'approved' ? step.k + '_approved' : decision;
+  await rqEvent(id, kind, { note: step.n + (noteTxt ? ': ' + noteTxt : ''), amount: amt });
   r = rqPut(res.data[0]);
-  toast(r.job_no + ' — ' + (decision === 'approved' ? (who === 'mgmt' ? 'approved, work can start' : 'audit approval recorded') : decision), 'ok-t');
+  toast(r.job_no + ' — ' + (decision === 'approved' ? (who === 'mgmt' ? 'approved, work can start' : step.n + ' approval recorded') : decision), 'ok-t');
   renderRail(); rqRender(S.view);
   await rqLoadEvents(id); rqRenderDetail(id, true);
 }
@@ -20641,7 +20735,7 @@ async function rqCancelReq(id) {
   var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqCanEditReq(r)) return;
   if (!(await appConfirm('Cancel ' + r.job_no + '? It stays on record under Returned / rejected, and its job number is not used again.', { title: 'Cancel requisition', okText: 'Cancel requisition', cancelText: 'Keep it', danger: true }))) return;
   var q = db.from('rq_requisitions').update({ status: 'cancelled', updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).eq('status', r.status);
-  if (r.status === 'pending') q = q.is('audit_status', null).is('mgmt_status', null);
+  if (r.status === 'pending') (RQ.stagesOk === true ? ['agm', 'cao', 'audit', 'mgmt'] : ['audit', 'mgmt']).forEach(function(k){ q = q.is(k + '_status', null); });
   var res = await q.select();
   if (res.error) { showSaveError('Could not cancel', res.error); return; }
   if (!res.data || !res.data.length) return rqStaleMsg(id);
@@ -20697,7 +20791,7 @@ function rqDocCss() {
     + '.path{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.st .ticks{margin:5px 0}.st .n{font-size:9px;font-weight:600}.st .w{font-size:7.6px;color:#8b8b88;min-height:11px}'
     + '.grow{flex:1;display:flex;flex-direction:column}.lines{flex:1;min-height:24mm;background:repeating-linear-gradient(#fff 0,#fff 7.4mm,#ececea 7.4mm,#ececea calc(7.4mm + 1px))}'
     + '.note{font-size:9px;padding:4px 0;border-bottom:1px solid #f0f0ee}.note b{font-weight:600}'
-    + '.sigs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px;break-inside:avoid}'
+    + '.sigs{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:8px;break-inside:avoid}'
     + '.sg{height:36mm;display:flex;flex-direction:column}.sg .area{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}.sg .area img{max-height:19mm;max-width:95%}.sg.seal .area img{transform:rotate(-8deg)}'
     + '.sg .ln{border-top:1px solid #141414;padding-top:4px}.sg .t{font-size:8.6px;font-weight:600}.sg .nm{font-size:7.4px;color:#8b8b88;height:21px;overflow:hidden;line-height:1.4}'
     + '.ft{display:flex;justify-content:space-between;font-size:7px;color:#9a9a97;margin-top:6px}';
@@ -20741,7 +20835,7 @@ function rqFormCss() {
     + '.box{margin-top:3mm;border:1px solid #e2e2df;border-radius:12px;padding:7px 9px;break-inside:avoid}.box h3{font-size:9px;font-weight:700;letter-spacing:.06em;margin-bottom:4px}'
     + '.ap{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ap>div{font-size:9.4px}.ap b{font-size:9.6px}'
     + '.box table td{height:auto;font-size:9px;padding:3px 6px}.box table th{font-size:7.2px;padding:3px 6px;border-bottom:1px solid #111}'
-    + '.sigs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:5mm;break-inside:avoid}.sg{border:1px solid #e2e2df;border-radius:12px;padding:6px 8px;height:25mm;display:flex;flex-direction:column}'
+    + '.sigs{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:5mm;break-inside:avoid}.sg{border:1px solid #e2e2df;border-radius:12px;padding:6px 8px;height:25mm;display:flex;flex-direction:column}'
     + '.sg .ar{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}.sg .ar img{max-height:15mm;max-width:95%}.sg.seal .ar img{transform:rotate(-8deg)}'
     + '.sg .ln{border-top:1px solid #111;padding-top:3px}.sg b{font-size:8.6px}.sg .nm{font-size:7.4px;color:#555;line-height:1.35;min-height:20px}'
     + '.ft{display:flex;justify-content:space-between;font-size:7px;color:#777;margin-top:3mm}';
@@ -20751,6 +20845,7 @@ function rqPrintHtml(r, st, ev, formOnly) {
   st = st || {};
   var co = rqCompany(r.company);
   var auditOk = !formOnly && r.audit_status === 'approved', mgmtOk = !formOnly && r.mgmt_status === 'approved';
+  var agmOk = !formOnly && r.agm_status === 'approved', caoOk = !formOnly && r.cao_status === 'approved';
   var items = Array.isArray(r.items) ? r.items : [];
   var purchase = r.kind === 'purchase';
   var started = !formOnly && ['wip', 'hold', 'done'].indexOf(r.status) !== -1;
@@ -20785,8 +20880,8 @@ function rqPrintHtml(r, st, ev, formOnly) {
       var lbl = { approved: 'Approved', returned: 'Returned', rejected: 'Rejected' }[stt] || 'Not yet';
       return '<div><div class="k">' + who + '</div><b>' + lbl + '</b>' + (by ? ' &middot; ' + E(by) + ' &middot; ' + E(rqDateTime(at)) : '') + (amt != null ? '<div>Approved amount: <b>' + E(rqMoneyTxt(amt)) + '</b></div>' : '') + (note ? '<div>' + E(note) + '</div>' : '') + '</div>';
     }
-    extra += '<div class="box"><h3>APPROVAL</h3><div class="ap">' + ap('Audit', r.audit_status, r.audit_by_name, r.audit_at, r.audit_note, null)
-      + ap('Management', r.mgmt_status, r.mgmt_by_name, r.mgmt_at, r.mgmt_note, mgmtOk ? r.approved_cost : null) + '</div></div>';
+    var pst = rqStagesFor(r);
+    extra += '<div class="box"><h3>APPROVAL</h3><div class="ap" style="grid-template-columns:repeat(' + pst.length + ',1fr)">' + pst.map(function(s2){ return ap(E(s2.full), r[s2.k + '_status'], r[s2.k + '_by_name'], r[s2.k + '_at'], r[s2.k + '_note'], s2.k === 'mgmt' && mgmtOk ? r.approved_cost : null); }).join('') + '</div></div>';
     if (started) {
       var log = (ev || []).filter(function(e){ return ['progress', 'cost', 'hold', 'resumed', 'done'].indexOf(e.kind) !== -1; });
       var prog = Math.max(0, Math.min(100, Number(r.progress) || 0));
@@ -20807,7 +20902,8 @@ function rqPrintHtml(r, st, ev, formOnly) {
   var sigs = '<div class="sigs">'
     + sig('Prepared by', E(r.created_by_name || ''))
     + sig('Department head', head ? E(head) : E(d.n))
-    + sig('AGM', E(newton))
+    + sig('AGM', agmOk ? E(r.agm_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.agm_at))) : E(newton), agmOk ? st.agm_sign : '', 'sign')
+    + sig('CAO', caoOk ? E(r.cao_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.cao_at))) : (st.cao_line ? E(st.cao_line) : 'Date:'), caoOk ? st.cao_sign : '', 'sign')
     + sig('Audit', auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : 'Date:', auditOk ? st.audit_seal : '', 'seal')
     + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : 'Date:', mgmtOk ? st.mgmt_sign : '', 'sign')
     + '</div>';
@@ -20925,12 +21021,15 @@ async function rqRenderAdminCard() {
   box.innerHTML = '<div style="padding:12px 16px 16px"><div class="rq-adm-grid">'
     + img('audit_seal', 'Audit seal', 'Printed in the Audit box once audit approves.')
     + img('mgmt_sign', 'Management signature', 'Printed in the Management box once management approves.')
+    + img('agm_sign', 'AGM signature / seal', 'Printed in the AGM box once the AGM approves.')
+    + img('cao_sign', 'CAO signature / seal', 'Printed in the CAO box once the CAO approves.')
     + img('group_logo', 'Shahana Group logo', 'Printed at the top of every requisition form.')
     + '</div><div class="sub2" style="margin:8px 0 12px">A photo of a stamp or signature on white paper works: the paper is made see-through automatically.</div>'
     + '<div class="adm-form" style="grid-template-columns:repeat(4,1fr)">'
     + RQ_DEPTS.map(function(d){ return '<div class="adm-field"><label class="adm-lbl">' + d.n + ' head (name)</label><input class="adm-inp" id="rq-head-' + d.k + '" value="' + rqEsc(st['dept_head_' + d.k] || '') + '" placeholder="Printed under Department Head"></div>'; }).join('')
     + RQ_COMPANIES.map(function(c){ return '<div class="adm-field" style="grid-column:span 2"><label class="adm-lbl">' + c.n + ' address</label><input class="adm-inp" id="rq-addr-' + c.c + '" value="' + rqEsc(rqCoAddr(st, c.c)) + '"></div>'; }).join('')
     + '<div class="adm-field"><label class="adm-lbl">AGM line</label><input class="adm-inp" id="rq-newton" value="' + rqEsc(st.newton_line || 'Mr. Newton, AGM (HR, Admin & Compliance)') + '"></div>'
+    + '<div class="adm-field"><label class="adm-lbl">CAO line</label><input class="adm-inp" id="rq-caoline" value="' + rqEsc(st.cao_line || '') + '" placeholder="Name, CAO"></div>'
     + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" onclick="rqSaveNames()">Save</button></div></div></div>';
 }
 async function rqSetSetting(key, value) {
@@ -20944,6 +21043,7 @@ async function rqSaveNames() {
   var ok = true;
   for (var i = 0; i < RQ_DEPTS.length; i++) ok = (await rqSetSetting('dept_head_' + RQ_DEPTS[i].k, $('rq-head-' + RQ_DEPTS[i].k).value.trim())) && ok;
   ok = (await rqSetSetting('newton_line', $('rq-newton').value.trim())) && ok;
+  if ($('rq-caoline')) ok = (await rqSetSetting('cao_line', $('rq-caoline').value.trim())) && ok;
   for (var j = 0; j < RQ_COMPANIES.length; j++) { var ae = $('rq-addr-' + RQ_COMPANIES[j].c); if (ae) ok = (await rqSetSetting('co_addr_' + RQ_COMPANIES[j].c, ae.value.trim())) && ok; }
   if (ok) toast('Requisition names saved', 'ok-t');
 }
@@ -21032,14 +21132,14 @@ var BP_BANK_FIELDS = [
 var BP_LOGO_MAX = 24000; // characters of the stored data URI (about 18 KB)
 
 // ─── who may do what ───
-function bpUse() { return !!S.user && S.user.role !== 'dept'; }
+function bpUse() { return !!S.user && S.user.role !== 'dept' && S.user.role !== 'agm'; }
 function bpMerchantOf(id) { return (S.buyerAssignments || {})[id] || null; }
 function bpIsMine(id) { var m = bpMerchantOf(id); return !!m && actsAsMerchant(m); }
 function bpManages(id) { var m = bpMerchantOf(id); return !!S.user && S.user.role === 'manager' && !!m && (S.myAssignments || []).indexOf(m) !== -1; }
 function bpCanSee(id) {
   if (!bpUse()) return false;
   var r = S.user.role;
-  if (['admin', 'management', 'hod', 'audit', 'commercial'].indexOf(r) !== -1) return true;
+  if (['admin', 'management', 'hod', 'audit', 'cao', 'commercial'].indexOf(r) !== -1) return true;
   if (r === 'manager') return bpManages(id);
   if (r === 'merchant' || r === 'jm') return bpIsMine(id);
   return false;
@@ -21047,7 +21147,7 @@ function bpCanSee(id) {
 function bpCan(what, id) {
   if (!bpCanSee(id)) return false;
   var r = S.user.role, admin = r === 'admin', boss = r === 'management' || r === 'hod';
-  var mine = bpIsMine(id), mgr = bpManages(id), com = r === 'commercial', aud = r === 'audit';
+  var mine = bpIsMine(id), mgr = bpManages(id), com = r === 'commercial', aud = r === 'audit' || r === 'cao';
   switch (what) {
     case 'edit_overview': case 'edit_team': case 'logo': return admin;
     case 'see_contacts': case 'see_payment': case 'see_shipping': return admin || boss || mine || mgr || com || aud;
@@ -21166,7 +21266,7 @@ async function bpLoadOne(id) {
 function bpIsView(v) { return typeof v === 'string' && (v === 'buyers' || v === 'buyers:kpi' || v.indexOf('buyer:') === 0); }
 function bpOpen(v) {
   if (!bpUse()) { toast('You don’t have access to this page'); return false; }
-  if (v === 'buyers:kpi') { if (!bhCanKpiPage()) { toast('Buyer KPIs are for Admin, management, HOD and audit'); return false; } return true; }
+  if (v === 'buyers:kpi') { if (!bhCanKpiPage()) { toast('Buyer KPIs are for Admin, management, HOD, audit and CAO'); return false; } return true; }
   if (v !== 'buyers') {
     var id = v.split(':')[1];
     if (!bpBuyer(id)) { toast('That buyer was not found'); return false; }
@@ -21363,7 +21463,7 @@ function bpTabTeam(id, b, cur) {
   var others = '<div class="bp-box">' + bpCardHead('Team', 'Admin', '') + BP_TEAM_ROLES.map(function(r){
     var t = cur.team.find(function(x){ return x.role === r.k; }), uid = t ? t.user_id : '';
     if (!admin || cur.missing) return bpRow(r.n, uid ? bpEsc(bpUserName(uid)) : '');
-    var people = (S.users || []).filter(function(u){ return u.role !== 'dept' && (!r.roles || r.roles.indexOf(u.role) !== -1); }).sort(function(a, c){ return a.name.localeCompare(c.name); });
+    var people = (S.users || []).filter(function(u){ return u.role !== 'dept' && u.role !== 'agm' && (!r.roles || r.roles.indexOf(u.role) !== -1); }).sort(function(a, c){ return a.name.localeCompare(c.name); });
     return '<div class="bp-kv"><span>' + r.n + '</span><select id="bpt-' + r.k + '" onchange="bpSaveTeam(\'' + id + '\',\'' + r.k + '\')"><option value="">Not set</option>' + people.map(function(u){ return '<option value="' + u.id + '"' + (u.id === uid ? ' selected' : '') + '>' + bpEsc(u.name) + ' (' + bpEsc(roleLabel(u.role)) + ')</option>'; }).join('') + '</select></div>';
   }).join('') + (admin ? '<div class="bp-hint">The backup merchant is shown on the profile only; it does not change who can open the buyer’s orders.</div>' : '') + '</div>';
   return '<div class="bp-cols bp-cols-2"><div class="bp-col">' + main + others + '</div><div class="bp-col">' + bpHistoryBox(id, cur, ['team', 'overview', 'logo']) + '</div></div>';
@@ -21904,11 +22004,11 @@ var BH_ORDER_COLS = 'id,merchant_id,buyer,buyer_id,style,po_number,qty,fob,total
 var BH_MILESTONES = [['yarn', 'Yarn in-house'], ['knit', 'Knitting'], ['sew', 'Linking'], ['pack', 'Packing'], ['insp', 'Inspection']];
 var BH_KPI_W = { volume: 20, delivery: 25, payment: 25, speed: 15, stability: 15 };
 
-function bhCanKpiPage() { return !!S.user && ['admin', 'management', 'hod', 'audit'].indexOf(S.user.role) !== -1; }
+function bhCanKpiPage() { return !!S.user && ['admin', 'management', 'hod', 'audit', 'cao'].indexOf(S.user.role) !== -1; }
 // the orders this person may see anyway (same rule as the boards)
 function bhCanSeeOrder(o) {
   var r = S.user.role;
-  if (['admin', 'management', 'hod', 'audit', 'commercial'].indexOf(r) !== -1) return true;
+  if (['admin', 'management', 'hod', 'audit', 'cao', 'commercial'].indexOf(r) !== -1) return true;
   if (r === 'manager') return (managerScopeIds() || []).indexOf(o.merchant_id) !== -1;
   return actsAsMerchant(o.merchant_id);
 }
@@ -22240,7 +22340,7 @@ function bhOpen(id) {
 // ─── KPI page: every buyer side by side ───
 async function bhRenderKpiPage() {
   rqSetHead('Customers', 'Buyer KPIs', 'Scores worked out from orders, shipments, payments and approvals', '<button class="btn" onclick="setView(\'buyers\')">&larr; All buyers</button>');
-  if (!bhCanKpiPage()) { $('content').innerHTML = '<div class="bp-box"><div class="bp-empty-box">Buyer KPIs are for Admin, management, HOD and audit.</div></div>'; return; }
+  if (!bhCanKpiPage()) { $('content').innerHTML = '<div class="bp-box"><div class="bp-empty-box">Buyer KPIs are for Admin, management, HOD, audit and CAO.</div></div>'; return; }
   $('content').innerHTML = '<div class="loading"><span class="spin"></span> Working out the scores…</div>';
   var all; try { all = await bhLoadAll(); } catch (e) { all = null; }
   if (S.view !== 'buyers:kpi') return;
