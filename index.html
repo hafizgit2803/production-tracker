@@ -1622,6 +1622,20 @@ table.adm-users tr.adm-editrow td{background:var(--accent-soft);padding:4px 12px
 .rq-appr.rq-appr-2 .rq-appr-box,.rq-appr.rq-appr-3 .rq-appr-box,.rq-appr.rq-appr-4 .rq-appr-box{flex:1;min-width:140px}
 .rq-appr-box.done{border-color:var(--green)}.rq-appr-box.stop{border-color:var(--amber)}
 .rq-warn{background:var(--amber-soft);color:var(--amber);border-radius:8px;padding:7px 10px;font-size:12.5px;margin-bottom:8px}
+.rq-q{margin-top:14px;border:1.5px solid #E8C35A;background:#FFF8E5;border-radius:10px;padding:12px 14px;color:#191817}
+.rq-q .t{font-weight:700;font-size:13.5px}.rq-q .m{font-size:14.5px;margin:6px 0 4px;white-space:pre-wrap}
+.rq-q textarea{width:100%;margin-top:2px}.rq-q .sub2{color:#6B675F}
+.rq-q.ans{border-color:#9CC6E6;background:#EEF6FC}.rq-q.ans .t{color:#1F5F8E}
+[data-theme="dark"] .rq-q{background:#3A3220;color:var(--ink);border-color:#8A6D1E}[data-theme="dark"] .rq-q.ans{background:#1E3140;border-color:#3D6E93}[data-theme="dark"] .rq-q .sub2{color:var(--muted)}
+.rq-qchip{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:99px;background:#FDF0D5;color:#9A6700;white-space:nowrap;margin-left:4px}
+.rq-qchip.ans{background:#E3EFF9;color:#1F5F8E}
+.btn.rq-ask{background:#FDF0D5;border-color:#E8C35A;color:#7A5A00}
+.sig-edit{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.sig-box{width:260px;height:84px;border:1.5px dashed var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;padding:6px;box-sizing:border-box}
+.sig-box img{max-width:100%;max-height:100%;object-fit:contain}.sig-box span{font-size:12px;color:#8A867D;text-align:center;padding:0 8px}
+.sig-acts{flex:1;min-width:240px;padding-top:18px}.sig-pend{font-size:12px;font-weight:700;color:var(--amber)}
+.sig-mini{height:26px;max-width:110px;object-fit:contain;background:#fff;border-radius:4px;padding:1px 3px}
+.rq-act .btn.pri:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.3)}
 /* Laying Goods */
 .lg-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
 .lg-sum-t{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
@@ -2045,11 +2059,14 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
   /* TNA sheets print portrait, one order per page */
   @page tnasheet{size:A4 portrait;margin:8mm}
   .ov.printing .tna-sheet{page:tnasheet;margin:0!important;box-shadow:none!important;border-radius:0!important;font-size:12px}
-  .ov.printing .inv-sheet{zoom:.78}
+  .ov.printing .inv-sheet{zoom:.74}
   .ov.printing .inv-sheet tr{break-inside:avoid;page-break-inside:avoid}
   .ov.printing .inv-sheet td{padding-top:4px!important;padding-bottom:4px!important}
   .ov.printing .inv-sheet .inv-sec{padding-top:10px!important}
-  .ov.printing .inv-sheet .inv-sig{padding-top:26px!important}
+  .ov.printing .inv-sheet .inv-sig{padding-top:18px!important}
+  .ov.printing .inv-sheet.inv-compact td{padding-top:3px!important;padding-bottom:3px!important}
+  .ov.printing .inv-sheet.inv-dense{zoom:.64}
+  .ov.printing .inv-sheet.inv-dense td{padding-top:2.5px!important;padding-bottom:2.5px!important}
   .ov.printing #tnapdf-body,.ov.printing #btnapdf-body{background:#fff!important}
 }
 
@@ -2429,7 +2446,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.19.1</p>
+    <p class="login-ver">V.2026.10.19.2</p>
   </div></div>
 </div>
 
@@ -2471,7 +2488,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.19.1</div>
+  <div id="ver-stamp">V.2026.10.19.2</div>
 </div>
 
 
@@ -4245,7 +4262,7 @@ function buildMaterialReportHtml(meta, rows) {
     + '<div class="hd"><div><div class="org">Shahana Group · Weekly Review</div><h1>' + E(matLabel) + ' &amp; Accessories Status</h1>'
     + '<div class="who">Merchandiser: <b>' + E(meta.merchantName) + '</b>' + (meta.division ? ' · ' + E(meta.division) : '')
     + ' · <span class="scope">' + (meta.mixedWise ? 'one row per style, or per PO for PO-wise buyers' + (rows.some(function(r){ return r.yarn.sharedOnly; }) ? ' · <span class="shr">all POs</span> = one style-level booking, shown on each of its POs' : '') : meta.poWise ? 'one row per PO (PO-wise booking)' + (rows.some(function(r){ return r.yarn.sharedOnly; }) ? ' · <span class="shr">all POs</span> = one style-level booking, shown on each of its POs' : '') : 'one row per style — figures cover every PO of the style') + '</span></div></div>'
-    + '<div class="meta"><div class="wk">Week ' + meta.week + ' · ' + E(meta.dateLabel) + '</div><div>Prepared by ' + E(meta.preparedBy) + ' at ' + E(meta.timeLabel) + '</div></div></div>'
+    + '<div class="meta"><div class="wk">Week ' + meta.week + ' · ' + E(meta.dateLabel) + '</div><div>Prepared by ' + sigInline(S.user.id, meta.preparedBy, 18) + ' at ' + E(meta.timeLabel) + '</div></div></div>'
     + (rows.length ? kpis + legend + sections : '<div class="empty">No live orders for this merchandiser.</div>')
     + '</div></body></html>';
 }
@@ -4254,6 +4271,7 @@ var _materialReportBusy = false;
 async function openMaterialStatusReport(uid) {
   if (_materialReportBusy) return;
   if (!can('view_board', uid)) { toast('You don’t have access to this board', 'err'); return; }
+  await sigNeed([S.user.id]);
   var merch = userById(uid);
   if (!merch) return;
   _materialReportBusy = true;
@@ -4310,6 +4328,7 @@ function openMeetingReportOptions(uid) {
 var _mrUid = null, _mrBusy = false;
 async function runMeetingReport(includeLaying) {
   var uid = _mrUid; if (!uid || _mrBusy) return;
+  await sigNeed([S.user.id]);
   closeModal('ov-meeting-opts');
   _mrBusy = true;
   var btn = document.getElementById('meet-report-btn'); if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
@@ -4539,7 +4558,7 @@ function buildMeetingReportHtml(meta, rows) {
     + '@media screen{body{background:#E9E6DE;padding:18px}.sheet{background:#fff;max-width:1123px;margin:0 auto;padding:14px 16px;box-shadow:0 2px 14px rgba(0,0,0,.12)}}';
   return '<!doctype html><html><head><meta charset="utf-8"><title>Meeting Report — ' + E(meta.merchantName) + '</title><style>' + css + printFrameCss('.hd{padding-top:4mm}') + '</style></head><body><div class="frame"></div><div class="sheet">'
     + '<div class="hd"><div><div class="org">Shahana Group · Weekly Merchant Meeting</div><h1>Order Status — ' + E(meta.merchantName) + '</h1></div>'
-    + '<div class="meta"><b>Week ' + meta.week + ' · ' + E(meta.dateLabel) + '</b><br>' + (meta.includeLaying ? 'Live + Laying Goods orders' : 'Live orders') + ' · prepared by ' + E(meta.preparedBy) + ' at ' + E(meta.timeLabel) + '</div></div>'
+    + '<div class="meta"><b>Week ' + meta.week + ' · ' + E(meta.dateLabel) + '</b><br>' + (meta.includeLaying ? 'Live + Laying Goods orders' : 'Live orders') + ' · prepared by ' + sigInline(S.user.id, meta.preparedBy, 18) + ' at ' + E(meta.timeLabel) + '</div></div>'
     + '<div class="sum"><span>' + rows.length + ' order' + (rows.length === 1 ? '' : 's') + '</span><span class="late">' + nLate + ' late</span><span class="risk">' + nRisk + ' at risk</span><span class="ok">' + (rows.length - nLate - nRisk) + ' on track</span>'
     + '<span style="background:none;font-weight:400;color:#73706A">Status is worked out by the app: Late = a TNA date or the ship date has passed; At risk = due within 7 days, material overdue or not booked, a rejection, or a missing shipping-sample date.</span></div>'
     + (rows.length ? '<table>' + thead + '<tfoot class="sp-foot">' + printSpacer(9) + '</tfoot><tbody>' + body + '</tbody></table>' : '<p style="padding:30px 0;color:#73706A">No orders to show.</p>')
@@ -4753,6 +4772,7 @@ function doLogout() {
 }
 
 async function startApp() {
+  try { sigPreloadOwn(); } catch (e) {}
   $('login-wrap').style.display = 'none';
   $('app').style.display = 'flex';
   applyPrefs();
@@ -9945,6 +9965,7 @@ function selectBulkTNAAudience(aud) {
 }
 
 async function generateBulkTNAPrint() {
+  await sigNeed([S.user.id]);
   var ids = Object.keys(_btnaSelected);
   if (!ids.length || !_btnaAudience) return;
   var orders = bulkTNAGetOrders().filter(function(o){ return _btnaSelected[o.id]; });
@@ -10012,7 +10033,7 @@ async function generateBulkTNAPrint() {
     + '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">PO</th>'
     + '<th style="text-align:left;padding:0 10px 8px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Attachment</th>'
     + headerCells + '</tr></thead><tbody>' + bodyRows + '</tbody></table></div>'
-    + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + htmlEsc(S.user.name) + ' \u00b7 ' + orders.length + ' orders</div>'
+    + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + sigInline(S.user.id, S.user.name) + ' \u00b7 ' + orders.length + ' orders</div>'
     + '</div>';
 
   $('btnapdf-body').innerHTML = html;
@@ -10044,9 +10065,10 @@ function openTNAPrintOptions(inv) {
   document.getElementById('tna-print-generate-btn').disabled = true;
   openModal('ov-tna-print-opts');
 }
-function tnaOptsGenerate() {
+async function tnaOptsGenerate() {
   var b = $('tna-print-generate-btn');
   if (!_tnaPrintAudience || (b && b.disabled)) return;
+  await sigNeed([S.user.id]);
   if (_invMode) generateInventoryPrint(); else generateTNAPrint();
 }
 function selectTNAAudience(aud) {
@@ -10169,7 +10191,7 @@ function tnaPrintSheet(o, audience, buffer, withProg, withProd) {
     + '<th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Plan Date</th>'
     + (withProg ? '<th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Actual Date</th><th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Days Left</th><th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Delay</th><th style="text-align:left;padding:0 12px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817">Status</th>' : '')
     + '</tr></thead><tbody>' + rows + '</tbody></table></div>'
-    + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + htmlEsc(S.user.name) + '</div>'
+    + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + sigInline(S.user.id, S.user.name) + '</div>'
     + '</div>';
 
   return html;
@@ -10245,7 +10267,8 @@ function invColours(o) {
 
 // One PO's sheet. row = this order's Material Report row; allOrders = the
 // merchant's live orders (to name the POs a style-wise booking is shared by).
-function inventorySheet(o, row, audience, buffer, allOrders) {
+function inventorySheet(o, row, audience, buffer, allOrders, people) {
+  people = people || {};
   var E = htmlEsc;
   var merch = userById(o.merchant_id);
   var division = (merch && merch.division) || 'sweater';
@@ -10313,28 +10336,41 @@ function inventorySheet(o, row, audience, buffer, allOrders) {
     yarnSub = 'Style-wise booking' + (stylePos.length > 1 ? ' &middot; shared across POs ' + stylePos.map(E).join(', ') : '');
   }
 
-  // ── Accessories: every item, in-house quantity only
+  // ── Accessories: every item, in-house quantity only. The layout follows the
+  // number of items so a usual order stays on one page: up to 8 per list as
+  // is, 9-14 tighter rows, 15+ each list across the page in two columns.
+  var nMax = Math.max(row ? ((row.acc.sewing.items || []).length) : 0, row ? ((row.acc.packing.items || []).length) : 0);
+  var density = nMax > 14 ? 'dense' : nMax > 8 ? 'compact' : 'normal';
+  var tdA = density === 'normal' ? td : td.replace('padding:7px 12px', 'padding:4px 10px').replace('font-size:12.5px', 'font-size:11.5px');
   function accTable(cat, title){
     var a = row ? row.acc[cat] : null, items = (a && a.items) || [];
     var head = '<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:700;margin:0 0 6px"><span>' + title + '</span><span style="color:#73706A">' + (a ? a.done : 0) + '/' + items.length + ' ' + title + ' Acc. Inhoused</span></div>';
-    var body = items.length ? items.map(function(it){
+    var trs = items.map(function(it){
       var s = it.done ? 'ok' : !it.booked ? 'nb' : etaState(it.eta);
       var q = !it.booked ? '&mdash;' : it.hasQty ? n(it.recd) : (it.done ? 'Received' : '0');
-      return '<tr><td style="' + td + ';font-weight:600">' + box(it.done) + E(it.item) + '</td><td style="' + td + mono + '">' + q + '</td>'
-        + '<td style="' + td + mono + (s === 'late' ? ';color:#B42318;font-weight:700' : '') + '">' + (it.done || !it.booked ? '&mdash;' : dd(it.eta)) + '</td><td style="' + td + '">' + C[s]() + '</td></tr>';
-    }).join('') : '<tr><td colspan="4" style="' + td + ';color:#73706A">No items listed.</td></tr>';
-    return '<div style="flex:1;min-width:300px">' + head + '<table style="width:100%;border-collapse:collapse">' + th(['Item', 'In-house qty', 'Expected', 'Status']) + body + '</table></div>';
+      return '<tr><td style="' + tdA + ';font-weight:600">' + box(it.done) + E(it.item) + '</td><td style="' + tdA + mono + ';white-space:nowrap">' + q + '</td>'
+        + '<td style="' + tdA + mono + ';white-space:nowrap' + (s === 'late' ? ';color:#B42318;font-weight:700' : '') + '">' + (it.done || !it.booked ? '&mdash;' : dd(it.eta)) + '</td><td style="' + tdA + '">' + C[s]() + '</td></tr>';
+    });
+    var TH = '<tr>' + [['Item', '46%'], ['In-house qty', '17%'], ['Expected', '17%'], ['Status', '20%']].map(function(c){ return '<th style="' + thS + ';width:' + c[1] + '">' + c[0] + '</th>'; }).join('') + '</tr>';
+    function tbl(list){ return '<table style="width:100%;border-collapse:collapse">' + TH + list.join('') + '</table>'; }
+    if (!items.length) return '<div style="flex:1;min-width:300px">' + head + tbl(['<tr><td colspan="4" style="' + td + ';color:#73706A">No items listed.</td></tr>']) + '</div>';
+    if (density === 'dense') {
+      var half = Math.ceil(trs.length / 2);
+      return '<div style="width:100%;margin-bottom:10px">' + head + '<div style="display:flex;gap:22px"><div style="flex:1;min-width:0">' + tbl(trs.slice(0, half)) + '</div><div style="flex:1;min-width:0">' + (trs.length > half ? tbl(trs.slice(half)) : '') + '</div></div></div>';
+    }
+    return '<div style="flex:1;min-width:300px">' + head + tbl(trs) + '</div>';
   }
   var sew = row ? row.acc.sewing : { done: 0, total: 0 }, pack = row ? row.acc.packing : { done: 0, total: 0 };
 
   var colours = invColours(o).map(E).join(' / ');
   var gaugeVal = o.gauge ? (isKnit ? E(o.gauge) : E(typeof fmtGauge === 'function' ? fmtGauge(o.gauge) : o.gauge)) : '';
   var G4 = 'display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 20px';
-  var sig = ['Concerned Merchant', 'Manager', 'HOD'].map(function(t){
-    return '<div style="flex:1;text-align:center"><div style="height:52px;border-bottom:1.5px solid #191817"></div><div style="font-size:11px;font-weight:700;margin-top:6px">' + t + '</div><div style="font-size:10px;color:#73706A">Signature &amp; date</div></div>';
-  }).join('');
+  // names filled in from the order: its merchant, that merchant's manager, the HOD
+  var pm = people.merchant || merch, sig = sigBoxHtml('Concerned Merchant', pm && pm.id, pm && pm.name)
+    + sigBoxHtml('Manager', people.manager && people.manager.id, people.manager && people.manager.name)
+    + sigBoxHtml('HOD', people.hod && people.hod.id, people.hod && people.hod.name);
 
-  return '<div class="tna-sheet inv-sheet" style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;color:#191817;background:#fff;margin:20px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">'
+  return '<div class="tna-sheet inv-sheet' + (density === 'normal' ? '' : ' inv-' + density) + '" style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;color:#191817;background:#fff;margin:20px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">'
     + '<div style="padding:24px 28px 18px;border-bottom:2px solid #191817;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">'
     + '<div><div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#73706A;font-weight:700;margin-bottom:6px">Shahana Group</div>'
     + '<div style="font-family:Georgia,serif;font-size:26px;font-weight:600;letter-spacing:-.4px">Inventory List — ' + E(o.style) + '</div></div>'
@@ -10357,7 +10393,7 @@ function inventorySheet(o, row, audience, buffer, allOrders) {
     + '</div></div>'
     + sec('TNA milestones') + '<div style="padding:0 28px"><table style="width:100%;border-collapse:collapse">' + th(['Milestone', 'Plan', 'Actual', 'Delay', 'Status']) + tnaRows + '</table></div>'
     + sec(matLabel + ' in-house', yarnSub) + '<div style="padding:0 28px"><table style="width:100%;border-collapse:collapse">' + th(['Supplier', 'Composition', 'In-house qty (' + unit + ')', 'Last recd', 'Expected', 'Status']) + yarnBody + '</table></div>'
-    + sec('Accessories in-house') + '<div style="padding:0 28px;display:flex;gap:22px;flex-wrap:wrap">' + accTable('sewing', 'Sewing') + accTable('packing', 'Packing') + '</div>'
+    + sec('Accessories in-house') + '<div style="padding:0 28px;display:flex;gap:' + (density === 'dense' ? '0' : '22px') + ';flex-wrap:wrap">' + accTable('sewing', 'Sewing') + accTable('packing', 'Packing') + '</div>'
     + '<div class="inv-sig" style="padding:34px 28px 8px;display:flex;gap:40px;break-inside:avoid;page-break-inside:avoid">' + sig + '</div>'
     + '<div style="padding:12px 28px;margin-top:8px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A;display:flex;justify-content:space-between;gap:12px"><span>Generated ' + genDate + ', ' + genTime + ' by ' + E(S.user.name) + '</span><span>Same figures as the Material Report</span></div>'
     + '</div>';
@@ -10370,13 +10406,21 @@ async function buildInventorySheets(uid, chosen, audience, buffer) {
   var base = live.filter(function(o){ return o.stage === 'live' || !o.stage; });
   chosen.forEach(function(o){ if (!base.some(function(x){ return x.id === o.id; })) base.push(o); });
   var D = await loadMaterialInputs(uid, base);
+  // who signs: the merchant, their manager (from Managers <-> merchants) and the HOD
+  var people = { merchant: userById(uid), manager: null, hod: (S.users || []).find(function(u){ return u.role === 'hod'; }) || null };
+  try {
+    var ma = await db.from('manager_assignments').select('manager_id').eq('merchant_id', uid);
+    var mid = ma.data && ma.data.length ? ma.data.map(function(x){ return x.manager_id; }).find(function(id){ return userById(id); }) : null;
+    people.manager = mid ? userById(mid) : null;
+  } catch (e) { console.error('manager lookup:', e); }
+  await sigNeed([uid, people.manager && people.manager.id, people.hod && people.hod.id, S.user.id]);
   var rows = invRowsFor(uid, base, D);
   var rowOf = {};
   rows.forEach(function(r){ r.orders.forEach(function(o){ rowOf[o.id] = r; }); });
   var sorted = chosen.slice().sort(function(a, b){ return String(a.buyer || '').localeCompare(String(b.buyer || '')) || String(a.ship_date || '9999').localeCompare(String(b.ship_date || '9999')); });
   return sorted.map(function(o, i){
     var full = base.find(function(x){ return x.id === o.id; }) || o;
-    return '<div class="tna-sheet-page" style="' + (i < sorted.length - 1 ? 'break-after:page;page-break-after:always;' : '') + '">' + inventorySheet(full, rowOf[o.id] || null, audience, buffer, base) + '</div>';
+    return '<div class="tna-sheet-page" style="' + (i < sorted.length - 1 ? 'break-after:page;page-break-after:always;' : '') + '">' + inventorySheet(full, rowOf[o.id] || null, audience, buffer, base, people) + '</div>';
   }).join('');
 }
 
@@ -10474,6 +10518,7 @@ function accessoryItemStatus(it) {
 }
 
 async function openOrderChecklist(ordId) {
+  await sigNeed([S.user.id]);
   var o = findOrderAnywhere(ordId);
   if (!o) return;
   var merch = userById(o.merchant_id);
@@ -10645,7 +10690,7 @@ async function openOrderChecklist(ordId) {
     + '<div style="padding:20px 28px">'
     + bodyHtml
     + '</div>'
-    + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + htmlEsc(S.user.name) + '</div>'
+    + '<div style="padding:14px 28px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A">Generated ' + genDate + ' by ' + sigInline(S.user.id, S.user.name) + '</div>'
     + '</div>';
 
   $('todo-body').innerHTML = html;
@@ -13334,6 +13379,7 @@ function renderAdminPage() {
   + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" onclick="saveMyProfile()">Save changes</button></div>'
   + '</div>'
   + '<div id="admin-own-err" class="adm-err" style="display:none"></div>'
+  + sigEditHtml(S.user.id)
   + '</div>'
 
   + '<div class="adm-card"><div class="adm-card-head"><div><h3 class="adm-h3">Backup &amp; restore</h3><div class="adm-sub">Download a full copy of the data, or put it back from a backup file</div></div></div><div id="admin-backup-body"></div></div>'
@@ -13396,6 +13442,7 @@ function renderAdminList() {
       return ra !== rb ? ra - rb : a.name.localeCompare(b.name);
     });
   var avColors = { management:'#7C3AED', cao:'#4338CA', hod:'#D97706', manager:'#059669', audit:'#0284C7', agm:'#0E7490', jm:'#DB2777', merchant:'#6B7280', dept:'#0F766E', accounts:'#C2552F' };
+  if (!SIG.allLoaded && !SIG.missing && !SIG._triedAll) { SIG._triedAll = true; sigNeedAll().then(function(){ if ($('admin-list')) renderAdminList(); if (S.user) sigRedraw(S.user.id); }); }
   var sub = $('adm-users-sub');
   if (sub) sub.textContent = staff.length + ' accounts' + (_pwViewMissing ? ' · readable passwords need the database update (user-password-view-migration.sql)' : '');
   if (!staff.length) { $('admin-list').innerHTML = '<div class="empty" style="padding:18px">No users yet.</div>'; return; }
@@ -13410,7 +13457,7 @@ function renderAdminList() {
   var rows = '', lastRole = null;
   staff.forEach(function(m) {
     if (m.role !== lastRole) {
-      rows += '<tr class="adm-grp"><td colspan="5">' + (roleGroup[m.role] || roleLabel(m.role)) + '<span>' + staff.filter(function(x){ return x.role === m.role; }).length + '</span></td></tr>';
+      rows += '<tr class="adm-grp"><td colspan="6">' + (roleGroup[m.role] || roleLabel(m.role)) + '<span>' + staff.filter(function(x){ return x.role === m.role; }).length + '</span></td></tr>';
       lastRole = m.role;
     }
     var isEdit = _editUserId === m.id;
@@ -13420,12 +13467,13 @@ function renderAdminList() {
       + '<td><span class="adm-role r-' + m.role + '">' + roleLabel(m.role) + '</span></td>'
       + '<td class="adm-muted">' + (m.role === 'dept' ? htmlEsc((rqDept(m.division) || { n: 'No department' }).n) : m.role === 'accounts' ? (m.division === 'head' ? 'Accounts head' : 'Accounts staff') : m.division ? htmlEsc(m.division.charAt(0).toUpperCase() + m.division.slice(1)) : '—') + '</td>'
       + '<td>' + adminPasswordCell(m) + '</td>'
+      + '<td>' + sigListCell(m.id) + '</td>'
       // Style / PO-wise is now set per buyer (Admin -> Buyer settings), not per merchant.
       + '<td class="adm-act"><button class="btn sm' + (isEdit?' pri':'') + '" data-uid="' + m.id + '" onclick="editUser(this.dataset.uid)">' + (isEdit?'Close':'Edit') + '</button>'
       +   '<button class="btn sm danger" data-uid="' + m.id + '" onclick="deleteUser(this.dataset.uid)">Delete</button></td>'
       + '</tr>';
     if (isEdit) {
-      rows += '<tr class="adm-editrow"><td colspan="5"><div class="adm-form" style="grid-template-columns:1.2fr 1.2fr 1fr 190px 150px 120px">'
+      rows += '<tr class="adm-editrow" onkeydown="if(event.key===\'Enter\'&&event.target.tagName===\'INPUT\'&&event.target.type!==\'file\'){event.preventDefault();saveEditUser(\'' + m.id + '\');}"><td colspan="6"><div class="adm-form" style="grid-template-columns:1.2fr 1.2fr 1fr 190px 150px 120px">'
         + '<div class="adm-field"><label class="adm-lbl">Name</label><input id="eu-name-' + m.id + '" class="adm-inp" value="' + htmlEsc(m.name||'') + '"></div>'
         + '<div class="adm-field"><label class="adm-lbl">Designation</label><input id="eu-desig-' + m.id + '" class="adm-inp" value="' + htmlEsc(m.title||'') + '" placeholder="e.g. Senior Merchandiser"></div>'
         + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" class="adm-inp" placeholder="Leave blank to keep">'
@@ -13437,10 +13485,10 @@ function renderAdminList() {
         + RQ_DEPTS.map(function(d){ return '<option value="' + d.k + '"' + (m.division === d.k ? ' selected' : '') + '>' + d.n + '</option>'; }).join('') + '</select></div>'
         + '<div class="adm-field" id="eu-acchead-wrap-' + m.id + '" style="display:' + (m.role === 'accounts' ? 'block' : 'none') + '"><label class="adm-lbl">Accounts</label><select id="eu-acchead-' + m.id + '" class="adm-sel"><option value="">Accounts staff</option><option value="head"' + (m.role === 'accounts' && m.division === 'head' ? ' selected' : '') + '>Accounts head</option></select></div>'
         + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" data-uid="' + m.id + '" onclick="saveEditUser(this.dataset.uid)">Save</button></div>'
-        + '</div></td></tr>';
+        + '</div>' + sigEditHtml(m.id) + '</td></tr>';
     }
   });
-  $('admin-list').innerHTML = '<div class="scroller"><table class="adm-users"><thead><tr><th>User</th><th>Role</th><th>Division</th><th>Password</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  $('admin-list').innerHTML = '<div class="scroller"><table class="adm-users"><thead><tr><th>User</th><th>Role</th><th>Division</th><th>Password</th><th>Signature</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 // ─── SAVE MY OWN PROFILE (admin renames/changes pwd) ───
@@ -13456,6 +13504,7 @@ async function saveMyProfile() {
   if (error) { errEl.textContent = 'Error: ' + error.message; errEl.style.display = 'block'; return; }
   S.user.name = name;
   if (pwd) { S.user.password = update.password; recordReadablePassword(S.user.id, pwd); if (_pwView) _pwView[S.user.id] = pwd; }
+  if (!(await sigSavePending(S.user.id))) return;
   await loadUsers();
   renderRail();
   renderAdminPage();
@@ -13465,6 +13514,7 @@ async function saveMyProfile() {
 // ─── EDIT USER INLINE (in admin page) ───
 var _editUserId = null;
 function editUser(uid) {
+  Object.keys(SIG.pending).forEach(function(k){ if (!S.user || k !== S.user.id) delete SIG.pending[k]; });
   if (_editUserId === uid) {
     // Toggle close
     _editUserId = null;
@@ -13529,6 +13579,7 @@ async function saveEditUser(uid) {
   }
   var { error } = await db.from('users').update(update).eq('id', uid);
   if (error) { toast('Error: ' + error.message, 'err'); return; }
+  if (!(await sigSavePending(uid))) return;
   toast(name + ' updated');
   _editUserId = null;
   await loadUsers();
@@ -14018,7 +14069,7 @@ function renderDashPdf() {
   + '</div>'
   + '<div style="text-align:right">'
   + '<div style="font-size:13px;color:#191817;font-weight:600">' + genDate + '</div>'
-  + '<div style="font-size:11px;color:#73706A;margin-top:2px">Generated ' + genTime + ' by ' + htmlEsc(S.user.name) + '</div>'
+  + '<div style="font-size:11px;color:#73706A;margin-top:2px">Generated ' + genTime + ' by ' + sigInline(S.user.id, S.user.name) + '</div>'
   + '</div></div>'
 
   // ── KPIs
@@ -19459,7 +19510,7 @@ function cbReportHtml(title, filt, cols, list, orientation, serial, coName) {
   var totRow = tot ? '<tr class="tot">' + (serial ? '<td></td>' : '') + tot.map(function(v, i){ return '<td class="' + tightCls(cols[i]) + '">' + (i === 0 ? 'Total (' + list.length + ')' : E(v)) + '</td>'; }).join('') + '</tr>' : '';
   return '<!doctype html><html><head><meta charset="utf-8"><title>' + E(title) + '</title><style>' + printDocCss(orientation, lay.font) + 'td.nw{white-space:nowrap}th.nw{white-space:normal}tr.tot td:first-child{white-space:nowrap}</style></head><body><div class="frame"></div><div class="sheet">'
     + '<div class="hd"><div><div class="org">' + (coName ? E(coName) : 'Shahana Group') + ' · Commercial</div><h1>' + E(title) + '</h1><div class="flt">' + E(filt) + '</div></div>'
-    + '<div class="meta"><b>' + now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + '</b><br>' + list.length + ' row' + (list.length === 1 ? '' : 's') + ' · prepared by ' + E(S.user.name) + '</div></div>'
+    + '<div class="meta"><b>' + now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + '</b><br>' + list.length + ' row' + (list.length === 1 ? '' : 's') + ' · prepared by ' + sigInline(S.user.id, S.user.name, 18) + '</div></div>'
     + '<table>' + colg + '<thead>' + head + '</thead><tfoot><tr class="sp"><td colspan="' + n + '"></td></tr></tfoot><tbody>' + body + totRow + '</tbody></table></div></body></html>';
 }
 
@@ -19677,14 +19728,14 @@ function addCopyButtons(root) {
 // user_password_view (readable passwords) is left out on purpose so a backup
 // never holds plain passwords; it refills as people log in.
 var BACKUP_TABLES = [ // known tables, parents before children (restore goes in this order); others follow
-  'users','buyers','companies','app_settings','memo','buyer_settings','buyer_assignments','manager_assignments','jm_assignments',
+  'users','user_signatures','buyers','companies','app_settings','memo','buyer_settings','buyer_assignments','manager_assignments','jm_assignments',
   'buyer_field_visibility','buyer_requests','orders','order_field_values','order_activity','style_images','style_attachments',
   'yarn_bookings','yarn_receipts','yarn_extra_checks','accessory_bookings','accessory_receipts','accessory_checklist_items','accessories',
   'approvals','pp_colour_approvals','tna_requests','shipment_alerts','alert_dismissals','messages',
   'developments','development_options','development_samples','dev_colour_approvals','dev_price_history','order_commercial','commercial_payments',
   'buyer_invoice_details',
   'buyer_logos','buyer_team','buyer_contacts','buyer_notes','buyer_payment','buyer_banking','buyer_bank_changes','buyer_addresses','buyer_change_log',
-  'rq_settings','rq_counters','rq_requisitions','rq_events','rq_quotations',
+  'rq_settings','rq_counters','rq_requisitions','rq_events','rq_quotations','rq_queries',
   'acc_banks','acc_iou_people','acc_cheques','acc_payments','acc_iou_entries'
 ];
 var BACKUP_EXCLUDE = ['user_password_view'];
@@ -19695,7 +19746,7 @@ var BACKUP_KEYS = {
   buyer_settings: ['buyer_id'], app_settings: ['key'], companies: ['code'], buyer_invoice_details: ['buyer_key'], buyer_assignments: ['buyer_id'], jm_assignments: ['merchant_id'],
   buyer_field_visibility: ['buyer_id', 'field_key'], memo: ['field', 'value'], order_commercial: ['order_id'],
   style_attachments: ['merchant_id', 'style'], style_images: ['merchant_id', 'style'], order_field_values: ['order_id', 'field_key'],
-  user_password_view: ['user_id'],
+  user_password_view: ['user_id'], user_signatures: ['user_id'],
   rq_settings: ['key'], rq_counters: ['dept', 'yr'],
   buyer_logos: ['buyer_id'], buyer_payment: ['buyer_id'], buyer_banking: ['buyer_id']
 };
@@ -20101,6 +20152,8 @@ var SETUP_KNOWN = { // every column the app uses: for tables a backup has no row
   style_images: 'created_at:timestamptz,id:uuid,image_url:text,merchant_id:uuid,storage_path:text,style:text,updated_at:timestamptz',
   tna_requests: 'created_at:timestamptz,dismissed_by:text,id:uuid,merchant_id:uuid,merchant_seen:boolean,milestone:text,new_date:date,old_date:date,order_id:uuid,reason:text,requested_by:text,requester_seen:boolean,reviewed_at:timestamptz,reviewed_by:text,status:text',
   user_password_view: 'password:text,updated_at:timestamptz,user_id:uuid',
+  user_signatures: 'img:text,updated_at:timestamptz,updated_by:text,user_id:text',
+  rq_queries: 'answer:text,answered_at:timestamptz,answered_by:text,answered_by_name:text,asked_at:timestamptz,asked_by:text,asked_by_name:text,changes:text,dept:text,est_at_ask:numeric,id:uuid,nq_at_ask:integer,question:text,req_id:uuid,status:text,step:text',
   users: 'accessory_booking_mode:text,created_at:timestamptz,division:text,id:uuid,name:text,password:text,role:text,title:text,updated_at:timestamptz,yarn_booking_mode:text',
   yarn_bookings: 'booked_on:date,category:text,composition:text,created_at:timestamptz,created_by:text,expected_note:text,expected_on:date,id:uuid,item:text,lc_number:text,material_type:text,merchant_id:uuid,order_id:uuid,pi_number:text,po_number:text,pp_expected_on:date,price_per_lb:numeric,qty:numeric,received_on:date,round:integer,style:text,supplier:text,updated_at:timestamptz,updated_by:text',
   yarn_extra_checks: 'checked_by:text,id:uuid,item:text,merchant_id:uuid,po_number:text,received_on:date,style:text',
@@ -20474,6 +20527,7 @@ async function rqLoad() {
     RQ.stagesOk = !pr.error;
   }
   try { await rqqLoad(); } catch (e) { console.error('quotations:', e); }
+  try { await rqQLoad(); } catch (e) { console.error('questions:', e); }
   try { await accLoadPays(); } catch (e) { console.error('payments:', e); }
 }
 async function rqLoadSettings(force) {
@@ -20497,7 +20551,8 @@ async function rqRefreshOne(id) {
     if (S.user.role === 'accounts' && res.data.mgmt_status !== 'approved') { if (i >= 0) RQ.rows.splice(i, 1); return null; }
     if (S.user.role === 'accounts' && i < 0 && accPayable(res.data)) toast('Approved by Management: ' + res.data.job_no + ' is waiting for payment', 'ok-t');
     if (i >= 0) RQ.rows[i] = res.data; else RQ.rows.unshift(res.data);
-  } else if (i >= 0) RQ.rows.splice(i, 1);
+  } else if (i >= 0 && !res.error) RQ.rows.splice(i, 1);
+  if (res.error) return i >= 0 ? RQ.rows[i] : null;
   return res.data || null;
 }
 // put a saved row into the list (replacing the old copy, wherever it is now)
@@ -20530,6 +20585,7 @@ function rqSubscribe() {
           }
         });
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rq_queries' }, function(p){ try { if (rqQOn()) rqQRealtime(p); } catch (e) { console.error('rq_queries live:', e); } })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_payments' }, function(p){ accRealtime('acc_payments', p); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_cheques' }, function(p){ accRealtime('acc_cheques', p); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_banks' }, function(p){ accRealtime('acc_banks', p); })
@@ -20590,6 +20646,7 @@ function rqRailHtml() {
     var open = localStorage.getItem('pt_sb_' + key) === '1' || (typeof S.view === 'string' && S.view.indexOf('rq:' + d.k + ':') === 0);
     var body = (rqCanWork(d.k) ? item('rq:' + d.k + ':new', '&#x002B;', 'New requisition') : '')
       + item('rq:' + d.k + ':all', '&#x2630;', flat ? 'My requisitions' : 'All ' + d.n, RQ.rows.filter(function(r){ return r.dept === d.k; }).length)
+      + (function(){ var qn = rqQOn() ? rqQCount(d.k) : 0; return qn || S.view === 'rq:' + d.k + ':questions' ? item('rq:' + d.k + ':questions', '&#x2753;', 'Questions to answer', qn, qn > 0) : ''; })()
       + item('rq:' + d.k + ':pending', '&#x23F3;', 'Approval pending', c.pending, c.pending > 0 && !rqIsDeptUser())
       + item('rq:' + d.k + ':wip', '&#x2692;', 'Work in progress', c.wip, c.overdue > 0)
       + item('rq:' + d.k + ':done', '&#x2713;', 'Completed', c.done)
@@ -20641,6 +20698,7 @@ function rqRender(view) {
   if (!d || !rqMyDepts().some(function(x){ return x.k === d.k; })) { setView(rqHomeView()); return; }
   if (p[2] === 'all') { RQ.editId = null; return rqRenderAll(d); }
   if (p[2] === 'edit' && !RQ.editId) { setView('rq:' + d.k + ':pending'); return; } // e.g. after a page refresh
+  if (p[2] === 'questions') { RQ.editId = null; return rqRenderQuestions(d); }
   if (p[2] === 'new' || p[2] === 'edit') return rqRenderForm(d, p[2] === 'edit' ? RQ.editId : null);
   RQ.editId = null;
   rqRenderList(d, RQ_TABS.some(function(t){ return t.k === p[2]; }) ? p[2] : 'pending');
@@ -20670,7 +20728,7 @@ function rqTable(list, tab, showDept) {
   var body = list.map(function(r){
     var loc = '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '');
     var nq = rqqOn() ? rqqList(r.id).length : 0;
-    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>' + (nq ? '<div class="sub2 rqq-n">' + nq + ' quote' + (nq === 1 ? '' : 's') + '</div>' : '');
+    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>' + rqQChip(r) + (nq ? '<div class="sub2 rqq-n">' + nq + ' quote' + (nq === 1 ? '' : 's') + '</div>' : '');
     var co = '<span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span>';
     var cells;
     if (tab === 'pending') {
@@ -20753,7 +20811,7 @@ function rqRenderAll(d) {
       '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : ''),
       rqEsc(r.work_type || '') + (r.priority === 'urgent' ? ' ' + rqPriChip('urgent') : ''),
       '<span class="num">' + rqMoney(r.status === 'done' && r.final_cost != null ? r.final_cost : r.approved_cost != null ? r.approved_cost : r.est_cost) + '</span>',
-      rqStatusChip(r), '<span class="rq-why">' + rqWhere(r) + '</span>', rqEsc(r.created_by_name || '')]).concat(accOn() ? [accPayChip(r)] : []);
+      rqStatusChip(r) + rqQChip(r), '<span class="rq-why">' + rqWhere(r) + '</span>', rqEsc(r.created_by_name || '')]).concat(accOn() ? [accPayChip(r)] : []);
     return '<tr onclick="rqOpen(\'' + r.id + '\')">' + cells.map(function(c){ return '<td>' + c + '</td>'; }).join('') + '</tr>';
   }).join('');
   var title = d ? (rqIsDeptUser() ? 'My requisitions' : 'All ' + d.n + ' requisitions') : S.user.role === 'accounts' ? 'Approved requisitions' : 'All requisitions';
@@ -20834,7 +20892,7 @@ function rqRenderForm(d, editId) {
   var r = editId ? RQ.rows.find(function(x){ return x.id === editId; }) : null;
   if (editId && !r) { setView('rq:' + d.k + ':pending'); return; }
   if (!rqCanWork(d.k)) { setView('rq:' + d.k + ':pending'); return; }
-  if (r && !rqCanEditReq(r)) { toast('This requisition can no longer be changed', 'err'); setView('rq:' + d.k + ':' + rqTabOf(r)); return; }
+  if (r && !rqCanEditReq(r) && !rqCanAnswerEdit(r)) { toast('This requisition can no longer be changed', 'err'); setView('rq:' + d.k + ':' + rqTabOf(r)); return; }
   r = r || { company: '', req_date: todayStr(), kind: 'work', priority: 'normal', time_unit: 'days', items: [] };
   var locs = {}; RQ.rows.forEach(function(x){ if (x.location) locs[x.location] = 1; });
   var types = d.types.slice(); var isOther = r.work_type && types.indexOf(r.work_type) === -1;
@@ -20912,6 +20970,7 @@ async function rqCancelForm(dk) {
   _rqFormStart = null; RQ.editId = null;
   setView('rq:' + dk + ':pending');
 }
+function rqCanAnswerEdit(r) { return !!r && rqCanWork(r.dept) && r.status === 'pending' && !r.mgmt_status && rqQOn() && rqQOpen(r).length > 0; }
 function rqCanEditReq(r) {
   if (!rqCanWork(r.dept)) return false;
   if (r.status === 'returned') return true;
@@ -20992,23 +21051,35 @@ async function rqSaveEdit(d, v) {
   var wasReturned = r.status === 'returned';
   var upd = Object.assign({}, v, { updated_at: new Date().toISOString(), updated_by: S.user.name });
   var stepKeys = RQ.stagesOk === true ? ['agm', 'cao', 'audit', 'mgmt'] : ['audit', 'mgmt'];
+  // answering a question: some checks may already be given; they stay unless the amount went up
+  var answering = !wasReturned && !rqCanEditReq(r) && rqCanAnswerEdit(r), reset = [], itemsChanged = false;
+  if (answering) {
+    var _fr = await rqRefreshOne(r.id);
+    if (!_fr || _fr.status !== 'pending' || _fr.mgmt_status) { toast('Someone has already acted on this requisition \u2014 it was not changed', 'err'); _rqFormStart = null; RQ.editId = null; setView('rq:' + d.k + ':pending'); return; }
+    itemsChanged = JSON.stringify(_fr.items || null) !== JSON.stringify(v.items || null);
+    if (_fr.est_cost != null && v.est_cost != null && Number(v.est_cost) > Number(_fr.est_cost)) reset = rqResetChecks(upd, _fr);
+    r = _fr;
+  }
   if (wasReturned) { upd.status = 'pending'; stepKeys.forEach(function(k){ ['status', 'by', 'by_name', 'at', 'note'].forEach(function(f){ upd[k + '_' + f] = null; }); }); }
   var q = db.from('rq_requisitions').update(upd).eq('id', r.id).eq('status', r.status);
-  if (!wasReturned) stepKeys.forEach(function(k){ q = q.is(k + '_status', null); });
+  if (answering) q = q.is('mgmt_status', null);
+  else if (!wasReturned) stepKeys.forEach(function(k){ q = q.is(k + '_status', null); });
   var res = await q.select();
   if (res.error) { showSaveError('Could not save the changes', res.error); return; }
   if (!res.data || !res.data.length) { await rqRefreshOne(r.id); toast('Someone has already acted on this requisition — it was not changed', 'err'); _rqFormStart = null; RQ.editId = null; setView('rq:' + d.k + ':' + rqTabOf(RQ.rows.find(function(x){ return x.id === r.id; }) || r)); return; }
-  await rqEvent(r.id, wasReturned ? 'resubmitted' : 'edited', { amount: v.est_cost });
+  if (answering) await rqEvent(r.id, 'edited', { amount: v.est_cost, note: (itemsChanged ? 'Items changed' : 'Details changed') + ' while answering a question' + (reset.length ? ' \u00b7 ' + reset.join(', ') + ' to check again' : '') });
+  else await rqEvent(r.id, wasReturned ? 'resubmitted' : 'edited', { amount: v.est_cost });
   r = rqPut(res.data[0]);
   var qErr2 = await rqqUploadForm(r);
   _rqFormStart = null; RQ.editId = null;
-  toast(wasReturned ? r.job_no + ' sent again for approval' : r.job_no + ' saved', 'ok-t');
+  toast(wasReturned ? r.job_no + ' sent again for approval' : r.job_no + ' saved' + (answering ? ' \u2014 now send your answer' : ''), 'ok-t');
   if (qErr2) setTimeout(function(){ toast(qErr2, 'err'); }, 50);
+  if (answering) { setView('rq:' + d.k + ':questions'); rqOpen(r.id); return; }
   setView('rq:' + d.k + ':pending');
 }
 function rqStartEdit(id) {
   var r = RQ.rows.find(function(x){ return x.id === id; });
-  if (!r || !rqCanEditReq(r)) { toast('This requisition can no longer be changed', 'err'); return; }
+  if (!r || !(rqCanEditReq(r) || rqCanAnswerEdit(r))) { toast('This requisition can no longer be changed', 'err'); return; }
   closeModal('ov-rq');
   RQ.editId = id;
   setView('rq:' + r.dept + ':edit');
@@ -21019,11 +21090,11 @@ async function rqOpen(id) {
   RQ.openId = id;
   rqRenderDetail(id, false);
   openModal('ov-rq');
-  await Promise.all([rqLoadEvents(id), rqqRefresh(id).catch(function(){})]);
+  await Promise.all([rqRefreshOne(id).catch(function(){}), rqLoadEvents(id), rqqRefresh(id).catch(function(){}), rqQRefresh(id).catch(function(){})]);
   if (RQ.openId === id) rqRenderDetail(id, true);
 }
 function rqKv(k, v) { return '<div class="rq-kv"><div class="k">' + k + '</div><div class="v">' + (v == null || v === '' ? '&mdash;' : v) + '</div></div>'; }
-var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled', paid: 'Payment recorded', pay_reversed: 'Payment reversed (admin)', cheque_cleared: 'Cheque cleared', cheque_bounced: 'Cheque bounced', cheque_cancelled: 'Cheque cancelled (admin)' };
+var RQ_EVENT_TXT = { asked: 'Question / change asked', answered: 'Answered', created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled', paid: 'Payment recorded', pay_reversed: 'Payment reversed (admin)', cheque_cleared: 'Cheque cleared', cheque_bounced: 'Cheque bounced', cheque_cancelled: 'Cheque cancelled (admin)' };
 function rqRenderDetail(id, withEvents) {
   var r = RQ.rows.find(function(x){ return x.id === id; });
   if (!r) { closeModal('ov-rq'); return; }
@@ -21059,6 +21130,7 @@ function rqRenderDetail(id, withEvents) {
   }
   if ((r.status === 'pending' || r.status === 'returned') && rqCanWork(r.dept)) h += '<div class="rq-hint">Need signatures on paper first? Use <b>Print form for signing</b> below. The approvers then record their approval here.</div>';
   try { h += accPaySection(r); } catch (e) { console.error('accPaySection:', e); }
+  try { h += rqQSectionHtml(r); } catch (e) { console.error('questions:', e); }
   h += '<div id="rq-actions">' + rqActionsHtml(r) + '</div>';
   var ev = RQ.events[id];
   h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
@@ -21078,15 +21150,19 @@ function rqActionsHtml(r) {
     if (myStep && !r[myStep.k + '_status'] && rqIsOwn(r)) h += '<div class="rq-act"><div class="sub2">You raised this requisition, so you cannot approve it yourself.</div></div>';
     else if (myStep && !r[myStep.k + '_status']) {
       var notYet = rqNotCheckedBefore(r, myStep);
+      var qWait = myStep.k === 'mgmt' ? rqQOpen(r).length : 0;
       h += '<div class="rq-act"><div class="rq-sec-h">' + rqEsc(myStep.full) + ' decision</div>'
         + (notYet.length ? '<div class="rq-warn">&#x26A0; Not yet checked by: <b>' + notYet.join(', ') + '</b></div>' : '')
+        + (qWait ? '<div class="rq-warn">&#x2753; Waiting for the department to answer ' + qWait + ' question' + (qWait === 1 ? '' : 's') + '. Final approval opens once they answer.</div>' : '')
         + (myStep.k === 'mgmt' ? '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>' : '')
-        + note(myStep.note, myStep.reject ? 'Comment (needed to return or reject)' : 'Comment (needed to return)')
-        + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'approved\')">&#x2713; ' + (myStep.k === 'mgmt' ? 'Approve &mdash; start the work' : 'Approve') + '</button><button class="btn" onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'returned\')">Return for changes</button>'
+        + note(myStep.note, rqQOn() ? (myStep.reject ? 'Comment / question (needed to ask, return or reject)' : 'Comment / question (needed to ask or return)') : (myStep.reject ? 'Comment (needed to return or reject)' : 'Comment (needed to return)'))
+        + '<div class="rq-btns"><button class="btn pri" ' + (qWait ? 'disabled title="Waiting for the department to answer" ' : '') + 'onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'approved\')">&#x2713; ' + (myStep.k === 'mgmt' ? 'Approve &mdash; start the work' : 'Approve') + '</button>'
+        + (rqQOn() ? '<button class="btn rq-ask" onclick="rqAsk(\'' + r.id + '\',\'' + myStep.k + '\')">&#x2753; Ask / Request change</button>' : '')
+        + '<button class="btn" onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'returned\')">Return for changes</button>'
         + (myStep.reject ? '<button class="btn danger" onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'rejected\')">Reject</button>' : '') + '</div></div>';
     }
     if (rqCanEditReq(r)) h += '<div class="rq-btns rq-own"><button class="btn" onclick="rqStartEdit(\'' + r.id + '\')">Change</button><button class="btn danger" onclick="rqCancelReq(\'' + r.id + '\')">Cancel requisition</button></div>';
-    else if (rqCanWork(r.dept)) h += '<div class="sub2 rq-own">Approval has started, so it can no longer be changed. Ask an approver to return it if something is wrong.</div>';
+    else if (rqCanWork(r.dept) && !rqCanAnswerEdit(r)) h += '<div class="sub2 rq-own">Approval has started, so it can no longer be changed. Ask an approver to return it if something is wrong.</div>';
   } else if (r.status === 'returned') {
     if (rqCanEditReq(r)) h += '<div class="rq-btns rq-own"><button class="btn pri" onclick="rqStartEdit(\'' + r.id + '\')">Change and send again</button><button class="btn danger" onclick="rqCancelReq(\'' + r.id + '\')">Cancel requisition</button></div>';
   } else if (r.status === 'rejected') {
@@ -21114,6 +21190,337 @@ function rqActionsHtml(r) {
   }
   return h;
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// SIGNATURES (one per user). Admin uploads them in Admin -> Users -> Edit.
+// Stored small (cleaned, cropped PNG, ~5 KB) in their own table and read
+// only when a print needs them, a few at a time, then kept for the session.
+// No signature -> only the name is printed. Nothing here can stop a print:
+// if the table is missing or a read fails, prints simply show names.
+// ═══════════════════════════════════════════════════════════════════════
+var SIG = { cache: {}, missing: false, pending: {}, allLoaded: false };
+function sigOk() { return !SIG.missing; }
+function sigImg(uid) { var v = uid ? SIG.cache[uid] : null; return v ? v : null; }
+async function sigNeed(ids) {
+  if (SIG.missing) return;
+  var want = Array.from(new Set((ids || []).filter(function(x){ return x && !(x in SIG.cache); })));
+  if (!want.length) return;
+  try {
+    for (var i = 0; i < want.length; i += 100) {
+      var part = want.slice(i, i + 100);
+      var r = await db.from('user_signatures').select('user_id,img').in('user_id', part);
+      if (r.error) { if (/user_signatures|does not exist|schema cache/i.test(r.error.message || '') || r.error.code === '42P01' || r.error.code === 'PGRST205') SIG.missing = true; else console.error('signatures:', r.error); return; }
+      part.forEach(function(id){ SIG.cache[id] = ''; });
+      (r.data || []).forEach(function(x){ if (sigImgValid(x.img)) SIG.cache[x.user_id] = x.img; });
+    }
+  } catch (e) { console.error('signatures:', e); }
+}
+async function sigNeedAll() {
+  if (SIG.allLoaded || SIG.missing) return;
+  await sigNeed((S.users || []).map(function(u){ return u.id; }));
+  SIG.allLoaded = !SIG.missing;
+}
+function sigImgValid(s) { return typeof s === 'string' && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(s) && s.length < 400000; }
+function sigUserByName(name) {
+  var n = String(name || '').trim().toLowerCase(); if (!n) return null;
+  return (S.users || []).find(function(u){ return String(u.name || '').trim().toLowerCase() === n; }) || null;
+}
+// "Name" + the signature picture next to it (for "prepared by / printed by" lines)
+function sigInline(uid, name, h) {
+  var img = sigImg(uid);
+  return htmlEsc(name || '') + (img ? ' <img src="' + img + '" alt="" style="height:' + (h || 22) + 'px;max-width:' + ((h || 22) * 4) + 'px;vertical-align:middle;margin-left:4px;object-fit:contain">' : '');
+}
+// a signature box: picture above the line (or empty), name under it
+function sigBoxHtml(label, uid, name, opts) {
+  opts = opts || {};
+  var img = sigImg(uid);
+  return '<div style="flex:1;text-align:center;min-width:0">'
+    + '<div style="height:' + (opts.h || 52) + 'px;border-bottom:1.5px solid #191817;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px">' + (img ? '<img src="' + img + '" alt="" style="max-height:' + ((opts.h || 52) - 4) + 'px;max-width:90%;object-fit:contain">' : '') + '</div>'
+    + '<div style="font-size:11px;font-weight:700;margin-top:6px">' + htmlEsc(label) + '</div>'
+    + '<div style="font-size:12px;margin-top:1px">' + (name ? htmlEsc(name) : '&nbsp;') + '</div>'
+    + (opts.sub ? '<div style="font-size:10px;color:#73706A">' + opts.sub + '</div>' : '') + '</div>';
+}
+// own signature, read quietly after login so "prepared by" lines have it
+function sigPreloadOwn() { if (S.user && S.user.id) setTimeout(function(){ sigNeed([S.user.id]); }, 2500); }
+
+// Clean a photo / scan of a signature: ink kept, paper made transparent,
+// cropped to the ink, shrunk to at most 420 x 140.
+function sigProcessFile(file) {
+  return new Promise(function(resolve, reject){
+    if (!file || !/^image\//.test(file.type || '')) { reject(new Error('Choose a picture (JPG or PNG) of the signature.')); return; }
+    if (file.size > 15 * 1024 * 1024) { reject(new Error('That picture is too large (over 15 MB).')); return; }
+    var url = URL.createObjectURL(file), im = new Image();
+    im.onerror = function(){ URL.revokeObjectURL(url); reject(new Error('This picture could not be read. Try a JPG or PNG.')); };
+    im.onload = function(){
+      try {
+        URL.revokeObjectURL(url);
+        var sc = Math.min(1, 1400 / Math.max(im.naturalWidth || 1, im.naturalHeight || 1));
+        var w = Math.max(1, Math.round(im.naturalWidth * sc)), h = Math.max(1, Math.round(im.naturalHeight * sc));
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h);
+        var d = x.getImageData(0, 0, w, h), p = d.data, n = w * h, lum = new Uint8Array(n);
+        for (var i = 0; i < n; i++) lum[i] = Math.round(0.299 * p[i * 4] + 0.587 * p[i * 4 + 1] + 0.114 * p[i * 4 + 2]);
+        // paper level: the bright end of the picture
+        var hist = new Uint32Array(256); for (i = 0; i < n; i++) hist[lum[i]]++;
+        var acc = 0, paper = 255; for (var v = 255; v >= 0; v--) { acc += hist[v]; if (acc >= n * 0.35) { paper = v; break; } }
+        paper = Math.max(paper, 90);
+        var lo = paper * 0.45, hi = paper * 0.82, minX = w, minY = h, maxX = -1, maxY = -1;
+        var alpha = new Uint8Array(n);
+        for (var yy = 0; yy < h; yy++) for (var xx = 0; xx < w; xx++) {
+          var k = yy * w + xx, L = lum[k], a = L <= lo ? 255 : L >= hi ? 0 : Math.round((hi - L) / (hi - lo) * 255);
+          alpha[k] = a;
+          if (a > 90) { if (xx < minX) minX = xx; if (xx > maxX) maxX = xx; if (yy < minY) minY = yy; if (yy > maxY) maxY = yy; }
+        }
+        if (maxX < 0 || (maxX - minX) < 8 || (maxY - minY) < 4) { reject(new Error('No signature found in this picture. Use a clear photo of the signature on white paper.')); return; }
+        var pad = 6; minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad); maxX = Math.min(w - 1, maxX + pad); maxY = Math.min(h - 1, maxY + pad);
+        var cw = maxX - minX + 1, ch = maxY - minY + 1;
+        var ink = document.createElement('canvas'); ink.width = cw; ink.height = ch;
+        var ix = ink.getContext('2d'), id = ix.createImageData(cw, ch), q = id.data;
+        for (yy = 0; yy < ch; yy++) for (xx = 0; xx < cw; xx++) {
+          var s = (yy + minY) * w + (xx + minX), t = (yy * cw + xx) * 4;
+          q[t] = 17; q[t + 1] = 24; q[t + 2] = 39; q[t + 3] = alpha[s];
+        }
+        ix.putImageData(id, 0, 0);
+        function out(maxW, maxH) {
+          var f = Math.min(1, maxW / cw, maxH / ch), ow = Math.max(1, Math.round(cw * f)), oh = Math.max(1, Math.round(ch * f));
+          var o = document.createElement('canvas'); o.width = ow; o.height = oh;
+          var ox = o.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.drawImage(ink, 0, 0, ow, oh);
+          return o.toDataURL('image/png');
+        }
+        var res = out(420, 140);
+        if (res.length > 24000) res = out(320, 107);
+        if (res.length > 24000) res = out(240, 80);
+        resolve(res);
+      } catch (e) { reject(e); }
+    };
+    im.src = url;
+  });
+}
+// admin: the signature part of the edit form (and of "My account")
+function sigEditHtml(uid) {
+  if (SIG.missing) return '<div class="sig-edit"><div class="adm-lbl">Signature</div><div class="sub2">Signatures need the database update (shahana-one-v2-migration.sql).</div></div>';
+  var pend = Object.prototype.hasOwnProperty.call(SIG.pending, uid), img = pend ? SIG.pending[uid] : sigImg(uid);
+  var known = uid in SIG.cache || pend;
+  return '<div class="sig-edit" id="sig-edit-' + uid + '"><div><div class="adm-lbl">Signature</div><div class="sig-box">'
+    + (img ? '<img src="' + img + '" alt="Signature">' : '<span>' + (known ? 'No signature &mdash; only the name is printed' : 'Loading&hellip;') + '</span>') + '</div></div>'
+    + '<div class="sig-acts"><label class="btn sm">' + (img ? 'Upload new picture' : 'Upload signature') + '<input type="file" accept="image/*" style="display:none" onchange="sigPick(\'' + uid + '\',this)"></label>'
+    + (img ? ' <button class="btn sm danger" type="button" onclick="sigMarkRemove(\'' + uid + '\')">Remove</button>' : '')
+    + (pend ? ' <span class="sig-pend">' + (SIG.pending[uid] ? 'New picture &mdash; press Save to keep it' : 'Will be removed when you press Save') + '</span>' : '')
+    + '<div class="sub2" style="margin-top:6px">Photo or scan of the signature on white paper. It is cropped, cleaned and saved small. Printed with this person&rsquo;s name on what they print or approve.</div></div></div>';
+}
+function sigRedraw(uid) { var el = $('sig-edit-' + uid); if (el) el.outerHTML = sigEditHtml(uid); }
+async function sigPick(uid, input) {
+  if (!S.user || S.user.role !== 'admin') { toast('Only admin can change signatures', 'err'); return; }
+  var f = input && input.files && input.files[0]; if (input) input.value = '';
+  if (!f) return;
+  try { SIG.pending[uid] = await sigProcessFile(f); sigRedraw(uid); }
+  catch (e) { toast(e && e.message ? e.message : 'Could not read the picture', 'err'); }
+}
+async function sigMarkRemove(uid) {
+  if (!(await appConfirm('Remove this signature? Prints will then show only the name.', { title: 'Remove signature', okText: 'Remove', danger: true }))) return;
+  SIG.pending[uid] = null; sigRedraw(uid);
+}
+// saves a pending change (called by the Save buttons). Returns false on failure.
+async function sigSavePending(uid) {
+  if (!Object.prototype.hasOwnProperty.call(SIG.pending, uid) || SIG.missing) return true;
+  var v = SIG.pending[uid], r;
+  if (v) r = await db.from('user_signatures').upsert({ user_id: uid, img: v, updated_at: new Date().toISOString(), updated_by: S.user.name }, { onConflict: 'user_id' });
+  else r = await db.from('user_signatures').delete().eq('user_id', uid);
+  if (r.error) { showSaveError('The signature was NOT saved.\n\nDatabase said:\n' + (r.error.message || r.error)); return false; }
+  SIG.cache[uid] = v || ''; delete SIG.pending[uid];
+  return true;
+}
+function sigListCell(uid) {
+  if (SIG.missing) return '<span class="adm-muted">&mdash;</span>';
+  if (!(uid in SIG.cache)) return '<span class="adm-muted">&hellip;</span>';
+  var img = sigImg(uid);
+  return img ? '<img class="sig-mini" src="' + img + '" alt="Signature">' : '<span class="adm-muted" style="font-size:12px">None &middot; name only</span>';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// REQUISITIONS: ASK / REQUEST CHANGE
+// An approver asks the department a question or for a change without
+// returning it. Approvals already given stay. The department answers and can
+// change the amount / items or add quotations; if the amount goes UP, the
+// earlier checks (AGM, CAO, Audit) are asked again. Management's final
+// approval waits until every question is answered.
+// ═══════════════════════════════════════════════════════════════════════
+function rqQOn() { return RQ.qOk === true; }
+async function rqQLoad() {
+  if (!rqCanSee() || S.user.role === 'accounts') { RQ.qs = []; return; }
+  var since = rqLocalDate(new Date(Date.now() - 120 * 86400000));
+  try {
+    var rows = await fetchAllRows(function(){
+      var q = db.from('rq_queries').select('*').or('status.eq.open,asked_at.gte.' + since);
+      if (rqIsDeptUser()) q = q.eq('dept', S.user.division);
+      return q.order('id');
+    });
+    RQ.qOk = true; RQ.qs = rows || [];
+  } catch (e) {
+    RQ.qOk = !(e && (e.code === '42P01' || e.code === 'PGRST205' || /rq_queries|does not exist|schema cache/i.test(e.message || '')));
+    if (RQ.qOk) console.error('rqQLoad:', e);
+    RQ.qs = [];
+  }
+}
+async function rqQRefresh(reqId) {
+  if (!rqQOn()) return;
+  var r = await db.from('rq_queries').select('*').eq('req_id', reqId);
+  if (r.error) return;
+  RQ.qs = (RQ.qs || []).filter(function(q){ return q.req_id !== reqId; }).concat(r.data || []);
+}
+function rqQFor(r) { return rqQOn() && r ? (RQ.qs || []).filter(function(q){ return q.req_id === r.id; }).sort(function(a, b){ return String(a.asked_at).localeCompare(String(b.asked_at)); }) : []; }
+function rqQOpen(r) { return r && r.status === 'pending' ? rqQFor(r).filter(function(q){ return q.status === 'open'; }) : []; }
+// answers the asking step has not acted on yet
+function rqQAnswered(r, stepK) { return r && r.status === 'pending' && !r[stepK + '_status'] ? rqQFor(r).filter(function(q){ return q.step === stepK && q.status === 'answered'; }) : []; }
+function rqQChip(r) {
+  if (!rqQOn() || !r || r.status !== 'pending') return '';
+  var open = rqQOpen(r).length;
+  if (open) return ' <span class="rq-qchip">&#x2753; Question</span>';
+  var ans = RQ_STAGES.some(function(st){ return rqQAnswered(r, st.k).length; });
+  return ans ? ' <span class="rq-qchip ans">Answered</span>' : '';
+}
+function rqQCount(dept) { return (RQ.rows || []).filter(function(r){ return (!dept || r.dept === dept) && rqQOpen(r).length; }).length; }
+// the amount is worked out from the item lines when they carry rates
+function rqCostFromItems(r) { return Array.isArray(r.items) && r.items.some(function(i){ return i.qty != null && i.rate != null; }); }
+
+function rqQSectionHtml(r) {
+  if (!rqQOn()) return '';
+  var open = rqQOpen(r), h = '';
+  open.forEach(function(q){
+    var st = rqStage(q.step) || { n: q.step };
+    h += '<div class="rq-q"><div class="t">&#x2753; Question from ' + rqEsc(st.n) + ' &middot; ' + rqEsc(q.asked_by_name || '') + ' &middot; ' + rqDateTime(q.asked_at) + '</div><div class="m">' + rqEsc(q.question) + '</div>';
+    if (rqCanWork(r.dept)) {
+      var fromItems = rqCostFromItems(r);
+      h += '<div class="sub2">Approvals already given stay. Change what is needed, then send your answer.</div>'
+        + '<label class="rq-lbl" style="margin-top:8px">Your answer</label><textarea id="rq-qa-' + q.id + '" rows="2" placeholder="e.g. Added a third quotation. Revised cost 68,500 Tk."></textarea>'
+        + (fromItems ? '<div class="sub2" style="margin-top:6px">The amount (' + rqMoney(r.est_cost) + ') comes from the item lines &mdash; use <b>Change items</b> to change it.</div>'
+          : '<div class="f" style="max-width:220px;margin-top:6px"><label>Amount (Tk)</label><input id="rq-qa-amt-' + q.id + '" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '" onkeydown="if(event.key===\'Enter\'){event.preventDefault();rqAnswer(\'' + q.id + '\');}"></div>')
+        + '<div class="rq-btns">' + (rqqCanAdd(r) ? '<button class="btn" onclick="rqqAdd(\'' + r.id + '\')">&#x002B; Add quotation</button>' : '')
+        + '<button class="btn" onclick="rqStartEdit(\'' + r.id + '\')">Change items</button>'
+        + '<button class="btn pri" id="rq-qa-btn-' + q.id + '" onclick="rqAnswer(\'' + q.id + '\')">Send answer</button></div>'
+        + '<div class="sub2" style="margin-top:6px">If the amount goes down, AGM, CAO and Audit approvals stay. If it goes up, they are asked to check again.</div>';
+    } else h += '<div class="sub2">Waiting for the department to answer.</div>';
+    h += '</div>';
+  });
+  // the asker sees the answer to their question until they decide
+  var mine = rqStageOfRole(S.user.role);
+  if (mine) rqQAnswered(r, mine.k).slice(-2).forEach(function(q){
+    h += '<div class="rq-q ans"><div class="t">&#x2709; Answered &middot; ' + rqEsc(q.answered_by_name || '') + ' &middot; ' + rqDateTime(q.answered_at) + '</div><div class="m">' + rqEsc(q.answer || '') + '</div>'
+      + '<div class="sub2">You asked: ' + rqEsc(q.question) + (q.changes ? ' &middot; <b>' + rqEsc(q.changes) + '</b>' : '') + '</div></div>';
+  });
+  return h;
+}
+async function rqAsk(id, who) {
+  var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqQOn()) return;
+  var step = rqStage(who);
+  if (!step || S.user.role !== step.role || !rqStageOn(step)) return;
+  if (rqIsOwn(r)) { toast('You raised this requisition', 'err'); return; }
+  var noteEl = $(step.note), txt = noteEl ? noteEl.value.trim() : '';
+  if (!txt) { toast('Write your question or the change you want', 'err'); if (noteEl) noteEl.focus(); return; }
+  var fresh = await rqRefreshOne(id);
+  if (!fresh || fresh.status !== 'pending' || fresh[step.k + '_status']) return rqStaleMsg(id);
+  r = fresh;
+  var nq = rqqOn() ? rqqList(r.id).length : null;
+  var row = { req_id: r.id, dept: r.dept, step: step.k, asked_by: S.user.id, asked_by_name: S.user.name, asked_at: new Date().toISOString(), question: txt, est_at_ask: r.est_cost == null ? null : r.est_cost, nq_at_ask: nq, status: 'open' };
+  var res = await db.from('rq_queries').insert(row).select();
+  if (res.error) { showSaveError('The question was NOT sent.\n\nDatabase said:\n' + (res.error.message || res.error)); return; }
+  RQ.qs = (RQ.qs || []).concat(res.data || []);
+  await rqEvent(id, 'asked', { note: step.n + ': ' + txt });
+  toast(r.job_no + ' — question sent to ' + ((rqDept(r.dept) || {}).n || 'the department'), 'ok-t');
+  renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+// approvals of the checks before management, cleared when the amount went up
+function rqResetChecks(upd, r) {
+  var reset = [];
+  ['agm', 'cao', 'audit'].forEach(function(k){
+    if (r[k + '_status'] === 'approved') { reset.push((rqStage(k) || {}).n || k); ['status', 'by', 'by_name', 'at', 'note'].forEach(function(f){ upd[k + '_' + f] = null; }); }
+  });
+  return reset;
+}
+async function rqAnswer(qid) {
+  var q = (RQ.qs || []).find(function(x){ return x.id === qid; }); if (!q) return;
+  var r = RQ.rows.find(function(x){ return x.id === q.req_id; }); if (!r || !rqCanWork(r.dept)) return;
+  var ta = $('rq-qa-' + qid), txt = ta ? ta.value.trim() : '';
+  if (!txt) { toast('Write your answer', 'err'); if (ta) ta.focus(); return; }
+  var amtEl = $('rq-qa-amt-' + qid), newAmt = null;
+  if (amtEl && amtEl.value !== '') { newAmt = Number(amtEl.value); if (isNaN(newAmt) || newAmt < 0) { toast('Enter a valid amount', 'err'); amtEl.focus(); return; } }
+  var btn = $('rq-qa-btn-' + qid); if (btn) btn.disabled = true;
+  try {
+    var fresh = await rqRefreshOne(r.id);
+    if (!fresh || fresh.status !== 'pending' || fresh.mgmt_status) return rqStaleMsg(r.id);
+    r = fresh;
+    var changes = [], reset = [];
+    var old = r.est_cost == null ? null : Number(r.est_cost);
+    if (newAmt != null && !rqCostFromItems(r) && newAmt !== old) {
+      var upd = { est_cost: newAmt, updated_at: new Date().toISOString(), updated_by: S.user.name };
+      if (old != null && newAmt > old) reset = rqResetChecks(upd, r);
+      var ur = await db.from('rq_requisitions').update(upd).eq('id', r.id).eq('status', 'pending').is('mgmt_status', null).select();
+      if (ur.error) { showSaveError('Could not save the new amount', ur.error); return; }
+      if (!ur.data || !ur.data.length) return rqStaleMsg(r.id);
+      r = rqPut(ur.data[0]);
+      await rqEvent(r.id, 'edited', { amount: newAmt, note: 'Amount changed while answering a question' + (reset.length ? ' · ' + reset.join(', ') + ' to check again' : '') });
+    }
+    // what changed since the question was asked
+    var a0 = q.est_at_ask == null ? null : Number(q.est_at_ask), a1 = r.est_cost == null ? null : Number(r.est_cost);
+    if (a0 !== a1) changes.push('Amount ' + (a0 == null ? '—' : Number(a0).toLocaleString('en-IN')) + ' → ' + (a1 == null ? '—' : Number(a1).toLocaleString('en-IN')) + ' Tk');
+    if (rqqOn() && q.nq_at_ask != null) { var dn = rqqList(r.id).length - Number(q.nq_at_ask); if (dn > 0) changes.push(dn + ' quotation' + (dn === 1 ? '' : 's') + ' added'); else if (dn < 0) changes.push((-dn) + ' quotation' + (dn === -1 ? '' : 's') + ' removed'); }
+    var ev = RQ.events[r.id] || [];
+    var later = ev.filter(function(e){ return e.kind === 'edited' && String(e.at) > String(q.asked_at); });
+    if (later.some(function(e){ return /^Items changed/.test(e.note || ''); })) changes.push('Items changed');
+    else if (later.some(function(e){ return /^Details changed/.test(e.note || ''); })) changes.push('Details changed');
+    if (reset.length) changes.push(reset.join(', ') + ' to check again');
+    var now = new Date().toISOString();
+    var qr = await db.from('rq_queries').update({ status: 'answered', answer: txt, answered_by: S.user.id, answered_by_name: S.user.name, answered_at: now, changes: changes.join(' · ') || null }).eq('id', qid).eq('status', 'open').select();
+    if (qr.error) { showSaveError('The answer was NOT sent.\n\nDatabase said:\n' + (qr.error.message || qr.error)); return; }
+    if (!qr.data || !qr.data.length) { await rqQRefresh(r.id); toast('This question was already answered — showing the latest', 'err'); rqRenderDetail(r.id, true); return; }
+    RQ.qs = (RQ.qs || []).filter(function(x){ return x.id !== qid; }).concat(qr.data);
+    await rqEvent(r.id, 'answered', { note: txt + (changes.length ? ' · ' + changes.join(' · ') : ''), amount: a0 !== a1 ? a1 : null });
+    toast(r.job_no + ' — answer sent', 'ok-t');
+    renderRail(); rqRender(S.view); await rqLoadEvents(r.id); rqRenderDetail(r.id, true);
+  } finally { if (btn && document.body.contains(btn)) btn.disabled = false; }
+}
+// questions are closed when the requisition is returned, rejected or sent again
+async function rqQCloseAll(reqId) {
+  if (!rqQOn()) return;
+  var open = (RQ.qs || []).filter(function(q){ return q.req_id === reqId && q.status === 'open'; });
+  if (!open.length) return;
+  var r = await db.from('rq_queries').update({ status: 'closed' }).eq('req_id', reqId).eq('status', 'open');
+  if (r.error) { console.error('rqQCloseAll:', r.error); return; }
+  open.forEach(function(q){ q.status = 'closed'; });
+}
+function rqRenderQuestions(d) {
+  var list = rqSortForTab(rqFiltered(RQ.rows.filter(function(r){ return r.dept === d.k && rqQOpen(r).length; })), 'pending');
+  rqSetHead('Requisitions › ' + d.n, d.n + ' — Questions to answer', 'An approver asked something or wants a change. Open it, answer, and change what is needed.', '');
+  $('content').innerHTML = '<div class="card"><div class="card-h"><h3>Questions to answer <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>'
+    + (list.length ? rqTable(list, 'pending', false) : '<div class="empty"><h4>Nothing to answer</h4>No open questions from the approvers.</div>') + '</div>';
+}
+function rqQRealtime(p) {
+  var row = p.new && p.new.id ? p.new : p.old; if (!row || !row.req_id) return;
+  if (rqIsDeptUser() && row.dept && row.dept !== S.user.division) return;
+  var before = (RQ.qs || []).find(function(q){ return q.id === row.id; });
+  rqQRefresh(row.req_id).then(function(){
+    var q = (RQ.qs || []).find(function(x){ return x.id === row.id; });
+    var r = RQ.rows.find(function(x){ return x.id === row.req_id; });
+    if (q && r && q.asked_by !== S.user.id && q.answered_by !== S.user.id) {
+      if (q.status === 'open' && !before && rqCanWork(r.dept)) toast('Question on ' + r.job_no + ' from ' + ((rqStage(q.step) || {}).n || '') + ': ' + q.question, 'ok-t');
+      if (q.status === 'answered' && before && before.status === 'open') { var mine = rqStageOfRole(S.user.role); if (mine && mine.k === q.step) toast('Answer received on ' + r.job_no, 'ok-t'); }
+    }
+    renderRail();
+    if (typeof S.view === 'string' && S.view.indexOf('rq:') === 0 && !RQ.editId && !rqFormDirty()) rqRender(S.view);
+    if (RQ.openId === row.req_id && $('ov-rq') && $('ov-rq').classList.contains('open')) {
+      var typing = Array.prototype.some.call(document.querySelectorAll('#rq-actions textarea, #rq-body textarea'), function(e){ return e.value && e.value !== e.defaultValue; });
+      if (!typing) rqLoadEvents(row.req_id).then(function(){ if (RQ.openId === row.req_id) rqRenderDetail(row.req_id, true); });
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ACCOUNTS: the IOU part is dormant for now. Its data, pages and code stay;
+// it is only hidden. Set to true to bring it back.
+// ═══════════════════════════════════════════════════════════════════════
+var ACC_IOU_ON = false;
+function accMethodsShown() { return ACC_METHODS.filter(function(m){ return ACC_IOU_ON || m[0] !== 'iou'; }); }
+
 function rqStaleMsg(id) {
   return rqRefreshOne(id).then(function(){ toast('Someone else has already acted on this — showing the latest', 'err'); renderRail(); rqRender(S.view); rqOpen(id); });
 }
@@ -21132,6 +21539,11 @@ async function rqDecide(id, who, decision) {
     if (amt == null || isNaN(amt) || amt < 0) { toast('Enter the approved amount', 'err'); return; }
   }
   var label = { approved: 'Approve', returned: 'Return', rejected: 'Reject' }[decision];
+  var _fresh = r;
+  try { _fresh = (await Promise.all([rqRefreshOne(id), rqQRefresh(id).catch(function(){})]))[0]; } catch (e) { console.error('refresh before decision:', e); _fresh = r; }
+  if (!_fresh || _fresh.status !== r.status || (_fresh.status === 'pending' && _fresh[step.k + '_status']) || (_fresh.status === 'rejected' && who === 'mgmt' && _fresh.mgmt_status === 'rejected')) return rqStaleMsg(id);
+  r = _fresh;
+  if (who === 'mgmt' && decision === 'approved' && r.status === 'pending' && rqQOpen(r).length) { toast('Waiting for the department to answer the open question \u2014 approve after they answer', 'err'); rqRenderDetail(id, true); return; }
   if (decision === 'approved' && r.status === 'pending') {
     var notYet = rqNotCheckedBefore(r, step);
     if (notYet.length && !(await appConfirm('Not yet checked by: ' + notYet.join(', ') + '.\n\nApprove ' + r.job_no + ' anyway?', { title: 'Approve before the others?', okText: 'Approve anyway' }))) return;
@@ -21159,6 +21571,7 @@ async function rqDecide(id, who, decision) {
   }
   var kind = decision === 'approved' ? step.k + '_approved' : decision;
   await rqEvent(id, kind, { note: step.n + (noteTxt ? ': ' + noteTxt : ''), amount: amt });
+  if (decision !== 'approved') { try { await rqQCloseAll(id); } catch (e) { console.error(e); } }
   r = rqPut(res.data[0]);
   toast(r.job_no + ' — ' + (decision === 'approved' ? (who === 'mgmt' ? 'approved, work can start' : step.n + ' approval recorded') : decision), 'ok-t');
   renderRail(); rqRender(S.view);
@@ -21254,6 +21667,8 @@ async function rqPrint(id, mode) {
   var st = {};
   try { st = await rqLoadSettings(true); } catch (e) {}
   var ev = RQ.events[id] || await rqLoadEvents(id);
+  var _hu = sigUserByName(st['dept_head_' + r.dept]);
+  await sigNeed([r.created_by, r.agm_by, r.cao_by, r.audit_by, r.mgmt_by, _hu && _hu.id, S.user.id]);
   openReportPreview((mode === 'form' ? 'Requisition form ' : 'Requisition ') + r.job_no, rqPrintHtml(r, st, ev, mode === 'form'));
 }
 // "Cards" layout (option A): figure cards on top, then details, remarks,
@@ -21397,21 +21812,22 @@ function rqPrintHtml(r, st, ev, formOnly) {
     }
   }
   function sig(title, name, img, cls) {
-    return '<div class="sg ' + (cls || '') + '"><div class="ar">' + (img ? '<img src="' + img + '" alt="">' : '') + '</div><div class="ln"><b>' + title + '</b><div class="nm">' + (name || '&nbsp;') + '</div></div></div>';
+    var imgs = [].concat(img || []).filter(Boolean);
+    return '<div class="sg ' + (cls || '') + '"><div class="ar">' + imgs.map(function(x, i){ return '<img src="' + x + '" alt=""' + (imgs.length > 1 ? ' style="max-width:' + (i ? '52%' : '44%') + (i ? ';transform:none' : '') + '"' : '') + '>'; }).join('') + '</div><div class="ln"><b>' + title + '</b><div class="nm">' + (name || '&nbsp;') + '</div></div></div>';
   }
   var sigs = '<div class="sigs">'
-    + sig('Prepared by', E(r.created_by_name || ''))
-    + sig('Department head', head ? E(head) : E(d.n))
-    + sig('AGM', agmOk ? E(r.agm_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.agm_at))) : E(newton), agmOk ? st.agm_sign : '', 'sign')
-    + sig('CAO', caoOk ? E(r.cao_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.cao_at))) : (st.cao_line ? E(st.cao_line) : 'Date:'), caoOk ? st.cao_sign : '', 'sign')
-    + sig('Audit', auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : 'Date:', auditOk ? st.audit_seal : '', 'seal')
-    + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : 'Date:', mgmtOk ? st.mgmt_sign : '', 'sign')
+    + sig('Prepared by', E(r.created_by_name || ''), sigImg(r.created_by), 'sign')
+    + sig('Department head', head ? E(head) : E(d.n), !formOnly && head && sigUserByName(head) ? sigImg(sigUserByName(head).id) : '', 'sign')
+    + sig('AGM', agmOk ? E(r.agm_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.agm_at))) : E(newton), agmOk ? (sigImg(r.agm_by) || st.agm_sign) : '', 'sign')
+    + sig('CAO', caoOk ? E(r.cao_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.cao_at))) : (st.cao_line ? E(st.cao_line) : 'Date:'), caoOk ? (sigImg(r.cao_by) || st.cao_sign) : '', 'sign')
+    + sig('Audit', auditOk ? E(r.audit_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.audit_at))) : 'Date:', auditOk ? [st.audit_seal, sigImg(r.audit_by)] : '', 'seal')
+    + sig('Management', mgmtOk ? E(r.mgmt_by_name || '') + ' &middot; ' + E(rqDateTxt(rqLocalDate(r.mgmt_at))) : 'Date:', mgmtOk ? (sigImg(r.mgmt_by) || st.mgmt_sign) : '', 'sign')
     + '</div>';
   var body = '<div class="pg"><div class="lh">' + '<img src="' + (st.group_logo || SG_MARK_IMG) + '" alt="">' + '<div class="g">SHAHANA GROUP</div><div class="c">' + E(co.n) + '</div><div class="a">' + E(rqCoAddr(st, r.company)) + ' &middot; info@shahanagroup.com</div></div>'
     + '<div class="tt"><div><h1>Requisition &mdash; ' + E(d.n) + '</h1><div class="sub">' + (purchase ? 'Items to buy' : 'Work / service') + ' &middot; raised ' + E(rqDateTime(r.created_at)) + '</div></div>'
     + '<div class="job"><div class="k">Job no.</div><b>' + E(r.job_no) + '</b><div><span class="st">' + (formOnly ? 'For approval' : E(status)) + '</span></div></div></div>'
     + strip + table + extra + sigs
-    + '<div class="ft"><span>Shahana Group &middot; Requisition ' + E(r.job_no) + (formOnly ? ' &middot; form for signing' : ' &middot; full record') + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + E(co.n) + '</span></div></div>';
+    + '<div class="ft"><span>Shahana Group &middot; Requisition ' + E(r.job_no) + (formOnly ? ' &middot; form for signing' : ' &middot; full record') + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + sigInline(S.user.id, S.user.name, 18) + '</span><span>' + E(co.n) + '</span></div></div>';
   return '<!doctype html><html><head><meta charset="utf-8"><title>Requisition ' + E(r.job_no.replace(/\//g, '-')) + '</title><style>' + rqFormCss() + '</style></head><body>' + body + '</body></html>';
 }
 
@@ -21475,6 +21891,7 @@ function rqRenderReport() {
     + '<div class="card"><div class="card-h"><h3>Completed jobs <span class="rq-count">' + doneList.length + '</span></h3>' + (D.over.length ? '<span class="note rq-late">' + D.over.length + ' over the approved amount by more than 10%</span>' : '') + '</div>' + jobs + '</div>';
 }
 async function rqPrintReport() {
+  await sigNeed([S.user.id]);
   var st = {}; try { st = await rqLoadSettings(true); } catch (e) {}
   var D = rqReportData(RQ.reportMonth || todayStr().slice(0, 7), RQ.filter.co);
   var E = rqEsc, T = D.tot, m = function(n){ return E(rqMoneyTxt(n) || 'Tk 0'); };
@@ -21501,7 +21918,7 @@ async function rqPrintReport() {
       return '<tr><td>' + E(r.job_no) + '</td><td>' + E(r.company) + '</td><td>' + E(r.location || '') + '</td><td>' + E(r.work_type || '') + '</td><td>' + E(rqDateTxt(rqLocalDate(r.completed_at))) + '</td><td class="num">' + m(r.approved_cost) + '</td><td class="num"' + (rqOverBudget(r) ? ' style="color:#c0392b;font-weight:700"' : '') + '>' + m(r.final_cost) + '</td></tr>'; }).join('') + '</table>' : '<div class="mut">None.</div>') + '</div>'
     + (D.open.length ? '<div class="card mt"><div class="h">Still open at the end of the month <span class="mut" style="font-weight:500">' + D.open.length + '</span></div><table><tr><th>Job no.</th><th>Location</th><th>Type of work</th><th>Progress</th><th>Target</th><th class="num">Approved</th><th class="num">Spent</th></tr>'
       + D.open.map(function(r){ return '<tr><td>' + E(r.job_no) + '</td><td>' + E(r.location || '') + '</td><td>' + E(r.work_type || '') + '</td><td>' + (Number(r.progress) || 0) + '%</td><td>' + E(rqDateTxt(r.target_date)) + '</td><td class="num">' + m(r.approved_cost) + '</td><td class="num">' + m(r.spent) + '</td></tr>'; }).join('') + '</table></div>' : '')
-    + '<div class="ft"><span>Shahana Group &middot; Requisitions monthly spend &middot; ' + E(rqMonthName(D.month)) + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + E(S.user.name) + '</span><span>' + (D.co ? E(rqCompany(D.co).n) : 'All companies') + '</span></div></div>';
+    + '<div class="ft"><span>Shahana Group &middot; Requisitions monthly spend &middot; ' + E(rqMonthName(D.month)) + ' &middot; printed ' + E(rqDateTime(new Date().toISOString())) + ' by ' + sigInline(S.user.id, S.user.name, 18) + '</span><span>' + (D.co ? E(rqCompany(D.co).n) : 'All companies') + '</span></div></div>';
   openReportPreview('Monthly spend ' + rqMonthName(D.month), '<!doctype html><html><head><meta charset="utf-8"><title>Requisitions spend ' + E(D.month) + '</title><style>' + rqDocCss() + '</style></head><body>' + body + '</body></html>');
 }
 
@@ -23827,7 +24244,7 @@ function accRailHtml() {
     + item('rq:acc:pays', '&#x2713;', 'Payments by month')
     + item('rq:acc:cq', '&#x1F3E6;', 'Cheque statement', cqHot, cqHot > 0)
     + item('rq:acc:cqh', '&#x2630;', 'Cheque history')
-    + item('rq:acc:iou', '&#x1F4B5;', 'IOU / advances', iouN, false)
+    + (ACC_IOU_ON ? item('rq:acc:iou', '&#x1F4B5;', 'IOU / advances', iouN, false) : '')
     + item('rq:acc:banks', '&#x2699;', accCanBanks() ? 'Banks &amp; seals' : 'Bank accounts');
 }
 
@@ -23843,6 +24260,7 @@ function accRender(p) {
   accLoadSealsOnce(function(){ if (String(S.view).indexOf('rq:acc:') === 0 && !accIouTyping()) rqRender(S.view); });
   var need = [];
   if (['cq', 'cqh', 'banks', 'wait'].indexOf(pg) !== -1 && !ACC.cheques) need.push(accLoadBooks());
+  if (pg === 'iou' && !ACC_IOU_ON) { setView('rq:acc:wait'); return; }
   if (pg === 'iou' && !ACC.people) need.push(accLoadIou());
   if (need.length) {
     $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading&hellip;</div>';
@@ -23943,7 +24361,7 @@ async function accPayForm(reqId) {
       + '<div class="f"><label>Amount (Tk)</label><input id="ap-amt" inputmode="decimal" value="' + (s.bal > 0 ? accFmt(s.bal) : '') + '" oninput="accPayOverCheck()"></div>'
       + '<div class="f"><label>Date</label><input id="ap-date" type="date" value="' + t + '"></div>'
       + '<div class="f"><label>Paid to</label><input id="ap-to" list="ap-sup" maxlength="160" value="' + rqEsc(sup[0] || '') + '"><datalist id="ap-sup">' + sup.map(function(x){ return '<option value="' + rqEsc(x) + '">'; }).join('') + '</datalist></div>'
-      + '<div class="f"><label>Method</label><select id="ap-meth" onchange="accPayMeth()">' + ACC_METHODS.map(function(m){ return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') + '</select></div>'
+      + '<div class="f"><label>Method</label><select id="ap-meth" onchange="accPayMeth()">' + accMethodsShown().map(function(m){ return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') + '</select></div>'
       + '<div class="f ap-cq"><label>Bank account</label><select id="ap-bank">' + accBankOptions() + '</select></div>'
       + '<div class="f ap-cq"><label>Cheque no.</label><input id="ap-cqno" maxlength="40"></div>'
       + '<div class="f ap-cq"><label>Clearance date</label><input id="ap-clear" type="date" value="' + t + '"></div>'
@@ -24605,7 +25023,7 @@ function accRenderPays() {
     + '<button class="btn" onclick="accPaysXlsx()">Excel</button><button class="btn pri" onclick="accPrintPays()">&#x1F5A8; Print / PDF</button>';
   rqSetHead('Accounts', 'Payments by month', rqEsc(rqMonthName(f.month)) + ' &middot; ' + (f.co ? rqEsc(rqCompany(f.co).n) : 'All companies') + ' &middot; cheques count on the day they were given out; bounced, cancelled and reversed payments are left out of the totals', acts);
   var tiles = '<div class="stats"><div class="stat acc-main"><div class="k">Paid in ' + rqEsc(rqMonthName(f.month)) + '</div><div class="v acc-v">' + accTk(D.total) + '</div><div class="n">' + D.live.length + ' payments</div></div>'
-    + ACC_METHODS.map(function(m){ return '<div class="stat' + (f.meth === m[0] ? ' acc-on' : '') + '" style="cursor:pointer" onclick="ACC.rep.meth=ACC.rep.meth===\'' + m[0] + '\'?\'\':\'' + m[0] + '\';rqRender(S.view)" title="Show only this"><div class="k">' + m[1] + '</div><div class="v acc-v">' + accTk(D.meth[m[0]]) + '</div></div>'; }).join('') + '</div>';
+    + ACC_METHODS.filter(function(m){ return ACC_IOU_ON || m[0] !== 'iou' || D.meth.iou; }).map(function(m){ return '<div class="stat' + (f.meth === m[0] ? ' acc-on' : '') + '" style="cursor:pointer" onclick="ACC.rep.meth=ACC.rep.meth===\'' + m[0] + '\'?\'\':\'' + m[0] + '\';rqRender(S.view)" title="Show only this"><div class="k">' + m[1] + '</div><div class="v acc-v">' + accTk(D.meth[m[0]]) + '</div></div>'; }).join('') + '</div>';
   var cos = f.co ? [rqCompany(f.co)] : RQ_COMPANIES;
   var grid = '<table class="rq-t"><thead><tr><th>Company</th>' + RQ_DEPTS.map(function(d){ return '<th class="num">' + d.n + '</th>'; }).join('') + '<th class="num">Total</th></tr></thead><tbody>'
     + cos.map(function(c){ var g = D.grid[c.c] || {}, t = 0; return '<tr><td><b>' + rqEsc(c.n) + '</b></td>' + RQ_DEPTS.map(function(d){ t += g[d.k] || 0; return '<td class="num">' + (g[d.k] ? accTk(g[d.k]) : '&mdash;') + '</td>'; }).join('') + '<td class="num"><b>' + accTk(t) + '</b></td></tr>'; }).join('') + '</tbody></table>';
@@ -24641,7 +25059,7 @@ function accPrintPays() {
     + (D.list.map(function(p){ var r = D.byId[p.req_id] || {}, off = !accPayLive(p);
       return '<tr class="' + (off ? 'off' : '') + '"><td>' + E(rqDateTxt(p.pay_date)) + '</td><td><b>' + E(r.job_no || '') + '</b><small>' + E(((rqDept(p.dept) || {}).n || '') + ' \u00B7 ' + (p.company || '')) + '</small></td><td class="nm">' + E(p.paid_to || '') + (p.reference ? '<small>' + E(p.reference) + '</small>' : '') + '</td><td>' + E(accMethodTxt(p.method)) + (p.method === 'cheque' ? '<small>' + E((p.bank_label || '') + (p.cheque_no ? ' \u00B7 CQ ' + p.cheque_no : '')) + '</small>' : '') + '</td><td>' + E(p.created_by_name || '') + '</td><td class="num cl">' + accFmt(accP(p.amount), 2) + '</td></tr>'; }).join('') || '<tr><td colspan="6" class="z">No payments.</td></tr>')
     + '</tbody><tfoot><tr class="tot"><td colspan="5">Total counted</td><td class="num cl">' + accFmt(D.total, 2) + '</td></tr></tfoot></table>'
-    + '<div class="sig"><div>Prepared by</div><div>Checked by</div><div>Approved by</div></div>';
+    + '<div class="sig"><div>Prepared by<br>' + sigInline(S.user.id, S.user.name, 26) + '</div><div>Checked by</div><div>Approved by</div></div>';
   accDocOpen('Payments ' + rqMonthName(D.f.month), body);
 }
 
@@ -24663,7 +25081,7 @@ function accPrintCq() {
           }).join('') + '</tbody><tfoot><tr class="tot"><td></td><td colspan="4">Total &middot; ' + E(b ? b.bank + ' ' + b.acc_no : '') + '</td><td class="num amt">' + accFmt(sum(g.rows)) + '</td></tr></tfoot></table>'
           : '<div class="none">No cheques waiting.</div>');
     }).join('')
-    + '<div class="sig"><div>Prepared by</div><div>Checked by</div><div>Approved by</div></div>';
+    + '<div class="sig"><div>Prepared by<br>' + sigInline(S.user.id, S.user.name, 26) + '</div><div>Checked by</div><div>Approved by</div></div>';
   accDocOpen('Cheque statement ' + rqDateTxt(t), body);
 }
 
