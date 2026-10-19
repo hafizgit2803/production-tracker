@@ -2045,6 +2045,11 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
   /* TNA sheets print portrait, one order per page */
   @page tnasheet{size:A4 portrait;margin:8mm}
   .ov.printing .tna-sheet{page:tnasheet;margin:0!important;box-shadow:none!important;border-radius:0!important;font-size:12px}
+  .ov.printing .inv-sheet{zoom:.78}
+  .ov.printing .inv-sheet tr{break-inside:avoid;page-break-inside:avoid}
+  .ov.printing .inv-sheet td{padding-top:4px!important;padding-bottom:4px!important}
+  .ov.printing .inv-sheet .inv-sec{padding-top:10px!important}
+  .ov.printing .inv-sheet .inv-sig{padding-top:26px!important}
   .ov.printing #tnapdf-body,.ov.printing #btnapdf-body{background:#fff!important}
 }
 
@@ -2424,7 +2429,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.18.5</p>
+    <p class="login-ver">V.2026.10.19.1</p>
   </div></div>
 </div>
 
@@ -2466,7 +2471,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.18.5</div>
+  <div id="ver-stamp">V.2026.10.19.1</div>
 </div>
 
 
@@ -2643,7 +2648,7 @@ td.col-cm{min-width:96px;font-size:11px}
 <div class="ov" id="ov-tna" onclick="if(event.target===this)closeModal('ov-tna')">
   <div class="modal wide">
     <div class="m-h"><div><h3 id="tna-title">TNA</h3><div class="msub" id="tna-sub"></div></div>
-      <div style="display:flex;gap:8px"><button class="btn" onclick="openTNAPrintOptions()">&#x1F5A8; Print</button><button class="btn" onclick="closeModal('ov-tna')">Close</button></div></div>
+      <div style="display:flex;gap:8px"><button class="btn" onclick="openInventoryOptions()" title="Yarn &amp; accessories in-house for this PO, with its TNA">&#x1F4E6; Inventory List</button><button class="btn" onclick="openTNAPrintOptions()">&#x1F5A8; Print</button><button class="btn" onclick="closeModal('ov-tna')">Close</button></div></div>
     <div class="m-b glass-backdrop" id="tna-body"></div>
     <div class="m-f"><button class="btn" onclick="closeModal('ov-tna')">Close</button></div>
   </div>
@@ -2679,7 +2684,7 @@ td.col-cm{min-width:96px;font-size:11px}
 <!-- === TNA PRINT OPTIONS MODAL === -->
 <div class="ov" id="ov-tna-print-opts" onclick="if(event.target===this)closeModal('ov-tna-print-opts')">
   <div class="modal slim">
-    <div class="m-h"><div><h3>Print TNA</h3><div class="msub">For Planning Team?</div></div>
+    <div class="m-h"><div><h3 id="tna-opts-title">Print TNA</h3><div class="msub">For Planning Team?</div></div>
       <button class="btn" onclick="closeModal('ov-tna-print-opts')">Cancel</button></div>
     <div class="m-b">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
@@ -2692,15 +2697,15 @@ td.col-cm{min-width:96px;font-size:11px}
       </div>
       <div id="tna-buffer-row" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
         <label style="font-size:12.5px;font-weight:600;color:var(--muted)">Show Final Inspection &amp; Ship Date this many days earlier</label>
-        <input type="number" id="tna-buffer-days" min="0" max="60" value="3" style="width:100%;margin-top:6px;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:15px;font-family:var(--mono);color:var(--ink)">
+        <input type="number" id="tna-buffer-days" min="0" max="60" value="3" onkeydown="if(event.key==='Enter'){event.preventDefault();tnaOptsGenerate();}" style="width:100%;margin-top:6px;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:15px;font-family:var(--mono);color:var(--ink)">
         <div class="hint" style="margin-top:6px">Only affects this printout — the real dates in the system never change.</div>
       </div>
-      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:9px;font-size:13.5px">
+      <div id="tna-opts-extra" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:9px;font-size:13.5px">
         <label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="tna-print-progress" checked style="margin-top:2px;width:16px;height:16px"><span><b>Include progress</b><br><span style="color:var(--muted);font-size:12px">Actual dates, status of each step, done / late summary</span></span></label>
         <label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="tna-print-prod" checked style="margin-top:2px;width:16px;height:16px"><span><b>Include production quantities</b><br><span style="color:var(--muted);font-size:12px">Knitting, linking and packing pieces done so far</span></span></label>
       </div>
     </div>
-    <div class="m-f"><button class="btn pri" id="tna-print-generate-btn" style="width:100%" disabled onclick="generateTNAPrint()">Generate</button></div>
+    <div class="m-f"><button class="btn pri" id="tna-print-generate-btn" style="width:100%" disabled onclick="tnaOptsGenerate()">Generate</button></div>
   </div>
 </div>
 
@@ -2708,7 +2713,7 @@ td.col-cm{min-width:96px;font-size:11px}
 <div class="ov" id="ov-tna-print" onclick="if(event.target===this)closeTNAPrint()" style="padding:16px">
   <div class="modal" style="max-width:900px;width:98vw;max-height:92vh;display:flex;flex-direction:column">
     <div class="m-h no-print" style="flex-shrink:0">
-      <div><h3>TNA Print Preview</h3><div class="msub" id="tnapdf-sub">Review before printing</div></div>
+      <div><h3 id="tnapdf-title">TNA Print Preview</h3><div class="msub" id="tnapdf-sub">Review before printing</div></div>
       <div style="display:flex;gap:8px">
         <button class="btn" onclick="closeTNAPrint()">Cancel</button>
         <button class="btn pri" onclick="printTNADoc()" style="display:flex;align-items:center;gap:6px"><span>&#x1F5A8;</span> Print / Save as PDF</button>
@@ -2813,7 +2818,7 @@ td.col-cm{min-width:96px;font-size:11px}
 <!-- === BULK TNA SELECT MODAL === -->
 <div class="ov" id="ov-bulk-tna" onclick="if(event.target===this)closeModal('ov-bulk-tna')">
   <div class="modal" style="max-width:720px;width:96vw;max-height:88vh;display:flex;flex-direction:column">
-    <div class="m-h" style="flex-shrink:0"><div><h3>Send TNA to Planning</h3><div class="msub" id="btna-sub"></div></div>
+    <div class="m-h" style="flex-shrink:0"><div><h3 id="btna-title">Send TNA to Planning</h3><div class="msub" id="btna-sub"></div></div>
       <button class="btn" onclick="closeModal('ov-bulk-tna')">Close</button></div>
     <div class="m-b" style="flex:1;overflow-y:auto;min-height:0">
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
@@ -2834,13 +2839,13 @@ td.col-cm{min-width:96px;font-size:11px}
       </div>
       <div id="btna-buffer-row" style="display:none">
         <label style="font-size:12.5px;font-weight:600;color:var(--muted)">Show Final Inspection &amp; Ship Date this many days earlier</label>
-        <input type="number" id="btna-buffer-days" min="0" max="60" value="3" style="width:100%;margin-top:6px;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:15px;font-family:var(--mono);color:var(--ink)">
+        <input type="number" id="btna-buffer-days" min="0" max="60" value="3" onkeydown="if(event.key==='Enter'){event.preventDefault();btnaGenerate();}" style="width:100%;margin-top:6px;padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;background:#FCFBF7;font-size:15px;font-family:var(--mono);color:var(--ink)">
       </div>
-      <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px">
+      <div id="btna-extra" style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px">
         <label style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" id="btna-progress" checked style="width:16px;height:16px"><span><b>Include progress</b> <span style="color:var(--muted)">(one full TNA page per order)</span></span></label>
         <label style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" id="btna-prod" checked style="width:16px;height:16px"><b>Include production quantities</b></label>
       </div>
-      <button class="btn pri" id="btna-generate-btn" style="width:100%" disabled onclick="generateBulkTNAPrint()">Generate</button>
+      <button class="btn pri" id="btna-generate-btn" style="width:100%" disabled onclick="btnaGenerate()">Generate</button>
     </div>
   </div>
 </div>
@@ -2849,7 +2854,7 @@ td.col-cm{min-width:96px;font-size:11px}
 <div class="ov" id="ov-bulk-tna-print" onclick="if(event.target===this)closeBulkTNAPrint()" style="padding:16px">
   <div class="modal" style="max-width:1100px;width:98vw;max-height:92vh;display:flex;flex-direction:column">
     <div class="m-h no-print" style="flex-shrink:0">
-      <div><h3>Bulk TNA Print Preview</h3><div class="msub" id="btnapdf-sub">Review before printing</div></div>
+      <div><h3 id="btnapdf-title">Bulk TNA Print Preview</h3><div class="msub" id="btnapdf-sub">Review before printing</div></div>
       <div style="display:flex;gap:8px">
         <button class="btn" onclick="closeBulkTNAPrint()">Cancel</button>
         <button class="btn pri" onclick="printBulkTNADoc()" style="display:flex;align-items:center;gap:6px"><span>&#x1F5A8;</span> Print / Save as PDF</button>
@@ -4030,7 +4035,11 @@ function buildMaterialReportRows(input) {
     // (no-PO) booking that appears on every PO row of a PO-wise merchant.
     // sharedOnly: this PO row's yarn is entirely a style-level booking.
     var ychk = input.yarnChecks ? yarnChecksForOrder(Object.assign({}, u.orders[0], { po_number: (u.yarnPo && u.po) ? u.po : null }), input.yarnChecks) : null;
-    u.yarn = { checks: ychk, parts: ybs.map(function(b){ return { id: b.id, qty: Number(b.qty)||0, recd: yrQty[b.id]||0 }; }),
+    // lines: one per booking, for the Inventory List (in-house quantity per supplier / composition)
+    var yLines = ybs.map(function(b){ var bq = Number(b.qty)||0, rq = yrQty[b.id]||0;
+      return { id: b.id, supplier: b.supplier || '', composition: b.composition || '', recd: rq, last: yrLast[b.id] || null,
+        eta: b.expected_on || null, done: bq > 0 && rq >= bq, shared: !b.po_number }; });
+    u.yarn = { lines: yLines, checks: ychk, parts: ybs.map(function(b){ return { id: b.id, qty: Number(b.qty)||0, recd: yrQty[b.id]||0 }; }),
       sharedOnly: u.yarnPo && !!u.po && ybs.length > 0 && ybs.every(function(b){ return !b.po_number; }),
       booked: booked, received: recd, balance: Math.max(0, booked - recd),
       pct: booked > 0 ? Math.min(100, Math.round(recd / booked * 100)) : 0, suppliers: suppliers, lastReceipt: last,
@@ -4043,10 +4052,10 @@ function buildMaterialReportRows(input) {
       var bks = ab.filter(function(b){ return b.category === cat && inScope(b, u.style, u.po, u.accPo && !!u.po, u.pos); });
       var need = cl.filter(function(c){ return c.category === cat && up(c.style) === u.style; }).map(function(c){ return c.item; });
       var items = need.length ? need : Array.from(new Set(bks.map(function(b){ return b.item; })));
-      var done = 0, pending = [], outBks = [];
+      var done = 0, pending = [], outBks = [], detail = [];
       items.forEach(function(item){
         var ib = bks.filter(function(b){ return b.item === item; });
-        if (!ib.length) { pending.push({ item: item, why: 'not booked' }); return; }
+        if (!ib.length) { pending.push({ item: item, why: 'not booked' }); detail.push({ item: item, booked: false, hasQty: false, recd: 0, done: false, eta: null }); return; }
         var hasQty = ib.some(function(b){ return b.qty != null; });
         var ok, why;
         if (hasQty) {
@@ -4056,12 +4065,15 @@ function buildMaterialReportRows(input) {
         } else {
           ok = ib.some(function(b){ return (arCount[b.id]||0) > 0; }); why = 'awaiting inhouse';
         }
-        if (ok) done++; else { pending.push({ item: item, why: why }); ib.forEach(function(b){ if (b.qty == null ? !(arCount[b.id]||0) : (arQty[b.id]||0) < (Number(b.qty)||0)) outBks.push(b); }); }
+        var itemOut = ib.filter(function(b){ return b.qty == null ? !(arCount[b.id]||0) : (arQty[b.id]||0) < (Number(b.qty)||0); });
+        var itemEta = ok ? null : etaOf(itemOut);
+        detail.push({ item: item, booked: true, hasQty: hasQty, recd: ib.reduce(function(s,b){ return s + (arQty[b.id]||0); }, 0), done: ok, eta: itemEta ? itemEta.date : null });
+        if (ok) done++; else { pending.push({ item: item, why: why }); itemOut.forEach(function(b){ outBks.push(b); }); }
       });
       var plan = earliest(cat === 'sewing' ? 'plan_sew' : 'plan_pack');
       var act = anyVal(cat === 'sewing' ? 'act_sew' : 'act_pack');
       var complete = items.length > 0 && done === items.length;
-      u.acc[cat] = { total: items.length, done: done, pending: pending, plan: plan, actual: act, complete: complete, eta: complete ? null : etaOf(outBks),
+      u.acc[cat] = { items: detail, total: items.length, done: done, pending: pending, plan: plan, actual: act, complete: complete, eta: complete ? null : etaOf(outBks),
         booked: bks.length > 0, late: !complete && plan != null && dayDiff(plan) < 0 };
     });
     var accTotal = u.acc.sewing.total + u.acc.packing.total, accDone = u.acc.sewing.done + u.acc.packing.done;
@@ -4250,26 +4262,8 @@ async function openMaterialStatusReport(uid) {
   try {
     var orders = (S.boardCache[uid] || await loadBoardOrders(uid) || []).filter(function(o){ return o.stage === 'live' || !o.stage; });
     var styles = Array.from(new Set(orders.map(function(o){ return String(o.style||'').toUpperCase(); }).filter(Boolean)));
-    var yb = [], yr = [], ab = [], ar = [], cl = [], yc = [];
-    if (styles.length) {
-      var first = await Promise.all([
-        db.from('yarn_bookings').select('*').eq('merchant_id', uid).eq('material_type', 'yarn').in('style', styles),
-        db.from('accessory_bookings').select('*').eq('merchant_id', uid).in('style', styles),
-        db.from('accessory_checklist_items').select('style,category,item').eq('merchant_id', uid).in('style', styles),
-        ensureStyleImagesFor(orders),
-        fetchYarnChecks(uid, styles)
-      ]);
-      yc = first[4] || [];
-      [first[0], first[1]].forEach(function(r){ if (r.error) throw r.error; });
-      yb = first[0].data || []; ab = first[1].data || [];
-      cl = first[2].error ? [] : (first[2].data || []); // checklist table may not exist yet on older databases — report still works
-      var second = await Promise.all([
-        yb.length ? db.from('yarn_receipts').select('booking_id,qty,received_on').in('booking_id', yb.map(function(b){ return b.id; })) : { data: [] },
-        ab.length ? db.from('accessory_receipts').select('booking_id,qty').in('booking_id', ab.map(function(b){ return b.id; })) : { data: [] }
-      ]);
-      second.forEach(function(r){ if (r.error) throw r.error; });
-      yr = second[0].data || []; ar = second[1].data || [];
-    }
+    var _md = await loadMaterialInputs(uid, orders);
+    var yb = _md.yb, yr = _md.yr, ab = _md.ab, ar = _md.ar, cl = _md.cl, yc = _md.yc;
     var isKnitDiv = (merch.division || 'sweater') === 'knit';
     var rows = buildMaterialReportRows({
       today: todayStr(), orders: orders,
@@ -6077,6 +6071,7 @@ async function renderBoard(uid, skipDataReload) {
   actBtns += `<button class="btn ghost" id="mat-report-btn" onclick="openMaterialStatusReport('${uid}')" title="Printable yarn &amp; accessories status for the weekly review">&#x1F4CA; Material Report</button>`;
   actBtns += `<button class="btn ghost" id="meet-report-btn" onclick="openMeetingReportOptions('${uid}')" title="Printable order status for the weekly meeting with management">&#x1F4DD; Meeting Report</button>`;
   if (canEdit) actBtns += `<button class="btn ghost" onclick="openBulkTNASelect('${uid}')">&#x1F4CB; TNA to Planning</button>`;
+  actBtns += `<button class="btn ghost" onclick="openBulkInventorySelect('${uid}')" title="Yarn &amp; accessories in-house per PO, with TNA, for the planning team">&#x1F4E6; Inventory List</button>`;
   $('act-row').innerHTML = actBtns;
 
   // ── Group by buyer (moved before no-orders check so buyer-status is checked first) ──
@@ -9877,7 +9872,16 @@ var _btnaUid = null;
 var _btnaSelected = {}; // orderId -> true
 var _btnaAudience = null;
 
-function openBulkTNASelect(uid) {
+var _btnaMode = 'tna';
+function btnaGenerate() {
+  var b = $('btna-generate-btn');
+  if (b && b.disabled) return;
+  if (_btnaMode === 'inv') generateBulkInventoryPrint(); else generateBulkTNAPrint();
+}
+function openBulkTNASelect(uid, mode) {
+  _btnaMode = mode === 'inv' ? 'inv' : 'tna';
+  $('btna-title').textContent = _btnaMode === 'inv' ? 'Inventory List to Planning' : 'Send TNA to Planning';
+  $('btna-extra').style.display = _btnaMode === 'inv' ? 'none' : '';
   _btnaUid = uid;
   _btnaSelected = {};
   _btnaAudience = null;
@@ -9952,6 +9956,7 @@ async function generateBulkTNAPrint() {
   var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
   var audienceLabel = _btnaAudience === 'planning' ? 'Planning Team' : 'Management';
   var bWithProg = !!($('btna-progress') && $('btna-progress').checked), bWithProd = !!($('btna-prod') && $('btna-prod').checked);
+  $('btnapdf-title').textContent = 'Bulk TNA Print Preview';
   if (bWithProg) {
     // same sheet as the single-order print, one page per order, grouped by buyer
     var sorted = orders.slice().sort(function(a, b){ return String(a.buyer || '').localeCompare(String(b.buyer || '')) || String(a.ship_date || '9999').localeCompare(String(b.ship_date || '9999')); });
@@ -10028,13 +10033,21 @@ function printBulkTNADoc() { printOnly('ov-bulk-tna-print'); }
 // exists inside this one generated HTML string.
 var _tnaPrintAudience = null;
 
-function openTNAPrintOptions() {
+function openTNAPrintOptions(inv) {
+  _invMode = !!inv;
+  $('tna-opts-title').textContent = _invMode ? 'Print Inventory List' : 'Print TNA';
+  $('tna-opts-extra').style.display = _invMode ? 'none' : '';
   _tnaPrintAudience = null;
   document.getElementById('tna-aud-planning').classList.remove('sel');
   document.getElementById('tna-aud-mgmt').classList.remove('sel');
   document.getElementById('tna-buffer-row').style.display = 'none';
   document.getElementById('tna-print-generate-btn').disabled = true;
   openModal('ov-tna-print-opts');
+}
+function tnaOptsGenerate() {
+  var b = $('tna-print-generate-btn');
+  if (!_tnaPrintAudience || (b && b.disabled)) return;
+  if (_invMode) generateInventoryPrint(); else generateTNAPrint();
 }
 function selectTNAAudience(aud) {
   _tnaPrintAudience = aud;
@@ -10061,6 +10074,7 @@ function generateTNAPrint() {
   if (!o) return;
   var buffer = _tnaPrintAudience === 'planning' ? Math.abs(parseInt(document.getElementById('tna-buffer-days').value) || 0) : 0;
   var html = tnaPrintSheet(o, _tnaPrintAudience, buffer, !!($('tna-print-progress') && $('tna-print-progress').checked), !!($('tna-print-prod') && $('tna-print-prod').checked));
+  $('tnapdf-title').textContent = 'TNA Print Preview';
   $('tnapdf-sub').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'}) + ' \u00b7 For: ' + (_tnaPrintAudience === 'planning' ? 'Planning Team' : 'Management');
   $('tnapdf-body').innerHTML = html;
   closeModal('ov-tna-print-opts');
@@ -10165,6 +10179,264 @@ function closeTNAPrint() {
   closeModal('ov-tna-print');
 }
 function printTNADoc() { printOnly('ov-tna-print'); }
+
+// ─── INVENTORY LIST (merchant -> planning team) ───
+// One A4 page per PO: the order's details, its TNA, and how much yarn/fabric
+// and every sewing & packing accessory is already in-house. Built from the
+// exact same rows as the Material Report (buildMaterialReportRows), so the two
+// can never disagree. Booked quantities are deliberately not shown — planning
+// only needs what is physically in the factory. Read-only: nothing is saved.
+// Planning copy: Final Inspection & Shipment shown earlier by the buffer (same
+// rule as the TNA print). Material dates are always the real supplier dates.
+var _invMode = false;          // single-order print options window is in Inventory List mode
+var _invBusy = false;
+
+// The data the Material Report reads, for one merchant and a set of orders.
+// Receipts are fetched in id batches and paged, so a big season never hits the
+// 1,000-row cap or an over-long request.
+async function loadMaterialInputs(uid, orders) {
+  var styles = Array.from(new Set(orders.map(function(o){ return String(o.style||'').toUpperCase(); }).filter(Boolean)));
+  var out = { yb: [], yr: [], ab: [], ar: [], cl: [], yc: [] };
+  if (!styles.length) return out;
+  var first = await Promise.all([
+    fetchAllRows(function(){ return db.from('yarn_bookings').select('*').eq('merchant_id', uid).eq('material_type', 'yarn').in('style', styles).order('id'); }),
+    fetchAllRows(function(){ return db.from('accessory_bookings').select('*').eq('merchant_id', uid).in('style', styles).order('id'); }),
+    db.from('accessory_checklist_items').select('style,category,item').eq('merchant_id', uid).in('style', styles),
+    ensureStyleImagesFor(orders),
+    fetchYarnChecks(uid, styles)
+  ]);
+  out.yb = first[0] || []; out.ab = first[1] || [];
+  out.cl = first[2].error ? [] : (first[2].data || []); // checklist table may not exist on older databases
+  out.yc = first[4] || [];
+  async function receipts(table, cols, ids) {
+    var all = [];
+    for (var i = 0; i < ids.length; i += 150) {
+      var chunk = ids.slice(i, i + 150);
+      var rows = await fetchAllRows(function(){ return db.from(table).select(cols).in('booking_id', chunk).order('id'); });
+      all = all.concat(rows);
+    }
+    return all;
+  }
+  var second = await Promise.all([
+    out.yb.length ? receipts('yarn_receipts', 'id,booking_id,qty,received_on', out.yb.map(function(b){ return b.id; })) : [],
+    out.ab.length ? receipts('accessory_receipts', 'id,booking_id,qty', out.ab.map(function(b){ return b.id; })) : []
+  ]);
+  out.yr = second[0]; out.ar = second[1];
+  return out;
+}
+
+function invRowsFor(uid, orders, D) {
+  var merch = userById(uid);
+  var isKnit = ((merch && merch.division) || 'sweater') === 'knit';
+  return buildMaterialReportRows({
+    today: todayStr(), orders: orders,
+    yarnBookings: D.yb, yarnReceipts: D.yr, accBookings: D.ab, accReceipts: D.ar, checklist: D.cl, yarnChecks: isKnit ? null : D.yc,
+    yarnPoWiseFor: function(o){ return isPoMode(o, 'yarn'); }, accPoWiseFor: function(o){ return isPoMode(o, 'accessory'); }
+  });
+}
+
+function invColours(o) {
+  var cs = [];
+  try { cs = o.colours_json ? JSON.parse(o.colours_json) : []; } catch (e) { cs = []; }
+  if (!Array.isArray(cs)) cs = [];
+  if (!cs.length && o.color) cs = String(o.color).split(',').map(function(x){ return x.trim(); }).filter(Boolean);
+  return cs;
+}
+
+// One PO's sheet. row = this order's Material Report row; allOrders = the
+// merchant's live orders (to name the POs a style-wise booking is shared by).
+function inventorySheet(o, row, audience, buffer, allOrders) {
+  var E = htmlEsc;
+  var merch = userById(o.merchant_id);
+  var division = (merch && merch.division) || 'sweater';
+  var isKnit = division === 'knit';
+  var unit = isKnit ? 'kgs' : 'lbs', matLabel = isKnit ? 'Fabric' : 'Yarn';
+  var VMILES = getMiles(division);
+  var photoUrl = getStyleImage(o.merchant_id, o.style);
+  var attachList = ((S.boardSummaries[o.merchant_id]||{})[o.id]||{}).attach || [];
+  var countryVal = getFieldValue(o.id, 'country') || '';
+  var now = new Date();
+  var genDate = now.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  var genTime = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  var audienceLabel = audience === 'planning' ? 'Planning Team' : 'Management';
+  function dd(x){ if (!x) return '&mdash;'; var p = String(x).split('-'); var M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return p.length === 3 ? p[2] + ' ' + M[(+p[1]) - 1] + ' ' + p[0].slice(2) : E(x); }
+  function n(x){ return Number(x||0).toLocaleString('en-US', { maximumFractionDigits: 2 }); }
+  var chip = function(t, bg, fg){ return '<span style="display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap;background:' + bg + ';color:' + fg + ';-webkit-print-color-adjust:exact;print-color-adjust:exact">' + t + '</span>'; };
+  var C = {
+    ok:   function(){ return chip('In-house', '#E3F2E8', '#1D7A46'); },
+    late: function(){ return chip('Overdue', '#FBE4E1', '#B42318'); },
+    soon: function(){ return chip('Due soon', '#FDF0D5', '#9A6700'); },
+    pend: function(){ return chip('Pending', '#ECE9E1', '#55524C'); },
+    nb:   function(){ return chip('Not booked', '#FBE4E1', '#B42318'); }
+  };
+  // status of something not fully in yet, from its expected in-house date
+  function etaState(eta){ if (!eta) return 'pend'; var d = daysTo(eta); return d < 0 ? 'late' : d <= 3 ? 'soon' : 'pend'; }
+  var td = 'padding:7px 12px;border-bottom:1px solid #E5E2D9;vertical-align:middle;font-size:12.5px';
+  var mono = ';font-family:ui-monospace,Menlo,Consolas,monospace';
+  var thS = 'text-align:left;padding:0 12px 6px;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;border-bottom:2px solid #191817;white-space:nowrap;background:transparent';
+  function th(cols){ return '<tr>' + cols.map(function(c){ return '<th style="' + thS + '">' + c + '</th>'; }).join('') + '</tr>'; }
+  function sec(title, sub){ return '<div class="inv-sec" style="padding:16px 28px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:12px"><div style="font-size:14px;font-weight:700">' + title + '</div><div style="font-size:11px;color:#73706A;text-align:right">' + (sub || '') + '</div></div>'; }
+  function info(l, v){ return '<div style="min-width:0"><div style="font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700">' + l + '</div><div style="font-size:13px;font-weight:600;margin-top:2px;overflow-wrap:anywhere">' + (v || '&mdash;') + '</div></div>'; }
+  function big(l, v){ return '<div style="min-width:0"><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#B25A2E;font-weight:700">' + l + '</div><div style="font-family:Georgia,serif;font-size:24px;font-weight:700;margin-top:2px;line-height:1.15;overflow-wrap:anywhere">' + (v || '&mdash;') + '</div></div>'; }
+  function tile(k, v){ return '<div style="flex:1;min-width:150px;padding:10px 14px;border:1px solid #E5E2D9;border-radius:12px;background:#fff"><div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#73706A;font-weight:700">' + k + '</div><div style="font-size:18px;font-weight:700;margin-top:3px">' + v + '</div></div>'; }
+  function box(on){ return '<span style="display:inline-block;width:11px;height:11px;border:1.5px solid #191817;border-radius:2px;margin-right:7px;vertical-align:-1px;text-align:center;line-height:10px;font-size:10px">' + (on ? '&#x2713;' : '') + '</span>'; }
+
+  // ── TNA milestones (same rules and words as the TNA print)
+  var tnaRows = VMILES.map(function(x){
+    var p = tnaPlanFor(o, x.k);
+    if (buffer && (x.k === 'insp' || x.k === 'ship')) p = shiftDate(p, buffer);
+    var a = o['act_' + x.k] || null, delay = '', st = chip('No plan', '#ECE9E1', '#55524C');
+    if (a && !p) st = chip('Done', '#E3F2E8', '#1D7A46');
+    if (p) {
+      if (a) { var dl = Math.round((toDate(a) - toDate(p)) / 86400000); if (dl > 0) { delay = '<span style="color:#B42318;font-weight:700">+' + dl + 'd</span>'; st = chip('Late', '#FBE4E1', '#B42318'); } else st = chip('On time', '#E3F2E8', '#1D7A46'); }
+      else { var d2 = daysTo(p); st = d2 < 0 ? chip('Overdue', '#FBE4E1', '#B42318') : d2 <= 3 ? chip('Due soon', '#FDF0D5', '#9A6700') : chip('Pending', '#ECE9E1', '#55524C'); }
+    }
+    return '<tr><td style="' + td + ';font-weight:600">' + E(x.n) + '</td><td style="' + td + mono + '">' + dd(p) + '</td><td style="' + td + mono + '">' + dd(a) + '</td><td style="' + td + mono + '">' + delay + '</td><td style="' + td + '">' + st + '</td></tr>';
+  }).join('');
+
+  // ── Yarn / fabric: one line per booking, in-house quantity only
+  var y = row ? row.yarn : null, yl = (y && y.lines) || [];
+  var yTotal = yl.reduce(function(s, l){ return s + l.recd; }, 0);
+  var yarnBody;
+  if (!yl.length) yarnBody = '<tr><td colspan="6" style="' + td + ';color:#73706A">No ' + matLabel.toLowerCase() + ' booked yet.</td></tr>';
+  else yarnBody = yl.map(function(l){
+      var s = l.done ? 'ok' : etaState(l.eta);
+      return '<tr><td style="' + td + ';font-weight:600">' + (E(l.supplier) || '&mdash;') + '</td><td style="' + td + '">' + (E(l.composition) || '&mdash;') + '</td>'
+        + '<td style="' + td + mono + ';font-weight:700">' + n(l.recd) + '</td><td style="' + td + mono + '">' + dd(l.last) + '</td>'
+        + '<td style="' + td + mono + (s === 'late' ? ';color:#B42318;font-weight:700' : '') + '">' + (l.done ? '&mdash;' : dd(l.eta)) + '</td><td style="' + td + '">' + C[s]() + '</td></tr>';
+    }).join('')
+    + '<tr><td colspan="2" style="' + td + ';font-weight:700">Total in-house</td><td style="' + td + mono + ';font-weight:700">' + n(yTotal) + ' ' + unit + '</td><td colspan="3" style="' + td + '"></td></tr>';
+  var yarnSub = '';
+  if (yl.some(function(l){ return l.shared; })) {
+    var stylePos = [];
+    (allOrders || [o]).forEach(function(x){ if (String(x.style||'').toUpperCase() === String(o.style||'').toUpperCase() && x.po_number && stylePos.indexOf(x.po_number) === -1) stylePos.push(x.po_number); });
+    yarnSub = 'Style-wise booking' + (stylePos.length > 1 ? ' &middot; shared across POs ' + stylePos.map(E).join(', ') : '');
+  }
+
+  // ── Accessories: every item, in-house quantity only
+  function accTable(cat, title){
+    var a = row ? row.acc[cat] : null, items = (a && a.items) || [];
+    var head = '<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:700;margin:0 0 6px"><span>' + title + '</span><span style="color:#73706A">' + (a ? a.done : 0) + '/' + items.length + ' ' + title + ' Acc. Inhoused</span></div>';
+    var body = items.length ? items.map(function(it){
+      var s = it.done ? 'ok' : !it.booked ? 'nb' : etaState(it.eta);
+      var q = !it.booked ? '&mdash;' : it.hasQty ? n(it.recd) : (it.done ? 'Received' : '0');
+      return '<tr><td style="' + td + ';font-weight:600">' + box(it.done) + E(it.item) + '</td><td style="' + td + mono + '">' + q + '</td>'
+        + '<td style="' + td + mono + (s === 'late' ? ';color:#B42318;font-weight:700' : '') + '">' + (it.done || !it.booked ? '&mdash;' : dd(it.eta)) + '</td><td style="' + td + '">' + C[s]() + '</td></tr>';
+    }).join('') : '<tr><td colspan="4" style="' + td + ';color:#73706A">No items listed.</td></tr>';
+    return '<div style="flex:1;min-width:300px">' + head + '<table style="width:100%;border-collapse:collapse">' + th(['Item', 'In-house qty', 'Expected', 'Status']) + body + '</table></div>';
+  }
+  var sew = row ? row.acc.sewing : { done: 0, total: 0 }, pack = row ? row.acc.packing : { done: 0, total: 0 };
+
+  var colours = invColours(o).map(E).join(' / ');
+  var gaugeVal = o.gauge ? (isKnit ? E(o.gauge) : E(typeof fmtGauge === 'function' ? fmtGauge(o.gauge) : o.gauge)) : '';
+  var G4 = 'display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 20px';
+  var sig = ['Concerned Merchant', 'Manager', 'HOD'].map(function(t){
+    return '<div style="flex:1;text-align:center"><div style="height:52px;border-bottom:1.5px solid #191817"></div><div style="font-size:11px;font-weight:700;margin-top:6px">' + t + '</div><div style="font-size:10px;color:#73706A">Signature &amp; date</div></div>';
+  }).join('');
+
+  return '<div class="tna-sheet inv-sheet" style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;color:#191817;background:#fff;margin:20px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08)">'
+    + '<div style="padding:24px 28px 18px;border-bottom:2px solid #191817;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">'
+    + '<div><div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#73706A;font-weight:700;margin-bottom:6px">Shahana Group</div>'
+    + '<div style="font-family:Georgia,serif;font-size:26px;font-weight:600;letter-spacing:-.4px">Inventory List — ' + E(o.style) + '</div></div>'
+    + '<div style="text-align:right;flex-shrink:0"><div style="font-size:12px;color:#73706A">' + genDate + '</div>'
+    + '<div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#A0A09A;margin-top:3px;font-weight:700">For: ' + audienceLabel + '</div></div></div>'
+    + '<div style="display:flex;gap:18px;align-items:stretch;padding:18px 28px;background:#F7F5EF;border-bottom:1px solid #E5E2D9;-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+    + (photoUrl ? '<img src="' + photoUrl + '" style="width:150px;height:150px;border-radius:12px;object-fit:contain;background:#fff;flex-shrink:0;border:1px solid #E5E2D9">'
+                : '<div style="width:150px;height:150px;border-radius:12px;background:#fff;border:1px solid #E5E2D9;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#A0A09A;font-size:11px">No photo</div>')
+    + '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between">'
+    + '<div style="' + G4 + '">' + big('PO Number', E(o.po_number)) + big('Buyer', E(o.buyer)) + big('Quantity', o.qty ? fmt(o.qty) + ' pcs' : '') + big('Ship Date', o.ship_date ? dd(o.ship_date) : '') + '</div>'
+    + '<div style="margin-top:10px">' + big('Colour', colours) + '</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 20px;margin-top:12px;padding-top:12px;border-top:1px solid #E5E2D9">'
+    + info('Style', E(o.style)) + info('Buying House', E(o.house)) + info('Country', E(countryVal)) + info('Gauge', gaugeVal) + info('Merchant', merch ? E(merch.name) : '') + info('Confirmed', o.confirm_date ? dd(o.confirm_date) : '')
+    + '</div></div></div>'
+    + '<div style="padding:10px 28px;background:#FBEFE8;border-bottom:2px solid #E8CFC2;font-size:14px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact"><span style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#B25A2E;margin-right:6px">Attachment:</span>' + (attachList.length ? attachList.map(E).join(', ') : 'No attachment') + '</div>'
+    + '<div style="padding:16px 28px 0"><div style="display:flex;gap:10px;flex-wrap:wrap">'
+    + tile(matLabel + ' Inhoused', n(yTotal) + ' ' + unit) + tile('Sewing Acc. Inhoused', sew.done + ' / ' + sew.total) + tile('Packing Acc. Inhoused', pack.done + ' / ' + pack.total)
+    + '</div><div style="margin-top:8px;font-size:11px;color:#73706A">'
+    + (buffer ? 'Final Inspection and Shipment are shown ' + buffer + ' day' + (buffer === 1 ? '' : 's') + ' earlier on this sheet. Material dates are real supplier dates.' : 'All dates are the real plan dates.')
+    + '</div></div>'
+    + sec('TNA milestones') + '<div style="padding:0 28px"><table style="width:100%;border-collapse:collapse">' + th(['Milestone', 'Plan', 'Actual', 'Delay', 'Status']) + tnaRows + '</table></div>'
+    + sec(matLabel + ' in-house', yarnSub) + '<div style="padding:0 28px"><table style="width:100%;border-collapse:collapse">' + th(['Supplier', 'Composition', 'In-house qty (' + unit + ')', 'Last recd', 'Expected', 'Status']) + yarnBody + '</table></div>'
+    + sec('Accessories in-house') + '<div style="padding:0 28px;display:flex;gap:22px;flex-wrap:wrap">' + accTable('sewing', 'Sewing') + accTable('packing', 'Packing') + '</div>'
+    + '<div class="inv-sig" style="padding:34px 28px 8px;display:flex;gap:40px;break-inside:avoid;page-break-inside:avoid">' + sig + '</div>'
+    + '<div style="padding:12px 28px;margin-top:8px;border-top:1px solid #E5E2D9;font-size:10.5px;color:#A0A09A;display:flex;justify-content:space-between;gap:12px"><span>Generated ' + genDate + ', ' + genTime + ' by ' + E(S.user.name) + '</span><span>Same figures as the Material Report</span></div>'
+    + '</div>';
+}
+
+// Builds the sheets for the chosen orders of one merchant (one data load).
+async function buildInventorySheets(uid, chosen, audience, buffer) {
+  var live = (S.boardCache[uid] || await loadBoardOrders(uid) || []).filter(function(o){ return o.stage !== 'shipped'; });
+  // the rows are worked out over the merchant's live orders, exactly like the Material Report
+  var base = live.filter(function(o){ return o.stage === 'live' || !o.stage; });
+  chosen.forEach(function(o){ if (!base.some(function(x){ return x.id === o.id; })) base.push(o); });
+  var D = await loadMaterialInputs(uid, base);
+  var rows = invRowsFor(uid, base, D);
+  var rowOf = {};
+  rows.forEach(function(r){ r.orders.forEach(function(o){ rowOf[o.id] = r; }); });
+  var sorted = chosen.slice().sort(function(a, b){ return String(a.buyer || '').localeCompare(String(b.buyer || '')) || String(a.ship_date || '9999').localeCompare(String(b.ship_date || '9999')); });
+  return sorted.map(function(o, i){
+    var full = base.find(function(x){ return x.id === o.id; }) || o;
+    return '<div class="tna-sheet-page" style="' + (i < sorted.length - 1 ? 'break-after:page;page-break-after:always;' : '') + '">' + inventorySheet(full, rowOf[o.id] || null, audience, buffer, base) + '</div>';
+  }).join('');
+}
+
+// Single order: from the TNA window. Reuses the TNA print options window.
+function openInventoryOptions() { openTNAPrintOptions(true); }
+async function generateInventoryPrint() {
+  if (_invBusy) return;
+  var ordId = S._tnaCurrentOrdId;
+  var o = findOrderAnywhere(ordId) || (S.orders || []).find(function(x){ return x.id === ordId; });
+  if (!o || !_tnaPrintAudience) return;
+  if (!can('view_board', o.merchant_id)) { toast('You don’t have access to this board', 'err'); return; }
+  var buffer = _tnaPrintAudience === 'planning' ? Math.abs(parseInt(document.getElementById('tna-buffer-days').value) || 0) : 0;
+  var btn = $('tna-print-generate-btn');
+  _invBusy = true; if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
+  try {
+    var html = await buildInventorySheets(o.merchant_id, [o], _tnaPrintAudience, buffer);
+    $('tnapdf-title').textContent = 'Inventory List Preview';
+    $('tnapdf-sub').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'}) + ' · For: ' + (_tnaPrintAudience === 'planning' ? 'Planning Team' : 'Management');
+    $('tnapdf-body').innerHTML = html;
+    closeModal('ov-tna-print-opts');
+    openModal('ov-tna-print');
+  } catch (e) {
+    console.error('inventory list failed:', e);
+    showSaveError('Could not build the Inventory List.\n\nDatabase said:\n' + (e && e.message ? e.message : String(e)));
+  } finally {
+    _invBusy = false;
+    if (btn) { btn.textContent = 'Generate'; btn.disabled = !_tnaPrintAudience; }
+  }
+}
+
+// Several orders: from the board, through the same picker as "TNA to Planning".
+function openBulkInventorySelect(uid) {
+  if (!can('view_board', uid)) { toast('You don’t have access to this board', 'err'); return; }
+  openBulkTNASelect(uid, 'inv');
+}
+async function generateBulkInventoryPrint() {
+  if (_invBusy) return;
+  var ids = Object.keys(_btnaSelected);
+  if (!ids.length || !_btnaAudience) return;
+  var orders = bulkTNAGetOrders().filter(function(o){ return _btnaSelected[o.id]; });
+  var buffer = _btnaAudience === 'planning' ? Math.abs(parseInt(document.getElementById('btna-buffer-days').value) || 0) : 0;
+  var btn = $('btna-generate-btn');
+  _invBusy = true; if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
+  try {
+    var html = await buildInventorySheets(_btnaUid, orders, _btnaAudience, buffer);
+    var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+    $('btnapdf-title').textContent = 'Inventory List Preview';
+    $('btnapdf-sub').textContent = genDate + ' · For: ' + (_btnaAudience === 'planning' ? 'Planning Team' : 'Management') + ' · ' + orders.length + ' order' + (orders.length === 1 ? '' : 's');
+    $('btnapdf-body').innerHTML = html;
+    closeModal('ov-bulk-tna');
+    openModal('ov-bulk-tna-print');
+  } catch (e) {
+    console.error('inventory list failed:', e);
+    showSaveError('Could not build the Inventory List.\n\nDatabase said:\n' + (e && e.message ? e.message : String(e)));
+  } finally {
+    _invBusy = false;
+    if (btn) { btn.textContent = 'Generate'; bulkTNAUpdateCount(); }
+  }
+}
+
 
 // ─── ORDER CHECKLIST ("what's left to do") ───
 // Every section below only appears if the buyer this order belongs to actually
