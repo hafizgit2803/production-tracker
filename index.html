@@ -262,12 +262,72 @@ table.rq-items input{width:100%;padding:5px 7px;border:1px solid var(--line);bor
 .rq-ev-returned .rq-ev-dot,.rq-ev-hold .rq-ev-dot{background:var(--orange)}
 .rq-ev-rejected .rq-ev-dot,.rq-ev-cancelled .rq-ev-dot{background:var(--red)}
 .rq-ev-progress .rq-ev-dot,.rq-ev-cost .rq-ev-dot{background:var(--accent)}
+.rq-ev-paid .rq-ev-dot,.rq-ev-cheque_cleared .rq-ev-dot{background:var(--green)}.rq-ev-pay_reversed .rq-ev-dot,.rq-ev-cheque_bounced .rq-ev-dot,.rq-ev-cheque_cancelled .rq-ev-dot{background:var(--red)}
 .rq-ev-note{white-space:pre-wrap;color:var(--ink)}
 #ov-rq .modal{max-width:920px}
 .rq-tallies{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .rq-tally{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:4px 12px;font-size:12.5px;color:var(--ink)}
 .rq-tally b{margin-left:4px}.rq-tally.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .rq-mine{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink);white-space:nowrap}
+/* ── ACCOUNTS ── */
+.acc-v{font-size:20px!important;white-space:nowrap}
+.acc-owe{color:var(--amber)}.acc-over{color:var(--red)}.acc-paid{color:var(--green)}.acc-deep{color:#9A3F20}
+[data-theme="dark"] .acc-deep{color:var(--accent)}
+.stat.acc-main{background:#C2552F;border-color:#C2552F;color:#fff}.stat.acc-main .k,.stat.acc-main .n{color:#fff;opacity:.9}
+.stat.acc-on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.acc-box{border:1px solid var(--line);border-radius:12px;padding:12px}
+.acc-pay3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.acc-pay3>div{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.acc-pay3 span{display:block;font-size:11px;color:var(--muted);font-weight:700}.acc-pay3 b{font-size:19px;font-variant-numeric:tabular-nums}
+.acc-pay3 small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+.acc-seal{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.acc-seal i{width:26px;height:26px;flex:0 0 26px;border-radius:50%;border:2px solid #3E5C76;color:#3E5C76;font-style:normal;font-size:8.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;transform:rotate(-12deg)}
+[data-theme="dark"] .acc-seal i{border-color:#8FB3D6;color:#8FB3D6}
+.acc-seal img{height:30px;max-width:60px;object-fit:contain;transform:rotate(-8deg)}
+.acc-seal small{display:block;font-size:10.5px;color:var(--muted)}
+.rq-t tr.acc-off td{color:var(--muted)}.rq-t tr.acc-off td.num{text-decoration:line-through}
+.rq-t tr.acc-bounced td{background:var(--red-soft)}
+.acc-rev{font-size:11.5px;color:var(--red);margin-top:2px;white-space:normal}
+.acc-big{font-size:15px!important;font-weight:700}
+.chip.acc-today{background:var(--accent-soft);color:var(--accent)}
+.acc-acts{white-space:nowrap;text-align:right}.acc-acts .btn{margin-left:4px}
+.rq-t tr.acc-tot td{font-weight:800;border-top:2px solid var(--ink);background:var(--bg)}
+.acc-balcell{background:var(--accent-soft);font-weight:800;font-size:14.5px;color:#9A3F20}
+[data-theme="dark"] .acc-balcell{color:var(--accent)}
+.acc-balh{color:#9A3F20!important}
+.rq-t tr.acc-opn td{font-style:italic;background:var(--bg)}
+.acc-ef{display:grid;grid-template-columns:2fr 1.9fr 1fr 1fr;gap:12px;padding:14px 16px;align-items:end}
+.acc-ef .f input{background:var(--panel)}
+.acc-ef-note{grid-column:1/2}.acc-prev{grid-column:2/-1}
+.card.acc-ef-card{overflow:visible}
+.acc-pick{position:relative}
+.rq-t.acc-paytab td{white-space:normal}.rq-t.acc-paytab td.num{white-space:nowrap}
+.acc-dd{display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:30;max-height:330px;overflow:auto}
+.acc-dd>div{display:flex;justify-content:space-between;gap:10px;padding:7px 11px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+.acc-dd>div small{color:var(--muted)}
+.acc-dd>div.hl,.acc-dd>div:hover{background:var(--accent-soft)}
+.acc-dd .acc-new{color:var(--accent);font-weight:700}
+.acc-seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.acc-seg button{flex:1;border:0;background:var(--panel);padding:7px 8px;font-size:12.5px;font-weight:600;white-space:nowrap;color:var(--muted)}
+.acc-seg button+button{border-left:1px solid var(--line)}
+.acc-seg button.on.g{background:var(--accent-soft);color:#9A3F20}.acc-seg button.on.c{background:var(--green-soft);color:var(--green)}
+[data-theme="dark"] .acc-seg button.on.g{color:var(--accent)}
+.acc-prev{display:flex;align-items:center;gap:16px;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:7px 12px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.acc-prev span b{display:block;font-size:16px;color:var(--ink);font-variant-numeric:tabular-nums}
+.acc-arrow{font-size:16px}
+.acc-g2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.acc-g2 .f input,.acc-g2 .f select{background:var(--panel)}
+#ov-acc{z-index:300}
+.acc-err{display:none;margin:0 18px 12px;padding:8px 11px;border-radius:8px;background:var(--red-soft);color:var(--red);font-size:13px;white-space:pre-wrap}
+.acc-warn{background:var(--amber-soft);color:var(--amber);border-radius:8px;padding:7px 10px;margin-top:8px;font-size:12.5px}
+.acc-chk{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13px;cursor:pointer}.acc-chk input{width:auto}
+.acc-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.acc-seals{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;padding:14px}
+.acc-sealcard{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.acc-sealimg{height:70px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:8px;margin-bottom:6px}
+.acc-sealimg img{max-height:64px;max-width:100%}
+.adm-role.r-accounts{background:#FBEDE7;color:#9A3F20}
+@media (max-width:760px){.acc-ef{grid-template-columns:1fr}.acc-ef-note,.acc-prev{grid-column:auto}.acc-pay3,.acc-g2{grid-template-columns:1fr}.acc-seg button{font-size:11.5px;padding:7px 4px}}
 .rq-month{padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-size:13px}
 .rq-hint{margin-top:14px;padding:9px 12px;border-radius:8px;background:var(--accent-soft);font-size:12.5px}
 .rq-adm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -2364,7 +2424,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.18.4</p>
+    <p class="login-ver">V.2026.10.18.5</p>
   </div></div>
 </div>
 
@@ -2406,7 +2466,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.18.4</div>
+  <div id="ver-stamp">V.2026.10.18.5</div>
 </div>
 
 
@@ -3261,6 +3321,17 @@ td.col-cm{min-width:96px;font-size:11px}
   </div>
 </div>
 
+<!-- ═══ MODAL: ACCOUNTS (payments, cheques, IOU) ═══ -->
+<div class="ov" id="ov-acc" onclick="if(event.target===this)accClose()">
+  <div class="modal" onkeydown="accModalKey(event)">
+    <div class="m-h"><div><h3 id="acc-m-title">Accounts</h3><div class="msub" id="acc-m-sub"></div></div>
+      <button class="btn" onclick="accClose()">Close</button></div>
+    <div class="m-b" id="acc-m-body"></div>
+    <div class="acc-err" id="acc-m-err"></div>
+    <div class="m-f" id="acc-m-foot"></div>
+  </div>
+</div>
+
 <div class="ov" id="ov-bp" onclick="if(event.target===this)closeModal('ov-bp')">
   <div class="modal wide" onkeydown="bpModalKey(event)">
     <div class="m-h"><div><h3 id="bp-m-title">Buyer</h3><div class="msub" id="bp-m-sub"></div></div>
@@ -3444,12 +3515,12 @@ const DASH_COLS = [
 
 // ─── Helpers ───
 const $ = id => document.getElementById(id);
-var ROLE_ORDER = { management:1, cao:1.5, audit:2, agm:2.5, hod:3, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
+var ROLE_ORDER = { management:1, cao:1.5, audit:2, agm:2.5, hod:3, manager:4, merchant:5, jm:6, commercial:7, accounts:7.5, dept:8 };
 const ROLE_LABELS = {
   admin: 'Administrator', management: 'Management', hod: 'Head of Dept',
   manager: 'Manager', audit: 'Audit', merchant: 'Merchandiser', jm: 'Junior Merchandiser', commercial: 'Commercial',
   cao: 'CAO (Chief Administrative Officer)', agm: 'AGM (HR, Admin & Compliance)',
-  dept: 'Department'
+  dept: 'Department', accounts: 'Accounts'
 };
 const roleLabel = function(r) { return ROLE_LABELS[r] || r; };
 
@@ -13011,7 +13082,10 @@ function renderAdminPage() {
   + '<option value="hod">HOD</option><option value="audit">Audit</option><option value="management">Management</option><option value="commercial">Commercial</option>'
   + '<option value="dept">Department (requisitions)</option>'
   + '<option value="cao">CAO (views everything, approves requisitions)</option><option value="agm">AGM &ndash; HR, Admin &amp; Compliance (requisitions)</option>'
+  + '<option value="accounts">Accounts (payments, cheques, IOU)</option>'
   + '</select></div>'
+  + '<div class="adm-field" id="acchead-field" style="display:none"><label class="adm-lbl">Accounts</label>'
+  + '<select id="a_acchead" ' + sel + '><option value="">Accounts staff</option><option value="head">Accounts head</option></select></div>'
   + '<div class="adm-field" id="div-field"><label class="adm-lbl">Division</label>'
   + '<select id="a_div" ' + sel + '><option value="sweater">Sweater</option><option value="knit">Knit</option></select></div>'
   + '<div class="adm-field" id="rqdept-field" style="display:none"><label class="adm-lbl">Department</label>'
@@ -13043,13 +13117,13 @@ function renderAdminPage() {
 
 function renderAdminList() {
   var roleOrder = { management:1, cao:1.5, hod:2, audit:3, agm:3.5, manager:4, merchant:5, jm:6, commercial:7, dept:8 };
-  var roleGroup = { management:'Management', cao:'CAO', hod:'Heads of department', audit:'Audit', agm:'AGM (HR, Admin & Compliance)', manager:'Managers', merchant:'Merchandisers', jm:'Junior merchandisers', commercial:'Commercial', dept:'Departments (requisitions)' };
+  var roleGroup = { management:'Management', cao:'CAO', hod:'Heads of department', audit:'Audit', agm:'AGM (HR, Admin & Compliance)', manager:'Managers', merchant:'Merchandisers', jm:'Junior merchandisers', commercial:'Commercial', dept:'Departments (requisitions)', accounts:'Accounts' };
   var staff = S.users.filter(function(u){ return u.role !== 'admin'; })
     .sort(function(a,b){
       var ra = roleOrder[a.role]||9, rb = roleOrder[b.role]||9;
       return ra !== rb ? ra - rb : a.name.localeCompare(b.name);
     });
-  var avColors = { management:'#7C3AED', cao:'#4338CA', hod:'#D97706', manager:'#059669', audit:'#0284C7', agm:'#0E7490', jm:'#DB2777', merchant:'#6B7280', dept:'#0F766E' };
+  var avColors = { management:'#7C3AED', cao:'#4338CA', hod:'#D97706', manager:'#059669', audit:'#0284C7', agm:'#0E7490', jm:'#DB2777', merchant:'#6B7280', dept:'#0F766E', accounts:'#C2552F' };
   var sub = $('adm-users-sub');
   if (sub) sub.textContent = staff.length + ' accounts' + (_pwViewMissing ? ' · readable passwords need the database update (user-password-view-migration.sql)' : '');
   if (!staff.length) { $('admin-list').innerHTML = '<div class="empty" style="padding:18px">No users yet.</div>'; return; }
@@ -13072,7 +13146,7 @@ function renderAdminList() {
       + '<td><div class="adm-who"><span class="adm-user-av" style="background:' + (avColors[m.role]||'#6B7280') + '">' + initials(m.name) + '</span>'
       +   '<span><b>' + htmlEsc(m.name) + '</b>' + (m.title ? '<small>' + htmlEsc(m.title) + '</small>' : '') + '</span></div></td>'
       + '<td><span class="adm-role r-' + m.role + '">' + roleLabel(m.role) + '</span></td>'
-      + '<td class="adm-muted">' + (m.role === 'dept' ? htmlEsc((rqDept(m.division) || { n: 'No department' }).n) : m.division ? htmlEsc(m.division.charAt(0).toUpperCase() + m.division.slice(1)) : '—') + '</td>'
+      + '<td class="adm-muted">' + (m.role === 'dept' ? htmlEsc((rqDept(m.division) || { n: 'No department' }).n) : m.role === 'accounts' ? (m.division === 'head' ? 'Accounts head' : 'Accounts staff') : m.division ? htmlEsc(m.division.charAt(0).toUpperCase() + m.division.slice(1)) : '—') + '</td>'
       + '<td>' + adminPasswordCell(m) + '</td>'
       // Style / PO-wise is now set per buyer (Admin -> Buyer settings), not per merchant.
       + '<td class="adm-act"><button class="btn sm' + (isEdit?' pri':'') + '" data-uid="' + m.id + '" onclick="editUser(this.dataset.uid)">' + (isEdit?'Close':'Edit') + '</button>'
@@ -13084,11 +13158,12 @@ function renderAdminList() {
         + '<div class="adm-field"><label class="adm-lbl">Designation</label><input id="eu-desig-' + m.id + '" class="adm-inp" value="' + htmlEsc(m.title||'') + '" placeholder="e.g. Senior Merchandiser"></div>'
         + '<div class="adm-field"><label class="adm-lbl">New password</label><div class="pwd-wrap"><input id="eu-pwd-' + m.id + '" type="password" class="adm-inp" placeholder="Leave blank to keep">'
         +   '<button class="pwd-eye" type="button" tabindex="-1" onclick="var i=$(\'eu-pwd-' + m.id + '\');i.type=i.type===\'password\'?\'text\':\'password\'">&#x1F441;</button></div></div>'
-        + '<div class="adm-field"><label class="adm-lbl">Role</label><select id="eu-role-' + m.id + '" class="adm-sel" onchange="var f=$(\'eu-rqdept-wrap-' + m.id + '\');if(f)f.style.display=this.value===\'dept\'?\'block\':\'none\'">'
-        + ['merchant','jm','manager','hod','audit','management','commercial','dept','cao','agm'].map(function(r){ return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>'; }).join('')
+        + '<div class="adm-field"><label class="adm-lbl">Role</label><select id="eu-role-' + m.id + '" class="adm-sel" onchange="var f=$(\'eu-rqdept-wrap-' + m.id + '\');if(f)f.style.display=this.value===\'dept\'?\'block\':\'none\';var g=$(\'eu-acchead-wrap-' + m.id + '\');if(g)g.style.display=this.value===\'accounts\'?\'block\':\'none\'">'
+        + ['merchant','jm','manager','hod','audit','management','commercial','dept','cao','agm','accounts'].map(function(r){ return '<option value="' + r + '"' + (m.role===r?' selected':'') + '>' + roleLabel(r) + '</option>'; }).join('')
         + '</select></div>'
         + '<div class="adm-field" id="eu-rqdept-wrap-' + m.id + '" style="display:' + (m.role === 'dept' ? 'block' : 'none') + '"><label class="adm-lbl">Department</label><select id="eu-rqdept-' + m.id + '" class="adm-sel">'
         + RQ_DEPTS.map(function(d){ return '<option value="' + d.k + '"' + (m.division === d.k ? ' selected' : '') + '>' + d.n + '</option>'; }).join('') + '</select></div>'
+        + '<div class="adm-field" id="eu-acchead-wrap-' + m.id + '" style="display:' + (m.role === 'accounts' ? 'block' : 'none') + '"><label class="adm-lbl">Accounts</label><select id="eu-acchead-' + m.id + '" class="adm-sel"><option value="">Accounts staff</option><option value="head"' + (m.role === 'accounts' && m.division === 'head' ? ' selected' : '') + '>Accounts head</option></select></div>'
         + '<div class="adm-field"><label class="adm-lbl">&nbsp;</label><button class="btn pri adm-save-btn" data-uid="' + m.id + '" onclick="saveEditUser(this.dataset.uid)">Save</button></div>'
         + '</div></td></tr>';
     }
@@ -13171,7 +13246,8 @@ async function saveEditUser(uid) {
   if (role) update.role = role;
   var _prevUser = S.users.find(function(x){ return x.id === uid; });
   if (role === 'dept') { var _rqd = $('eu-rqdept-' + uid); update.division = _rqd ? _rqd.value : null; }
-  else if (role && _prevUser && _prevUser.role === 'dept') update.division = null;
+  else if (role === 'accounts') { var _ah = $('eu-acchead-' + uid); update.division = _ah && _ah.value ? _ah.value : null; }
+  else if (role && _prevUser && (_prevUser.role === 'dept' || _prevUser.role === 'accounts')) update.division = null;
   // Moving a merchant to another role leaves their orders without a merchant
   // board — say so before doing it.
   var _before = S.users.find(function(x){ return x.id === uid; });
@@ -13577,7 +13653,7 @@ async function addMerchant() {
   if (!pwd)  { errEl.textContent='Password is required.'; errEl.style.display='block'; return; }
   var dupUser = S.users.find(function(u){ return u.name.toLowerCase() === name.toLowerCase(); });
   if (dupUser) { errEl.textContent = 'A user named "' + dupUser.name + '" already exists.'; errEl.style.display='block'; return; }
-  const division = type === 'merchant' && $('a_div') ? $('a_div').value : (type === 'dept' && $('a_rqdept') ? $('a_rqdept').value : null);
+  const division = type === 'merchant' && $('a_div') ? $('a_div').value : (type === 'dept' && $('a_rqdept') ? $('a_rqdept').value : (type === 'accounts' && $('a_acchead') ? ($('a_acchead').value || null) : null));
   const designation = ($('a_designation').value||'').trim();
   const { error } = await db.from('users').insert({ name, role: type, password: await hashPassword(pwd), division, title: designation||null });
   if (!error) {
@@ -13594,6 +13670,8 @@ async function addMerchant() {
     errEl.textContent='The Department role needs requisitions-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
   } else if ((type === 'cao' || type === 'agm') && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
     errEl.textContent='The CAO and AGM roles need requisition-approvals-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
+  } else if (type === 'accounts' && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
+    errEl.textContent='The Accounts role needs accounts-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
   } else if (type === 'commercial' && (error.code === '23514' || error.code === '22P02' || /check constraint|enum/i.test(error.message || ''))) {
     errEl.textContent='The Commercial role needs commercial-migration.sql. Run it once in Supabase, reload, then add this user again.'; errEl.style.display='block';
   } else {
@@ -13793,6 +13871,7 @@ function handleProfileType() {
   const divField = $('div-field');
   if (divField) divField.style.display = t === 'merchant' ? 'block' : 'none';
   var rqf = $('rqdept-field'); if (rqf) rqf.style.display = t === 'dept' ? 'block' : 'none';
+  var ahf = $('acchead-field'); if (ahf) ahf.style.display = t === 'accounts' ? 'block' : 'none';
 }
 
 
@@ -13942,7 +14021,7 @@ function renderRail() {
     var on=S.view==='jm_'+j.id?'on':'';
     return '<button class="ni '+on+'" onclick="setView(\'jm_'+j.id+'\')" style="color:#DB2777"><span class="av" style="font-size:11px;background:#FCE7F3;color:#DB2777">'+initials(j.name)+'</span><span class="nm">'+htmlEsc(j.name)+'</span></button>';
   }
-  if (r === 'dept' || r === 'agm') { rqRenderRailForDept(); return; } // department staff and the AGM see only requisitions
+  if (r === 'dept' || r === 'agm' || r === 'accounts') { rqRenderRailForDept(); return; } // department staff and the AGM see only requisitions
   var html=ni('dashboard','&#x2302;','Dashboard');
   if (r === 'commercial') {
     var ab=(S.alerts||[]).filter(function(a){return !a.dismissed;}).length + getMyThreads().filter(function(t2){ return t2.unread; }).length;
@@ -13992,6 +14071,7 @@ function renderRail() {
   // new section added above must stay above this line, not below it.
   html+=ni('trash','&#x1F5D1;','Trash',S.trash.length);
   try { html+=rqRailHtml(); } catch(e) { console.error('rqRailHtml:', e); } // Requisitions: admin, management, audit only
+  try { if (accOn()) html+=accRailHtml(); } catch(e) { console.error('accRailHtml:', e); } // Accounts: admin, management, audit (read only)
   if(isAdmin){
     html+='<div class="rail-sep"></div>';
     html+='<button class="ni'+(S.view==='admin'?' on':'')+'" onclick="setView(\'admin\')"><span class="av" style="font-size:12px">&#x2699;</span><span class="nm">Admin</span></button>';
@@ -19332,7 +19412,8 @@ var BACKUP_TABLES = [ // known tables, parents before children (restore goes in 
   'developments','development_options','development_samples','dev_colour_approvals','dev_price_history','order_commercial','commercial_payments',
   'buyer_invoice_details',
   'buyer_logos','buyer_team','buyer_contacts','buyer_notes','buyer_payment','buyer_banking','buyer_bank_changes','buyer_addresses','buyer_change_log',
-  'rq_settings','rq_counters','rq_requisitions','rq_events','rq_quotations'
+  'rq_settings','rq_counters','rq_requisitions','rq_events','rq_quotations',
+  'acc_banks','acc_iou_people','acc_cheques','acc_payments','acc_iou_entries'
 ];
 var BACKUP_EXCLUDE = ['user_password_view'];
 var _backupBusy = false;
@@ -19429,7 +19510,7 @@ async function collectBackup(progress) {
     } catch (e) {
       // Requisition tables only exist once requisitions-migration.sql is run;
       // until then there is simply nothing to back up there.
-      if ((/^rq_/.test(t) || BP_TABLES.indexOf(t) !== -1) && isTableMissing(e)) { tables.splice(i, 1); i--; continue; }
+      if ((/^rq_|^acc_/.test(t) || BP_TABLES.indexOf(t) !== -1) && isTableMissing(e)) { tables.splice(i, 1); i--; continue; }
       problems.push(t + ': ' + (e.message || e));
     }
   }
@@ -19695,6 +19776,11 @@ async function runRestore() {
 // out from the rows when the backup has no layout. Run once in the new
 // Supabase project's SQL Editor; safe to run again.
 var SETUP_KNOWN = { // every column the app uses: for tables a backup has no rows of (when it has no saved layout)
+  acc_banks: 'acc_name:text,acc_no:text,bank:text,branch:text,created_at:timestamptz,created_by_name:text,hidden:boolean,id:uuid,import_key:text,updated_at:timestamptz,updated_by_name:text',
+  acc_cheques: 'amount:numeric,bank_id:uuid,cheque_no:text,clear_date:date,created_at:timestamptz,created_by:text,created_by_name:text,history:jsonb,id:uuid,import_key:text,issue_date:date,note:text,payee:text,payment_id:uuid,req_id:uuid,status:text,status_at:timestamptz,status_by:text,status_by_name:text,status_note:text,status_on:date',
+  acc_payments: 'amount:numeric,bank_label:text,cheque_clear_date:date,cheque_id:uuid,cheque_no:text,cheque_status:text,cheque_status_on:date,company:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,id:uuid,method:text,over_reason:text,paid_to:text,pay_date:date,reference:text,req_id:uuid,reverse_reason:text,reversed_at:timestamptz,reversed_by_name:text',
+  acc_iou_people: 'created_at:timestamptz,created_by_name:text,dept:text,id:uuid,import_key:text,name:text,note:text,phone:text',
+  acc_iou_entries: 'cr:numeric,created_at:timestamptz,created_by:text,created_by_name:text,dr:numeric,entry_date:date,id:uuid,import_key:text,kind:text,note:text,person_id:uuid,reverse_reason:text,reversed_at:timestamptz,reversed_by_name:text',
   rq_requisitions: 'agm_at:timestamptz,agm_by:text,agm_by_name:text,agm_note:text,agm_status:text,cao_at:timestamptz,cao_by:text,cao_by_name:text,cao_note:text,cao_status:text,approved_cost:numeric,audit_at:timestamptz,audit_by:text,audit_by_name:text,audit_note:text,audit_status:text,company:text,completed_at:timestamptz,completion_note:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,est_cost:numeric,final_cost:numeric,id:uuid,items:jsonb,job_no:text,kind:text,location:text,location_detail:text,mgmt_at:timestamptz,mgmt_by:text,mgmt_by_name:text,mgmt_note:text,mgmt_status:text,priority:text,progress:integer,remarks:text,req_date:date,seq:integer,spent:numeric,started_at:timestamptz,status:text,target_date:date,time_unit:text,time_value:numeric,updated_at:timestamptz,updated_by:text,work_type:text,yr:integer',
   rq_events: 'amount:numeric,at:timestamptz,by_id:text,by_name:text,id:uuid,kind:text,note:text,pct:integer,req_id:uuid',
   rq_quotations: 'amount:numeric,bytes:integer,created_at:timestamptz,created_by:text,created_by_name:text,currency:text,dept:text,id:uuid,images_deleted_at:timestamptz,keep_changed_by:text,keep_until:date,page_count:integer,pages:jsonb,req_id:uuid,supplier:text,valid_until:date',
@@ -19995,7 +20081,7 @@ function rqDept(k) { return RQ_DEPTS.find(function(d){ return d.k === k; }) || n
 function rqCompany(c) { return RQ_COMPANIES.find(function(x){ return x.c === c; }) || { c: c, n: c || '' }; }
 function rqIsDeptUser() { return !!S.user && S.user.role === 'dept'; }
 // logins that only ever see requisitions: department staff and the AGM
-function rqOnlyUser() { return !!S.user && (S.user.role === 'dept' || S.user.role === 'agm'); }
+function rqOnlyUser() { return !!S.user && (S.user.role === 'dept' || S.user.role === 'agm' || S.user.role === 'accounts'); }
 // The approval steps, in the order they are meant to check. Only management's
 // approval starts the work; the others are checks before it. AGM and CAO can
 // approve or return, not reject. Nobody approves a requisition they raised.
@@ -20042,10 +20128,10 @@ function rqApprMini(r) {
     return '<span class="rq-mini ' + cls + '" title="' + rqEsc(st.full) + ': ' + ({ approved: 'approved', returned: 'returned', rejected: 'rejected' }[v] || 'waiting') + '">' + st.n + ' ' + ic + '</span>';
   }).join('') + '</span>';
 }
-function rqCanSee() { return !!S.user && (['admin', 'management', 'audit', 'cao', 'agm'].includes(S.user.role) || (rqIsDeptUser() && !!rqDept(S.user.division))); }
-function rqMyDepts() { if (!rqCanSee()) return []; return rqIsDeptUser() ? [rqDept(S.user.division)] : RQ_DEPTS.slice(); }
+function rqCanSee() { return !!S.user && (['admin', 'management', 'audit', 'cao', 'agm', 'accounts'].includes(S.user.role) || (rqIsDeptUser() && !!rqDept(S.user.division))); }
+function rqMyDepts() { if (!rqCanSee() || S.user.role === 'accounts') return []; return rqIsDeptUser() ? [rqDept(S.user.division)] : RQ_DEPTS.slice(); }
 function rqCanWork(dept) { return !!S.user && (S.user.role === 'admin' || (rqIsDeptUser() && S.user.division === dept)); }
-function rqHomeView() { return rqIsDeptUser() ? 'rq:' + S.user.division + ':pending' : (S.user.role === 'admin' ? 'rq:overview' : 'rq:approvals'); }
+function rqHomeView() { return rqIsDeptUser() ? 'rq:' + S.user.division + ':pending' : S.user.role === 'accounts' ? 'rq:acc:wait' : (S.user.role === 'admin' ? 'rq:overview' : 'rq:approvals'); }
 function rqEsc(s) { return htmlEsc(s); }
 function rqMoney(n) { if (n == null || n === '' || isNaN(Number(n))) return '&mdash;'; return 'Tk ' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
 function rqMoneyTxt(n) { if (n == null || n === '' || isNaN(Number(n))) return ''; return 'Tk ' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
@@ -20092,9 +20178,16 @@ function rqPriChip(p) {
 // ─── DATA ───
 async function rqLoad() {
   if (!rqCanSee()) { RQ.rows = []; RQ.loaded = true; return; }
-  var q = db.from('rq_requisitions').select('*').order('created_at', { ascending: false });
-  if (rqIsDeptUser()) q = q.eq('dept', S.user.division);
-  var res = await q;
+  // read in pages of 1,000 (Supabase hands out at most 1,000 rows per request)
+  var res;
+  try {
+    res = { data: await fetchAllRows(function(){
+      var q = db.from('rq_requisitions').select('*').order('created_at', { ascending: false }).order('id');
+      if (rqIsDeptUser()) q = q.eq('dept', S.user.division);
+      if (S.user.role === 'accounts') q = q.eq('mgmt_status', 'approved'); // accounts see a requisition only once management has approved it
+      return q;
+    }) };
+  } catch (e) { res = { error: e }; }
   if (res.error) {
     RQ.missing = /rq_requisitions|relation|schema cache|does not exist/i.test(res.error.message || '') || res.error.code === '42P01' || res.error.code === 'PGRST205';
     RQ.rows = []; RQ.loaded = true;
@@ -20109,6 +20202,7 @@ async function rqLoad() {
     RQ.stagesOk = !pr.error;
   }
   try { await rqqLoad(); } catch (e) { console.error('quotations:', e); }
+  try { await accLoadPays(); } catch (e) { console.error('payments:', e); }
 }
 async function rqLoadSettings(force) {
   if (RQ.settings && !force) return RQ.settings;
@@ -20128,6 +20222,8 @@ async function rqRefreshOne(id) {
   var i = RQ.rows.findIndex(function(x){ return x.id === id; });
   if (res.data) {
     if (rqIsDeptUser() && res.data.dept !== S.user.division) return null;
+    if (S.user.role === 'accounts' && res.data.mgmt_status !== 'approved') { if (i >= 0) RQ.rows.splice(i, 1); return null; }
+    if (S.user.role === 'accounts' && i < 0 && accPayable(res.data)) toast('Approved by Management: ' + res.data.job_no + ' is waiting for payment', 'ok-t');
     if (i >= 0) RQ.rows[i] = res.data; else RQ.rows.unshift(res.data);
   } else if (i >= 0) RQ.rows.splice(i, 1);
   return res.data || null;
@@ -20162,6 +20258,11 @@ function rqSubscribe() {
           }
         });
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_payments' }, function(p){ accRealtime('acc_payments', p); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_cheques' }, function(p){ accRealtime('acc_cheques', p); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_banks' }, function(p){ accRealtime('acc_banks', p); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_iou_people' }, function(p){ accRealtime('acc_iou_people', p); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_iou_entries' }, function(p){ accRealtime('acc_iou_entries', p); })
       .subscribe();
   } catch (e) { console.error('rqSubscribe:', e); }
 }
@@ -20170,10 +20271,13 @@ function rqSubscribe() {
 async function rqBoot() {
   var rs = document.querySelector('.rail-search'); if (rs) rs.style.display = 'none';
   var bs = document.querySelector('.brand-sub'); if (bs) bs.textContent = 'Factory operations \u00b7 Requisitions';
+  if (S.user.role === 'accounts' && bs) bs.textContent = 'Factory operations \u00b7 Accounts';
   try { await rqLoad(); } catch (e) { console.error('rqLoad:', e); }
+  if (S.user.role === 'accounts') { try { await accLoadBooks(); } catch (e) { console.error('accLoadBooks:', e); } }
   rqSubscribe();
   var v = null; try { v = sessionStorage.getItem('pt_last_view'); } catch (e) {}
   setView(v && v.indexOf('rq:') === 0 ? v : rqHomeView());
+  if (S.user.role === 'accounts') accLoginNotice();
 }
 
 // ─── SIDEBAR ───
@@ -20227,7 +20331,10 @@ function rqRailHtml() {
 function rqRenderRailForDept() {
   var rb = $('rail-body'); if (!rb) return;
   var d = rqDept(S.user.division), h;
-  if (S.user.role === 'agm') {
+  if (S.user.role === 'accounts') {
+    h = RQ.missing ? '<div class="rail-label" style="color:var(--muted)">Requisitions need the database update</div>'
+      : accRailHtml() + '<div class="rail-sep"></div><div class="rail-label">Requisitions</div><button class="ni' + (S.view === 'rq:all' ? ' on' : '') + ' rq-ni" onclick="setView(\'rq:all\')"><span class="av" style="font-size:12px">&#x2630;</span><span class="nm">Approved requisitions</span><span class="ct">' + RQ.rows.length + '</span></button>';
+  } else if (S.user.role === 'agm') {
     h = (RQ.missing ? '<div class="rail-label" style="color:var(--muted)">Requisitions need the database update</div>' : rqRailHtml())
       + '<div class="rail-sep"></div><div class="rail-label">HR &amp; Compliance</div><div class="rq-rail-note" style="white-space:normal">Certificates, audits and HR records will come here later.</div>';
   } else h = d ? (RQ.missing ? '<div class="rail-label" style="color:var(--muted)">Requisitions need the database update</div>' : rqRailHtml())
@@ -20251,6 +20358,8 @@ function rqRender(view) {
   }
   document.body.classList.remove('rq-form-phone');
   var p = String(view).split(':');
+  if (p[1] === 'acc') return accRender(p);
+  if (S.user.role === 'accounts' && p[1] !== 'all') { setView(rqHomeView()); return; }
   if (p[1] === 'quotes') { if (!rqqOn() || (S.user.role !== 'admin' && !rqIsDeptUser())) { setView(rqHomeView()); return; } return rqqRenderDue(); }
   if (p[1] === 'approvals') return rqRenderApprovals();
   if (p[1] === 'overview') return rqRenderOverview();
@@ -20365,17 +20474,17 @@ function rqRenderAll(d) {
   var extra = '<select onchange="RQ.filter.st=this.value;rqRender(S.view)">' + RQ_STATUS_OPTS.map(function(o){ return '<option value="' + o[0] + '"' + (f.st === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'
     + (!d ? '<select onchange="RQ.filter.dp=this.value;rqRender(S.view)"><option value="">All departments</option>' + RQ_DEPTS.map(function(x){ return '<option value="' + x.k + '"' + (f.dp === x.k ? ' selected' : '') + '>' + x.n + '</option>'; }).join('') + '</select>' : '')
     + (rqIsDeptUser() ? '<label class="rq-mine"><input type="checkbox"' + (f.mine ? ' checked' : '') + ' onchange="RQ.filter.mine=this.checked;rqRender(S.view)"> Only the ones I raised</label>' : '');
-  var cols = ['Job no.'].concat(d ? [] : ['Department']).concat(['Date', 'Company', 'Location', 'Type of work', 'Cost', 'Status', 'Where it is now', 'Raised by']);
+  var cols = ['Job no.'].concat(d ? [] : ['Department']).concat(['Date', 'Company', 'Location', 'Type of work', 'Cost', 'Status', 'Where it is now', 'Raised by']).concat(accOn() ? ['Payment'] : []);
   var body = list.map(function(r){
     var cells = ['<span class="rq-job">' + rqEsc(r.job_no) + '</span>'].concat(d ? [] : [rqEsc((rqDept(r.dept) || {}).n || r.dept)]).concat([
       rqDateTxt(r.req_date), '<span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span>',
       '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : ''),
       rqEsc(r.work_type || '') + (r.priority === 'urgent' ? ' ' + rqPriChip('urgent') : ''),
       '<span class="num">' + rqMoney(r.status === 'done' && r.final_cost != null ? r.final_cost : r.approved_cost != null ? r.approved_cost : r.est_cost) + '</span>',
-      rqStatusChip(r), '<span class="rq-why">' + rqWhere(r) + '</span>', rqEsc(r.created_by_name || '')]);
+      rqStatusChip(r), '<span class="rq-why">' + rqWhere(r) + '</span>', rqEsc(r.created_by_name || '')]).concat(accOn() ? [accPayChip(r)] : []);
     return '<tr onclick="rqOpen(\'' + r.id + '\')">' + cells.map(function(c){ return '<td>' + c + '</td>'; }).join('') + '</tr>';
   }).join('');
-  var title = d ? (rqIsDeptUser() ? 'My requisitions' : 'All ' + d.n + ' requisitions') : 'All requisitions';
+  var title = d ? (rqIsDeptUser() ? 'My requisitions' : 'All ' + d.n + ' requisitions') : S.user.role === 'accounts' ? 'Approved requisitions' : 'All requisitions';
   rqSetHead('Requisitions' + (d ? ' \u203A ' + d.n : ''), title, (d ? d.n + ' department' : 'Every department') + ' &middot; every requisition ever raised, newest first. Cost: final if completed, else approved, else estimated.', d && rqCanWork(d.k) ? '<button class="btn pri" onclick="setView(\'rq:' + d.k + ':new\')">&#x002B; New requisition</button>' : '');
   $('content').innerHTML = (chips ? '<div class="rq-tallies">' + chips + '</div>' : '')
     + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3 style="white-space:nowrap">' + title + ' <span class="rq-count">' + list.length + (list.length !== base.length ? ' of ' + base.length : '') + '</span></h3>' + rqFilterBar(extra) + '</div>'
@@ -20642,7 +20751,7 @@ async function rqOpen(id) {
   if (RQ.openId === id) rqRenderDetail(id, true);
 }
 function rqKv(k, v) { return '<div class="rq-kv"><div class="k">' + k + '</div><div class="v">' + (v == null || v === '' ? '&mdash;' : v) + '</div></div>'; }
-var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled' };
+var RQ_EVENT_TXT = { created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled', paid: 'Payment recorded', pay_reversed: 'Payment reversed (admin)', cheque_cleared: 'Cheque cleared', cheque_bounced: 'Cheque bounced', cheque_cancelled: 'Cheque cancelled (admin)' };
 function rqRenderDetail(id, withEvents) {
   var r = RQ.rows.find(function(x){ return x.id === id; });
   if (!r) { closeModal('ov-rq'); return; }
@@ -20677,11 +20786,12 @@ function rqRenderDetail(id, withEvents) {
       + '</div>' + (r.completion_note ? '<div class="rq-remarks" style="margin-top:8px">' + rqEsc(r.completion_note) + '</div>' : '') + '</div>';
   }
   if ((r.status === 'pending' || r.status === 'returned') && rqCanWork(r.dept)) h += '<div class="rq-hint">Need signatures on paper first? Use <b>Print form for signing</b> below. The approvers then record their approval here.</div>';
+  try { h += accPaySection(r); } catch (e) { console.error('accPaySection:', e); }
   h += '<div id="rq-actions">' + rqActionsHtml(r) + '</div>';
   var ev = RQ.events[id];
   h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
     : '<div class="rq-hist">' + ev.slice().reverse().map(function(e){
-      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done', 'quote_added', 'quote_removed'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
+      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done', 'quote_added', 'quote_removed', 'paid', 'pay_reversed', 'cheque_cleared', 'cheque_bounced', 'cheque_cancelled'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
         + (e.note ? '<div class="rq-ev-note">' + rqEsc(e.note) + '</div>' : '') + '<div class="sub2">' + rqEsc(e.by_name || '') + ' &middot; ' + rqDateTime(e.at) + '</div></div></div>';
     }).join('') + '</div>') + '</div>';
   $('rq-body').innerHTML = h;
@@ -21165,13 +21275,14 @@ async function rqSaveNames() {
   for (var j = 0; j < RQ_COMPANIES.length; j++) { var ae = $('rq-addr-' + RQ_COMPANIES[j].c); if (ae) ok = (await rqSetSetting('co_addr_' + RQ_COMPANIES[j].c, ae.value.trim())) && ok; }
   if (ok) toast('Requisition names saved', 'ok-t');
 }
+function rqImgAllowed(key) { return S.user.role === 'admin' || (String(key).indexOf('acc_seal_') === 0 && accIsHead()); }
 async function rqClearImg(key) {
-  if (S.user.role !== 'admin') return;
+  if (!rqImgAllowed(key)) return;
   if (!(await appConfirm('Remove this picture? Printed forms will no longer show it.', { title: 'Remove picture', okText: 'Remove', danger: true }))) return;
-  if (await rqSetSetting(key, null)) { toast('Removed', 'ok-t'); rqRenderAdminCard(); }
+  if (await rqSetSetting(key, null)) { toast('Removed', 'ok-t'); rqRenderAdminCard(); accAfterSeal(); }
 }
 function rqUploadImg(key, input) {
-  if (S.user.role !== 'admin') return;
+  if (!rqImgAllowed(key)) return;
   var file = input.files && input.files[0]; input.value = '';
   if (!file) return;
   var rd = new FileReader();
@@ -21197,7 +21308,7 @@ function rqUploadImg(key, input) {
       }
       var url = c.toDataURL('image/png');
       if (url.length > 400000) { toast('That picture is too large. Crop it closer and try again.', 'err'); return; }
-      if (await rqSetSetting(key, url)) { toast('Picture saved', 'ok-t'); rqRenderAdminCard(); }
+      if (await rqSetSetting(key, url)) { toast('Picture saved', 'ok-t'); rqRenderAdminCard(); accAfterSeal(); }
     };
     im.onerror = function(){ toast('Could not read that picture', 'err'); };
     im.src = rd.result;
@@ -22940,6 +23051,7 @@ async function rqqLoad() {
     RQ.quotes = []; return;
   }
   RQ.qtOk = true; RQ.quotes = res || [];
+  if (S.user.role === 'accounts') { var _ok = {}; RQ.rows.forEach(function(r){ _ok[r.id] = 1; }); RQ.quotes = RQ.quotes.filter(function(q){ return _ok[q.req_id]; }); }
   if (S.user.role === 'admin') rqqPurgeExpired();
 }
 async function rqqRefresh(reqId) {
@@ -23223,6 +23335,1225 @@ function rqqViewDraw() {
 }
 function rqqViewGo(d) { var q = (RQ.quotes || []).find(function(x){ return x.id === RQQV.id; }); if (!q) return; var n = RQQV.i + d; if (n < 0 || n >= q.pages.length) return; RQQV.i = n; rqqViewDraw(); }
 function rqqViewClose() { closeModal('ov-qv'); }
+
+// ════════════════════════════════════════════════════════════════════════
+// ACCOUNTS: payments against requisitions approved by management, the cheque
+// statement and history, bank accounts, and IOU / advances.
+// Needs accounts-migration.sql; before that nothing here shows and every other
+// page is exactly as it was. Money is added up in paisa (whole numbers), never
+// in floating point, so totals always match to the last paisa.
+// Who sees what:
+//   accounts (4-5 people, one head)  record payments, cheques, IOU entries
+//   accounts head                    also bank accounts and seals
+//   admin                            everything, and is the only one who can
+//                                    reverse a payment / IOU entry or cancel a cheque
+//   management, audit                see the accounts pages (read only)
+//   department, AGM, CAO             see the payment part of a requisition only
+// ════════════════════════════════════════════════════════════════════════
+var ACC = { ok: null, pays: [], byReq: null, banks: null, cheques: null, people: null, entries: null, calc: null,
+  iou: { tab: 'out', q: '', sel: null, kind: 'given', hi: 0 }, cqh: { st: '', q: '', from: '', to: '' },
+  rep: { month: null, co: '', meth: '', q: '' }, wait: { tab: 'wait', q: '', dp: '' }, stmt: { from: '', to: '' } };
+var ACC_METHODS = [['cash', 'Cash'], ['cheque', 'Cheque'], ['bank', 'Bank transfer'], ['iou', 'From IOU / advance']];
+var ACC_KINDS = { opening: 'Opening balance', given: 'Given', adjusted: 'Adjusted (bills)', returned: 'Returned (cash)', import_dr: 'Given (total from Excel)', import_cr: 'Adjusted (total from Excel)' };
+function accOn() { return ACC.ok === true; }
+function accIsAcc() { return !!S.user && S.user.role === 'accounts'; }
+function accIsHead() { return accIsAcc() && S.user.division === 'head'; }
+function accIsAdmin() { return !!S.user && S.user.role === 'admin'; }
+function accCanBooks() { return !!S.user && ['admin', 'management', 'audit', 'accounts'].indexOf(S.user.role) !== -1; }
+function accCanRecord() { return !!S.user && (S.user.role === 'accounts' || S.user.role === 'admin'); }
+function accCanBanks() { return accIsAdmin() || accIsHead(); }
+function accUuid() {
+  try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){ var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+}
+// ─── money (paisa) ───
+function accP(n) { var x = Number(n); return isFinite(x) ? Math.round(x * 100) : 0; }
+function accFmt(p, dec) { var a = Math.abs(p); var s = (a / 100).toLocaleString('en-IN', { minimumFractionDigits: dec != null ? dec : (a % 100 ? 2 : 0), maximumFractionDigits: 2 }); return (p < 0 ? '-' : '') + s; }
+function accTk(p) { return (p < 0 ? '&minus;' : '') + 'Tk ' + accFmt(Math.abs(p)); }
+function accTkTxt(p) { return (p < 0 ? '-' : '') + 'Tk ' + accFmt(Math.abs(p)); }
+// "25,000", "25000.5", "Tk 1,90,000.00", Bangla digits: all read the same. null = not a valid amount.
+function accParseAmt(s) {
+  s = String(s == null ? '' : s).replace(/[\u09E6-\u09EF]/g, function(c){ return String(c.charCodeAt(0) - 0x09E6); }).replace(/tk|\u09F3|,|\s/gi, '');
+  if (!/^\d+(\.\d{1,2})?$/.test(s)) return null;
+  var p = Math.round(parseFloat(s) * 100);
+  return p > 0 && p < 1e14 ? p : null;
+}
+function accAmtVal(p) { return p / 100; } // what is written to the database
+function accN(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+function accDate(d) { return d ? rqDateTxt(d) : '&mdash;'; }
+function accValidDate(d) { return /^\d{4}-\d{2}-\d{2}$/.test(d || '') && d >= '2000-01-01' && d <= '2100-12-31' && !isNaN(new Date(d + 'T00:00:00')); }
+function accErrMsg(err) {
+  if (!err) return 'Could not save';
+  if (err.code === '42P01' || err.code === 'PGRST205' || /does not exist|schema cache/i.test(err.message || '')) return 'The accounts part needs accounts-migration.sql. Run it once in Supabase, then refresh.';
+  return 'Could not save: ' + (err.message || err);
+}
+function accMissing(err) { return !!err && (err.code === '42P01' || err.code === 'PGRST205' || /acc_[a-z_]+|does not exist|schema cache/i.test(err.message || '')); }
+function accDup(err) { return !!err && (err.code === '23505' || /duplicate key/i.test(err.message || '')); }
+// who recorded it: their seal picture (uploaded by the accounts head) or a stamp with initials
+function accSeal(uid, name, at) {
+  var img = RQ.settings && uid ? RQ.settings['acc_seal_' + uid] : null;
+  var ini = String(name || '?').split(/\s+/).filter(Boolean).map(function(w){ return w.charAt(0); }).join('').slice(0, 3).toUpperCase();
+  return '<span class="acc-seal">' + (img ? '<img src="' + img + '" alt="">' : '<i>' + rqEsc(ini) + '</i>') + '<span>' + rqEsc(name || '') + (at ? '<small>' + rqDateTime(at) + '</small>' : '') + '</span></span>';
+}
+function accLoadSealsOnce(after) {
+  if (RQ.settings || ACC._stLoading) return;
+  ACC._stLoading = true;
+  rqLoadSettings().then(function(){ ACC._stLoading = false; if (after) after(); }).catch(function(){ ACC._stLoading = false; });
+}
+
+// ─── DATA ───
+// Payments are read once with the requisitions (everyone who sees requisitions
+// sees what has been paid on them); a department reads only its own.
+async function accLoadPays() {
+  if (!rqCanSee()) return;
+  try {
+    var rows = await fetchAllRows(function(){ var q = db.from('acc_payments').select('*'); if (rqIsDeptUser()) q = q.eq('dept', S.user.division); return q.order('id'); });
+    if (accIsAcc()) { var ids = {}; RQ.rows.forEach(function(r){ ids[r.id] = 1; }); rows = rows.filter(function(p){ return ids[p.req_id]; }); }
+    ACC.pays = rows; ACC.byReq = null; ACC.ok = true;
+  } catch (e) {
+    ACC.pays = []; ACC.byReq = null;
+    ACC.ok = accMissing(e) ? false : null;
+    if (!accMissing(e)) console.error('accLoadPays:', e);
+  }
+}
+// Banks and cheques: only for the people who see the accounts pages.
+async function accLoadBooks(force) {
+  if (!accCanBooks() || ACC.ok === false) return;
+  if (ACC.cheques && !force) return;
+  if (ACC._booksP && !force) return ACC._booksP;
+  ACC._booksP = (async function(){
+    try {
+      var r = await Promise.all([
+        fetchAllRows(function(){ return db.from('acc_banks').select('*').order('id'); }),
+        fetchAllRows(function(){ return db.from('acc_cheques').select('*').order('id'); })
+      ]);
+      ACC.banks = r[0].sort(function(a, b){ return String(a.created_at).localeCompare(String(b.created_at)) || String(a.bank).localeCompare(String(b.bank)); });
+      ACC.cheques = r[1];
+      ACC.ok = true;
+    } catch (e) { if (accMissing(e)) ACC.ok = false; else console.error('accLoadBooks:', e); }
+    finally { ACC._booksP = null; }
+  })();
+  return ACC._booksP;
+}
+async function accLoadIou(force) {
+  if (!accCanBooks() || ACC.ok === false) return;
+  if (ACC.people && !force) return;
+  if (ACC._iouP && !force) return ACC._iouP;
+  ACC._iouP = (async function(){
+    try {
+      var r = await Promise.all([
+        fetchAllRows(function(){ return db.from('acc_iou_people').select('*').order('id'); }),
+        fetchAllRows(function(){ return db.from('acc_iou_entries').select('*').order('id'); })
+      ]);
+      ACC.people = r[0]; ACC.entries = r[1]; ACC.calc = null; ACC.ok = true;
+    } catch (e) { if (accMissing(e)) ACC.ok = false; else console.error('accLoadIou:', e); }
+    finally { ACC._iouP = null; }
+  })();
+  return ACC._iouP;
+}
+function accPut(list, row) { var i = list.findIndex(function(x){ return x.id === row.id; }); if (i >= 0) list[i] = row; else list.push(row); return row; }
+function accPutPay(row) { accPut(ACC.pays, row); ACC.byReq = null; }
+// someone else saved something: fetch that one row and redraw
+function accRealtime(table, p) {
+  var id = (p.new && p.new.id) || (p.old && p.old.id); if (!id) return;
+  var list = table === 'acc_payments' ? ACC.pays : table === 'acc_cheques' ? ACC.cheques : table === 'acc_banks' ? ACC.banks : table === 'acc_iou_people' ? ACC.people : ACC.entries;
+  if (!list) return; // not loaded here
+  if (table === 'acc_payments' && rqIsDeptUser() && p.new && p.new.dept && p.new.dept !== S.user.division) return;
+  db.from(table).select('*').eq('id', id).maybeSingle().then(function(res){
+    if (res.error) return;
+    if (res.data) {
+      if (table === 'acc_payments' && accIsAcc() && !RQ.rows.some(function(r){ return r.id === res.data.req_id; })) return;
+      if (table === 'acc_payments' && rqIsDeptUser() && res.data.dept !== S.user.division) return;
+      accPut(list, res.data);
+    } else { var i = list.findIndex(function(x){ return x.id === id; }); if (i >= 0) list.splice(i, 1); }
+    ACC.byReq = null; ACC.calc = null;
+    accRedraw(table === 'acc_payments' ? res.data && res.data.req_id : null);
+  });
+}
+// redraw what is on screen, unless something is being typed
+function accRedraw(reqId) {
+  try { renderRail(); } catch (e) {}
+  var typing = (ACCM && $('ov-acc') && $('ov-acc').classList.contains('open')) || accIouTyping();
+  if (!typing && typeof S.view === 'string' && S.view.indexOf('rq:') === 0 && !rqFormDirty()) rqRender(S.view);
+  if (RQ.openId && $('ov-rq') && $('ov-rq').classList.contains('open') && (!reqId || reqId === RQ.openId) && !typing) rqRenderDetail(RQ.openId, true);
+}
+
+// ─── PAYMENTS: sums per requisition ───
+function accIndex() {
+  var m = {};
+  ACC.pays.forEach(function(p){ (m[p.req_id] = m[p.req_id] || []).push(p); });
+  Object.keys(m).forEach(function(k){ m[k].sort(function(a, b){ return String(a.pay_date).localeCompare(String(b.pay_date)) || String(a.created_at).localeCompare(String(b.created_at)); }); });
+  ACC.byReq = m;
+}
+function accPaysOf(id) { if (!ACC.byReq) accIndex(); return ACC.byReq[id] || []; }
+// counted as paid: not reversed, and not a cheque that bounced or was cancelled
+function accPayLive(p) { return !p.reversed_at && !(p.method === 'cheque' && (p.cheque_status === 'bounced' || p.cheque_status === 'cancelled')); }
+function accTarget(r) { return accP(r.approved_cost != null ? r.approved_cost : r.est_cost); }
+function accSum(r) {
+  var s = { target: accTarget(r), done: 0, wait: 0, bounced: 0, n: 0 };
+  accPaysOf(r.id).forEach(function(p){
+    if (p.reversed_at) return;
+    var a = accP(p.amount);
+    if (p.method === 'cheque') {
+      if (p.cheque_status === 'bounced') s.bounced += a;
+      else if (p.cheque_status === 'cancelled') return;
+      else if (p.cheque_status === 'cleared') s.done += a;
+      else s.wait += a;
+    } else s.done += a;
+    s.n++;
+  });
+  s.paid = s.done + s.wait; s.bal = s.target - s.paid;
+  return s;
+}
+function accPayable(r) { return !!r && r.mgmt_status === 'approved' && ['wip', 'hold', 'done'].indexOf(r.status) !== -1; }
+function accState(s) { if (s.paid <= 0) return 'none'; if (s.bal > 0) return 'part'; if (s.bal < 0) return 'over'; return 'paid'; }
+function accPayChip(r) {
+  if (!accOn()) return '';
+  if (!accPayable(r) && !accPaysOf(r.id).length) return '<span class="sub2">&mdash;</span>';
+  var s = accSum(r), st = accState(s);
+  return { none: '<span class="chip run">Not paid</span>', part: '<span class="chip warn">Part paid</span>', paid: '<span class="chip ok">Paid</span>', over: '<span class="chip bad">Paid over approved</span>' }[st]
+    + (s.wait && st !== 'none' ? '<div class="sub2">' + accTk(s.wait) + ' cheque to clear</div>' : '')
+    + (s.bounced ? ' <span class="chip bad">Cheque bounced</span>' : '');
+}
+function accWaitingList() { return RQ.rows.filter(function(r){ return accPayable(r) && accSum(r).bal > 0; }); }
+function accMethodTxt(m) { var x = ACC_METHODS.find(function(a){ return a[0] === m; }); return x ? x[1] : (m || ''); }
+function accBank(id) { return (ACC.banks || []).find(function(b){ return b.id === id; }) || null; }
+function accBankLabel(b) { return b ? b.bank + ' \u00B7 A/C ' + b.acc_no : 'No bank set'; }
+function accCqChip(c) {
+  var t = todayStr();
+  if (c.status === 'bounced') return '<span class="chip bad">Bounced' + (c.status_on ? ' ' + rqDateTxt(c.status_on) : '') + '</span>';
+  if (c.status === 'cleared') return '<span class="chip ok">Cleared' + (c.status_on ? ' ' + rqDateTxt(c.status_on) : '') + '</span>';
+  if (c.status === 'cancelled') return '<span class="chip run">Cancelled' + (c.status_on ? ' ' + rqDateTxt(c.status_on) : '') + '</span>';
+  if (c.clear_date && c.clear_date < t) return '<span class="chip warn">Date passed</span>';
+  if (c.clear_date === t) return '<span class="chip acc-today">Due today</span>';
+  return '<span class="chip run">Issued</span>';
+}
+function accPayChequeChip(p) {
+  if (p.method !== 'cheque') return '';
+  var t = todayStr();
+  if (p.cheque_status === 'cleared') return ' <span class="chip ok">Cleared' + (p.cheque_status_on ? ' ' + rqDateTxt(p.cheque_status_on) : '') + '</span>';
+  if (p.cheque_status === 'bounced') return ' <span class="chip bad">Bounced &middot; not counted</span>';
+  if (p.cheque_status === 'cancelled') return ' <span class="chip run">Cheque cancelled &middot; not counted</span>';
+  return ' <span class="chip ' + (p.cheque_clear_date && p.cheque_clear_date <= t ? 'warn' : 'run') + '">Will be paid &middot; clears ' + accDate(p.cheque_clear_date) + '</span>';
+}
+
+// ─── RAIL ───
+function accRailHtml() {
+  if (!accCanBooks()) return '';
+  function item(view, icon, label, count, hot) {
+    var on = S.view === view || (view === 'rq:acc:iou' && String(S.view).indexOf('rq:acc:iou:') === 0) ? ' on' : '';
+    var cnt = count > 0 ? (hot ? '<span class="badge">' + count + '</span>' : '<span class="ct">' + count + '</span>') : '';
+    return '<button class="ni' + on + ' rq-ni" onclick="setView(\'' + view + '\')"><span class="av" style="font-size:12px">' + icon + '</span><span class="nm">' + label + '</span>' + cnt + '</button>';
+  }
+  var h = '<div class="rail-sep"></div><div class="rail-label">Accounts</div>';
+  if (ACC.ok === false) return h + '<div class="rq-rail-note" style="white-space:normal">Needs accounts-migration.sql</div>';
+  if (RQ.missing) return h + '<div class="rq-rail-note" style="white-space:normal">Needs requisitions-migration.sql</div>';
+  var w = accOn() ? accWaitingList().length : 0, t = todayStr();
+  var cqHot = (ACC.cheques || []).filter(function(c){ return c.status === 'bounced' || (c.status === 'issued' && c.clear_date && c.clear_date <= t); }).length;
+  var iouN = ACC.people ? ACC.people.filter(function(p){ var x = accCalc()[p.id]; return x && x.bal !== 0; }).length : 0;
+  return h + item('rq:acc:wait', '&#x23F3;', 'Waiting for payment', w, w > 0 && accIsAcc())
+    + item('rq:acc:pays', '&#x2713;', 'Payments by month')
+    + item('rq:acc:cq', '&#x1F3E6;', 'Cheque statement', cqHot, cqHot > 0)
+    + item('rq:acc:cqh', '&#x2630;', 'Cheque history')
+    + item('rq:acc:iou', '&#x1F4B5;', 'IOU / advances', iouN, false)
+    + item('rq:acc:banks', '&#x2699;', accCanBanks() ? 'Banks &amp; seals' : 'Bank accounts');
+}
+
+// ─── PAGES ───
+function accRender(p) {
+  if (!accCanBooks()) { setView(rqHomeView()); return; }
+  var pg = p[2] || 'wait';
+  if (ACC.ok === false) {
+    rqSetHead('Accounts', 'Accounts', '', '');
+    $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>accounts-migration.sql</b> once in Supabase &rarr; SQL Editor, then refresh this page.</div></div>';
+    return;
+  }
+  accLoadSealsOnce(function(){ if (String(S.view).indexOf('rq:acc:') === 0 && !accIouTyping()) rqRender(S.view); });
+  var need = [];
+  if (['cq', 'cqh', 'banks', 'wait'].indexOf(pg) !== -1 && !ACC.cheques) need.push(accLoadBooks());
+  if (pg === 'iou' && !ACC.people) need.push(accLoadIou());
+  if (need.length) {
+    $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading&hellip;</div>';
+    var v = S.view;
+    Promise.all(need).then(function(){ if (S.view === v) { renderRail(); rqRender(v); } });
+    return;
+  }
+  if (pg === 'wait') return accRenderWait();
+  if (pg === 'pays') return accRenderPays();
+  if (pg === 'cq') return accRenderCq();
+  if (pg === 'cqh') return accRenderCqh();
+  if (pg === 'banks') return accRenderBanks();
+  if (pg === 'iou') { if (p[3]) return accRenderPerson(p[3]); return accRenderIou(); }
+  setView('rq:acc:wait');
+}
+
+// Waiting for payment: approved by management, not fully paid
+function accRenderWait() {
+  var f = ACC.wait, t = todayStr(), m0 = t.slice(0, 7);
+  var all = RQ.rows.filter(accPayable);
+  var tagged = all.map(function(r){ return { r: r, s: accSum(r) }; });
+  var waiting = tagged.filter(function(x){ return x.s.bal > 0; }), paid = tagged.filter(function(x){ return x.s.bal <= 0; });
+  var list = f.tab === 'paid' ? paid : f.tab === 'all' ? tagged : waiting;
+  var q = String(f.q || '').trim().toLowerCase();
+  list = list.filter(function(x){
+    if (f.dp && x.r.dept !== f.dp) return false;
+    if (!q) return true;
+    return [x.r.job_no, x.r.location, x.r.location_detail, x.r.work_type, x.r.company].join(' ').toLowerCase().indexOf(q) !== -1;
+  }).sort(function(a, b){ return String(a.r.mgmt_at || '').localeCompare(String(b.r.mgmt_at || '')); });
+  var owed = waiting.reduce(function(s, x){ return s + x.s.bal; }, 0);
+  var paidMonth = ACC.pays.reduce(function(s, p){ return s + (accPayLive(p) && String(p.pay_date).slice(0, 7) === m0 ? accP(p.amount) : 0); }, 0);
+  var wk = rqAddDays(t, 7);
+  var cq7 = (ACC.cheques || []).filter(function(c){ return c.status === 'issued' && c.clear_date && c.clear_date <= wk; }).reduce(function(s, c){ return s + accP(c.amount); }, 0);
+  var tiles = '<div class="stats">'
+    + '<div class="stat' + (waiting.length ? ' alert' : '') + '"><div class="k">Waiting for payment</div><div class="v">' + waiting.length + '</div></div>'
+    + '<div class="stat"><div class="k">Approved, still to pay</div><div class="v acc-v">' + accTk(owed) + '</div></div>'
+    + '<div class="stat"><div class="k">Paid this month</div><div class="v acc-v">' + accTk(paidMonth) + '</div></div>'
+    + (ACC.cheques ? '<div class="stat"><div class="k">Cheques to clear (7 days)</div><div class="v acc-v">' + accTk(cq7) + '</div></div>' : '') + '</div>';
+  var tabs = '<div class="rq-tallies">' + [['wait', 'Waiting for payment', waiting.length], ['paid', 'Fully paid', paid.length], ['all', 'All approved', tagged.length]].map(function(x){
+    return '<button class="rq-tally' + (f.tab === x[0] ? ' on' : '') + '" onclick="ACC.wait.tab=\'' + x[0] + '\';rqRender(S.view)">' + x[1] + ' <b>' + x[2] + '</b></button>'; }).join('') + '</div>';
+  var bar = '<div class="rq-filter"><select onchange="ACC.wait.dp=this.value;rqRender(S.view)"><option value="">All departments</option>' + RQ_DEPTS.map(function(d){ return '<option value="' + d.k + '"' + (f.dp === d.k ? ' selected' : '') + '>' + d.n + '</option>'; }).join('') + '</select>'
+    + '<input type="search" id="acc-wq" placeholder="Search job no., location, type&hellip;" value="' + rqEsc(f.q) + '" oninput="ACC.wait.q=this.value;clearTimeout(ACC._wt);ACC._wt=setTimeout(function(){rqRender(S.view);var i=$(\'acc-wq\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)"></div>';
+  var body = list.map(function(x){
+    var r = x.r, s = x.s;
+    return '<tr onclick="rqOpen(\'' + r.id + '\')"><td><span class="rq-job">' + rqEsc(r.job_no) + '</span></td><td>' + rqEsc((rqDept(r.dept) || {}).n || r.dept) + '</td><td><span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span></td>'
+      + '<td><b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '') + '</td><td>' + rqEsc(r.work_type || '') + '</td>'
+      + '<td class="num"><b>' + accTk(s.target) + '</b></td><td class="num">' + accTk(s.paid) + '</td><td class="num"><b class="' + (s.bal > 0 ? 'acc-owe' : '') + '">' + accTk(s.bal) + '</b></td>'
+      + '<td>' + (r.mgmt_at ? rqDateTxt(rqLocalDate(r.mgmt_at)) : '&mdash;') + '</td><td>' + rqEsc(r.mgmt_by_name || '') + '</td><td>' + accPayChip(r) + '</td></tr>';
+  }).join('');
+  rqSetHead('Accounts', 'Waiting for payment', 'Requisitions approved by Management. Open one to record a payment.', '');
+  $('content').innerHTML = tiles + tabs + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>' + ({ wait: 'Waiting for payment', paid: 'Fully paid', all: 'All approved' }[f.tab]) + ' <span class="rq-count">' + list.length + '</span></h3>' + bar + '</div>'
+    + (list.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Job no.</th><th>Department</th><th>Company</th><th>Location</th><th>Type of work</th><th class="num">Approved</th><th class="num">Paid</th><th class="num">Still to pay</th><th>Approved on</th><th>By</th><th>Payment</th></tr></thead><tbody>' + body + '</tbody></table></div>'
+      : '<div class="empty"><h4>Nothing here</h4>' + (f.tab === 'wait' ? 'Every approved requisition is paid.' : 'No requisitions.') + '</div>') + '</div>';
+}
+
+// ─── PAYMENT PART OF A REQUISITION ───
+function accPaySection(r) {
+  if (!accOn() || !r) return '';
+  var pays = accPaysOf(r.id);
+  if (!accPayable(r) && !pays.length) return '';
+  accLoadSealsOnce(function(){ if (RQ.openId === r.id && $('ov-rq').classList.contains('open')) rqRenderDetail(r.id, true); });
+  var s = accSum(r), canRec = accCanRecord() && accPayable(r);
+  var rows = pays.map(function(p){
+    var off = !!p.reversed_at;
+    var meth = rqEsc(accMethodTxt(p.method)) + (p.method === 'cheque' ? ' &middot; ' + rqEsc(p.bank_label || '') + (p.cheque_no ? ' &middot; CQ ' + rqEsc(p.cheque_no) : '') : '');
+    return '<tr class="' + (off ? 'acc-off' : (p.method === 'cheque' && p.cheque_status === 'bounced' ? 'acc-bounced' : '')) + '"><td>' + accDate(p.pay_date) + '</td><td><b>' + rqEsc(p.paid_to || '') + '</b></td><td>' + meth + (off ? '' : accPayChequeChip(p))
+      + (off ? '<div class="acc-rev">Reversed by ' + rqEsc(p.reversed_by_name || 'Admin') + ' &middot; ' + rqDateTime(p.reversed_at) + (p.reverse_reason ? ': ' + rqEsc(p.reverse_reason) : '') + '</div>' : '') + '</td>'
+      + '<td>' + rqEsc(p.reference || '') + (p.over_reason ? '<div class="sub2">Over approved: ' + rqEsc(p.over_reason) + '</div>' : '') + '</td><td class="num"><b>' + accTk(accP(p.amount)) + '</b></td><td>' + accSeal(p.created_by, p.created_by_name, p.created_at) + '</td>'
+      + (accIsAdmin() ? '<td>' + (off ? '' : '<button class="btn sm" onclick="accPayReverse(\'' + p.id + '\')">Reverse</button>') + '</td>' : '') + '</tr>';
+  }).join('');
+  var st = accState(s);
+  return '<div class="rq-sec acc-paysec"><div class="rq-sec-h" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>Payment</span>'
+    + (canRec ? '<button class="btn pri sm" style="text-transform:none;letter-spacing:0" onclick="accPayForm(\'' + r.id + '\')">&#x002B; Record payment</button>' : (!accCanRecord() ? '<span class="chip ' + ({ none: 'run', part: 'warn', paid: 'ok', over: 'bad' }[st]) + '" style="text-transform:none;letter-spacing:0">' + ({ none: 'Not paid yet', part: 'Part paid', paid: 'Paid', over: 'Paid over approved' }[st]) + ' &middot; view only</span>' : '')) + '</div>'
+    + '<div class="acc-box"><div class="acc-pay3"><div><span>Approved</span><b>' + accTk(s.target) + '</b></div><div><span>Paid</span><b class="acc-paid">' + accTk(s.paid) + '</b>' + (s.wait ? '<small>' + (s.done ? accTk(s.done) + ' paid &middot; ' : '') + accTk(s.wait) + ' by cheque, not cleared yet</small>' : '') + '</div>'
+    + '<div><span>' + (s.bal < 0 ? 'Paid over approved' : 'Still to pay') + '</span><b class="' + (s.bal > 0 ? 'acc-owe' : s.bal < 0 ? 'acc-over' : '') + '">' + accTk(Math.abs(s.bal)) + '</b>' + (s.bounced ? '<small class="acc-over">' + accTk(s.bounced) + ' bounced, not counted</small>' : '') + '</div></div>'
+    + (pays.length ? '<div class="scroller"><table class="rq-t acc-paytab"><thead><tr><th>Date</th><th>Paid to</th><th>Method</th><th>Reference</th><th class="num">Amount</th><th>Recorded by</th>' + (accIsAdmin() ? '<th></th>' : '') + '</tr></thead><tbody>' + rows + '</tbody></table></div>'
+      : '<div class="sub2" style="padding:4px 2px">Nothing paid yet.</div>') + '</div></div>';
+}
+function accSuppliers(reqId) {
+  var out = [], seen = {};
+  function add(n){ n = String(n || '').trim(); if (n && !seen[n.toLowerCase()]) { seen[n.toLowerCase()] = 1; out.push(n); } }
+  if (reqId && rqqOn()) rqqList(reqId).slice().sort(function(a, b){ return (Number(a.amount) || 9e15) - (Number(b.amount) || 9e15); }).forEach(function(q){ add(q.supplier); });
+  ACC.pays.slice().reverse().forEach(function(p){ add(p.paid_to); });
+  (ACC.cheques || []).forEach(function(c){ add(c.payee); });
+  return out.slice(0, 300);
+}
+function accBankOptions(sel) {
+  return (ACC.banks || []).filter(function(b){ return !b.hidden || b.id === sel; }).map(function(b){ return '<option value="' + b.id + '"' + (b.id === sel ? ' selected' : '') + '>' + rqEsc(accBankLabel(b)) + (b.acc_name ? ' (' + rqEsc(b.acc_name) + ')' : '') + '</option>'; }).join('');
+}
+async function accPayForm(reqId) {
+  var r = RQ.rows.find(function(x){ return x.id === reqId; });
+  if (!r || !accCanRecord() || !accPayable(r)) { toast('Payments can only be recorded on requisitions approved by Management', 'err'); return; }
+  await accLoadBooks();
+  var s = accSum(r), t = todayStr(), sup = accSuppliers(reqId);
+  var ids = { pay: accUuid(), cq: accUuid() };
+  accForm({ title: 'Record payment', sub: rqEsc(r.job_no) + ' &middot; approved ' + accTk(s.target) + ' &middot; still to pay <b>' + accTk(s.bal) + '</b>',
+    body: '<div class="acc-g2">'
+      + '<div class="f"><label>Amount (Tk)</label><input id="ap-amt" inputmode="decimal" value="' + (s.bal > 0 ? accFmt(s.bal) : '') + '" oninput="accPayOverCheck()"></div>'
+      + '<div class="f"><label>Date</label><input id="ap-date" type="date" value="' + t + '"></div>'
+      + '<div class="f"><label>Paid to</label><input id="ap-to" list="ap-sup" maxlength="160" value="' + rqEsc(sup[0] || '') + '"><datalist id="ap-sup">' + sup.map(function(x){ return '<option value="' + rqEsc(x) + '">'; }).join('') + '</datalist></div>'
+      + '<div class="f"><label>Method</label><select id="ap-meth" onchange="accPayMeth()">' + ACC_METHODS.map(function(m){ return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') + '</select></div>'
+      + '<div class="f ap-cq"><label>Bank account</label><select id="ap-bank">' + accBankOptions() + '</select></div>'
+      + '<div class="f ap-cq"><label>Cheque no.</label><input id="ap-cqno" maxlength="40"></div>'
+      + '<div class="f ap-cq"><label>Clearance date</label><input id="ap-clear" type="date" value="' + t + '"></div>'
+      + '<div class="f"><label>Reference / note</label><input id="ap-ref" maxlength="300" placeholder="e.g. bill no., advance, balance"></div>'
+      + '<div class="f" id="ap-over-w" style="grid-column:1/-1;display:none"><label class="acc-over">More than what is left to pay &mdash; write why</label><input id="ap-over" maxlength="300"></div>'
+      + '</div><div class="sub2" id="ap-hint" style="margin-top:8px">Saved with your name and seal. A cheque is put on the cheque statement by itself.</div>',
+    ok: 'Save payment',
+    after: function(){ accPayMeth(); accPayOverCheck(); },
+    onOk: async function(){
+      var amt = accParseAmt($('ap-amt').value), date = $('ap-date').value, to = $('ap-to').value.trim(), meth = $('ap-meth').value, ref = $('ap-ref').value.trim(), over = $('ap-over').value.trim();
+      if (!amt) return 'Write the amount (numbers only, up to 2 decimals).';
+      if (!accValidDate(date)) return 'Choose the date.';
+      if (date > rqAddDays(t, 366)) return 'The date is more than a year ahead.';
+      if (!to) return 'Write who it was paid to.';
+      var cq = null;
+      if (meth === 'cheque') {
+        cq = { bank: $('ap-bank').value, no: $('ap-cqno').value.trim(), clear: $('ap-clear').value };
+        if (!cq.bank) return 'Choose the bank account. (No bank account yet? The accounts head adds it under Banks.)';
+        if (!accValidDate(cq.clear)) return 'Choose the clearance date.';
+        if (cq.clear < date) return 'The clearance date cannot be before the cheque date.';
+        if (cq.no) {
+          var dupc = (ACC.cheques || []).find(function(c){ return c.bank_id === cq.bank && c.status !== 'cancelled' && String(c.cheque_no || '').trim().toLowerCase() === cq.no.toLowerCase() && c.id !== ids.cq; });
+          if (dupc) return 'Cheque no. ' + cq.no + ' of this bank is already on record (' + dupc.payee + ', ' + accTkTxt(accP(dupc.amount)) + ').';
+        }
+      }
+      // the latest from the database: someone else may have paid meanwhile
+      var fresh = await rqRefreshOne(reqId);
+      if (!fresh || !accPayable(fresh)) return 'This requisition is no longer open for payment (it may have been cancelled or reopened).';
+      var pr = await db.from('acc_payments').select('*').eq('req_id', reqId);
+      if (pr.error) return accErrMsg(pr.error);
+      if ((pr.data || []).some(function(x){ return x.id === ids.pay; })) { (pr.data || []).forEach(accPutPay); return accPaySaved(reqId, amt, to); } // the first try did save
+      ACC.pays = ACC.pays.filter(function(x){ return x.req_id !== reqId; }).concat(pr.data || []); ACC.byReq = null;
+      var s2 = accSum(fresh);
+      if (amt > s2.bal && !over) { $('ap-over-w').style.display = ''; $('ap-over').focus(); return 'This is more than what is left to pay (' + accTkTxt(Math.max(0, s2.bal)) + '). Write why, then save again.'; }
+      var b = cq ? accBank(cq.bank) : null;
+      var row = { id: ids.pay, req_id: reqId, dept: fresh.dept, company: fresh.company, amount: accAmtVal(amt), pay_date: date, method: meth, paid_to: to, reference: ref || null,
+        over_reason: amt > s2.bal ? over : null, created_by: S.user.id, created_by_name: S.user.name };
+      if (cq) Object.assign(row, { cheque_id: ids.cq, cheque_no: cq.no || null, bank_label: accBankLabel(b), cheque_status: 'issued', cheque_clear_date: cq.clear });
+      if (cq) {
+        var crow = { id: ids.cq, bank_id: cq.bank, payee: to, cheque_no: cq.no || null, amount: accAmtVal(amt), issue_date: date, clear_date: cq.clear, status: 'issued', req_id: reqId, payment_id: ids.pay,
+          note: fresh.job_no, created_by: S.user.id, created_by_name: S.user.name, history: [{ s: 'issued', at: new Date().toISOString(), by: S.user.name, note: 'Payment for ' + fresh.job_no }] };
+        var ci = await db.from('acc_cheques').insert(crow).select('*').single();
+        if (ci.error && !accDup(ci.error)) return accErrMsg(ci.error);
+        if (ci.data && ACC.cheques) accPut(ACC.cheques, ci.data);
+      }
+      var pi = await db.from('acc_payments').insert(row).select('*').single();
+      if (pi.error && !accDup(pi.error)) {
+        if (cq) { var und = await db.from('acc_cheques').delete().eq('id', ids.cq).eq('status', 'issued'); if (!und.error && ACC.cheques) ACC.cheques = ACC.cheques.filter(function(c){ return c.id !== ids.cq; }); }
+        return accErrMsg(pi.error);
+      }
+      if (pi.data) accPutPay(pi.data);
+      else { var again = await db.from('acc_payments').select('*').eq('id', ids.pay).maybeSingle(); if (again.data) accPutPay(again.data); }
+      return accPaySaved(reqId, amt, to, row);
+    } });
+}
+async function accPaySaved(reqId, amt, to, row) {
+  await rqEvent(reqId, 'paid', { amount: accAmtVal(amt), note: (row ? accMethodTxt(row.method) + (row.cheque_no ? ' CQ ' + row.cheque_no : '') + ' \u00B7 ' : '') + to });
+  toast('Payment of ' + accTkTxt(amt) + ' to ' + to + ' saved', 'ok-t');
+  await rqLoadEvents(reqId);
+  setTimeout(function(){ accRedraw(reqId); }, 0);
+  return true;
+}
+function accPayMeth() { var c = $('ap-meth') && $('ap-meth').value === 'cheque'; document.querySelectorAll('#acc-m-body .ap-cq').forEach(function(e){ e.style.display = c ? '' : 'none'; }); }
+function accPayOverCheck() {
+  var r = RQ.rows.find(function(x){ return x.id === RQ.openId; }); if (!r || !$('ap-amt')) return;
+  var a = accParseAmt($('ap-amt').value), s = accSum(r);
+  $('ap-over-w').style.display = a && a > s.bal ? '' : 'none';
+}
+async function accPayReverse(pid) {
+  if (!accIsAdmin()) return;
+  var p = ACC.pays.find(function(x){ return x.id === pid; }); if (!p || p.reversed_at) return;
+  var cqNote = p.method === 'cheque' ? (p.cheque_status === 'cleared' ? '<div class="acc-warn">This cheque has already cleared. It stays in the cheque history as cleared; only this payment record is reversed.</div>' : '<div class="acc-warn">The cheque is cancelled too and leaves the cheque statement.</div>') : '';
+  accForm({ title: 'Reverse payment', danger: true, sub: accTk(accP(p.amount)) + ' to ' + rqEsc(p.paid_to || '') + ' on ' + accDate(p.pay_date),
+    body: '<div class="f"><label>Why (kept on record)</label><input id="apr-why" maxlength="300"></div>' + cqNote + '<div class="sub2" style="margin-top:8px">The payment is not deleted: it stays, crossed out, with your name and the reason, and is no longer counted.</div>',
+    ok: 'Reverse payment',
+    onOk: async function(){
+      var why = $('apr-why').value.trim(); if (!why) return 'Write why it is being reversed.';
+      var up = await db.from('acc_payments').update({ reversed_at: new Date().toISOString(), reversed_by_name: S.user.name, reverse_reason: why }).eq('id', pid).is('reversed_at', null).select('*');
+      if (up.error) return accErrMsg(up.error);
+      if (!up.data || !up.data.length) { var cur = await db.from('acc_payments').select('*').eq('id', pid).maybeSingle(); if (cur.data) accPutPay(cur.data); accRedraw(p.req_id); return 'Someone else has already changed this payment. Showing the latest.'; }
+      accPutPay(up.data[0]);
+      if (p.cheque_id && p.cheque_status !== 'cleared') {
+        var c = await db.from('acc_cheques').select('*').eq('id', p.cheque_id).maybeSingle();
+        if (c.data && (c.data.status === 'issued' || c.data.status === 'bounced')) {
+          var hist = (c.data.history || []).concat([{ s: 'cancelled', at: new Date().toISOString(), by: S.user.name, note: 'Payment reversed: ' + why }]);
+          var cu = await db.from('acc_cheques').update({ status: 'cancelled', status_on: todayStr(), status_at: new Date().toISOString(), status_by: S.user.id, status_by_name: S.user.name, status_note: 'Payment reversed: ' + why, history: hist }).eq('id', p.cheque_id).eq('status', c.data.status).select('*');
+          if (cu.data && cu.data[0] && ACC.cheques) accPut(ACC.cheques, cu.data[0]);
+          await db.from('acc_payments').update({ cheque_status: 'cancelled', cheque_status_on: todayStr() }).eq('id', pid);
+          var pp = await db.from('acc_payments').select('*').eq('id', pid).maybeSingle(); if (pp.data) accPutPay(pp.data);
+        }
+      }
+      await rqEvent(p.req_id, 'pay_reversed', { amount: p.amount, note: why });
+      toast('Payment reversed', 'ok-t');
+      await rqLoadEvents(p.req_id);
+      setTimeout(function(){ accRedraw(p.req_id); }, 0);
+      return true;
+    } });
+}
+
+// ─── CHEQUE STATEMENT ───
+function accCqBankGroups(list) {
+  var groups = [], byId = {};
+  (ACC.banks || []).forEach(function(b){ var g = { b: b, rows: [] }; byId[b.id] = g; groups.push(g); });
+  var none = { b: null, rows: [] };
+  list.forEach(function(c){ (byId[c.bank_id] || none).rows.push(c); });
+  if (none.rows.length) groups.push(none);
+  groups.forEach(function(g){ g.rows.sort(function(a, b){ return String(a.clear_date || '9999').localeCompare(String(b.clear_date || '9999')) || String(a.created_at).localeCompare(String(b.created_at)); }); });
+  return groups.filter(function(g){ return g.rows.length || (g.b && !g.b.hidden); });
+}
+function accCqOpen() { return (ACC.cheques || []).filter(function(c){ return c.status === 'issued' || c.status === 'bounced'; }); }
+function accReqJob(id) { var r = id && RQ.rows.find(function(x){ return x.id === id; }); return r ? r.job_no : ''; }
+function accRenderCq() {
+  var t = todayStr(), wk = rqAddDays(t, 7), open = accCqOpen(), can = accCanRecord();
+  var sum = function(l){ return l.reduce(function(s, c){ return s + accP(c.amount); }, 0); };
+  var issued = open.filter(function(c){ return c.status === 'issued'; }), bounced = open.filter(function(c){ return c.status === 'bounced'; });
+  var today = issued.filter(function(c){ return c.clear_date === t; }), passed = issued.filter(function(c){ return c.clear_date && c.clear_date < t; }), next7 = issued.filter(function(c){ return c.clear_date && c.clear_date > t && c.clear_date <= wk; });
+  var tiles = '<div class="stats">'
+    + '<div class="stat"><div class="k">Waiting to clear</div><div class="v acc-v">' + accTk(sum(issued)) + '</div><div class="n">' + accN(issued.length, 'cheque') + '</div></div>'
+    + '<div class="stat' + (today.length ? ' alert' : '') + '"><div class="k">Due today</div><div class="v acc-v">' + accTk(sum(today)) + '</div><div class="n">' + accN(today.length, 'cheque') + '</div></div>'
+    + '<div class="stat' + (passed.length ? ' alert' : '') + '"><div class="k">Date passed, not cleared</div><div class="v acc-v">' + accTk(sum(passed)) + '</div><div class="n">' + accN(passed.length, 'cheque') + '</div></div>'
+    + '<div class="stat' + (bounced.length ? ' alert' : '') + '"><div class="k">Bounced</div><div class="v acc-v' + (bounced.length ? ' acc-over' : '') + '">' + accTk(sum(bounced)) + '</div><div class="n">' + accN(bounced.length, 'cheque') + '</div></div>'
+    + '<div class="stat"><div class="k">Next 7 days</div><div class="v acc-v">' + accTk(sum(next7)) + '</div><div class="n">' + accN(next7.length, 'cheque') + '</div></div></div>';
+  var cards = accCqBankGroups(open).map(function(g){
+    var rows = g.rows.map(function(c, i){
+      var acts = '';
+      if (can && c.status === 'issued') acts = '<button class="btn sm" onclick="event.stopPropagation();accCqSet(\'' + c.id + '\',\'cleared\')">Cleared</button><button class="btn sm" onclick="event.stopPropagation();accCqSet(\'' + c.id + '\',\'bounced\')">Bounced</button><button class="btn sm" onclick="event.stopPropagation();accCqDate(\'' + c.id + '\')" title="Change the clearance date">Date</button>';
+      if (can && c.status === 'bounced') acts = '<button class="btn sm" onclick="event.stopPropagation();accCqSet(\'' + c.id + '\',\'cleared\')" title="Presented again and cleared">Cleared</button>';
+      if (accIsAdmin()) acts += '<button class="btn sm danger" onclick="event.stopPropagation();accCqSet(\'' + c.id + '\',\'cancelled\')">Cancel</button>';
+      var job = accReqJob(c.req_id);
+      return '<tr class="' + (c.status === 'bounced' ? 'acc-bounced' : '') + '" onclick="accCqView(\'' + c.id + '\')"><td class="sub2">' + (i + 1) + '</td><td><b>' + rqEsc(c.payee) + '</b>' + (c.note && !job && c.created_by_name !== 'Setup' ? '<div class="sub2">' + rqEsc(c.note) + '</div>' : '') + '</td><td>' + (c.cheque_no ? rqEsc(c.cheque_no) : '&mdash;') + '</td>'
+        + '<td>' + (job ? '<span class="rq-job">' + rqEsc(job) + '</span>' : '<span class="sub2">&mdash;</span>') + '</td><td>' + accDate(c.issue_date) + '</td><td class="acc-big">' + accDate(c.clear_date) + '</td><td>' + accCqChip(c) + '</td>'
+        + '<td class="num acc-big">' + accTk(accP(c.amount)) + '</td><td class="acc-acts">' + acts + '</td></tr>';
+    }).join('');
+    var b = g.b;
+    return '<div class="card"><div class="card-h"><h3>' + rqEsc(accBankLabel(b)) + (b && b.acc_name ? ' <span class="rq-count">' + rqEsc(b.acc_name) + '</span>' : '') + (b && b.hidden ? ' <span class="chip run">Hidden</span>' : '') + '</h3><span class="note">' + g.rows.length + ' cheque' + (g.rows.length === 1 ? '' : 's') + '</span></div>'
+      + (g.rows.length ? '<div class="scroller"><table class="rq-t acc-cqt"><thead><tr><th style="width:30px">SL</th><th>Payee</th><th>Cheque no.</th><th>For</th><th>Given out</th><th>Clearance date</th><th>Status</th><th class="num">Amount</th><th></th></tr></thead><tbody>' + rows
+        + '<tr class="acc-tot"><td></td><td colspan="6">Total &middot; ' + rqEsc(b ? b.bank + ' ' + b.acc_no : 'no bank') + '</td><td class="num acc-big">' + accTk(sum(g.rows)) + '</td><td></td></tr></tbody></table></div>'
+        : '<div class="empty" style="padding:14px">No cheques waiting.</div>') + '</div>';
+  }).join('');
+  var acts = (can ? '<button class="btn" onclick="accCqAdd()">&#x002B; Add cheque</button>' : '') + '<button class="btn pri" onclick="accPrintCq()">&#x1F5A8; Print statement</button>';
+  rqSetHead('Accounts', 'Cheque statement', 'Cheques given out and not cleared yet. Cleared and cancelled cheques move to Cheque history. Bounced cheques stay here in red.', acts);
+  $('content').innerHTML = tiles + (cards || '<div class="card"><div class="empty"><h4>No bank accounts yet</h4>' + (accCanBanks() ? 'Add one under Banks &amp; seals.' : 'The accounts head adds them.') + '</div></div>');
+}
+function accCqAdd() {
+  if (!accCanRecord()) return;
+  var t = todayStr(), sup = accSuppliers(null), id = accUuid();
+  accForm({ title: 'Add cheque', sub: 'A cheque that is not a requisition payment (requisition payments add their cheque by themselves)',
+    body: '<div class="acc-g2"><div class="f"><label>Bank account</label><select id="ac-bank">' + accBankOptions() + '</select></div>'
+      + '<div class="f"><label>Payee (company / person)</label><input id="ac-payee" list="ac-sup" maxlength="160"><datalist id="ac-sup">' + sup.map(function(x){ return '<option value="' + rqEsc(x) + '">'; }).join('') + '</datalist></div>'
+      + '<div class="f"><label>Amount (Tk)</label><input id="ac-amt" inputmode="decimal"></div><div class="f"><label>Cheque no.</label><input id="ac-no" maxlength="40"></div>'
+      + '<div class="f"><label>Given out on</label><input id="ac-issue" type="date" value="' + t + '"></div><div class="f"><label>Clearance date</label><input id="ac-clear" type="date" value="' + t + '"></div>'
+      + '<div class="f" style="grid-column:1/-1"><label>Note</label><input id="ac-note" maxlength="300"></div></div>',
+    ok: 'Save cheque',
+    onOk: async function(){
+      var bank = $('ac-bank').value, payee = $('ac-payee').value.trim(), amt = accParseAmt($('ac-amt').value), no = $('ac-no').value.trim(), issue = $('ac-issue').value, clear = $('ac-clear').value, note = $('ac-note').value.trim();
+      if (!bank) return 'Choose the bank account.';
+      if (!payee) return 'Write who the cheque is for.';
+      if (!amt) return 'Write the amount (numbers only, up to 2 decimals).';
+      if (!accValidDate(clear)) return 'Choose the clearance date.';
+      if (issue && !accValidDate(issue)) return 'The date given out is not a valid date.';
+      if (issue && clear < issue) return 'The clearance date cannot be before the date it was given out.';
+      if (no) { var d = (ACC.cheques || []).find(function(c){ return c.bank_id === bank && c.status !== 'cancelled' && String(c.cheque_no || '').trim().toLowerCase() === no.toLowerCase(); }); if (d) return 'Cheque no. ' + no + ' of this bank is already on record (' + d.payee + ').'; }
+      var row = { id: id, bank_id: bank, payee: payee, cheque_no: no || null, amount: accAmtVal(amt), issue_date: issue || null, clear_date: clear, status: 'issued', note: note || null,
+        created_by: S.user.id, created_by_name: S.user.name, history: [{ s: 'issued', at: new Date().toISOString(), by: S.user.name, note: 'Added by hand' }] };
+      var res = await db.from('acc_cheques').insert(row).select('*').single();
+      if (res.error && !accDup(res.error)) return accErrMsg(res.error);
+      var got = res.data || (await db.from('acc_cheques').select('*').eq('id', id).maybeSingle()).data;
+      if (got) accPut(ACC.cheques, got);
+      toast('Cheque to ' + payee + ' added', 'ok-t'); setTimeout(function(){ accRedraw(); }, 0);
+      return true;
+    } });
+}
+// cleared / bounced / cancelled. Only admin cancels.
+function accCqSet(id, to) {
+  var c = (ACC.cheques || []).find(function(x){ return x.id === id; }); if (!c) return;
+  if (to === 'cancelled' ? !accIsAdmin() : !accCanRecord()) { toast('Only ' + (to === 'cancelled' ? 'admin' : 'accounts') + ' can do this', 'err'); return; }
+  var ok = { issued: ['cleared', 'bounced', 'cancelled'], bounced: ['cleared', 'cancelled'] }[c.status] || [];
+  if (ok.indexOf(to) === -1) { toast('This cheque is already ' + c.status, 'err'); return; }
+  var t = todayStr(), word = { cleared: 'Cleared', bounced: 'Bounced', cancelled: 'Cancel' }[to];
+  var linked = c.payment_id ? '<div class="acc-warn">' + (to === 'cleared' ? 'The requisition payment shows as cleared.' : to === 'bounced' ? 'The requisition payment is no longer counted as paid until the cheque clears.' : 'The requisition payment it belongs to is no longer counted.') + '</div>' : '';
+  accForm({ title: word + (to === 'cancelled' ? ' cheque' : ''), danger: to !== 'cleared', sub: rqEsc(c.payee) + ' &middot; ' + accTk(accP(c.amount)) + (c.cheque_no ? ' &middot; CQ ' + rqEsc(c.cheque_no) : '') + ' &middot; ' + rqEsc(accBankLabel(accBank(c.bank_id))),
+    body: '<div class="acc-g2"><div class="f"><label>' + (to === 'cleared' ? 'Cleared on' : to === 'bounced' ? 'Bounced on' : 'Cancelled on') + '</label><input id="acs-on" type="date" value="' + t + '" max="' + t + '"></div>'
+      + '<div class="f"><label>' + (to === 'cleared' ? 'Note (optional)' : 'Reason') + '</label><input id="acs-note" maxlength="300"></div></div>' + linked
+      + (to === 'cancelled' ? '<div class="sub2" style="margin-top:8px">The cheque leaves the statement and is kept in Cheque history as cancelled.</div>' : ''),
+    ok: word === 'Cancel' ? 'Cancel cheque' : 'Mark ' + word.toLowerCase(),
+    onOk: async function(){
+      var on = $('acs-on').value, note = $('acs-note').value.trim();
+      if (!accValidDate(on) || on > t) return 'Choose a date (today or before).';
+      if (to !== 'cleared' && !note) return 'Write the reason.';
+      var cur = await db.from('acc_cheques').select('*').eq('id', id).maybeSingle();
+      if (cur.error) return accErrMsg(cur.error);
+      if (!cur.data) return 'This cheque is no longer there.';
+      if ((({ issued: ['cleared', 'bounced', 'cancelled'], bounced: ['cleared', 'cancelled'] })[cur.data.status] || []).indexOf(to) === -1) { accPut(ACC.cheques, cur.data); setTimeout(function(){ accRedraw(); }, 0); return 'Someone has already marked this cheque ' + cur.data.status + '.'; }
+      var now = new Date().toISOString();
+      var hist = (cur.data.history || []).concat([{ s: to, on: on, at: now, by: S.user.name, note: note || null }]);
+      var up = await db.from('acc_cheques').update({ status: to, status_on: on, status_at: now, status_by: S.user.id, status_by_name: S.user.name, status_note: note || null, history: hist }).eq('id', id).eq('status', cur.data.status).select('*');
+      if (up.error) return accErrMsg(up.error);
+      if (!up.data || !up.data.length) return 'Someone else changed this cheque just now. Close and try again.';
+      accPut(ACC.cheques, up.data[0]);
+      if (cur.data.payment_id) {
+        var pu = await db.from('acc_payments').update({ cheque_status: to, cheque_status_on: on }).eq('id', cur.data.payment_id).select('*');
+        if (pu.error) { console.error('payment copy of cheque status:', pu.error); toast('Cheque saved, but the requisition payment could not be updated. Refresh the page.', 'err'); }
+        else if (pu.data && pu.data[0]) { accPutPay(pu.data[0]); if (cur.data.req_id) rqEvent(cur.data.req_id, 'cheque_' + to, { amount: cur.data.amount, note: (cur.data.cheque_no ? 'CQ ' + cur.data.cheque_no + ' \u00B7 ' : '') + (note || '') }); }
+      }
+      toast('Cheque to ' + cur.data.payee + ' marked ' + to, 'ok-t'); setTimeout(function(){ accRedraw(cur.data.req_id); }, 0);
+      return true;
+    } });
+}
+function accCqDate(id) {
+  var c = (ACC.cheques || []).find(function(x){ return x.id === id; }); if (!c || !accCanRecord() || c.status !== 'issued') return;
+  accForm({ title: 'Change clearance date', sub: rqEsc(c.payee) + ' &middot; ' + accTk(accP(c.amount)) + ' &middot; now ' + accDate(c.clear_date),
+    body: '<div class="acc-g2"><div class="f"><label>New clearance date</label><input id="acd-d" type="date" value="' + (c.clear_date || todayStr()) + '"></div><div class="f"><label>Why (kept in the history)</label><input id="acd-n" maxlength="300"></div></div>',
+    ok: 'Save date',
+    onOk: async function(){
+      var d = $('acd-d').value, n = $('acd-n').value.trim();
+      if (!accValidDate(d)) return 'Choose the date.';
+      if (c.issue_date && d < c.issue_date) return 'The clearance date cannot be before the date it was given out.';
+      if (d === c.clear_date) return true;
+      var cur = await db.from('acc_cheques').select('*').eq('id', id).maybeSingle();
+      if (!cur.data || cur.data.status !== 'issued') { if (cur.data) accPut(ACC.cheques, cur.data); return 'This cheque has just been marked ' + (cur.data ? cur.data.status : 'removed') + '.'; }
+      var hist = (cur.data.history || []).concat([{ s: 'date', from: cur.data.clear_date, to: d, at: new Date().toISOString(), by: S.user.name, note: n || null }]);
+      var up = await db.from('acc_cheques').update({ clear_date: d, history: hist }).eq('id', id).eq('status', 'issued').select('*');
+      if (up.error) return accErrMsg(up.error);
+      if (up.data && up.data[0]) accPut(ACC.cheques, up.data[0]);
+      if (cur.data.payment_id) { var pu = await db.from('acc_payments').update({ cheque_clear_date: d }).eq('id', cur.data.payment_id).select('*'); if (pu.data && pu.data[0]) accPutPay(pu.data[0]); }
+      toast('Clearance date changed to ' + rqDateTxt(d), 'ok-t'); setTimeout(function(){ accRedraw(cur.data.req_id); }, 0);
+      return true;
+    } });
+}
+function accCqView(id) {
+  var c = (ACC.cheques || []).find(function(x){ return x.id === id; }); if (!c) return;
+  var job = accReqJob(c.req_id);
+  var hist = (c.history || []).slice().reverse().map(function(h){
+    var what = h.s === 'date' ? 'Clearance date changed ' + accDate(h.from) + ' &rarr; ' + accDate(h.to) : ({ issued: 'Given out', cleared: 'Cleared', bounced: 'Bounced', cancelled: 'Cancelled' }[h.s] || rqEsc(h.s)) + (h.on ? ' on ' + accDate(h.on) : '');
+    return '<div class="rq-ev"><div class="rq-ev-dot" style="background:' + ({ cleared: 'var(--green)', bounced: 'var(--red)', cancelled: 'var(--muted)' }[h.s] || 'var(--accent)') + '"></div><div><b>' + what + '</b>' + (h.note ? '<div class="rq-ev-note">' + rqEsc(h.note) + '</div>' : '') + '<div class="sub2">' + rqEsc(h.by || '') + ' &middot; ' + rqDateTime(h.at) + '</div></div></div>';
+  }).join('');
+  accForm({ title: c.payee, sub: accTk(accP(c.amount)) + ' &middot; ' + rqEsc(accBankLabel(accBank(c.bank_id))) + ' &middot; ' + accCqChip(c), view: true,
+    body: '<div class="rq-grid">' + rqKv('Cheque no.', rqEsc(c.cheque_no || '')) + rqKv('Given out', accDate(c.issue_date)) + rqKv('Clearance date', accDate(c.clear_date))
+      + rqKv('For', job ? '<a href="#" onclick="event.preventDefault();accClose();rqOpen(\'' + c.req_id + '\')">' + rqEsc(job) + '</a>' : rqEsc(c.note || '')) + rqKv('Added by', accSeal(c.created_by, c.created_by_name, c.created_at))
+      + rqKv('Last marked by', c.status_by_name ? accSeal(c.status_by, c.status_by_name, c.status_at) : '') + '</div>'
+      + (c.status_note ? '<div class="rq-remarks" style="margin-top:10px">' + rqEsc(c.status_note) + '</div>' : '')
+      + '<div class="rq-sec"><div class="rq-sec-h">History</div><div class="rq-hist">' + (hist || '<div class="sub2">No history.</div>') + '</div></div>' });
+}
+
+// ─── CHEQUE HISTORY ───
+function accRenderCqh() {
+  var f = ACC.cqh, q = String(f.q || '').trim().toLowerCase();
+  var base = (ACC.cheques || []).filter(function(c){ return c.status === 'cleared' || c.status === 'cancelled' || c.status === 'bounced'; });
+  var tally = { cleared: 0, bounced: 0, cancelled: 0 }; base.forEach(function(c){ tally[c.status]++; });
+  var list = base.filter(function(c){
+    if (f.st && c.status !== f.st) return false;
+    var d = c.status_on || (c.status_at ? rqLocalDate(c.status_at) : '');
+    if (f.from && d < f.from) return false;
+    if (f.to && d > f.to) return false;
+    if (!q) return true;
+    return [c.payee, c.cheque_no, c.note, accReqJob(c.req_id), accBankLabel(accBank(c.bank_id)), c.status_note].join(' ').toLowerCase().indexOf(q) !== -1;
+  }).sort(function(a, b){ return String(b.status_on || '').localeCompare(String(a.status_on || '')) || String(b.status_at || '').localeCompare(String(a.status_at || '')); });
+  var tot = list.reduce(function(s, c){ return s + accP(c.amount); }, 0);
+  var tabs = '<div class="rq-tallies">' + [['', 'All', base.length], ['cleared', 'Cleared', tally.cleared], ['bounced', 'Bounced (still open)', tally.bounced], ['cancelled', 'Cancelled', tally.cancelled]].map(function(x){
+    return '<button class="rq-tally' + (f.st === x[0] ? ' on' : '') + '" onclick="ACC.cqh.st=\'' + x[0] + '\';rqRender(S.view)">' + x[1] + ' <b>' + x[2] + '</b></button>'; }).join('') + '</div>';
+  var bar = '<div class="rq-filter"><input type="search" id="acc-hq" placeholder="Search payee, cheque no., job no.&hellip;" value="' + rqEsc(f.q) + '" oninput="ACC.cqh.q=this.value;clearTimeout(ACC._ht);ACC._ht=setTimeout(function(){rqRender(S.view);var i=$(\'acc-hq\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)">'
+    + '<label class="rq-mine">From <input type="date" value="' + rqEsc(f.from) + '" onchange="ACC.cqh.from=this.value;rqRender(S.view)"></label><label class="rq-mine">to <input type="date" value="' + rqEsc(f.to) + '" onchange="ACC.cqh.to=this.value;rqRender(S.view)"></label></div>';
+  var body = list.map(function(c){
+    var job = accReqJob(c.req_id);
+    return '<tr class="' + (c.status === 'bounced' ? 'acc-bounced' : '') + '" onclick="accCqView(\'' + c.id + '\')"><td><b>' + rqEsc(c.payee) + '</b></td><td>' + rqEsc(accBankLabel(accBank(c.bank_id))) + '</td><td>' + (c.cheque_no ? rqEsc(c.cheque_no) : '&mdash;') + '</td><td>' + (job ? '<span class="rq-job">' + rqEsc(job) + '</span>' : '') + '</td>'
+      + '<td class="num"><b>' + accTk(accP(c.amount)) + '</b></td><td>' + accDate(c.issue_date) + '</td><td>' + accDate(c.clear_date) + '</td><td>' + accCqChip(c) + (c.status_note ? '<div class="sub2">' + rqEsc(c.status_note) + '</div>' : '') + '</td><td>' + (c.status_by_name ? accSeal(c.status_by, c.status_by_name, c.status_at) : '') + '</td></tr>';
+  }).join('');
+  rqSetHead('Accounts', 'Cheque history', 'Every cheque that cleared, bounced or was cancelled: when it was given out, what happened and who marked it.', '');
+  $('content').innerHTML = tabs + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>Cheques <span class="rq-count">' + list.length + ' &middot; ' + accTk(tot) + '</span></h3>' + bar + '</div>'
+    + (list.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Payee</th><th>Bank account</th><th>Cheque no.</th><th>For</th><th class="num">Amount</th><th>Given out</th><th>Clearance date</th><th>What happened</th><th>Marked by</th></tr></thead><tbody>' + body + '</tbody></table></div>'
+      : '<div class="empty"><h4>Nothing here</h4>' + (base.length ? 'No cheque matches these filters.' : 'No cheque has cleared, bounced or been cancelled yet.') + '</div>') + '</div>';
+}
+
+// ─── BANKS & SEALS ───
+function accRenderBanks() {
+  var can = accCanBanks(), open = accCqOpen();
+  var rows = (ACC.banks || []).map(function(b){
+    var mine = open.filter(function(c){ return c.bank_id === b.id; });
+    return '<tr class="' + (b.hidden ? 'acc-off' : '') + '"><td><b>' + rqEsc(b.bank) + '</b></td><td>' + rqEsc(b.acc_name || '') + '</td><td><b>' + rqEsc(b.acc_no) + '</b></td><td>' + rqEsc(b.branch || '') + '</td>'
+      + '<td>' + (mine.length ? mine.length + ' waiting &middot; ' + accTk(mine.reduce(function(s, c){ return s + accP(c.amount); }, 0)) : '<span class="sub2">none waiting</span>') + '</td><td>' + (b.hidden ? '<span class="chip run">Hidden</span>' : '<span class="chip ok">In use</span>') + '</td>'
+      + (can ? '<td class="acc-acts"><button class="btn sm" onclick="accBankForm(\'' + b.id + '\')">Edit</button><button class="btn sm" onclick="accBankHide(\'' + b.id + '\',' + (b.hidden ? 'false' : 'true') + ')">' + (b.hidden ? 'Show again' : 'Hide') + '</button></td>' : '') + '</tr>';
+  }).join('');
+  var seals = '';
+  if (can) {
+    var people = (S.users || []).filter(function(u){ return u.role === 'accounts' || u.role === 'admin'; }).sort(function(a, b){ return (a.role === 'admin') - (b.role === 'admin') || String(a.name).localeCompare(String(b.name)); });
+    seals = '<div class="card"><div class="card-h"><h3>Seals</h3><span class="note">Shown next to every payment, cheque and IOU entry the person records. A photo of the stamp on white paper works.</span></div><div class="acc-seals">'
+      + (people.length ? people.map(function(u){
+        var img = RQ.settings && RQ.settings['acc_seal_' + u.id];
+        return '<div class="acc-sealcard"><div class="acc-sealimg">' + (img ? '<img src="' + img + '" alt="">' : '<span class="sub2">No seal yet</span>') + '</div><b>' + rqEsc(u.name) + '</b><div class="sub2">' + (u.role === 'admin' ? 'Admin' : u.division === 'head' ? 'Accounts head' : 'Accounts') + '</div>'
+          + '<div style="margin-top:6px"><label class="btn sm">Upload<input type="file" accept="image/*" style="display:none" onchange="rqUploadImg(\'acc_seal_' + u.id + '\',this)"></label>' + (img ? ' <button class="btn sm danger" onclick="rqClearImg(\'acc_seal_' + u.id + '\')">Remove</button>' : '') + '</div></div>';
+      }).join('') : '<div class="sub2" style="padding:12px">No accounts logins yet. Admin adds them under Admin &rarr; Add user (role Accounts).</div>') + '</div></div>';
+  }
+  rqSetHead('Accounts', can ? 'Banks & seals' : 'Bank accounts', 'The bank accounts cheques are written on.' + (can ? ' Only the accounts head and admin can change them.' : ''), can ? '<button class="btn pri" onclick="accBankForm(null)">&#x002B; Add bank account</button>' : '');
+  $('content').innerHTML = '<div class="card"><div class="card-h"><h3>Bank accounts <span class="rq-count">' + (ACC.banks || []).length + '</span></h3></div>'
+    + ((ACC.banks || []).length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Bank</th><th>Account name</th><th>Account no.</th><th>Branch</th><th>Cheques</th><th>Status</th>' + (can ? '<th></th>' : '') + '</tr></thead><tbody>' + rows + '</tbody></table></div>' : '<div class="empty" style="padding:16px">No bank accounts yet.</div>')
+    + '<div class="sub2" style="padding:8px 14px 12px">A bank account with cheques on it is never deleted; hide it when it is no longer used.</div></div>' + seals;
+}
+function accBankForm(id) {
+  if (!accCanBanks()) return;
+  var b = id ? accBank(id) : null, nid = accUuid();
+  accForm({ title: b ? 'Edit bank account' : 'Add bank account', sub: b ? rqEsc(accBankLabel(b)) : '',
+    body: '<div class="acc-g2"><div class="f"><label>Bank name</label><input id="ab-bank" maxlength="120" value="' + rqEsc(b ? b.bank : '') + '" placeholder="e.g. Dutch-Bangla Bank"></div>'
+      + '<div class="f"><label>Account name</label><input id="ab-name" maxlength="160" value="' + rqEsc(b ? b.acc_name || '' : '') + '" placeholder="e.g. Banga Fashion Limited"></div>'
+      + '<div class="f"><label>Account number</label><input id="ab-no" maxlength="60" value="' + rqEsc(b ? b.acc_no : '') + '"></div>'
+      + '<div class="f"><label>Branch (optional)</label><input id="ab-br" maxlength="120" value="' + rqEsc(b ? b.branch || '' : '') + '"></div></div>',
+    ok: b ? 'Save' : 'Add bank account',
+    onOk: async function(){
+      var v = { bank: $('ab-bank').value.trim(), acc_name: $('ab-name').value.trim() || null, acc_no: $('ab-no').value.trim(), branch: $('ab-br').value.trim() || null };
+      if (!v.bank) return 'Write the bank name.';
+      if (!v.acc_no) return 'Write the account number.';
+      var dup = (ACC.banks || []).find(function(x){ return x.id !== id && x.bank.trim().toLowerCase() === v.bank.toLowerCase() && x.acc_no.replace(/\s/g, '') === v.acc_no.replace(/\s/g, ''); });
+      if (dup) return 'This bank account is already on the list.';
+      var res;
+      if (b) res = await db.from('acc_banks').update(Object.assign(v, { updated_at: new Date().toISOString(), updated_by_name: S.user.name })).eq('id', id).select('*');
+      else res = await db.from('acc_banks').insert(Object.assign(v, { id: nid, created_by_name: S.user.name })).select('*');
+      if (res.error && !accDup(res.error)) return accErrMsg(res.error);
+      if (res.data && res.data[0]) accPut(ACC.banks, res.data[0]); else await accLoadBooks(true);
+      if (b) { // keep the bank name shown on requisition payments in step
+        var lbl = accBankLabel(Object.assign({}, b, v));
+        var linked = ACC.pays.filter(function(p){ return p.method === 'cheque' && p.cheque_id && (ACC.cheques || []).some(function(c){ return c.id === p.cheque_id && c.bank_id === id; }) && p.bank_label !== lbl; });
+        for (var i = 0; i < linked.length; i += 50) { var pu = await db.from('acc_payments').update({ bank_label: lbl }).in('id', linked.slice(i, i + 50).map(function(p){ return p.id; })).select('*'); (pu.data || []).forEach(accPutPay); }
+      }
+      toast(b ? 'Bank account saved' : 'Bank account added', 'ok-t'); setTimeout(function(){ accRedraw(); }, 0);
+      return true;
+    } });
+}
+async function accBankHide(id, hide) {
+  if (!accCanBanks()) return;
+  var res = await db.from('acc_banks').update({ hidden: hide, updated_at: new Date().toISOString(), updated_by_name: S.user.name }).eq('id', id).select('*');
+  if (res.error) { toast(accErrMsg(res.error), 'err'); return; }
+  if (res.data && res.data[0]) accPut(ACC.banks, res.data[0]);
+  toast(hide ? 'Hidden: it is no longer offered for new cheques' : 'Shown again', 'ok-t'); accRedraw();
+}
+function accAfterSeal() { if (S.view === 'rq:acc:banks') rqRender(S.view); }
+
+// ─── IOU / ADVANCES ───
+function accCalc() {
+  if (ACC.calc) return ACC.calc;
+  var m0 = todayStr().slice(0, 7), o = {};
+  (ACC.people || []).forEach(function(p){ o[p.id] = { bal: 0, dr: 0, cr: 0, mdr: 0, mcr: 0, last: null, n: 0 }; });
+  (ACC.entries || []).forEach(function(e){
+    var x = o[e.person_id]; if (!x) return;
+    if (!e.reversed_at) {
+      var d = accP(e.dr), c = accP(e.cr);
+      x.bal += d - c; x.dr += d; x.cr += c; x.n++;
+      if (String(e.entry_date).slice(0, 7) === m0 && e.kind !== 'opening' && e.kind !== 'import_dr' && e.kind !== 'import_cr') { x.mdr += d; x.mcr += c; }
+    }
+    if (!x.last || String(e.entry_date) > String(x.last.entry_date) || (e.entry_date === x.last.entry_date && String(e.created_at) > String(x.last.created_at))) x.last = e;
+  });
+  ACC.calc = o; return o;
+}
+function accPerson(id) { return (ACC.people || []).find(function(p){ return p.id === id; }) || null; }
+var ACC_KIND_RANK = { opening: 0, import_dr: 1, import_cr: 2 }; // on the same day: opening, then the Excel's debit, then its credit
+function accEntriesOf(id) { var rk = function(e){ return ACC_KIND_RANK[e.kind] != null ? ACC_KIND_RANK[e.kind] : 3; }; return (ACC.entries || []).filter(function(e){ return e.person_id === id; }).sort(function(a, b){ return String(a.entry_date).localeCompare(String(b.entry_date)) || rk(a) - rk(b) || String(a.created_at).localeCompare(String(b.created_at)); }); }
+function accKindChip(e) {
+  var cr = accP(e.cr) > 0 && accP(e.dr) === 0;
+  return '<span class="chip ' + (e.kind === 'opening' ? 'run' : cr ? 'ok' : 'warn') + '">' + rqEsc(ACC_KINDS[e.kind] || e.kind) + '</span>';
+}
+// the entry form: on the IOU page and on a person's page
+function accIouTyping() { var a = $('acc-ia'), n = $('acc-in'); return !!((a && a.value) || (n && n.value)); }
+function accIouFormHtml(fixed) {
+  if (!accCanRecord()) return '';
+  var k = ACC.iou.kind, t = todayStr();
+  var seg = [['given', '&#x002B; Given (Dr)'], ['adjusted', '&minus; Adjusted &middot; bills (Cr)'], ['returned', '&minus; Returned &middot; cash (Cr)']].map(function(x){
+    return '<button type="button" class="' + (k === x[0] ? 'on ' + (x[0] === 'given' ? 'g' : 'c') : '') + '" onclick="ACC.iou.kind=\'' + x[0] + '\';accIouSeg()">' + x[1] + '</button>'; }).join('');
+  var p = fixed ? accPerson(fixed) : (ACC.iou.sel ? accPerson(ACC.iou.sel) : null);
+  return '<div class="card acc-ef-card" id="acc-ef" onkeydown="accIouKey(event)"><div class="card-h"><h3>New IOU entry' + (fixed && p ? ' &middot; ' + rqEsc(p.name) : '') + '</h3><span class="note">Saved with your name and seal &middot; Enter = Save</span></div><div class="acc-ef">'
+    + (fixed ? '<input type="hidden" id="acc-ip" value="' + rqEsc(p ? p.name : '') + '">' : '<div class="f acc-pick"><label>Person (every ledger account, settled ones too)</label><input id="acc-ip" autocomplete="off" placeholder="Type a name&hellip;" value="' + rqEsc(p ? p.name : '') + '" oninput="accPickInput()" onfocus="accPickInput()" onblur="setTimeout(accPickHide,200)"><div class="acc-dd" id="acc-dd"></div></div>')
+    + '<div class="f"><label>Entry</label><div class="acc-seg" id="acc-seg">' + seg + '</div></div>'
+    + '<div class="f"><label>Amount (Tk)</label><input id="acc-ia" inputmode="decimal" autocomplete="off" oninput="accIouPrev()"></div>'
+    + '<div class="f"><label>Date</label><input id="acc-id" type="date" value="' + t + '" max="' + t + '"></div>'
+    + '<div class="f acc-ef-note"><label>Note / purpose</label><input id="acc-in" maxlength="300" placeholder="e.g. travel to Chattogram port, bills submitted"></div>'
+    + '<div class="acc-prev" id="acc-prev"></div></div></div>';
+}
+function accIouSeg() {
+  var k = ACC.iou.kind;
+  document.querySelectorAll('#acc-seg button').forEach(function(b, i){ var key = ['given', 'adjusted', 'returned'][i]; b.className = key === k ? 'on ' + (key === 'given' ? 'g' : 'c') : ''; });
+  accIouPrev();
+}
+function accIouSelId() { var f = S.view.split(':'); return f[3] || ACC.iou.sel; }
+function accIouPrev() {
+  var box = $('acc-prev'); if (!box) return;
+  var id = accIouSelId(), x = id ? accCalc()[id] : null, a = accParseAmt(($('acc-ia') || {}).value), cr = ACC.iou.kind !== 'given';
+  var after = x && a ? x.bal + (cr ? -a : a) : null;
+  box.innerHTML = '<span>Balance now<b>' + (x ? accTk(x.bal) : '&mdash;') + '</b></span><span class="acc-arrow">&rarr;</span><span>After this entry<b class="' + (after != null && after < 0 ? 'acc-over' : 'acc-deep') + '">' + (after != null ? accTk(after) : '&mdash;') + '</b></span>'
+    + (cr && x && x.bal > 0 ? '<button type="button" class="btn sm" onclick="accIouSettle()">Settle in full</button>' : '')
+    + '<span style="flex:1"></span><button type="button" class="btn pri" id="acc-isave" onclick="accIouSave()">Save entry</button>';
+}
+function accIouSettle() { var id = accIouSelId(), x = id ? accCalc()[id] : null; if (!x || x.bal <= 0) return; $('acc-ia').value = accFmt(x.bal); if (ACC.iou.kind === 'given') ACC.iou.kind = 'adjusted'; accIouSeg(); $('acc-in').focus(); }
+function accPickMatches() {
+  var q = String(($('acc-ip') || {}).value || '').trim().toLowerCase(), c = accCalc();
+  var l = (ACC.people || []).filter(function(p){ return !q || p.name.toLowerCase().indexOf(q) !== -1 || String(p.dept || '').toLowerCase().indexOf(q) !== -1; });
+  l.sort(function(a, b){
+    var as = q && a.name.toLowerCase().indexOf(q) === 0 ? 0 : 1, bs = q && b.name.toLowerCase().indexOf(q) === 0 ? 0 : 1;
+    var ab = (c[a.id] || {}).bal ? 0 : 1, bb = (c[b.id] || {}).bal ? 0 : 1;
+    return as - bs || ab - bb || a.name.localeCompare(b.name);
+  });
+  return { q: q, list: l.slice(0, 40), exact: (ACC.people || []).some(function(p){ return p.name.toLowerCase() === q; }) };
+}
+function accPickInput() {
+  var dd = $('acc-dd'), inp = $('acc-ip'); if (!dd || !inp) return;
+  var cur = ACC.iou.sel ? accPerson(ACC.iou.sel) : null;
+  if (cur && inp.value !== cur.name) { ACC.iou.sel = null; accIouPrev(); }
+  var m = accPickMatches(), c = accCalc();
+  ACC.iou.items = m.list.map(function(p){ return p.id; });
+  if (m.q && !m.exact) ACC.iou.items.push('+new');
+  if (ACC.iou.hi >= ACC.iou.items.length) ACC.iou.hi = 0;
+  dd.innerHTML = m.list.map(function(p, i){
+    var x = c[p.id] || {};
+    return '<div class="' + (i === ACC.iou.hi ? 'hl' : '') + '" onmousedown="event.preventDefault();accPick(\'' + p.id + '\')"><span><b>' + rqEsc(p.name) + '</b>' + (p.dept ? ' <small>' + rqEsc(p.dept) + '</small>' : '') + '</span><span class="' + (x.bal ? '' : 'sub2') + '">' + accTk(x.bal || 0) + (x.bal ? '' : ' &middot; settled') + '</span></div>';
+  }).join('') + (m.q && !m.exact ? '<div class="acc-new' + (ACC.iou.hi === m.list.length ? ' hl' : '') + '" onmousedown="event.preventDefault();accPersonForm(null,$(\'acc-ip\').value)">&#x002B; Add new person &ldquo;' + rqEsc($('acc-ip').value.trim()) + '&rdquo;</div>' : '')
+    + (!m.list.length && !m.q ? '<div class="sub2">No people yet.</div>' : '');
+  dd.style.display = 'block';
+}
+function accPickHide() { var dd = $('acc-dd'); if (dd) dd.style.display = 'none'; }
+function accPick(id) {
+  var p = accPerson(id); if (!p) return;
+  ACC.iou.sel = id; $('acc-ip').value = p.name; accPickHide(); accIouPrev();
+  var a = $('acc-ia'); if (a) a.focus();
+}
+function accIouKey(e) {
+  var dd = $('acc-dd'), open = dd && dd.style.display === 'block' && e.target && e.target.id === 'acc-ip';
+  if (open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); var n = (ACC.iou.items || []).length; if (!n) return; ACC.iou.hi = (ACC.iou.hi + (e.key === 'ArrowDown' ? 1 : n - 1)) % n; accPickInput(); return; }
+  if (e.key === 'Escape' && open) { e.stopPropagation(); accPickHide(); return; }
+  if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+  if (e.target && e.target.tagName === 'BUTTON') return;
+  e.preventDefault();
+  if (open) { var it = (ACC.iou.items || [])[ACC.iou.hi]; if (it === '+new') accPersonForm(null, $('acc-ip').value); else if (it) accPick(it); return; }
+  accIouSave();
+}
+async function accIouSave() {
+  if (!accCanRecord() || ACC._iouBusy) return;
+  var id = accIouSelId(), p = id ? accPerson(id) : null;
+  var amt = accParseAmt($('acc-ia').value), date = $('acc-id').value, note = $('acc-in').value.trim(), kind = ACC.iou.kind, t = todayStr();
+  function err(m, f) { toast(m, 'err'); if (f && $(f)) $(f).focus(); }
+  if (!p) return err('Choose the person first (or add them as a new person).', 'acc-ip');
+  if (!amt) return err('Write the amount (numbers only, up to 2 decimals).', 'acc-ia');
+  if (!accValidDate(date) || date > t) return err('Choose the date (today or before).', 'acc-id');
+  ACC._iouBusy = true; var btn = $('acc-isave'); if (btn) { btn.disabled = true; btn.textContent = 'Saving\u2026'; }
+  try {
+    var fr = await db.from('acc_iou_entries').select('*').eq('person_id', id); // the latest balance
+    if (fr.error) { err(accErrMsg(fr.error)); return; }
+    ACC.entries = ACC.entries.filter(function(e){ return e.person_id !== id; }).concat(fr.data || []); ACC.calc = null;
+    var bal = accCalc()[id].bal, cr = kind !== 'given', after = bal + (cr ? -amt : amt);
+    if (cr && after < 0) {
+      if (!note) { err('This takes ' + p.name + ' below zero (the company would owe them ' + accTkTxt(-after) + '). Write the reason in the note.', 'acc-in'); return; }
+      if (!(await appConfirm(p.name + '\u2019s balance is ' + accTkTxt(bal) + '. This entry takes it to ' + accTkTxt(after) + ': the company would owe them money.\n\nSave anyway?', { title: 'Balance goes below zero', okText: 'Save anyway' }))) return;
+    }
+    var row = { id: accUuid(), person_id: id, entry_date: date, kind: kind, dr: cr ? 0 : accAmtVal(amt), cr: cr ? accAmtVal(amt) : 0, note: note || null, created_by: S.user.id, created_by_name: S.user.name };
+    var res = await db.from('acc_iou_entries').insert(row).select('*').single();
+    if (res.error) { err(accErrMsg(res.error)); return; }
+    accPut(ACC.entries, res.data); ACC.calc = null;
+    toast((cr ? (kind === 'returned' ? 'Returned ' : 'Adjusted ') : 'Given ') + accTkTxt(amt) + (cr ? ' from ' : ' to ') + p.name + ' \u00B7 balance now ' + accTkTxt(accCalc()[id].bal), 'ok-t');
+    $('acc-ia').value = ''; $('acc-in').value = '';
+    renderRail(); rqRender(S.view);
+    var a = $('acc-ia'); if (a && S.view.split(':')[3]) a.focus(); else { var ip = $('acc-ip'); if (ip) { ip.value = ''; ACC.iou.sel = null; ip.focus(); accPickHide(); accIouPrev(); } }
+  } finally { ACC._iouBusy = false; var b2 = $('acc-isave'); if (b2) { b2.disabled = false; b2.textContent = 'Save entry'; } }
+}
+function accPersonForm(id, name) {
+  if (id ? !accCanBanks() : !accCanRecord()) return;
+  accPickHide();
+  var p = id ? accPerson(id) : null, nid = accUuid();
+  accForm({ title: p ? 'Edit person' : 'Add new person', sub: p ? 'Name and details only; entries are not changed' : 'A ledger account for IOU / advances. It is never deleted: when the balance is back to zero the person shows under Settled.',
+    body: '<div class="acc-g2"><div class="f" style="grid-column:1/-1"><label>Name</label><input id="apf-name" maxlength="120" value="' + rqEsc(p ? p.name : String(name || '').trim()) + '"></div>'
+      + '<div class="f"><label>Department / designation</label><input id="apf-dept" maxlength="120" value="' + rqEsc(p ? p.dept || '' : '') + '"></div><div class="f"><label>Phone (optional)</label><input id="apf-ph" maxlength="40" value="' + rqEsc(p ? p.phone || '' : '') + '"></div>'
+      + '<div class="f" style="grid-column:1/-1"><label>Note (optional)</label><input id="apf-note" maxlength="300" value="' + rqEsc(p ? p.note || '' : '') + '"></div></div>',
+    ok: p ? 'Save' : 'Add person',
+    onOk: async function(){
+      var v = { name: $('apf-name').value.trim().replace(/\s+/g, ' '), dept: $('apf-dept').value.trim() || null, phone: $('apf-ph').value.trim() || null, note: $('apf-note').value.trim() || null };
+      if (!v.name) return 'Write the name.';
+      var dup = (ACC.people || []).find(function(x){ return x.id !== id && x.name.toLowerCase() === v.name.toLowerCase(); });
+      if (dup) return 'There is already a ledger account named "' + dup.name + '". Use that one, or add something to tell them apart (e.g. the department).';
+      var res = p ? await db.from('acc_iou_people').update(v).eq('id', id).select('*') : await db.from('acc_iou_people').insert(Object.assign(v, { id: nid, created_by_name: S.user.name })).select('*');
+      if (res.error) return accDup(res.error) ? 'There is already a ledger account with this name.' : accErrMsg(res.error);
+      var row = res.data && res.data[0]; if (row) accPut(ACC.people, row); ACC.calc = null;
+      toast(p ? 'Saved' : v.name + ' added', 'ok-t');
+      setTimeout(function(){
+        if (!p && row) { ACC.iou.sel = row.id; }
+        var keep = { a: ($('acc-ia') || {}).value, n: ($('acc-in') || {}).value, d: ($('acc-id') || {}).value };
+        rqRender(S.view); renderRail();
+        if ($('acc-ia') && keep.a != null) { $('acc-ia').value = keep.a || ''; $('acc-in').value = keep.n || ''; if (keep.d) $('acc-id').value = keep.d; accIouPrev(); $('acc-ia').focus(); }
+      }, 0);
+      return true;
+    } });
+}
+function accRenderIou() {
+  var c = accCalc(), f = ACC.iou, q = String(f.q || '').trim().toLowerCase();
+  var all = (ACC.people || []).slice().sort(function(a, b){ return a.name.localeCompare(b.name); });
+  var out = all.filter(function(p){ return (c[p.id] || {}).bal !== 0; }), settled = all.filter(function(p){ return !(c[p.id] || {}).bal; });
+  var list = f.tab === 'settled' ? settled : f.tab === 'all' ? all : out;
+  if (q) list = list.filter(function(p){ return (p.name + ' ' + (p.dept || '') + ' ' + (p.note || '')).toLowerCase().indexOf(q) !== -1; });
+  var sum = function(l, k){ return l.reduce(function(s, p){ return s + ((c[p.id] || {})[k] || 0); }, 0); };
+  var tiles = '<div class="stats"><div class="stat"><div class="k">People with a balance</div><div class="v">' + out.length + '</div><div class="n">' + settled.length + ' settled</div></div>'
+    + '<div class="stat acc-main"><div class="k">Total balance (with people)</div><div class="v acc-v">' + accTk(sum(all, 'bal')) + '</div></div>'
+    + '<div class="stat"><div class="k">Given this month</div><div class="v acc-v">' + accTk(sum(all, 'mdr')) + '</div></div>'
+    + '<div class="stat"><div class="k">Adjusted / returned this month</div><div class="v acc-v">' + accTk(sum(all, 'mcr')) + '</div></div></div>';
+  var tabs = [['out', 'Outstanding', out.length], ['settled', 'Settled', settled.length], ['all', 'All', all.length]].map(function(x){
+    return '<button class="rq-tally' + (f.tab === x[0] ? ' on' : '') + '" onclick="ACC.iou.tab=\'' + x[0] + '\';rqRender(S.view)">' + x[1] + ' <b>' + x[2] + '</b></button>'; }).join('');
+  var body = list.map(function(p){
+    var x = c[p.id] || {}, l = x.last;
+    return '<tr onclick="setView(\'rq:acc:iou:' + p.id + '\')"><td><b>' + rqEsc(p.name) + '</b>' + (p.dept ? '<div class="sub2">' + rqEsc(p.dept) + '</div>' : '') + '</td>'
+      + '<td class="num">' + (x.mdr ? accTk(x.mdr) : '<span class="sub2">&mdash;</span>') + '</td><td class="num">' + (x.mcr ? accTk(x.mcr) : '<span class="sub2">&mdash;</span>') + '</td>'
+      + '<td class="num acc-balcell' + (x.bal < 0 ? ' acc-over' : '') + '">' + accTk(x.bal || 0) + '</td>'
+      + '<td class="sub2">' + (l ? accDate(l.entry_date) + ' &middot; ' + (l.created_by_name === 'Setup' ? 'from the IOU Excel' : rqEsc(ACC_KINDS[l.kind] || l.kind) + (l.created_by_name ? ' &middot; ' + rqEsc(l.created_by_name) : '')) : 'No entries') + '</td></tr>';
+  }).join('');
+  var acts = (accCanRecord() ? '<button class="btn" onclick="accPersonForm(null,\'\')">&#x002B; Add person</button>' : '') + (accIsAdmin() ? '<button class="btn" onclick="accImportIou()">Import from Excel</button>' : '') + '<button class="btn pri" onclick="accLedgerAsk()">&#x1F5A8; Ledger report</button>';
+  var keep = accIouDraft();
+  rqSetHead('Accounts', 'IOU / advances', 'Balance = opening + given &minus; adjusted / returned. Worked out from the entries, never typed in.', acts);
+  $('content').innerHTML = accIouFormHtml(null) + tiles
+    + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><div class="rq-tallies" style="margin:0">' + tabs + '</div><div class="rq-filter"><input type="search" id="acc-iq" placeholder="Search name, department&hellip;" value="' + rqEsc(f.q) + '" oninput="ACC.iou.q=this.value;clearTimeout(ACC._it);ACC._it=setTimeout(function(){rqRender(S.view);var i=$(\'acc-iq\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)"></div></div>'
+    + (list.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Name</th><th class="num">Given this month</th><th class="num">Adjusted this month</th><th class="num acc-balh">Balance</th><th>Last entry</th></tr></thead><tbody>' + body
+      + '<tr class="acc-tot"><td>Total ' + list.length + '</td><td class="num">' + accTk(sum(list, 'mdr')) + '</td><td class="num">' + accTk(sum(list, 'mcr')) + '</td><td class="num acc-balcell">' + accTk(sum(list, 'bal')) + '</td><td></td></tr></tbody></table></div>'
+      : '<div class="empty"><h4>Nothing here</h4>' + (f.tab === 'settled' ? 'Nobody is settled at zero.' : q ? 'No name matches.' : 'No balances.') + '</div>') + '</div>';
+  accIouRestore(keep);
+}
+function accIouDraft() { return { a: ($('acc-ia') || {}).value, n: ($('acc-in') || {}).value, d: ($('acc-id') || {}).value, f: document.activeElement && document.activeElement.id }; }
+function accIouRestore(k) {
+  if ($('acc-ia') && k) { if (k.a) $('acc-ia').value = k.a; if (k.n) $('acc-in').value = k.n; if (k.d) $('acc-id').value = k.d; if (k.f && ['acc-ia', 'acc-in', 'acc-id'].indexOf(k.f) !== -1) $(k.f).focus(); }
+  accIouPrev();
+}
+function accRenderPerson(id) {
+  var p = accPerson(id);
+  if (!p) { rqSetHead('Accounts \u203A IOU', 'Not found', '', ''); $('content').innerHTML = '<div class="card"><div class="empty"><h4>This ledger account is not here</h4><button class="btn" onclick="setView(\'rq:acc:iou\')">Back to IOU list</button></div></div>'; return; }
+  if (ACC.stmt.pid !== id) ACC.stmt = { from: '', to: '', pid: id }; // a period chosen for one person does not carry over to the next
+  var f = ACC.stmt, all = accEntriesOf(id), x = accCalc()[id] || { bal: 0 };
+  var op = 0, rows = '', run = 0, gd = 0, gc = 0;
+  all.forEach(function(e){ if (f.from && e.entry_date < f.from && !e.reversed_at) op += accP(e.dr) - accP(e.cr); });
+  run = op;
+  var shown = all.filter(function(e){ return (!f.from || e.entry_date >= f.from) && (!f.to || e.entry_date <= f.to); });
+  if (f.from) rows += '<tr class="acc-opn"><td>' + accDate(f.from) + '</td><td colspan="2">Balance brought forward</td><td></td><td></td><td class="num"><b>' + accTk(op) + '</b></td><td></td>' + (accIsAdmin() ? '<td></td>' : '') + '</tr>';
+  shown.forEach(function(e){
+    var d = accP(e.dr), cr = accP(e.cr), off = !!e.reversed_at;
+    if (!off) { run += d - cr; gd += d; gc += cr; }
+    rows += '<tr class="' + (off ? 'acc-off' : '') + '"><td>' + accDate(e.entry_date) + '</td><td>' + accKindChip(e) + '</td><td style="white-space:normal">' + rqEsc(e.note || '')
+      + (off ? '<div class="acc-rev">Reversed by ' + rqEsc(e.reversed_by_name || 'Admin') + ' &middot; ' + rqDateTime(e.reversed_at) + (e.reverse_reason ? ': ' + rqEsc(e.reverse_reason) : '') + '</div>' : '') + '</td>'
+      + '<td class="num">' + (d ? accTk(d) : '') + '</td><td class="num">' + (cr ? accTk(cr) : '') + '</td><td class="num"><b>' + (off ? '' : accTk(run)) + '</b></td>'
+      + '<td>' + (e.created_by_name === 'Setup' ? '<span class="sub2">From the Excel</span>' : accSeal(e.created_by, e.created_by_name, e.created_at)) + '</td>'
+      + (accIsAdmin() ? '<td>' + (off ? '' : '<button class="btn sm" onclick="accIouReverse(\'' + e.id + '\')">Reverse</button>') + '</td>' : '') + '</tr>';
+  });
+  var acts = '<button class="btn" onclick="setView(\'rq:acc:iou\')">&larr; IOU list</button>' + (accCanBanks() ? '<button class="btn" onclick="accPersonForm(\'' + id + '\')">Edit details</button>' : '') + '<button class="btn pri" onclick="accPrintPerson(\'' + id + '\')">&#x1F5A8; Print statement</button>';
+  var keep = accIouDraft();
+  rqSetHead('Accounts \u203A IOU', p.name, (p.dept ? rqEsc(p.dept) + ' &middot; ' : '') + (p.phone ? rqEsc(p.phone) + ' &middot; ' : '') + (x.bal ? 'Balance ' + accTk(x.bal) : 'Settled (balance zero)'), acts);
+  $('content').innerHTML = accIouFormHtml(id)
+    + '<div class="stats"><div class="stat"><div class="k">' + (f.from ? 'Brought forward ' + rqDateTxt(f.from) : 'Entries') + '</div><div class="v acc-v">' + (f.from ? accTk(op) : all.filter(function(e){ return !e.reversed_at; }).length) + '</div></div>'
+    + '<div class="stat"><div class="k">Given (Dr)' + (f.from || f.to ? ' in period' : '') + '</div><div class="v acc-v">' + accTk(gd) + '</div></div>'
+    + '<div class="stat"><div class="k">Adjusted / returned (Cr)' + (f.from || f.to ? ' in period' : '') + '</div><div class="v acc-v">' + accTk(gc) + '</div></div>'
+    + '<div class="stat acc-main"><div class="k">Balance now</div><div class="v acc-v">' + accTk(x.bal) + '</div></div></div>'
+    + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>Entries</h3><div class="rq-filter"><label class="rq-mine">From <input type="date" value="' + rqEsc(f.from) + '" onchange="ACC.stmt.from=this.value;rqRender(S.view)"></label><label class="rq-mine">to <input type="date" value="' + rqEsc(f.to) + '" onchange="ACC.stmt.to=this.value;rqRender(S.view)"></label>'
+    + (f.from || f.to ? '<button class="btn sm" onclick="ACC.stmt.from=\'\';ACC.stmt.to=\'\';rqRender(S.view)">Show all</button>' : '') + '</div></div>'
+    + (rows ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Date</th><th>Entry</th><th>Note</th><th class="num">Given (Dr)</th><th class="num">Adjusted (Cr)</th><th class="num">Balance</th><th>By</th>' + (accIsAdmin() ? '<th></th>' : '') + '</tr></thead><tbody>' + rows + '</tbody></table></div>' : '<div class="empty" style="padding:16px">No entries' + (f.from || f.to ? ' in this period' : ' yet') + '.</div>')
+    + '<div class="sub2" style="padding:8px 14px 12px">Entries are never edited or deleted. Only Admin can reverse an entry, with a reason; it then stays here crossed out.</div></div>';
+  accIouRestore(keep);
+}
+function accIouReverse(eid) {
+  if (!accIsAdmin()) return;
+  var e = (ACC.entries || []).find(function(x){ return x.id === eid; }); if (!e || e.reversed_at) return;
+  var p = accPerson(e.person_id);
+  accForm({ title: 'Reverse entry', danger: true, sub: rqEsc(p ? p.name : '') + ' &middot; ' + rqEsc(ACC_KINDS[e.kind] || e.kind) + ' ' + accTk(accP(e.dr) || accP(e.cr)) + ' &middot; ' + accDate(e.entry_date),
+    body: '<div class="f"><label>Why (kept on record)</label><input id="air-why" maxlength="300"></div><div class="sub2" style="margin-top:8px">The entry stays, crossed out, with your name and the reason, and is no longer counted in the balance.</div>',
+    ok: 'Reverse entry',
+    onOk: async function(){
+      var why = $('air-why').value.trim(); if (!why) return 'Write why it is being reversed.';
+      var up = await db.from('acc_iou_entries').update({ reversed_at: new Date().toISOString(), reversed_by_name: S.user.name, reverse_reason: why }).eq('id', eid).is('reversed_at', null).select('*');
+      if (up.error) return accErrMsg(up.error);
+      if (!up.data || !up.data.length) return 'This entry has already been reversed.';
+      accPut(ACC.entries, up.data[0]); ACC.calc = null;
+      toast('Entry reversed', 'ok-t'); setTimeout(function(){ accRedraw(); }, 0);
+      return true;
+    } });
+}
+// opening / debit / credit / closing per person for a period (the Excel's "Ledger wise report")
+function accLedger(from, to, opts) {
+  opts = opts || {};
+  var o = {};
+  (ACC.people || []).forEach(function(p){ o[p.id] = { p: p, op: 0, dr: 0, cr: 0 }; });
+  (ACC.entries || []).forEach(function(e){
+    var x = o[e.person_id]; if (!x || e.reversed_at) return;
+    var d = accP(e.dr), c = accP(e.cr);
+    if (from && e.entry_date < from) x.op += d - c;
+    else if (!to || e.entry_date <= to) { x.dr += d; x.cr += c; }
+  });
+  var rows = Object.keys(o).map(function(k){ var x = o[k]; x.cl = x.op + x.dr - x.cr; return x; })
+    .filter(function(x){ if (opts.onlyBal && !x.cl) return false; if (opts.hideZero && !x.op && !x.dr && !x.cr && !x.cl) return false; return true; })
+    .sort(function(a, b){ return a.p.name.localeCompare(b.p.name); });
+  var t = { op: 0, dr: 0, cr: 0, cl: 0 }; rows.forEach(function(x){ t.op += x.op; t.dr += x.dr; t.cr += x.cr; t.cl += x.cl; });
+  return { rows: rows, tot: t };
+}
+function accLedgerAsk() {
+  var t = todayStr();
+  accForm({ title: 'Ledger report', sub: 'IOU: opening, given (debit), adjusted (credit) and closing balance for each person',
+    body: '<div class="acc-g2"><div class="f"><label>From</label><input id="alr-from" type="date" value="' + (ACC.ledFrom || t.slice(0, 8) + '01') + '"></div><div class="f"><label>To</label><input id="alr-to" type="date" value="' + (ACC.ledTo || t) + '"></div></div>'
+      + '<div class="acc-quick">' + [['This month', t.slice(0, 8) + '01', t], ['Since the Excel (01.05.2025)', '2025-05-01', t], ['Excel period', '2025-05-01', '2026-10-14']].map(function(x){ return '<button type="button" class="btn sm" onclick="$(\'alr-from\').value=\'' + x[1] + '\';$(\'alr-to\').value=\'' + x[2] + '\'">' + x[0] + '</button>'; }).join('') + '</div>'
+      + '<label class="acc-chk"><input type="checkbox" id="alr-zero" checked> Leave out people with nothing in the period and no balance</label>'
+      + '<label class="acc-chk"><input type="checkbox" id="alr-bal"> Only people who still have a balance at the end</label>',
+    ok: '&#x1F5A8; Print / PDF', extra: '<button class="btn" onclick="accLedgerGo(true)">Excel</button>',
+    onOk: async function(){ return accLedgerGo(false); } });
+}
+function accLedgerGo(xl) {
+  var from = $('alr-from').value, to = $('alr-to').value;
+  if (!accValidDate(from) || !accValidDate(to)) { $('acc-m-err').textContent = 'Choose both dates.'; return 'Choose both dates.'; }
+  if (from > to) { $('acc-m-err').textContent = 'The From date is after the To date.'; return 'The From date is after the To date.'; }
+  ACC.ledFrom = from; ACC.ledTo = to;
+  var L = accLedger(from, to, { hideZero: $('alr-zero').checked, onlyBal: $('alr-bal').checked });
+  if (xl) {
+    var aoa = [['Shahana Group'], ['IOU ledger, ' + rqDateTxt(from) + ' to ' + rqDateTxt(to)], [], ['SL', 'Particulars', 'Department', 'Opening', 'Debit (given)', 'Credit (adjusted)', 'Closing']];
+    L.rows.forEach(function(x, i){ aoa.push([i + 1, x.p.name, x.p.dept || '', x.op / 100, x.dr / 100, x.cr / 100, x.cl / 100]); });
+    aoa.push(['', 'Total', '', L.tot.op / 100, L.tot.dr / 100, L.tot.cr / 100, L.tot.cl / 100]);
+    accXlsx('IOU ledger ' + from + ' to ' + to, [{ name: 'IOU ledger', aoa: aoa, widths: [5, 34, 18, 16, 16, 16, 16] }]);
+    return false;
+  }
+  var E = rqEsc;
+  var body = accDocHead('IOU Ledger', 'Period <b>' + rqDateTxt(from) + ' &ndash; ' + rqDateTxt(to) + '</b><br>' + L.rows.length + ' people &middot; amounts in Tk')
+    + '<div class="kp"><div><span>Opening</span><b>' + accFmt(L.tot.op, 2) + '</b></div><div><span>Given &middot; Debit</span><b>' + accFmt(L.tot.dr, 2) + '</b></div><div><span>Adjusted &middot; Credit</span><b>' + accFmt(L.tot.cr, 2) + '</b></div><div class="main"><span>Closing balance</span><b>' + accFmt(L.tot.cl, 2) + '</b></div></div>'
+    + '<table class="lt"><colgroup><col style="width:7mm"><col><col style="width:27mm"><col style="width:27mm"><col style="width:27mm"><col style="width:30mm"></colgroup><thead><tr><th>SL</th><th>Particulars</th><th class="num">Opening</th><th class="num">Debit</th><th class="num">Credit</th><th class="num cl">Closing</th></tr></thead><tbody>'
+    + L.rows.map(function(x, i){ return '<tr><td class="sl">' + (i + 1) + '</td><td class="nm"><b>' + E(x.p.name) + '</b>' + (x.p.dept ? ' <small>' + E(x.p.dept) + '</small>' : '') + '</td>' + [x.op, x.dr, x.cr].map(function(v){ return '<td class="num' + (v ? '' : ' z') + '">' + (v ? accFmt(v, 2) : '&mdash;') + '</td>'; }).join('') + '<td class="num cl">' + accFmt(x.cl, 2) + '</td></tr>'; }).join('')
+    + '</tbody><tfoot><tr class="tot"><td></td><td>Total</td><td class="num">' + accFmt(L.tot.op, 2) + '</td><td class="num">' + accFmt(L.tot.dr, 2) + '</td><td class="num">' + accFmt(L.tot.cr, 2) + '</td><td class="num cl">' + accFmt(L.tot.cl, 2) + '</td></tr></tfoot></table>';
+  accDocOpen('IOU ledger ' + rqDateTxt(from) + ' - ' + rqDateTxt(to), body);
+  return true;
+}
+function accPrintPerson(id) {
+  var p = accPerson(id); if (!p) return;
+  var f = ACC.stmt, all = accEntriesOf(id).filter(function(e){ return !e.reversed_at; }), E = rqEsc;
+  var op = 0; all.forEach(function(e){ if (f.from && e.entry_date < f.from) op += accP(e.dr) - accP(e.cr); });
+  var shown = all.filter(function(e){ return (!f.from || e.entry_date >= f.from) && (!f.to || e.entry_date <= f.to); });
+  var run = op, gd = 0, gc = 0;
+  var rows = (f.from ? '<tr class="opn"><td>' + E(rqDateTxt(f.from)) + '</td><td colspan="2">Balance brought forward</td><td></td><td></td><td class="num cl">' + accFmt(op, 2) + '</td></tr>' : '')
+    + shown.map(function(e){ var d = accP(e.dr), c = accP(e.cr); run += d - c; gd += d; gc += c;
+      return '<tr><td>' + E(rqDateTxt(e.entry_date)) + '</td><td>' + E(ACC_KINDS[e.kind] || e.kind) + '</td><td class="nm">' + E(e.note || '') + '<small>' + E(e.created_by_name === 'Setup' ? 'From the Excel' : e.created_by_name || '') + '</small></td><td class="num' + (d ? '' : ' z') + '">' + (d ? accFmt(d, 2) : '&mdash;') + '</td><td class="num' + (c ? '' : ' z') + '">' + (c ? accFmt(c, 2) : '&mdash;') + '</td><td class="num cl">' + accFmt(run, 2) + '</td></tr>'; }).join('');
+  var per = f.from || f.to ? (f.from ? rqDateTxt(f.from) : 'Start') + ' &ndash; ' + (f.to ? rqDateTxt(f.to) : rqDateTxt(todayStr())) : 'All entries';
+  var body = accDocHead('IOU Statement', '<b>' + E(p.name) + '</b>' + (p.dept ? '<br>' + E(p.dept) : '') + '<br>' + per)
+    + '<div class="kp"><div><span>' + (f.from ? 'Brought forward' : 'Opening') + '</span><b>' + accFmt(op, 2) + '</b></div><div><span>Given &middot; Debit</span><b>' + accFmt(gd, 2) + '</b></div><div><span>Adjusted &middot; Credit</span><b>' + accFmt(gc, 2) + '</b></div><div class="main"><span>Balance</span><b>' + accFmt(run, 2) + '</b></div></div>'
+    + '<table class="lt"><colgroup><col style="width:20mm"><col style="width:34mm"><col><col style="width:25mm"><col style="width:25mm"><col style="width:28mm"></colgroup><thead><tr><th>Date</th><th>Entry</th><th>Note</th><th class="num">Debit</th><th class="num">Credit</th><th class="num cl">Balance</th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" class="z">No entries.</td></tr>') + '</tbody></table>'
+    + '<div class="sig"><div>Prepared by</div><div>Received / acknowledged by</div><div>Approved by</div></div>';
+  accDocOpen('IOU statement ' + p.name, body);
+}
+
+// ─── PAYMENTS BY MONTH (the monthly money track) ───
+function accPaysMonth() {
+  var f = ACC.rep; if (!f.month) f.month = todayStr().slice(0, 7);
+  var byId = {}; RQ.rows.forEach(function(r){ byId[r.id] = r; });
+  var q = String(f.q || '').trim().toLowerCase();
+  var list = ACC.pays.filter(function(p){
+    if (String(p.pay_date).slice(0, 7) !== f.month) return false;
+    if (f.co && p.company !== f.co) return false;
+    if (f.meth && p.method !== f.meth) return false;
+    if (q) { var r = byId[p.req_id] || {}; if ([r.job_no, p.paid_to, p.reference, p.cheque_no, p.created_by_name].join(' ').toLowerCase().indexOf(q) === -1) return false; }
+    return true;
+  }).sort(function(a, b){ return String(a.pay_date).localeCompare(String(b.pay_date)) || String(a.created_at).localeCompare(String(b.created_at)); });
+  var live = list.filter(accPayLive), sum = function(l){ return l.reduce(function(s, p){ return s + accP(p.amount); }, 0); };
+  var meth = {}; ACC_METHODS.forEach(function(m){ meth[m[0]] = sum(live.filter(function(p){ return p.method === m[0]; })); });
+  var grid = {}; RQ_COMPANIES.forEach(function(c){ grid[c.c] = {}; });
+  live.forEach(function(p){ var co = p.company || '?', dp = p.dept || '?'; grid[co] = grid[co] || {}; grid[co][dp] = (grid[co][dp] || 0) + accP(p.amount); });
+  return { f: f, list: list, live: live, total: sum(live), out: sum(list.filter(function(p){ return !accPayLive(p); })), meth: meth, grid: grid, byId: byId };
+}
+function accRenderPays() {
+  var D = accPaysMonth(), f = D.f;
+  var acts = '<input type="month" class="rq-month" value="' + f.month + '" onchange="if(this.value){ACC.rep.month=this.value;rqRender(S.view)}">'
+    + '<select class="rq-month" onchange="ACC.rep.co=this.value;rqRender(S.view)"><option value="">All companies</option>' + RQ_COMPANIES.map(function(c){ return '<option value="' + c.c + '"' + (f.co === c.c ? ' selected' : '') + '>' + c.n + '</option>'; }).join('') + '</select>'
+    + '<button class="btn" onclick="accPaysXlsx()">Excel</button><button class="btn pri" onclick="accPrintPays()">&#x1F5A8; Print / PDF</button>';
+  rqSetHead('Accounts', 'Payments by month', rqEsc(rqMonthName(f.month)) + ' &middot; ' + (f.co ? rqEsc(rqCompany(f.co).n) : 'All companies') + ' &middot; cheques count on the day they were given out; bounced, cancelled and reversed payments are left out of the totals', acts);
+  var tiles = '<div class="stats"><div class="stat acc-main"><div class="k">Paid in ' + rqEsc(rqMonthName(f.month)) + '</div><div class="v acc-v">' + accTk(D.total) + '</div><div class="n">' + D.live.length + ' payments</div></div>'
+    + ACC_METHODS.map(function(m){ return '<div class="stat' + (f.meth === m[0] ? ' acc-on' : '') + '" style="cursor:pointer" onclick="ACC.rep.meth=ACC.rep.meth===\'' + m[0] + '\'?\'\':\'' + m[0] + '\';rqRender(S.view)" title="Show only this"><div class="k">' + m[1] + '</div><div class="v acc-v">' + accTk(D.meth[m[0]]) + '</div></div>'; }).join('') + '</div>';
+  var cos = f.co ? [rqCompany(f.co)] : RQ_COMPANIES;
+  var grid = '<table class="rq-t"><thead><tr><th>Company</th>' + RQ_DEPTS.map(function(d){ return '<th class="num">' + d.n + '</th>'; }).join('') + '<th class="num">Total</th></tr></thead><tbody>'
+    + cos.map(function(c){ var g = D.grid[c.c] || {}, t = 0; return '<tr><td><b>' + rqEsc(c.n) + '</b></td>' + RQ_DEPTS.map(function(d){ t += g[d.k] || 0; return '<td class="num">' + (g[d.k] ? accTk(g[d.k]) : '&mdash;') + '</td>'; }).join('') + '<td class="num"><b>' + accTk(t) + '</b></td></tr>'; }).join('') + '</tbody></table>';
+  var body = D.list.map(function(p){
+    var r = D.byId[p.req_id] || {}, off = !accPayLive(p);
+    return '<tr class="' + (off ? 'acc-off' : '') + '" onclick="rqOpen(\'' + p.req_id + '\')"><td>' + accDate(p.pay_date) + '</td><td><span class="rq-job">' + rqEsc(r.job_no || '') + '</span></td><td>' + rqEsc((rqDept(p.dept) || {}).n || p.dept || '') + '</td><td><span class="rq-co">' + rqEsc(p.company || '') + '</span></td><td><b>' + rqEsc(p.paid_to || '') + '</b></td>'
+      + '<td>' + rqEsc(accMethodTxt(p.method)) + (p.method === 'cheque' ? '<div class="sub2">' + rqEsc(p.bank_label || '') + (p.cheque_no ? ' &middot; CQ ' + rqEsc(p.cheque_no) : '') + '</div>' : '') + (off ? '<div class="acc-rev">' + (p.reversed_at ? 'Reversed' : p.cheque_status === 'bounced' ? 'Cheque bounced' : 'Cheque cancelled') + ' &middot; not counted</div>' : '') + '</td>'
+      + '<td class="num"><b>' + accTk(accP(p.amount)) + '</b></td><td>' + accSeal(p.created_by, p.created_by_name) + '</td></tr>';
+  }).join('');
+  var bar = '<div class="rq-filter"><input type="search" id="acc-pq" placeholder="Search job no., paid to, cheque no.&hellip;" value="' + rqEsc(f.q) + '" oninput="ACC.rep.q=this.value;clearTimeout(ACC._pt);ACC._pt=setTimeout(function(){rqRender(S.view);var i=$(\'acc-pq\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)">'
+    + (f.meth ? '<button class="btn sm" onclick="ACC.rep.meth=\'\';rqRender(S.view)">Only ' + rqEsc(accMethodTxt(f.meth)) + ' &times;</button>' : '') + '</div>';
+  $('content').innerHTML = tiles + '<div class="card"><div class="card-h"><h3>By company and department</h3></div><div class="scroller">' + grid + '</div></div>'
+    + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>Payments <span class="rq-count">' + D.list.length + '</span></h3>' + bar + '</div>'
+    + (D.list.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Date</th><th>Job no.</th><th>Department</th><th>Company</th><th>Paid to</th><th>Method</th><th class="num">Amount</th><th>Recorded by</th></tr></thead><tbody>' + body
+      + '<tr class="acc-tot"><td colspan="6">Total counted</td><td class="num">' + accTk(D.total) + '</td><td></td></tr></tbody></table></div>' : '<div class="empty"><h4>No payments</h4>Nothing was paid in ' + rqEsc(rqMonthName(f.month)) + (f.co || f.meth || f.q ? ' with these filters' : '') + '.</div>') + '</div>';
+}
+function accPaysXlsx() {
+  var D = accPaysMonth();
+  var aoa = [['Shahana Group'], ['Payments, ' + rqMonthName(D.f.month) + (D.f.co ? ' \u00B7 ' + rqCompany(D.f.co).n : '')], [], ['Date', 'Job no.', 'Department', 'Company', 'Paid to', 'Method', 'Bank account', 'Cheque no.', 'Cheque status', 'Reference', 'Amount', 'Counted', 'Recorded by']];
+  D.list.forEach(function(p){ var r = D.byId[p.req_id] || {}; aoa.push([rqDateTxt(p.pay_date), r.job_no || '', (rqDept(p.dept) || {}).n || p.dept || '', p.company || '', p.paid_to || '', accMethodTxt(p.method), p.bank_label || '', p.cheque_no || '', p.cheque_status || '', p.reference || '', accP(p.amount) / 100, accPayLive(p) ? 'Yes' : (p.reversed_at ? 'No (reversed)' : 'No (cheque ' + p.cheque_status + ')'), p.created_by_name || '']); });
+  aoa.push(['', '', '', '', '', '', '', '', '', 'Total counted', D.total / 100]);
+  accXlsx('Payments ' + D.f.month, [{ name: 'Payments', aoa: aoa, widths: [11, 18, 13, 9, 26, 16, 20, 12, 12, 24, 14, 16, 16] }]);
+}
+function accPrintPays() {
+  var D = accPaysMonth(), E = rqEsc;
+  var cos = D.f.co ? [rqCompany(D.f.co)] : RQ_COMPANIES;
+  var body = accDocHead('Payments', '<b>' + E(rqMonthName(D.f.month)) + '</b><br>' + (D.f.co ? E(rqCompany(D.f.co).n) : 'All companies') + (D.f.meth ? ' &middot; ' + E(accMethodTxt(D.f.meth)) : ''))
+    + '<div class="kp"><div class="main"><span>Paid</span><b>' + accFmt(D.total, 2) + '</b></div>' + ACC_METHODS.slice(0, 3).map(function(m){ return '<div><span>' + m[1] + '</span><b>' + accFmt(D.meth[m[0]], 2) + '</b></div>'; }).join('') + '</div>'
+    + '<div class="sec"><span><i></i>By company and department</span></div><table class="lt"><thead><tr><th>Company</th>' + RQ_DEPTS.map(function(d){ return '<th class="num">' + d.n + '</th>'; }).join('') + '<th class="num cl">Total</th></tr></thead><tbody>'
+    + cos.map(function(c){ var g = D.grid[c.c] || {}, t = 0; return '<tr><td><b>' + E(c.n) + '</b></td>' + RQ_DEPTS.map(function(d){ t += g[d.k] || 0; return '<td class="num' + (g[d.k] ? '' : ' z') + '">' + (g[d.k] ? accFmt(g[d.k], 2) : '&mdash;') + '</td>'; }).join('') + '<td class="num cl">' + accFmt(t, 2) + '</td></tr>'; }).join('') + '</tbody></table>'
+    + '<div class="sec"><span><i></i>Payments</span><small>' + D.live.length + ' counted' + (D.list.length > D.live.length ? ' &middot; ' + (D.list.length - D.live.length) + ' not counted (struck through)' : '') + '</small></div>'
+    + '<table class="lt"><colgroup><col style="width:18mm"><col style="width:30mm"><col><col style="width:32mm"><col style="width:24mm"><col style="width:27mm"></colgroup><thead><tr><th>Date</th><th>Job no.</th><th>Paid to</th><th>Method</th><th>Recorded by</th><th class="num cl">Amount</th></tr></thead><tbody>'
+    + (D.list.map(function(p){ var r = D.byId[p.req_id] || {}, off = !accPayLive(p);
+      return '<tr class="' + (off ? 'off' : '') + '"><td>' + E(rqDateTxt(p.pay_date)) + '</td><td><b>' + E(r.job_no || '') + '</b><small>' + E(((rqDept(p.dept) || {}).n || '') + ' \u00B7 ' + (p.company || '')) + '</small></td><td class="nm">' + E(p.paid_to || '') + (p.reference ? '<small>' + E(p.reference) + '</small>' : '') + '</td><td>' + E(accMethodTxt(p.method)) + (p.method === 'cheque' ? '<small>' + E((p.bank_label || '') + (p.cheque_no ? ' \u00B7 CQ ' + p.cheque_no : '')) + '</small>' : '') + '</td><td>' + E(p.created_by_name || '') + '</td><td class="num cl">' + accFmt(accP(p.amount), 2) + '</td></tr>'; }).join('') || '<tr><td colspan="6" class="z">No payments.</td></tr>')
+    + '</tbody><tfoot><tr class="tot"><td colspan="5">Total counted</td><td class="num cl">' + accFmt(D.total, 2) + '</td></tr></tfoot></table>'
+    + '<div class="sig"><div>Prepared by</div><div>Checked by</div><div>Approved by</div></div>';
+  accDocOpen('Payments ' + rqMonthName(D.f.month), body);
+}
+
+// ─── PRINTED CHEQUE STATEMENT ───
+function accPrintCq() {
+  var t = todayStr(), E = rqEsc, open = accCqOpen(), groups = accCqBankGroups(open).filter(function(g){ return g.b ? !g.b.hidden || g.rows.length : g.rows.length; });
+  var sum = function(l){ return l.reduce(function(s, c){ return s + accP(c.amount); }, 0); };
+  var issued = open.filter(function(c){ return c.status === 'issued'; }), bounced = open.filter(function(c){ return c.status === 'bounced'; });
+  var body = accDocHead('Cheque Statement', 'Date <b>' + rqDateTxt(t) + '</b><br>Cheques not yet cleared')
+    + '<div class="kp"><div class="main"><span>Waiting to clear</span><b>Tk ' + accFmt(sum(issued)) + '</b></div><div><span>Due today</span><b>Tk ' + accFmt(sum(issued.filter(function(c){ return c.clear_date === t; }))) + '</b></div><div><span>Bounced</span><b>Tk ' + accFmt(sum(bounced)) + '</b></div><div><span>Cheques</span><b>' + open.length + '</b></div></div>'
+    + groups.map(function(g){
+      var b = g.b;
+      return '<div class="sec"><span><i></i>' + E(b ? b.bank + ' \u00B7 A/C ' + b.acc_no : 'No bank set') + (b && b.acc_name ? ' <small>' + E(b.acc_name) + '</small>' : '') + '</span><small>' + g.rows.length + ' cheque' + (g.rows.length === 1 ? '' : 's') + '</small></div>'
+        + (g.rows.length ? '<table class="lt cq"><colgroup><col style="width:7mm"><col><col style="width:24mm"><col style="width:26mm"><col style="width:22mm"><col style="width:30mm"></colgroup><thead><tr><th>SL</th><th>Payee</th><th>Cheque no.</th><th>Clearance date</th><th>Status</th><th class="num">Amount (Tk)</th></tr></thead><tbody>'
+          + g.rows.map(function(c, i){
+            var st = c.status === 'bounced' ? '<span class="st b">BOUNCED</span>' : c.clear_date === t ? '<span class="st t">DUE TODAY</span>' : c.clear_date && c.clear_date < t ? '<span class="st p">DATE PASSED</span>' : '<span class="st">ISSUED</span>';
+            var job = accReqJob(c.req_id);
+            return '<tr class="' + (c.status === 'bounced' ? 'bx' : '') + '"><td class="sl">' + (i + 1) + '</td><td class="nm"><b>' + E(c.payee) + '</b>' + (job ? '<small>' + E(job) + '</small>' : '') + '</td><td>' + E(c.cheque_no || '\u2014') + '</td><td class="dt">' + E(rqDateTxt(c.clear_date)) + '</td><td>' + st + '</td><td class="num amt">' + accFmt(accP(c.amount)) + '</td></tr>';
+          }).join('') + '</tbody><tfoot><tr class="tot"><td></td><td colspan="4">Total &middot; ' + E(b ? b.bank + ' ' + b.acc_no : '') + '</td><td class="num amt">' + accFmt(sum(g.rows)) + '</td></tr></tfoot></table>'
+          : '<div class="none">No cheques waiting.</div>');
+    }).join('')
+    + '<div class="sig"><div>Prepared by</div><div>Checked by</div><div>Approved by</div></div>';
+  accDocOpen('Cheque statement ' + rqDateTxt(t), body);
+}
+
+// ─── PRINT LOOK (A4, black-and-white safe, terracotta accent) ───
+function accDocCss() {
+  return '@page{size:A4;margin:15mm 14mm 16mm}@page{@bottom-right{content:"Page " counter(page) " of " counter(pages);font:8.5px Arial,sans-serif;color:#9a9a9a}}'
+    + '*{box-sizing:border-box}html,body{margin:0;background:#e8e6e1}body{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#1c1c1c;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10.5px}'
+    + '.sheet{width:210mm;min-height:297mm;margin:14px auto;background:#fff;padding:15mm 14mm 16mm;box-shadow:0 2px 12px rgba(0,0,0,.15)}'
+    + '@media print{html,body{background:#fff}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}}'
+    + '.top{height:4px;background:#C2552F;border-radius:2px;margin-bottom:12px}.h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:14px}'
+    + '.co{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:#C2552F;font-weight:700}h1{font-size:23px;margin:3px 0 0;font-weight:700;letter-spacing:-.02em}'
+    + '.meta{text-align:right;font-size:10px;color:#6b6b6b;line-height:1.55}.meta b{color:#1c1c1c}'
+    + '.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.kp div{background:#FBEDE7;border-radius:7px;padding:7px 10px}'
+    + '.kp span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#9A3F20;font-weight:700}.kp b{font-size:13.5px;font-variant-numeric:tabular-nums;white-space:nowrap}'
+    + '.kp .main{background:#C2552F;color:#fff}.kp .main span{color:#fff;opacity:.88}.kp .main b{font-size:15px}'
+    + '.sec{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 5px;font-size:12px;font-weight:700;break-after:avoid}.sec small{font-size:9.5px;color:#6b6b6b;font-weight:500}.sec span small{margin-left:6px}'
+    + '.sec i{display:inline-block;width:8px;height:8px;border-radius:2px;background:#C2552F;margin-right:7px}'
+    + 'table{width:100%;border-collapse:collapse;table-layout:fixed}thead{display:table-header-group}tfoot{display:table-row-group}tr{break-inside:avoid}'
+    + 'th{font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:#8a8a8a;text-align:left;font-weight:700;padding:5px 6px;border-bottom:1px solid #dcdcdc}'
+    + 'td{padding:4.5px 6px;border-bottom:1px solid #efefef;vertical-align:top;overflow-wrap:anywhere}.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;overflow-wrap:normal}'
+    + '.sl{color:#aaa}.z{color:#bdbdbd}td small{display:block;font-size:8.5px;color:#888;font-weight:400}.nm small{display:inline;margin-left:4px}td.nm small{display:block;margin-left:0}'
+    + '.cl{background:#FBEDE7;font-weight:800;font-size:11.5px;color:#9A3F20}th.cl{color:#9A3F20;font-size:8.5px}'
+    + 'tr.tot td{border-top:1.5px solid #1c1c1c;border-bottom:none;font-weight:800;padding-top:7px;font-size:11px}tr.tot td.cl{font-size:12.5px}'
+    + 'tr.opn td{background:#faf8f5;font-style:italic}tr.off td{text-decoration:line-through;color:#aaa}'
+    + '.cq .amt{font-size:12.5px;font-weight:800}.cq .dt{font-size:12px;font-weight:700;white-space:nowrap}.cq tr.tot .amt{font-size:13.5px}'
+    + '.st{font-size:8px;font-weight:700;letter-spacing:.04em;padding:2px 6px;border-radius:99px;background:#f0f0f0;color:#555;white-space:nowrap;border:1px solid #e0e0e0}'
+    + '.st.b{background:#FDE3E0;color:#B42318;border-color:#B42318}.st.t{background:#FBEDE7;color:#9A3F20;border-color:#C2552F}.st.p{background:#FFF4DE;color:#8a5a00;border-color:#d9a640}'
+    + 'tr.bx td{background:#FFF6F5}tr.bx .amt{color:#B42318}.none{font-size:10px;color:#8a8a8a;padding:3px 6px}'
+    + '.sig{display:flex;justify-content:space-between;gap:18px;margin-top:46px;font-size:9.5px;color:#6b6b6b;break-inside:avoid}.sig div{flex:1;border-top:1px solid #bbb;padding-top:5px;text-align:center}'
+    + '.ft{margin-top:14px;display:flex;justify-content:space-between;font-size:8.5px;color:#9a9a9a;border-top:1px solid #eee;padding-top:5px}';
+}
+function accDocHead(title, meta) {
+  return '<div class="top"></div><div class="h"><div><div class="co">Shahana Group</div><h1>' + title + '</h1></div><div class="meta">' + meta + '</div></div>';
+}
+function accDocOpen(title, body) {
+  var html = '<!doctype html><html><head><meta charset="utf-8"><title>' + rqEsc(title) + '</title><style>' + accDocCss() + '</style></head><body><div class="sheet">' + body
+    + '<div class="ft"><span>Printed ' + rqEsc(rqDateTime(new Date().toISOString())) + ' &middot; ' + rqEsc(S.user.name) + ' &middot; Shahana One</span><span>' + rqEsc(title) + '</span></div></div></body></html>';
+  if ($('ov-acc') && $('ov-acc').classList.contains('open')) { ACCM = null; closeModal('ov-acc'); }
+  openReportPreview(title, html);
+}
+async function accXlsx(name, sheets) {
+  try {
+    if (typeof XLSX === 'undefined') await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    var wb = XLSX.utils.book_new();
+    sheets.forEach(function(s){ var ws = XLSX.utils.aoa_to_sheet(s.aoa); if (s.widths) ws['!cols'] = s.widths.map(function(w){ return { wch: w }; }); XLSX.utils.book_append_sheet(wb, ws, s.name.slice(0, 31)); });
+    XLSX.writeFile(wb, name.replace(/[\\\/:*?"<>|]/g, '-') + '.xlsx');
+  } catch (e) { console.error('accXlsx:', e); toast('Could not make the Excel file: ' + (e.message || e), 'err'); }
+}
+
+// ─── IMPORT FROM EXCEL (admin): the IOU "Ledger wise report" ───
+// New names get their closing balance as an opening entry; names already here are left alone.
+function accImportIou() {
+  if (!accIsAdmin()) return;
+  var inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.xlsx,.xls,.csv';
+  inp.onchange = async function(){
+    var file = inp.files && inp.files[0]; if (!file) return;
+    try {
+      if (typeof XLSX === 'undefined') await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+      var wb = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+      var rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: false, defval: '' });
+      var parsed = accParseLedger(rows);
+      if (!parsed.length) { toast('No names with amounts were found in that file. It should look like the "Ledger wise report" (Particulars, Opening, Debit, Credit, Closing).', 'err'); return; }
+      accImportPreview(parsed, file.name);
+    } catch (e) { console.error(e); toast('Could not read that file: ' + (e.message || e), 'err'); }
+  };
+  inp.click();
+}
+function accParseLedger(rows) {
+  var hdr = -1, cols = null;
+  for (var i = 0; i < Math.min(rows.length, 40); i++) {
+    var low = rows[i].map(function(c){ return String(c).trim().toLowerCase(); });
+    var pi = low.findIndex(function(c){ return c.indexOf('particular') === 0 || c === 'name'; });
+    var ci = low.findIndex(function(c){ return c.indexOf('clos') === 0; }); // their sheet spells it "Clossing"
+    if (pi !== -1 && ci !== -1) { hdr = i; cols = { name: pi, close: ci }; break; }
+  }
+  if (hdr === -1) cols = { name: 0, close: 4 };
+  var num = function(v){ var s = String(v).replace(/[\u09E6-\u09EF]/g, function(c){ return String(c.charCodeAt(0) - 0x09E6); }).replace(/tk|\u09F3|,|\s/gi, ''); var neg = /^\(.*\)$/.test(s) || /^-/.test(s); s = s.replace(/[()\-]/g, ''); if (!/^\d+(\.\d+)?$/.test(s)) return null; var p = Math.round(parseFloat(s) * 100); return neg ? -p : p; };
+  var out = [];
+  for (var j = hdr + 1; j < rows.length; j++) {
+    var name = String(rows[j][cols.name] || '').trim().replace(/\s+/g, ' '), cl = num(rows[j][cols.close]);
+    if (!name || cl == null || /^(total|grand total|sub ?total)$/i.test(name)) continue;
+    out.push({ name: name, cl: cl });
+  }
+  return out;
+}
+function accImportPreview(list, fname) {
+  var have = {}; (ACC.people || []).forEach(function(p){ have[p.name.toLowerCase()] = 1; });
+  var seen = {}, add = [], skip = [];
+  list.forEach(function(x){ var k = x.name.toLowerCase(); if (have[k] || seen[k]) skip.push(x); else { seen[k] = 1; add.push(x); } });
+  var tot = add.reduce(function(s, x){ return s + x.cl; }, 0);
+  accForm({ title: 'Import IOU balances', sub: rqEsc(fname), wide: true,
+    body: '<div class="acc-g2"><div class="f"><label>Balance as on (date of the opening entry)</label><input id="aim-d" type="date" value="' + todayStr() + '" max="' + todayStr() + '"></div><div class="f"><label>&nbsp;</label><div class="sub2" style="padding-top:8px"><b>' + add.length + '</b> new people &middot; ' + accTk(tot) + (skip.length ? ' &middot; ' + skip.length + ' already here (left alone)' : '') + '</div></div></div>'
+      + '<div class="scroller" style="max-height:320px;margin-top:8px"><table class="rq-t"><thead><tr><th>Name</th><th class="num">Opening balance</th><th></th></tr></thead><tbody>'
+      + add.map(function(x){ return '<tr><td>' + rqEsc(x.name) + '</td><td class="num">' + accTk(x.cl) + '</td><td><span class="chip ok">New</span></td></tr>'; }).join('')
+      + skip.map(function(x){ return '<tr class="acc-off"><td>' + rqEsc(x.name) + '</td><td class="num">' + accTk(x.cl) + '</td><td><span class="chip run">Already here</span></td></tr>'; }).join('') + '</tbody></table></div>',
+    ok: 'Import ' + add.length,
+    onOk: async function(){
+      if (!add.length) return 'Nothing new to import.';
+      var d = $('aim-d').value; if (!accValidDate(d) || d > todayStr()) return 'Choose the date (today or before).';
+      var done = 0;
+      for (var i = 0; i < add.length; i += 50) {
+        var grp = add.slice(i, i + 50).map(function(x){ return { x: x, id: accUuid() }; });
+        var pr = await db.from('acc_iou_people').insert(grp.map(function(g){ return { id: g.id, name: g.x.name, created_by_name: S.user.name }; })).select('*');
+        if (pr.error) return accErrMsg(pr.error) + (done ? ' (' + done + ' were imported before this)' : '');
+        (pr.data || []).forEach(function(p){ accPut(ACC.people, p); });
+        var en = grp.filter(function(g){ return g.x.cl; }).map(function(g){ return { id: accUuid(), person_id: g.id, entry_date: d, kind: 'opening', dr: g.x.cl > 0 ? g.x.cl / 100 : 0, cr: g.x.cl < 0 ? -g.x.cl / 100 : 0, note: 'Opening balance (imported from ' + fname.slice(0, 80) + ')', created_by: S.user.id, created_by_name: S.user.name }; });
+        if (en.length) { var er = await db.from('acc_iou_entries').insert(en).select('*'); if (er.error) return accErrMsg(er.error); (er.data || []).forEach(function(e){ accPut(ACC.entries, e); }); }
+        done += grp.length;
+      }
+      ACC.calc = null; toast(done + ' people imported', 'ok-t'); setTimeout(function(){ accRedraw(); }, 0);
+      return true;
+    } });
+}
+
+// ─── THE ACCOUNTS POPUP WINDOW (Enter = the main button) ───
+var ACCM = null;
+function accForm(o) {
+  ACCM = o; o.busy = false;
+  $('acc-m-title').textContent = o.title || '';
+  $('acc-m-sub').innerHTML = o.sub || '';
+  $('acc-m-body').innerHTML = o.body || '';
+  var er = $('acc-m-err'); er.textContent = ''; er.style.display = 'none';
+  $('acc-m-foot').innerHTML = (o.extra || '') + '<span style="flex:1"></span>' + (o.view ? '<button class="btn" onclick="accClose()">Close</button>'
+    : '<button class="btn" onclick="accClose()">Cancel</button><button class="btn ' + (o.danger ? 'danger-solid' : 'pri') + '" id="acc-m-ok" onclick="accModalOk()">' + o.ok + '</button>');
+  $('ov-acc').querySelector('.modal').classList.toggle('wide', !!o.wide);
+  openModal('ov-acc');
+  if (o.after) o.after();
+  // focus the first box now (a delayed focus could jump in while someone is already typing in another box)
+  var f = $('acc-m-body').querySelector('input:not([type=hidden]):not([type=checkbox]),select,textarea'); if (f && !o.view) try { f.focus(); } catch (e) {}
+}
+async function accModalOk() {
+  var o = ACCM; if (!o || o.busy || o.view) return;
+  o.busy = true;
+  var b = $('acc-m-ok'), txt = b ? b.innerHTML : ''; if (b) { b.disabled = true; b.textContent = 'Saving\u2026'; }
+  var res;
+  try { res = await o.onOk(); } catch (e) { console.error('accounts save:', e); res = 'Could not save: ' + (e && e.message || e); }
+  o.busy = false;
+  if (ACCM !== o) return;
+  if (b) { b.disabled = false; b.innerHTML = txt; }
+  if (res === true) { ACCM = null; closeModal('ov-acc'); }
+  else if (res) { var er = $('acc-m-err'); er.textContent = res; er.style.display = 'block'; }
+}
+function accClose() { if (ACCM && ACCM.busy) return; ACCM = null; closeModal('ov-acc'); }
+function accModalKey(e) {
+  if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); accClose(); return; }
+  if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+  var t = e.target; if (!t || t.tagName === 'TEXTAREA' || t.tagName === 'BUTTON' || t.tagName === 'A') return;
+  e.preventDefault(); accModalOk();
+}
+// accounts login: say what is waiting, once per session
+function accLoginNotice() {
+  if (!accIsAcc() || !accOn()) return;
+  try { if (sessionStorage.getItem('acc_notice') === '1') return; sessionStorage.setItem('acc_notice', '1'); } catch (e) {}
+  var w = accWaitingList(), t = todayStr();
+  var due = (ACC.cheques || []).filter(function(c){ return c.status === 'issued' && c.clear_date && c.clear_date <= t; }), bounced = (ACC.cheques || []).filter(function(c){ return c.status === 'bounced'; });
+  var lines = [];
+  if (w.length) lines.push(w.length + ' requisition' + (w.length === 1 ? '' : 's') + ' approved by Management ' + (w.length === 1 ? 'is' : 'are') + ' waiting for payment (' + accTkTxt(w.reduce(function(s, r){ return s + accSum(r).bal; }, 0)) + ').');
+  if (due.length) lines.push(due.length + ' cheque' + (due.length === 1 ? ' is' : 's are') + ' due today or past the clearance date.');
+  if (bounced.length) lines.push(bounced.length + ' bounced cheque' + (bounced.length === 1 ? '' : 's') + ' still open.');
+  if (!lines.length) return;
+  setTimeout(function(){ appConfirm(lines.join('\n'), { title: 'Waiting for you', okText: w.length ? 'Open the list' : 'Open cheque statement', cancelText: 'Later' }).then(function(ok){ if (ok) setView(w.length ? 'rq:acc:wait' : 'rq:acc:cq'); }); }, 150);
+}
 
 function bhOpen(id) {
   var st = BH.calc[id], e = $('bh-want'), out = $('bh-open'); if (!st || !e || !out) return;
