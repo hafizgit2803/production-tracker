@@ -2446,7 +2446,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.19.2</p>
+    <p class="login-ver">V.2026.10.19.3</p>
   </div></div>
 </div>
 
@@ -2488,7 +2488,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.19.2</div>
+  <div id="ver-stamp">V.2026.10.19.3</div>
 </div>
 
 
@@ -21165,6 +21165,12 @@ function rqActionsHtml(r) {
     else if (rqCanWork(r.dept) && !rqCanAnswerEdit(r)) h += '<div class="sub2 rq-own">Approval has started, so it can no longer be changed. Ask an approver to return it if something is wrong.</div>';
   } else if (r.status === 'returned') {
     if (rqCanEditReq(r)) h += '<div class="rq-btns rq-own"><button class="btn pri" onclick="rqStartEdit(\'' + r.id + '\')">Change and send again</button><button class="btn danger" onclick="rqCancelReq(\'' + r.id + '\')">Cancel requisition</button></div>';
+    if (role === 'management' && !rqIsOwn(r) && rqStageOn(rqStage('mgmt'))) {
+      var _rd = rqDecider(r, 'returned');
+      h += '<div class="rq-act"><div class="rq-sec-h">Returned' + (_rd ? ' by ' + rqEsc(_rd.st.n) : '') + ' for changes. Management can still approve it as it is.</div>'
+        + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '" onkeydown="if(event.key===\'Enter\'){event.preventDefault();rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\');}"></div>'
+        + note('rq-m-note', 'Comment') + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\')">&#x2713; Approve anyway</button></div></div>';
+    }
   } else if (r.status === 'rejected') {
     if (role === 'management' && r.mgmt_status !== 'rejected' && !rqIsOwn(r)) {
       h += '<div class="rq-act"><div class="rq-sec-h">Audit rejected this. Management can still approve it.</div>'
@@ -21560,7 +21566,8 @@ async function rqDecide(id, who, decision) {
     upd.target_date = rqTargetFrom(r, todayStr());
   }
   var q = db.from('rq_requisitions').update(upd).eq('id', id);
-  if (who === 'mgmt' && r.status === 'rejected') q = q.eq('status', 'rejected').neq('mgmt_status', 'rejected');
+  if (who === 'mgmt' && r.status === 'returned' && decision === 'approved') q = q.eq('status', 'returned');
+  else if (who === 'mgmt' && r.status === 'rejected') q = q.eq('status', 'rejected').neq('mgmt_status', 'rejected');
   else q = q.eq('status', 'pending').is(p + 'status', null);
   var res = await q.select();
   if (res.error) { showSaveError('Could not save the decision', res.error); return; }
