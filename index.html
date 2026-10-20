@@ -303,6 +303,10 @@ tr.pos-tot td{font-weight:800;border-top:1.5px solid var(--ink)}tr.pos-grand td{
 .pos-info{display:block;background:#EEF6FC;border:1px solid #9CC6E6;color:#1F5F8E;border-radius:8px;padding:8px 10px;font-size:13px;margin-top:8px}
 .pos-chk{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:9px;margin-bottom:6px;font-size:13.5px;cursor:pointer}.pos-chk-z{background:var(--rail)}
 .pos-upd-top{display:grid;grid-template-columns:170px 1fr 220px 200px;gap:12px;padding:12px 14px;margin-bottom:12px}
+.pos-xl td.pos-cc{padding:2px 4px}.pos-cell{width:100%;min-width:104px;text-align:right;font-family:var(--mono);font-size:12.5px;padding:4px 6px;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--ink);outline:none}
+.pos-cell:hover{border-color:var(--line);background:var(--panel)}.pos-cell:focus{border-color:var(--accent);background:var(--panel);box-shadow:0 0 0 2px var(--accent-soft)}
+.pos-cell.saving{background:#FFF6D6}.pos-cell.ok{background:var(--green-soft);transition:background 1.2s}.pos-cell.bad{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+[data-theme="dark"] .pos-cell.saving{background:#2E2814}
 .pos-upd td{vertical-align:middle}.pos-gt td,.pos-gt th{padding-left:6px;padding-right:6px}.pos-gt td.num{font-size:12px}
 .pos-upd .pos-in{width:140px;text-align:right;font-family:var(--mono);padding:5px 8px}.pos-upd .pos-in.bad{border-color:var(--red);background:var(--red-soft)}.pos-upd .pos-exp{padding:4px 6px;font-size:12px}
 .pos-ins{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 10px;display:flex;gap:12px}.pos-ins .i{font-size:20px;line-height:1.2}.pos-ins b{font-size:14px}.pos-ins div div{font-size:12.8px;color:var(--muted);margin-top:3px;line-height:1.5}
@@ -20668,6 +20672,7 @@ function rqSubscribe() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_iou_entries' }, function(p){ accRealtime('acc_iou_entries', p); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_pay_approvals' }, function(p){ try { apRealtime(p); } catch (e) { console.error('payment approvals live:', e); } })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_weeks' }, function(p){ try { posRealtime('pos_weeks', p); } catch (e) { console.error('position live:', e); } })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_vals' }, function(p){ try { posRealtime('pos_vals', p); } catch (e) { console.error('position live:', e); } })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_items' }, function(p){ try { posRealtime('pos_items', p); } catch (e) { console.error('position live:', e); } })
       .subscribe();
   } catch (e) { console.error('rqSubscribe:', e); }
@@ -25613,6 +25618,7 @@ function posTkS(p) { return 'Tk ' + posShort(p); }
 function posAmt(v) { return v == null ? '' : accFmt(accP(v)); }
 // up / down change; good = which way is good news (for colour)
 function posCh(d, good, noTxt) {
+  if (!d) return '&nbsp;';
   if (d == null) return '<span class="sub2">' + (noTxt || 'first week') + '</span>';
   if (!d) return '<span class="sub2">no change</span>';
   var up = d > 0, cls = good === 0 ? '' : ((up ? 1 : -1) === good ? 'pos-dn' : 'pos-up');
@@ -25734,6 +25740,7 @@ function posAttention(co, t) {
 // new-report badge for Management / Admin / Audit
 function posSeenKey() { return 'pos_seen:' + (S.user && S.user.id); }
 function posNewWeeks() {
+  return 0; // weekly updates are off for now
   if (!S.user || S.user.role === 'accounts' || !posCanSee()) return 0;
   var seen = ''; try { seen = localStorage.getItem(posSeenKey()) || ''; } catch (e) {}
   return POS.weeks.filter(function(w){ return String(w.created_at || '') > seen && w.created_by_name !== S.user.name; }).length;
@@ -25741,22 +25748,29 @@ function posNewWeeks() {
 function posMarkSeen() { var m = POS.weeks.reduce(function(a, w){ return String(w.created_at || '') > a ? String(w.created_at) : a; }, ''); try { if (m) localStorage.setItem(posSeenKey(), m); } catch (e) {} }
 function posRailHtml() {
   if (!posCanSee() || POS.ok === false) return '';
-  var nw = posNewWeeks(), v = String(S.view);
+  var v = String(S.view);
   function b(view, icon, label, on, badge){ return '<button class="ni' + (on ? ' on' : '') + ' rq-ni" onclick="setView(\'' + view + '\')"><span class="av" style="font-size:12px">' + icon + '</span><span class="nm">' + label + '</span>' + (badge || '') + '</button>'; }
   return b('rq:acc:pos', '&#x2696;', 'Position', v.indexOf('rq:acc:pos') === 0 && v !== 'rq:acc:posrep')
-    + b('rq:acc:posrep', '&#x1F4C8;', 'Weekly position report', v === 'rq:acc:posrep', nw ? '<span class="badge pos-new">new</span>' : '');
+    + b('rq:acc:posrep', '&#x1F4A1;', 'Position insights', v === 'rq:acc:posrep');
 }
 // someone saved a weekly update or changed a line
 var _posRtT = null;
 function posRealtime(table, p) {
   if (!posCanSee()) return;
   var row = p.new || {};
+  if (table === 'pos_vals') {
+    if (!row.week_id || !row.item_id || !POS.vals[row.week_id]) return;
+    var old = POS.vals[row.week_id][row.item_id];
+    if (old && ['rec', 'pay', 'adv', 'expiry', 'updated_on'].every(function(k){ return String(old[k] == null ? '' : old[k]) === String(row[k] == null ? '' : row[k]); })) return; // my own save coming back
+    POS.vals[row.week_id][row.item_id] = row;
+    posSoftRedraw();
+    return;
+  }
   if (table === 'pos_weeks') {
-    if (p.eventType !== 'INSERT' || !row.id) return; // an update only changes the stored totals
-    if (POS.weeks.some(function(w){ return w.id === row.id; })) return; // already here
+    if (p.eventType !== 'INSERT' || !row.id) return;
+    if (POS.weeks.some(function(w){ return w.id === row.id; })) return;
     POS.weeks.push(row);
-    if (row.created_by_name === S.user.name) return; // my own update: already loaded
-    if (S.user.role !== 'accounts') toast('Weekly position updated: ' + posCo(row.company).n + ' as on ' + rqDateTxt(row.as_on), 'ok-t');
+    if (row.created_by_name === S.user.name) return;
   } else if (row.id && POS.byId[row.id]) {
     var loc = POS.byId[row.id]; // my own change comes back too: nothing new
     if (String(loc.updated_at || '') === String(row.updated_at || '') && loc.active === row.active && loc.name === row.name) return;
@@ -25765,9 +25779,9 @@ function posRealtime(table, p) {
   clearTimeout(_posRtT);
   _posRtT = setTimeout(function(){
     try { renderRail(); } catch (e) {}
-    if (String(S.view).indexOf('rq:acc:pos') !== 0 || String(S.view).indexOf('rq:acc:posupd') === 0) return;
+    if (String(S.view).indexOf('rq:acc:pos') !== 0) return;
     if (ACCM && $('ov-acc') && $('ov-acc').classList.contains('open')) return;
-    if (POS.items) posLoad(true).then(function(){ if (String(S.view).indexOf('rq:acc:pos') === 0 && String(S.view).indexOf('rq:acc:posupd') !== 0) rqRender(S.view); });
+    if (POS.items) posLoad(true).then(function(){ posSoftRedraw(); });
   }, 2500);
 }
 
@@ -25776,9 +25790,9 @@ function posRender(p) {
   if (!posCanSee()) { setView(rqHomeView()); return; }
   var pg = p[2], arg = p[3];
   if (POS.ok === false) { rqSetHead('Accounts', 'Receivable & Credit Position', '', ''); $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>shahana-one-v3-migration.sql</b> once in Supabase, then refresh.</div></div>'; return; }
-  if (pg === 'posupd' && $('pos-upd') && $('pos-upd').dataset.co === arg) return; // keep what is being typed
+  if (pg === 'posupd') { setView('rq:acc:pos' + (arg === 'BFL' ? ':BFL' : '')); return; } // weekly update is off for now
   if (!POS.items || POS.stale || Date.now() - POS.loadedAt > 300000) {
-    var wait = !POS.items || pg === 'posupd'; // the weekly update always starts from the latest figures
+    var wait = !POS.items;
     if (wait) $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading the position&hellip;</div>';
     var v = S.view;
     posLoad(!!POS.items).then(function(){
@@ -25786,8 +25800,7 @@ function posRender(p) {
       if (!POS.items) { $('content').innerHTML = '<div class="card"><div class="empty"><h4>Could not load the position</h4>' + rqEsc(POS.err || '') + '<div style="margin-top:10px"><button class="btn" onclick="rqRender(S.view)">Try again</button></div></div></div>'; return; }
       renderRail();
       if (ACCM && $('ov-acc') && $('ov-acc').classList.contains('open')) return;
-      if (pg === 'posupd' && $('pos-upd') && $('pos-upd').dataset.co === arg) return;
-      posRenderNow(pg, arg);
+      posSoftRedraw();
     });
     if (wait) return;
   }
@@ -25795,7 +25808,6 @@ function posRender(p) {
 }
 function posRenderNow(pg, arg) {
   if (pg === 'posrep') return posRenderReport();
-  if (pg === 'posupd') { if (!posCanEdit()) { setView('rq:acc:pos'); return; } return posRenderUpdate(arg === 'BFL' ? 'BFL' : 'MTS'); }
   var tab = arg === 'BFL' || arg === 'party' || arg === 'group' ? arg : 'MTS';
   try { sessionStorage.setItem('pos_tab', tab); } catch (e) {}
   posHead(tab);
@@ -25808,22 +25820,22 @@ function posHead(tab) {
   var asOn = POS_COS.map(function(co){ var w = posWeeksOf(co.c)[0]; return co.s + ' ' + (w ? rqDateTxt(w.as_on) : '&mdash;'); }).join(' &middot; ');
   var co = tab === 'BFL' ? 'BFL' : 'MTS';
   var w = posWeeksOf(co)[0];
-  var sub = (tab === 'MTS' || tab === 'BFL') ? (w ? 'As on ' + rqDateTxt(w.as_on) + ' &middot; updated by ' + rqEsc(w.created_by_name || '') : 'Nothing entered yet') : 'As on ' + asOn;
-  var acts = '<button class="btn" onclick="setView(\'rq:acc:posrep\')">&#x1F4C8; Weekly report</button>'
-    + (posCanEdit() ? '<button class="btn" onclick="setView(\'rq:acc:posupd:' + co + '\')">&#x270E; Weekly update</button><button class="btn" onclick="posAddParty(\'' + co + '\')">+ Add party</button><button class="btn" onclick="posAddBank(\'' + co + '\')">+ Add bank account</button>' : '')
+  var sub = (tab === 'MTS' || tab === 'BFL') ? (posCanEdit() ? 'Click any figure and type, like Excel &middot; it saves by itself &middot; Enter goes down, Tab goes right' : 'Current figures') : 'Both companies';
+  var acts = '<button class="btn" onclick="setView(\'rq:acc:posrep\')">&#x1F4A1; Insights</button>'
+    + (posCanEdit() ? '<button class="btn" onclick="posAddParty(\'' + co + '\')">+ Add party</button><button class="btn" onclick="posAddBank(\'' + co + '\')">+ Add bank account</button>' : '')
     + '<button class="btn pri" onclick="posPrintModal()">&#x1F5A8; Print</button>';
   rqSetHead('Accounts', 'Receivable & Credit Position', sub + (posCanEdit() ? '' : ' &middot; view only'), acts);
 }
 function posTile(k, v, ch, cls, click) { return '<div class="stat pos-tile' + (cls ? ' ' + cls : '') + '"' + (click ? ' onclick="' + click + '" style="cursor:pointer"' : '') + '><div class="k">' + k + '</div><div class="v acc-v">' + v + '</div><div class="n">' + ch + '</div></div>'; }
 function posTilesHtml(co) {
   var c = posCur(co), t = c.t0, p = c.t1, at = posAttention(co, todayStr());
-  var d = function(f){ return p ? t[f] - p[f] : null; }, vs = c.w1 ? 'vs ' + posD(c.w1.as_on) : '';
+  var d = function(){ return 0; }, vs = '';
   return '<div class="stats pos-tiles">'
     + posTile('Receivable', posTkS(t.rec), posCh(d('rec'), 1) + ' <span class="sub2">' + vs + '</span>')
     + posTile('Payable', posTkS(t.pay), posCh(d('pay'), -1))
     + posTile('Advance', posTkS(t.adv), posCh(d('adv'), 0))
     + posTile('Net liability', posTkS(t.net), posCh(d('net'), -1) + '<div class="sub2">Payable &minus; Receivable</div>')
-    + '<div class="stat pos-tile pos-pad"><div class="k">PAD &middot; forced loan</div><div class="v acc-v">' + posTkS(t.pad) + '</div><div class="n">' + t.padN + ' line' + (t.padN === 1 ? '' : 's') + ' &middot; ' + posCh(d('pad'), -1) + '</div></div>'
+    + '<div class="stat pos-tile pos-pad"><div class="k">PAD &middot; forced loan</div><div class="v acc-v">' + posTkS(t.pad) + '</div><div class="n">' + t.padN + ' line' + (t.padN === 1 ? '' : 's') + '</div></div>'
     + posTile('Needs attention', at.exp || at.soon ? (at.exp ? at.exp + ' expired' : '') + (at.exp && at.soon ? ' &middot; ' : '') + (at.soon ? at.soon + ' soon' : '') : 'Nothing', 'PC / FDR / other dates' + (POS.ui.att ? ' &middot; <b>showing these</b>' : at.list.length ? ' &middot; click to show' : ''), at.exp ? 'alert' : '', at.list.length || POS.ui.att ? 'POS.ui.att=!POS.ui.att;rqRender(S.view)' : '')
     + '</div>';
 }
@@ -25852,9 +25864,10 @@ function posCompanyHtml(co) {
       st[0] += x.rec; st[1] += x.pay; st[2] += x.adv; shown++;
       return '<tr><td class="sub2">' + (i + 1) + '</td><td><b>' + rqEsc(posName(it)) + '</b>' + (oth ? ' <span class="chip pos-both">also ' + oth.s + '</span>' : '') + (it.currency && it.currency !== 'BDT' ? ' <span class="chip pos-cur">' + rqEsc(it.currency) + '</span>' : '') + (it.note ? '<div class="sub2">' + rqEsc(it.note) + '</div>' : '') + '</td>'
         + '<td>' + rqEsc(it.nature || '') + '</td>'
-        + '<td class="num">' + posAmt(v && v.rec) + '</td><td class="num">' + posAmt(v && v.pay) + '</td><td class="num">' + posAmt(v && v.adv) + '</td>'
-        + '<td>' + (v && v.expiry ? posD(v.expiry) : '') + posExpChip(it, v, t) + '</td><td class="sub2">' + posD(v && v.updated_on) + '</td>'
-        + (can ? '<td class="pos-acts"><button class="btn sm" title="Edit" onclick="posEdit(\'' + it.id + '\')">&#x270E;</button><button class="btn sm" title="Delete / closed" onclick="posDelete(\'' + it.id + '\')">&#x1F5D1;</button></td>' : '') + '</tr>';
+        + (can ? ['rec', 'pay', 'adv'].map(function(k){ return '<td class="num pos-cc">' + posCellHtml(it.id, k, v) + '</td>'; }).join('')
+          : '<td class="num">' + posAmt(v && v.rec) + '</td><td class="num">' + posAmt(v && v.pay) + '</td><td class="num">' + posAmt(v && v.adv) + '</td>')
+        + '<td>' + (v && v.expiry ? posD(v.expiry) : '') + posExpChip(it, v, t) + '</td><td class="sub2" data-up="' + it.id + '">' + (v && v.updated_on === t ? '<b class="acc-owe">today</b>' : posD(v && v.updated_on)) + '</td>'
+        + (can ? '<td class="pos-acts"><button class="btn sm" tabindex="-1" title="Rename, expiry, delete" onclick="posEdit(\'' + it.id + '\')">&#x22EF;</button></td>' : '') + '</tr>';
     }).join('');
     var k = g.bank ? 'bank' : 'party'; for (var i = 0; i < 3; i++) tot[k][i] += st[i];
     return '<tr class="pos-sec"><td colspan="' + (can ? 9 : 8) + '">' + (g.bank ? rqEsc(g.bank) + ' &middot; ' : '') + g.title + ' <span class="sub2">' + list.length + '</span></td></tr>' + body
@@ -25870,7 +25883,7 @@ function posCompanyHtml(co) {
   if (!c.w0 && !items.length) return posTilesHtml(co) + '<div class="card"><div class="empty"><h4>Nothing entered for ' + posCo(co).n + ' yet</h4>' + (can ? 'Use <b>+ Add party</b> or <b>+ Add bank account</b>.' : '') + '</div></div>';
   return posTilesHtml(co) + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>' + posCo(co).n + ' <span class="rq-count">' + shown + '</span></h3>' + bar + '</div>'
     + (filtered ? '<div class="sub2" style="padding:0 2px 6px">Filtered: totals are for the lines shown. <a href="#" onclick="POS.ui.q=\'\';POS.ui.sec=\'\';POS.ui.zero=false;POS.ui.att=false;rqRender(S.view);return false">Show all</a></div>' : '')
-    + (shown ? '<div class="scroller"><table class="rq-t pos-t"><thead><tr><th>SN</th><th>Name / account</th><th>Nature</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th>Expiry</th><th>Updated</th>' + (can ? '<th></th>' : '') + '</tr></thead><tbody>' + rows + foot + '</tbody></table></div>'
+    + (shown ? '<div class="scroller"><table class="rq-t pos-t' + (can ? ' pos-xl' : '') + '"' + (can ? ' onkeydown="posCellKey(event)" onfocusin="posCellFocus(event)" onfocusout="posCellBlur(event)" oninput="posCellInput(event)"' : '') + '><thead><tr><th>SN</th><th>Name / account</th><th>Nature</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th>Expiry</th><th>Updated</th>' + (can ? '<th></th>' : '') + '</tr></thead><tbody>' + rows + foot + '</tbody></table></div>'
       : '<div class="empty"><h4>Nothing matches</h4>Change the search or filters.</div>') + '</div>' + closedHtml;
 }
 // party summary: both companies added together
@@ -25959,13 +25972,105 @@ function posGroupHtml() {
     + '</tbody></table></div><div class="sub2" style="padding:8px 2px 2px">Bank accounts of each company stay in their own company; this page only adds the totals by type.</div></div>';
 }
 
+
+// ─── TYPE IN THE TABLE, LIKE EXCEL (Accounts / Admin) ───
+// Each box saves by itself when you leave it (Enter, Tab, arrows, click elsewhere).
+// Saves go one after another; a failed save stays red on screen and is tried again.
+POS.pend = {}; POS.okAt = {};
+function posCellHtml(iid, k, v) {
+  var key = iid + '|' + k, pd = POS.pend[key];
+  var val = pd ? pd.txt : (v && v[k] != null ? accFmt(accP(v[k])) : '');
+  var cls = pd ? ' ' + (pd.st === 'bad' || pd.st === 'err' ? 'bad' : 'saving') : (Date.now() - (POS.okAt[key] || 0) < 1500 ? ' ok' : '');
+  return '<input class="pos-cell' + cls + '" data-iid="' + iid + '" data-k="' + k + '" inputmode="decimal" autocomplete="off" spellcheck="false" value="' + rqEsc(val) + '"' + (pd && pd.st === 'err' ? ' title="Not saved yet: will try again"' : '') + '>';
+}
+function posIsCell(t) { return !!t && !!t.classList && t.classList.contains('pos-cell'); }
+function posCellActive() { var a = document.activeElement; return posIsCell(a) ? a : null; }
+function posCellFocus(e) {
+  var t = e.target; if (!posIsCell(t) || POS._restoring) return;
+  t.dataset.orig = t.value; t.dataset.edit = '';
+  try { t.select(); } catch (x) {}
+  setTimeout(function(){ try { if (document.activeElement === t && !t.dataset.edit) t.select(); } catch (x) {} }, 0);
+}
+function posCellInput(e) { var t = e.target; if (!posIsCell(t)) return; t.dataset.edit = '1'; t.classList.toggle('bad', posParse(t.value) === false); }
+function posCellBlur(e) { var t = e.target; if (!posIsCell(t) || POS._restoring) return; posCellCommit(t); setTimeout(function(){ if (POS._redrawWant && !posCellActive()) posSoftRedraw(); }, 0); }
+function posCellKey(e) {
+  var t = e.target; if (!posIsCell(t) || e.isComposing) return;
+  var k = e.key, dir = null;
+  if (k === 'Escape') { e.preventDefault(); e.stopPropagation(); t.value = t.dataset.orig || ''; t.dataset.edit = ''; t.classList.remove('bad'); delete POS.pend[t.dataset.iid + '|' + t.dataset.k]; try { t.select(); } catch (x) {} return; }
+  if (k === 'Enter') dir = e.shiftKey ? 'up' : 'down';
+  else if (k === 'ArrowDown') dir = 'down'; else if (k === 'ArrowUp') dir = 'up';
+  else if ((k === 'ArrowRight' || k === 'ArrowLeft') && !t.dataset.edit) dir = k === 'ArrowRight' ? 'right' : 'left';
+  if (!dir) return;
+  e.preventDefault();
+  var all = Array.prototype.slice.call(document.querySelectorAll('.pos-xl .pos-cell')), i = all.indexOf(t), n;
+  if (dir === 'right') n = all[i + 1]; else if (dir === 'left') n = all[i - 1];
+  else { var col = all.filter(function(x){ return x.dataset.k === t.dataset.k; }), j = col.indexOf(t); n = col[dir === 'down' ? j + 1 : j - 1]; }
+  if (n) n.focus(); else posCellCommit(t);
+}
+function posCellCommit(t) {
+  var key = t.dataset.iid + '|' + t.dataset.k, txt = t.value.trim(), p = posParse(txt);
+  if (txt === String(t.dataset.orig || '').trim() && !POS.pend[key]) return;
+  if (p === false) { POS.pend[key] = { txt: t.value, st: 'bad' }; t.classList.add('bad'); toast('Numbers only (up to 2 decimals): not saved', 'err'); return; }
+  t.dataset.orig = t.value; t.dataset.edit = '';
+  POS.pend[key] = { txt: t.value, st: 'saving' }; t.classList.remove('bad'); t.classList.add('saving');
+  posCellQueue(t.dataset.iid, t.dataset.k, p, t.value);
+}
+function posCellQueue(iid, k, p, txt) { POS._q = (POS._q || Promise.resolve()).then(function(){ return posCellSave(iid, k, p, txt); }).catch(function(){}); }
+async function posCellSave(iid, k, p, txt) {
+  var key = iid + '|' + k, it = POS.byId[iid];
+  if (!it) { delete POS.pend[key]; return; }
+  if (POS.pend[key] && POS.pend[key].txt !== txt) return; // typed again since: the newer one is on its way
+  try {
+    var ew = await posEnsureWeek(it.company); if (ew.stale) ew = await posEnsureWeek(it.company);
+    if (!ew.w) throw new Error('no week');
+    var old = posValOf(ew.w, iid) || {};
+    var nv = { rec: old.rec == null ? null : old.rec, pay: old.pay == null ? null : old.pay, adv: old.adv == null ? null : old.adv, expiry: old.expiry || null, updated_on: todayStr() };
+    nv[k] = p == null ? null : accAmtVal(p);
+    await posPutVal(ew.w, iid, nv);
+    if (POS.pend[key] && POS.pend[key].txt === txt) delete POS.pend[key];
+    POS.okAt[key] = Date.now();
+  } catch (e) {
+    console.warn('position save:', e);
+    if (POS.pend[key] && POS.pend[key].txt === txt) {
+      POS.pend[key].st = 'err';
+      toast('Could not save ' + posName(it) + ' \u2014 kept on screen, trying again', 'err');
+      setTimeout(function(){ var pd = POS.pend[key]; if (pd && pd.st === 'err' && pd.txt === txt) { pd.st = 'saving'; posCellQueue(iid, k, p, txt); posSoftRedraw(); } }, 6000);
+    }
+  }
+  posSoftRedraw();
+}
+// redraw the page (totals, tiles, ticks) without losing the box being typed in or the scroll
+function posSoftRedraw() {
+  var v = String(S.view);
+  if (v.indexOf('rq:acc:pos') !== 0 || !POS.items) return;
+  if (ACCM && $('ov-acc') && $('ov-acc').classList.contains('open')) { POS._redrawWant = true; return; }
+  POS._redrawWant = false;
+  var a = document.activeElement, keep = null;
+  if (posIsCell(a)) keep = { cell: 1, iid: a.dataset.iid, k: a.dataset.k, val: a.value, orig: a.dataset.orig, edit: a.dataset.edit, s: a.selectionStart, e: a.selectionEnd };
+  else if (a && a.id && a.tagName === 'INPUT') keep = { id: a.id, s: a.selectionStart, e: a.selectionEnd };
+  var sc = [document.scrollingElement, $('content'), $('content') && $('content').parentElement].concat(Array.prototype.slice.call(document.querySelectorAll('#content .scroller'))).filter(Boolean).map(function(el){ return [el, el.scrollTop, el.scrollLeft]; });
+  POS._restoring = true;
+  try {
+    rqRender(v);
+    var sc2 = Array.prototype.slice.call(document.querySelectorAll('#content .scroller'));
+    sc.forEach(function(x, i){ var el = x[0]; if (!document.contains(el)) el = sc2[i - 3]; if (el) { el.scrollTop = x[1]; el.scrollLeft = x[2]; } });
+    if (keep && keep.cell) {
+      var n = document.querySelector('.pos-cell[data-iid="' + keep.iid + '"][data-k="' + keep.k + '"]');
+      if (n) { n.value = keep.val; n.dataset.orig = keep.orig || ''; n.dataset.edit = keep.edit || ''; n.focus({ preventScroll: true }); try { n.setSelectionRange(keep.s, keep.e); } catch (x) {} }
+    } else if (keep && keep.id && $(keep.id)) { $(keep.id).focus({ preventScroll: true }); try { $(keep.id).setSelectionRange(keep.s, keep.e); } catch (x) {} }
+  } finally { POS._restoring = false; }
+}
+
 // ─── ADD / EDIT / DELETE ───
 // the newest week of the company, read again (someone may have saved a weekly update meanwhile)
 async function posEnsureWeek(co) {
+  var mine0 = posWeeksOf(co)[0]; POS._wkAt = POS._wkAt || {};
+  if (mine0 && Date.now() - (POS._wkAt[co] || 0) < 60000) return { w: mine0 };
   var r = await db.from('pos_weeks').select('*').eq('company', co).order('as_on', { ascending: false }).limit(1);
   if (r.error) throw r.error;
   var w = (r.data || [])[0], mine = posWeeksOf(co)[0];
   if (w && (!mine || mine.id !== w.id)) { await posLoad(true); return { stale: true }; }
+  POS._wkAt[co] = Date.now();
   if (w) return { w: mine };
   var nw = { id: accUuid(), company: co, as_on: todayStr(), created_by_name: S.user.name, note: 'Started when the first line was added' };
   var ins = await db.from('pos_weeks').insert(nw).select('*').single();
@@ -25973,7 +26078,7 @@ async function posEnsureWeek(co) {
   POS.weeks.push(ins.data); POS.vals[ins.data.id] = {};
   return { w: ins.data };
 }
-var POS_STALE_MSG = 'Someone has just saved a weekly update, so the list was refreshed. Check the figures and save again.';
+var POS_STALE_MSG = 'The list was just refreshed with the latest figures. Check and save again.';
 async function posPutVal(w, iid, v) {
   var row = Object.assign({ week_id: w.id, item_id: iid }, v);
   var r = await db.from('pos_vals').upsert(row, { onConflict: 'week_id,item_id' }).select('*').single();
@@ -26123,7 +26228,7 @@ function posEdit(iid) {
   var it = POS.byId[iid]; if (!it || !posCanEdit()) return;
   var w = posWeeksOf(it.company)[0], v = posValOf(w, iid), party = it.kind === 'party';
   var oth = posInOther(it);
-  accForm({ title: 'Edit \u2014 ' + posName(it), sub: posCo(it.company).n + ' &middot; ' + (party ? 'party' : rqEsc(it.bank || '') + ' &middot; ' + rqEsc(it.nature || '')) + (w ? ' &middot; as on ' + rqDateTxt(w.as_on) : ''),
+  accForm({ title: 'Edit \u2014 ' + posName(it), sub: posCo(it.company).n + ' &middot; ' + (party ? 'party' : rqEsc(it.bank || '') + ' &middot; ' + rqEsc(it.nature || '')) + '',
     body: '<div class="f"><label>' + (party ? 'Party name' : 'Account number') + '</label><input id="pe-name" maxlength="160" value="' + rqEsc(posName(it)) + '"></div>'
       + (party && oth ? '<div class="sub2" style="margin-top:4px">Renaming changes it in ' + oth.n + ' too (same party).</div>' : '')
       + (party ? '<div class="f" style="margin-top:8px"><label>Section</label><select id="pe-sec">' + POS_SECS.filter(function(s){ return s[2]; }).map(function(s){ return '<option value="' + s[0] + '"' + (s[0] === it.section ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('') + '</select></div>' : '')
@@ -26182,170 +26287,26 @@ function posDelete(iid) {
     } });
 }
 
-// ─── WEEKLY UPDATE ───
-function posUpdRows(co) {
-  var w = posWeeksOf(co)[0], out = [];
-  posGroups(posItemsOf(co)).forEach(function(g){
-    out.push({ head: (g.bank ? rqEsc(g.bank) + ' &middot; ' : '') + g.title });
-    g.items.forEach(function(it){
-      var v = posValOf(w, it.id), x = posPv(v);
-      var cols = POS_COLS.filter(function(c){ return v && v[c[0]] != null && accP(v[c[0]]) !== 0; }).map(function(c){ return c[0]; });
-      if (!cols.length) cols = [posMain(it)];
-      cols.forEach(function(k, j){ out.push({ it: it, col: k, last: x[k], first: j === 0, v: v }); });
-    });
-  });
-  return out;
-}
-function posDraftKey(co) { var w = posWeeksOf(co)[0]; return 'pos_draft:' + co + ':' + (w ? w.id : 'none'); }
-function posRenderUpdate(co) {
-  var w = posWeeksOf(co)[0], rows = posUpdRows(co), t = todayStr();
-  POS._upd = { co: co, rows: rows };
-  var draft = null; try { draft = JSON.parse(localStorage.getItem(posDraftKey(co)) || 'null'); } catch (e) {}
-  var n = 0;
-  var body = rows.map(function(r){
-    if (r.head) return '<tr class="pos-sec"><td colspan="6">' + r.head + '</td></tr>';
-    var i = n++, it = r.it;
-    return '<tr data-q="' + rqEsc(posNorm(posName(it) + ' ' + (it.nature || ''))) + '"><td>' + (r.first ? '<b>' + rqEsc(posName(it)) + '</b>' + (it.kind === 'bank' && it.nature ? ' <span class="sub2">' + rqEsc(it.nature) + '</span>' : '') : '') + '</td>'
-      + '<td>' + ({ rec: 'Receivable', pay: 'Payable', adv: 'Advance' }[r.col]) + '</td><td class="num">' + accFmt(r.last) + '</td>'
-      + '<td class="num"><input class="pos-in" id="pu-' + i + '" data-i="' + i + '" inputmode="decimal" value="' + accFmt(r.last) + '" oninput="posUpdChange(' + i + ')" onkeydown="posUpdKey(event,' + i + ')"></td>'
-      + '<td class="num" id="pc-' + i + '"><span class="sub2">&mdash;</span></td>'
-      + '<td>' + (r.first && it.kind === 'bank' ? '<input type="date" class="pos-exp" id="pe-' + i + '" data-i="' + i + '" value="' + rqEsc((r.v && r.v.expiry) || '') + '" onchange="posUpdChange(' + i + ')"' + (it.section === 'pad' ? ' title="PAD: no expiry warning is shown"' : '') + '>' : '') + '</td></tr>';
-  }).join('');
-  POS._upd.n = n;
-  rqSetHead('Accounts \u203A Position', 'Weekly update \u2014 ' + posCo(co).n, (w ? 'Last update as on <b>' + rqDateTxt(w.as_on) + '</b> by ' + rqEsc(w.created_by_name || '') + ' &middot; ' : '') + 'Enter moves to the next box &middot; <span id="pu-count">0 changed</span>',
-    '<button class="btn" onclick="setView(\'rq:acc:pos' + (co === 'BFL' ? ':BFL' : '') + '\')">Cancel</button><button class="btn pri" id="pu-save" onclick="posUpdSave()">Save update</button>');
-  $('content').innerHTML = '<div id="pos-upd" data-co="' + co + '">'
-    + '<div class="card pos-upd-top"><div class="f"><label>New &ldquo;as on&rdquo; date</label><input type="date" id="pu-date" value="' + t + '"></div>'
-    + '<div class="f"><label>Note (optional)</label><input id="pu-note" maxlength="200" placeholder="e.g. after Thursday bank statement"></div>'
-    + '<div class="f"><label>Find a line</label><input type="search" id="pu-q" placeholder="Search&hellip;" oninput="posUpdFilter(this.value)"></div>'
-    + '<div class="f"><label>Company</label><select onchange="setView(\'rq:acc:posupd:\'+this.value)">' + POS_COS.map(function(c){ return '<option value="' + c.c + '"' + (c.c === co ? ' selected' : '') + '>' + c.n + '</option>'; }).join('') + '</select></div></div>'
-    + (draft && draft.v && Object.keys(draft.v).length ? '<div class="pos-info" id="pu-draft">You have unsaved figures from ' + rqDateTime(draft.at) + ' (' + Object.keys(draft.v).length + ' boxes). <button class="btn sm pri" onclick="posUpdRestore()">Bring them back</button> <button class="btn sm" onclick="posUpdDropDraft()">Discard</button></div>' : '')
-    + '<div class="card"><div class="scroller"><table class="rq-t pos-t pos-upd"><thead><tr><th>Name / account</th><th>Column</th><th class="num">Last (' + (w ? posD(w.as_on) : '&mdash;') + ')</th><th class="num">This week</th><th class="num">Change</th><th>Expiry</th></tr></thead><tbody>' + body + '</tbody></table></div>'
-    + (n ? '' : '<div class="empty"><h4>No lines yet</h4>Add parties and bank accounts first.</div>') + '</div></div>';
-  var f = $('pu-0'); if (f) try { f.focus(); f.select(); } catch (e) {}
-}
-function posUpdFilter(q) { q = posNorm(q); document.querySelectorAll('#pos-upd tbody tr').forEach(function(tr){ if (tr.classList.contains('pos-sec')) { tr.style.display = q ? 'none' : ''; return; } tr.style.display = !q || (tr.dataset.q || '').indexOf(q) !== -1 ? '' : 'none'; }); }
-function posUpdVal(i) { var e = $('pu-' + i); return e ? posParse(e.value) : null; }
-function posUpdChange(i) {
-  var U = POS._upd; if (!U) return; var r = U.rows.filter(function(x){ return !x.head; })[i]; if (!r) return;
-  var p = posUpdVal(i), c = $('pc-' + i), e = $('pu-' + i);
-  if (e) e.classList.toggle('bad', p === false);
-  if (c) c.innerHTML = p === false ? '<span class="acc-over">not a number</span>' : (function(){ var d = (p || 0) - r.last; return d ? '<span class="' + (d > 0 === (r.col === 'rec' || r.col === 'adv') ? 'pos-dn' : 'pos-up') + '">' + (d > 0 ? '+' : '&minus;') + accFmt(Math.abs(d)) + ((p || 0) === 0 ? ' &middot; settled' : '') + '</span>' : '<span class="sub2">&mdash;</span>'; })();
-  clearTimeout(U._t); U._t = setTimeout(posUpdCount, 150);
-}
-function posUpdCollect() {
-  var U = POS._upd, rows = U.rows.filter(function(x){ return !x.head; }), by = {}, bad = -1, changed = 0, draft = {};
-  rows.forEach(function(r, i){
-    var p = posUpdVal(i); if (p === false && bad < 0) bad = i;
-    var o = by[r.it.id] = by[r.it.id] || { it: r.it, v: r.v, set: {}, exp: undefined };
-    o.set[r.col] = p === false ? r.last : (p == null ? 0 : p);
-    if ((p || 0) !== r.last) { changed++; draft[r.it.id + '|' + r.col] = $('pu-' + i).value; }
-    var e = $('pe-' + i); if (e) { o.exp = e.value || null; if ((o.exp || null) !== ((r.v && r.v.expiry) || null)) { changed++; draft[r.it.id + '|exp'] = o.exp || ''; } }
-  });
-  return { by: by, bad: bad, changed: changed, draft: draft };
-}
-function posUpdCount() {
-  var U = POS._upd; if (!U || !$('pu-count')) return;
-  var c = posUpdCollect(); $('pu-count').textContent = c.changed + ' changed' + (c.bad >= 0 ? ' \u00B7 1 box is not a number' : '');
-  try { if (c.changed) localStorage.setItem(posDraftKey(U.co), JSON.stringify({ at: new Date().toISOString(), v: c.draft })); else localStorage.removeItem(posDraftKey(U.co)); } catch (e) {}
-}
-function posUpdRestore() {
-  var U = POS._upd; if (!U) return; var d = null; try { d = JSON.parse(localStorage.getItem(posDraftKey(U.co)) || 'null'); } catch (e) {}
-  if (!d || !d.v) return;
-  U.rows.filter(function(x){ return !x.head; }).forEach(function(r, i){
-    var k = r.it.id + '|' + r.col; if (d.v[k] != null && $('pu-' + i)) { $('pu-' + i).value = d.v[k]; posUpdChange(i); }
-    var ke = r.it.id + '|exp'; if (d.v[ke] != null && $('pe-' + i)) $('pe-' + i).value = d.v[ke];
-  });
-  var b = $('pu-draft'); if (b) b.remove(); posUpdCount();
-}
-function posUpdDropDraft() { var U = POS._upd; try { localStorage.removeItem(posDraftKey(U.co)); } catch (e) {} var b = $('pu-draft'); if (b) b.remove(); }
-function posUpdKey(e, i) {
-  if (e.key !== 'Enter' || e.isComposing) return;
-  e.preventDefault();
-  var list = Array.prototype.filter.call(document.querySelectorAll('#pos-upd .pos-in'), function(x){ return x.closest('tr').style.display !== 'none'; });
-  var k = list.indexOf(e.target);
-  if (k >= 0 && k < list.length - 1) { list[k + 1].focus(); list[k + 1].select(); } else posUpdSave();
-}
-async function posUpdSave() {
-  var U = POS._upd; if (!U || U.busy || !posCanEdit()) return;
-  U.busy = true;
-  try { await posUpdSave2(U); } finally { U.busy = false; var b = $('pu-save'); if (b) { b.disabled = false; b.textContent = 'Save update'; } }
-}
-async function posUpdSave2(U) {
-  var co = U.co, asOn = $('pu-date').value, note = $('pu-note').value.trim(), c = posUpdCollect();
-  if (c.bad >= 0) { toast('One box is not a number. Fix it first.', 'err'); var b = $('pu-' + c.bad); if (b) { b.focus(); b.select(); } return; }
-  if (!accValidDate(asOn)) { toast('Choose the "as on" date', 'err'); $('pu-date').focus(); return; }
-  if (asOn > rqAddDays(todayStr(), 7)) { toast('The "as on" date is more than a week ahead', 'err'); return; }
-  var last = posWeeksOf(co)[0];
-  if (last && asOn <= last.as_on) { toast('The new "as on" date must be after the last update (' + rqDateTxt(last.as_on) + ')', 'err'); $('pu-date').focus(); return; }
-  if (!c.changed && !(await appConfirm('Nothing has changed since ' + (last ? rqDateTxt(last.as_on) : 'the last update') + '. Save it as on ' + rqDateTxt(asOn) + ' anyway?', { title: 'Weekly update', okText: 'Save' }))) return;
-  if (c.changed && !(await appConfirm('Save the weekly update of ' + posCo(co).n + ' as on ' + rqDateTxt(asOn) + '? ' + c.changed + ' figure' + (c.changed === 1 ? '' : 's') + ' changed. Management is told.', { title: 'Weekly update', okText: 'Save update' }))) return;
-  var btn = $('pu-save'); if (btn) { btn.disabled = true; btn.textContent = 'Saving\u2026'; }
-  var res = await posUpdWrite(co, asOn, note, c, last);
-  if (res !== true) { toast(res, 'err'); if (/added meanwhile/.test(res)) { var el = $('pos-upd'); if (el) el.dataset.co = ''; rqRender(S.view); } return; }
-  try { localStorage.removeItem('pos_draft:' + co + ':' + (last ? last.id : 'none')); } catch (e) {}
-  toast('Weekly update saved: ' + posCo(co).n + ' as on ' + rqDateTxt(asOn), 'ok-t');
-  setView('rq:acc:posrep');
-}
-async function posUpdWrite(co, asOn, note, c, last) {
-  // the newest week again: someone may have saved one meanwhile
-  var chk = await db.from('pos_weeks').select('id,as_on').eq('company', co).order('as_on', { ascending: false }).limit(1);
-  if (chk.error) return accErrMsg(chk.error);
-  var top = (chk.data || [])[0];
-  if (top && (!last || top.id !== last.id)) { await posLoad(true); return 'Someone else has just saved an update for ' + posCo(co).n + '. Open the weekly update again to start from it.'; }
-  // a line added meanwhile by someone else would be left out of the new week
-  var li = await db.from('pos_items').select('id').eq('company', co).eq('active', true);
-  if (li.error) return accErrMsg(li.error);
-  var miss = (li.data || []).filter(function(x){ return !c.by[x.id]; });
-  if (miss.length) { await posLoad(true); return miss.length + ' line' + (miss.length === 1 ? ' was' : 's were') + ' added meanwhile. Open the weekly update again; your figures are kept (press \u201CBring them back\u201D).'; }
-  var wid = accUuid(), rows = [];
-  Object.keys(c.by).forEach(function(iid){
-    var o = c.by[iid], v = o.v, x = posPv(v);
-    var nv = { week_id: wid, item_id: iid, rec: v ? v.rec : null, pay: v ? v.pay : null, adv: v ? v.adv : null, expiry: v ? v.expiry : null };
-    var ch = false;
-    Object.keys(o.set).forEach(function(k){ if (o.set[k] !== x[k]) ch = true; nv[k] = o.set[k] === 0 && (!v || v[k] == null) ? null : accAmtVal(o.set[k]); });
-    if (o.exp !== undefined) { if ((o.exp || null) !== ((v && v.expiry) || null)) ch = true; nv.expiry = o.exp || null; }
-    nv.updated_on = ch || !v ? asOn : (v.updated_on || asOn);
-    rows.push(nv);
-  });
-  // totals for the trend
-  var tmp = {}; rows.forEach(function(r){ tmp[r.item_id] = r; });
-  var wk = { id: wid, company: co, as_on: asOn, note: note || null, created_by_name: S.user.name };
-  POS.vals[wid] = tmp; wk.totals = posTotJson(co, wk); delete POS.vals[wid];
-  var wi = await db.from('pos_weeks').insert(wk).select('*').single();
-  if (wi.error) return accDup(wi.error) ? 'An update as on ' + rqDateTxt(asOn) + ' is already saved for ' + posCo(co).n + '.' : accErrMsg(wi.error);
-  for (var i = 0; i < rows.length; i += 200) {
-    var r = await db.from('pos_vals').insert(rows.slice(i, i + 200));
-    if (r.error) {
-      await db.from('pos_vals').delete().eq('week_id', wid);
-      await db.from('pos_weeks').delete().eq('id', wid);
-      return 'Could not save the figures (' + (r.error.message || r.error) + '). Nothing was saved; your figures are still on the screen.';
-    }
-  }
-  await posLoad(true);
-  return true;
-}
-
-// ─── WEEKLY REPORT ───
+// ─── INSIGHTS ───
 function posReport() {
   var t = todayStr(), R = { cos: [], ins: [], any2: false, t: t };
   var all0 = [], all1 = {};
   POS_COS.forEach(function(co){
-    var c = posCur(co.c); c.co = co; R.cos.push(c); if (c.w1) R.any2 = true;
+    var c = posCur(co.c); c.co = co; c.w1 = null; c.t1 = null; R.cos.push(c);
     posItemsOf(co.c, true).forEach(function(it){
-      var v0 = it.active !== false ? posValOf(c.w0, it.id) : null, v1 = posValOf(c.w1, it.id);
+      var v0 = it.active !== false ? posValOf(c.w0, it.id) : null, v1 = null;
       if (v0) all0.push({ it: it, v: v0, x: posPv(v0), w: c.w0 });
       if (v1) all1[it.id] = { it: it, v: v1, x: posPv(v1) };
     });
   });
   var G = { rec: 0, pay: 0, adv: 0, pad: 0, padN: 0, prec: 0, ppay: 0, padv: 0, net: 0 }, G1 = R.any2 ? { rec: 0, pay: 0, adv: 0, pad: 0, prec: 0, ppay: 0, padv: 0, net: 0 } : null;
-  R.cos.forEach(function(c){ Object.keys(G).forEach(function(k){ G[k] += c.t0[k] || 0; if (G1 && k in G1) G1[k] += (c.t1 || c.t0)[k] || 0; }); });
+  R.cos.forEach(function(c){ Object.keys(G).forEach(function(k){ G[k] += c.t0[k] || 0; if (false) G1[k] += (c.t1 || c.t0)[k] || 0; }); });
   R.G = G; R.G1 = G1;
   function L(list, n) { return list.slice(0, n).map(function(x){ return rqEsc(posName(x.it)) + ' ' + posShort(x.a); }).join(' &middot; '); }
   // PAD (forced loan): big, every week
   var pads = all0.filter(function(x){ return x.it.section === 'pad' && x.x.pay; }).map(function(x){ return { it: x.it, a: x.x.pay }; }).sort(function(a, b){ return b.a - a.a; });
   var padTxt = 'Largest: ' + L(pads, 3) + '.';
-  if (G1) { var dp = G.pad - G1.pad, newP = pads.filter(function(x){ return !all1[x.it.id] || !all1[x.it.id].x.pay; }).length, clr = Object.keys(all1).filter(function(id){ var o = all1[id]; return o.it.section === 'pad' && o.x.pay && !all0.some(function(x){ return x.it.id === id && x.x.pay; }); }).length;
+  if (false) { var dp = G.pad - G1.pad, newP = pads.filter(function(x){ return !all1[x.it.id] || !all1[x.it.id].x.pay; }).length, clr = Object.keys(all1).filter(function(id){ var o = all1[id]; return o.it.section === 'pad' && o.x.pay && !all0.some(function(x){ return x.it.id === id && x.x.pay; }); }).length;
     padTxt += ' This week ' + (dp > 0 ? 'up ' + posTkS(dp) : dp < 0 ? 'down ' + posTkS(-dp) : 'no change') + (newP ? ' &middot; ' + newP + ' new' : '') + (clr ? ' &middot; ' + clr + ' cleared' : '') + '.'; }
   R.pads = pads;
   if (pads.length) R.ins.push(['&#x1F3E6;', 'PAD: ' + posTkS(G.pad) + ' forced loan across ' + pads.length + ' lines', padTxt, 'pad']);
@@ -26393,79 +26354,78 @@ function posReport() {
     if (nw.length || cl.length) R.ins.push(['&#x2795;', 'New / closed this week', (nw.length ? 'Added: ' + nw.slice(0, 5).map(function(x){ return rqEsc(posName(x.it)) + (x.it.nature ? ' ' + rqEsc(x.it.nature) : '') + ' ' + posShort(x.x.rec || x.x.pay || x.x.adv); }).join(' &middot; ') : '') + (nw.length && cl.length ? ' &middot; ' : '') + (cl.length ? 'Closed: ' + cl.slice(0, 5).map(function(o){ return rqEsc(posName(o.it)) + ' (' + rqEsc(String(o.it.close_reason || '').toLowerCase()) + ')'; }).join(' &middot; ') : '') + '.', '']);
   }
   R.ch = ch;
-  var stale = all0.filter(function(x){ return x.it.kind === 'party' && !posZero(x.v) && x.v.updated_on && rqDaysBetween(x.v.updated_on, x.w.as_on) >= 56; });
+  var stale = all0.filter(function(x){ return x.it.kind === 'party' && !posZero(x.v) && x.v.updated_on && rqDaysBetween(x.v.updated_on, t) >= 56; });
   if (stale.length) R.ins.push(['&#x23F8;', stale.length + ' part' + (stale.length === 1 ? 'y has' : 'ies have') + ' not changed in 8+ weeks', 'e.g. ' + stale.slice(0, 4).map(function(x){ return rqEsc(posName(x.it)); }).join(', ') + ' &mdash; old balances worth checking or closing.', '']);
-  if (!R.any2) R.ins.push(['&#x1F4C8;', 'Week on week starts from the second update', 'After the next weekly update this report shows the biggest increases and decreases, new and closed lines, parties unchanged for 8+ weeks and a 12-week trend.', '']);
   return R;
-}
-function posSpark(co, key) {
-  var ws = posWeeksOf(co).filter(function(w){ return w.totals && w.totals[key === 'net' ? 'pay' : key] != null; }).slice(0, 12).reverse();
-  if (ws.length < 2) return '';
-  var v = ws.map(function(w){ return key === 'net' ? w.totals.pay - w.totals.rec : w.totals[key]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), W = 150, H = 34;
-  var pts = v.map(function(y, i){ return (i * W / (v.length - 1)).toFixed(1) + ',' + (mx === mn ? H / 2 : H - 3 - (y - mn) * (H - 6) / (mx - mn)).toFixed(1); }).join(' ');
-  return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" class="pos-spark"><polyline fill="none" stroke="#C96442" stroke-width="2" points="' + pts + '"/></svg><div class="sub2">' + posD(ws[0].as_on) + ' &rarr; ' + posD(ws[ws.length - 1].as_on) + '</div>';
 }
 function posRenderReport() {
   var R = posReport(), G = R.G, G1 = R.G1;
-  posMarkSeen(); setTimeout(function(){ try { renderRail(); } catch (e) {} }, 0);
-  var d = function(k){ return G1 ? G[k] - G1[k] : null; };
-  var range = R.cos.map(function(c){ return c.co.s + ' ' + (c.w1 ? posD(c.w1.as_on) + ' &rarr; ' : '') + (c.w0 ? posD(c.w0.as_on) : '&mdash;'); }).join(' &middot; ');
-  rqSetHead('Accounts \u203A Position', 'Weekly position report', 'Both companies &middot; ' + range, '<button class="btn" onclick="setView(\'rq:acc:pos\')">&larr; Position</button><button class="btn pri" onclick="posPrintModal(\'rep\')">&#x1F5A8; Print</button>');
+  var d = function(){ return 0; };
+  rqSetHead('Accounts \u203A Position', 'Position insights', 'Both companies &middot; worked out from the current figures', '<button class="btn" onclick="setView(\'rq:acc:pos\')">&larr; Position</button><button class="btn pri" onclick="posPrintModal(\'rep\')">&#x1F5A8; Print</button>');
   var padCo = R.cos.map(function(c){ return c.co.s + ' ' + posShort(c.t0.pad); }).join(' &middot; ');
-  var tiles = '<div class="stats pos-tiles"><div class="stat pos-tile pos-pad pos-pad-big"><div class="k">PAD &middot; forced loan</div><div class="v">' + posTkS(G.pad) + '</div><div class="n">' + G.padN + ' lines &middot; ' + padCo + ' &middot; ' + posCh(d('pad'), -1, 'weekly change from the 2nd update') + '</div></div>'
-    + posTile('Net liability (group)', posTkS(G.net), posCh(d('net'), -1, 'from the 2nd update'))
+  var tiles = '<div class="stats pos-tiles"><div class="stat pos-tile pos-pad pos-pad-big"><div class="k">PAD &middot; forced loan</div><div class="v">' + posTkS(G.pad) + '</div><div class="n">' + G.padN + ' lines &middot; ' + padCo + ' &middot; ' + 'a forced loan: keep an eye on it' + '</div></div>'
+    + posTile('Net liability (group)', posTkS(G.net), 'Payable &minus; Receivable')
     + posTile('Party receivable', posTkS(G.prec), posCh(d('prec'), 1, '&nbsp;'))
     + posTile('Party payable', posTkS(G.ppay), posCh(d('ppay'), -1, '&nbsp;'))
     + posTile('Advance', posTkS(G.padv), posCh(d('padv'), 0, '&nbsp;')) + '</div>';
-  var cmp = '<div class="card"><div class="card-h"><h3>By company</h3></div><div class="scroller"><table class="rq-t pos-t"><thead><tr><th>Company</th><th>As on</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">PAD</th><th class="num">Net liability</th><th>Trend (net liability)</th></tr></thead><tbody>'
-    + R.cos.map(function(c){ var t = c.t0, p = c.t1;
-      function cell(k, good){ return '<td class="num"><b>' + accFmt(t[k]) + '</b><div>' + (p ? posCh(t[k] - p[k], good) : '') + '</div></td>'; }
-      return '<tr><td><b>' + c.co.n + '</b></td><td>' + (c.w0 ? rqDateTxt(c.w0.as_on) : '&mdash;') + (c.w1 ? '<div class="sub2">last ' + rqDateTxt(c.w1.as_on) + '</div>' : '') + '</td>' + cell('rec', 1) + cell('pay', -1) + cell('adv', 0) + cell('pad', -1) + cell('net', -1) + '<td>' + (posSpark(c.co.c, 'net') || '<span class="sub2">from the 2nd update</span>') + '</td></tr>'; }).join('')
+  var cmp = '<div class="card"><div class="card-h"><h3>By company</h3></div><div class="scroller"><table class="rq-t pos-t"><thead><tr><th>Company</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">PAD</th><th class="num">Net liability</th></tr></thead><tbody>'
+    + R.cos.map(function(c){ var t = c.t0;
+      function cell(k){ return '<td class="num"><b>' + accFmt(t[k]) + '</b></td>'; }
+      return '<tr><td><b>' + c.co.n + '</b></td>' + cell('rec') + cell('pay') + cell('adv') + cell('pad') + cell('net') + '</tr>'; }).join('')
     + '</tbody></table></div></div>';
   var ins = '<div class="card"><div class="card-h"><h3>Insights</h3><span class="note">Worked out from the figures; nothing is sent anywhere.</span></div>' + R.ins.map(function(x){ return '<div class="pos-ins' + (x[3] ? ' ' + x[3] : '') + '"><span class="i">' + x[0] + '</span><div><b>' + x[1] + '</b><div>' + x[2] + '</div></div></div>'; }).join('') + '</div>';
   $('content').innerHTML = tiles + ins + cmp;
+  var hb = $('act-row'); if (hb) hb.innerHTML = '<button class="btn" onclick="setView(\'rq:acc:pos\')">&larr; Position</button><button class="btn pri" onclick="posPrintModal(\'rep\')">&#x1F5A8; Print insights</button>';
 }
 
 // ─── PRINT / EXCEL ───
 function posPrintModal(pre) {
-  var parts = [['MTS', 'M.T. Sweaters &mdash; full details'], ['BFL', 'Banga Fashion &mdash; full details'], ['group', 'Group summary', 'by type of account, both companies'], ['party', 'Party summary', 'parties of both companies added together'], ['rep', 'Weekly report', 'changes and insights']];
+  var parts = [['MTS', 'M.T. Sweaters &mdash; full details'], ['BFL', 'Banga Fashion &mdash; full details'], ['group', 'Group summary', 'by type of account, both companies'], ['party', 'Party summary', 'parties of both companies added together'], ['rep', 'Insights', 'PAD, PC, FDR, concentration, advances']];
   var on = pre === 'rep' ? { rep: 1 } : { MTS: 1, BFL: 1, group: 1 };
-  var asOn = POS_COS.map(function(co){ var w = posWeeksOf(co.c)[0]; return co.s + ' ' + (w ? rqDateTxt(w.as_on) : '&mdash;'); }).join(' &middot; ');
-  accForm({ title: 'Print position', sub: 'As on ' + asOn,
+  accForm({ title: 'Print position', sub: 'Current figures &middot; printed ' + rqDateTxt(todayStr()),
     body: parts.map(function(p){ return '<label class="pos-chk"><input type="checkbox" class="pp-part" value="' + p[0] + '"' + (on[p[0]] ? ' checked' : '') + '><span><b>' + p[1] + '</b>' + (p[2] ? ' &middot; ' + p[2] : '') + '</span></label>'; }).join('')
       + '<label class="pos-chk pos-chk-z"><input type="checkbox" id="pp-zero" checked><span><b>Leave out zero balances</b></span></label>',
     extra: '<button class="btn" onclick="posExcel()">Excel</button>', ok: 'Print / Save as PDF',
     onOk: function(){ var p = posPickedParts(); if (!p.length) return 'Tick at least one part.'; posPrint(p, $('pp-zero').checked); return true; } });
 }
 function posPickedParts() { return Array.prototype.filter.call(document.querySelectorAll('.pp-part'), function(c){ return c.checked; }).map(function(c){ return c.value; }); }
+// rows of one section kept together where it matters: the heading with its first rows,
+// the last rows with the sub total (long sections still flow over pages)
+function posDocRows(head, rows, foot) {
+  var n = rows.length;
+  if (n <= 6) return '<tbody class="keep">' + head + rows.join('') + foot + '</tbody>';
+  return '<tbody class="keep">' + head + rows.slice(0, 3).join('') + '</tbody><tbody>' + rows.slice(3, n - 2).join('') + '</tbody><tbody class="keep">' + rows.slice(n - 2).join('') + foot + '</tbody>';
+}
 function posDocCompany(co, noZero) {
   var c = posCur(co), t = c.t0, groups = posGroups(posItemsOf(co)), tot = { party: [0, 0, 0], bank: [0, 0, 0] };
-  var h = accDocHead('Receivable &amp; Credit Position', '<b>' + posCo(co).n + '</b><br>As on ' + (c.w0 ? rqDateTxt(c.w0.as_on) : '&mdash;') + (c.w0 ? '<br>Updated by ' + rqEsc(c.w0.created_by_name || '') : ''))
+  var h = accDocHead('Receivable &amp; Credit Position', '<b>' + posCo(co).n + '</b><br>Figures as at ' + rqDateTxt(todayStr()))
     + '<div class="kp"><div><span>Receivable</span><b>' + accFmt(t.rec) + '</b></div><div><span>Payable</span><b>' + accFmt(t.pay) + '</b></div><div><span>Advance</span><b>' + accFmt(t.adv) + '</b></div><div class="main"><span>Net liability</span><b>' + accFmt(t.net) + '</b></div></div>'
-    + '<table><thead><tr><th style="width:5%">SN</th><th style="width:31%">Name / account</th><th style="width:10%">Nature</th><th class="num" style="width:13%">Receivable</th><th class="num" style="width:13%">Payable</th><th class="num" style="width:12%">Advance</th><th style="width:8%">Expiry</th><th style="width:8%">Updated</th></tr></thead><tbody>';
+    + '<table class="pos-pt"><thead><tr><th style="width:4%">SN</th><th style="width:29%">Name / account</th><th style="width:9%">Nature</th><th class="num" style="width:13%">Receivable</th><th class="num" style="width:13%">Payable</th><th class="num" style="width:12%">Advance</th><th class="dt" style="width:10%">Expiry</th><th class="dt" style="width:10%">Updated</th></tr></thead>';
   groups.forEach(function(g){
     var list = g.items.filter(function(it){ return !noZero || !posZero(posValOf(c.w0, it.id)); }); if (!list.length) return;
     var st = [0, 0, 0];
-    h += '<tr><td colspan="8" class="cl">' + (g.bank ? rqEsc(g.bank) + ' &middot; ' : '') + g.title + '</td></tr>' + list.map(function(it, i){
+    var rows = list.map(function(it, i){
       var v = posValOf(c.w0, it.id), x = posPv(v); st[0] += x.rec; st[1] += x.pay; st[2] += x.adv;
-      return '<tr><td class="sl">' + (i + 1) + '</td><td>' + rqEsc(posName(it)) + (it.currency && it.currency !== 'BDT' ? ' <small>' + rqEsc(it.currency) + '</small>' : '') + '</td><td>' + rqEsc(it.nature || '') + '</td><td class="num">' + posAmt(v && v.rec) + '</td><td class="num">' + posAmt(v && v.pay) + '</td><td class="num">' + posAmt(v && v.adv) + '</td><td>' + posD(v && v.expiry) + '</td><td class="sl">' + posD(v && v.updated_on) + '</td></tr>';
-    }).join('') + '<tr><td></td><td><b>Sub total</b></td><td></td><td class="num"><b>' + accFmt(st[0]) + '</b></td><td class="num"><b>' + accFmt(st[1]) + '</b></td><td class="num"><b>' + accFmt(st[2]) + '</b></td><td colspan="2"></td></tr>';
+      return '<tr><td class="sl">' + (i + 1) + '</td><td>' + rqEsc(posName(it)) + (it.currency && it.currency !== 'BDT' ? ' <small>' + rqEsc(it.currency) + '</small>' : '') + '</td><td>' + rqEsc(it.nature || '') + '</td><td class="num">' + posAmt(v && v.rec) + '</td><td class="num">' + posAmt(v && v.pay) + '</td><td class="num">' + posAmt(v && v.adv) + '</td><td class="dt">' + posD(v && v.expiry) + '</td><td class="sl dt">' + posD(v && v.updated_on) + '</td></tr>';
+    });
+    h += posDocRows('<tr><td colspan="8" class="cl">' + (g.bank ? rqEsc(g.bank) + ' &middot; ' : '') + g.title + '</td></tr>', rows,
+      '<tr class="stt"><td></td><td><b>Sub total</b></td><td></td><td class="num"><b>' + accFmt(st[0]) + '</b></td><td class="num"><b>' + accFmt(st[1]) + '</b></td><td class="num"><b>' + accFmt(st[2]) + '</b></td><td colspan="2"></td></tr>');
     var k = g.bank ? 'bank' : 'party'; for (var i = 0; i < 3; i++) tot[k][i] += st[i];
   });
   var g3 = [0, 1, 2].map(function(i){ return tot.party[i] + tot.bank[i]; });
   function tr(l, a){ return '<tr class="tot"><td></td><td>' + l + '</td><td></td><td class="num">' + accFmt(a[0]) + '</td><td class="num">' + accFmt(a[1]) + '</td><td class="num">' + accFmt(a[2]) + '</td><td colspan="2"></td></tr>'; }
-  return h + tr('Total (Party)', tot.party) + tr('Total (Bank)', tot.bank) + tr('Grand total (Party + Bank)', g3) + '<tr class="tot"><td></td><td>Net liability (Payable &minus; Receivable)</td><td></td><td></td><td class="num">' + accFmt(g3[1] - g3[0]) + '</td><td colspan="3"></td></tr></tbody></table>';
+  return h + '<tbody class="keep">' + tr('Total (Party)', tot.party) + tr('Total (Bank)', tot.bank) + tr('Grand total (Party + Bank)', g3) + '<tr class="tot"><td></td><td>Net liability (Payable &minus; Receivable)</td><td></td><td></td><td class="num">' + accFmt(g3[1] - g3[0]) + '</td><td colspan="3"></td></tr></tbody></table>';
 }
 function posDocGroup(noZero) {
   var d = posGroupData(), t = d.tot;
-  var asOn = POS_COS.map(function(co){ var w = posWeeksOf(co.c)[0]; return co.s + ' ' + (w ? rqDateTxt(w.as_on) : '&mdash;'); }).join('<br>');
+  var asOn = 'Figures as at ' + rqDateTxt(todayStr());
   function cells(o){ var g = { rec: o.MTS.rec + o.BFL.rec, pay: o.MTS.pay + o.BFL.pay, adv: o.MTS.adv + o.BFL.adv }; function n(v){ return '<td class="num">' + (v ? accFmt(v) : '') + '</td>'; } return n(o.MTS.rec) + n(o.BFL.rec) + '<td class="num"><b>' + (g.rec ? accFmt(g.rec) : '') + '</b></td>' + n(o.MTS.pay) + n(o.BFL.pay) + '<td class="num"><b>' + (g.pay ? accFmt(g.pay) : '') + '</b></td>' + n(g.adv); }
   var net = function(c){ return t[c].pay - t[c].rec; };
   return accDocHead('Group summary', '<b>M.T. Sweaters &amp; Banga Fashion</b><br>' + asOn)
     + '<div class="kp"><div><span>Receivable</span><b>' + accFmt(t.MTS.rec + t.BFL.rec) + '</b></div><div><span>Payable</span><b>' + accFmt(t.MTS.pay + t.BFL.pay) + '</b></div><div><span>Advance</span><b>' + accFmt(t.MTS.adv + t.BFL.adv) + '</b></div><div class="main"><span>Net liability</span><b>' + accFmt(net('MTS') + net('BFL')) + '</b></div></div>'
     + '<table><thead><tr><th style="width:4%">SN</th><th style="width:24%">Particulars</th><th class="num">Rec. M.T.</th><th class="num">Rec. Banga</th><th class="num">Receivable</th><th class="num">Pay. M.T.</th><th class="num">Pay. Banga</th><th class="num">Payable</th><th class="num">Advance</th></tr></thead><tbody>'
     + d.lines.filter(function(l){ return !noZero || ['MTS', 'BFL'].some(function(c){ return l[c].rec || l[c].pay || l[c].adv; }); }).map(function(l, i){ return '<tr><td class="sl">' + (i + 1) + '</td><td>' + l.n + '</td>' + cells(l) + '</tr>'; }).join('')
-    + '<tr class="tot"><td></td><td>Total</td>' + cells(t) + '</tr><tr class="tot"><td></td><td>Net liability</td><td colspan="3"></td><td class="num">' + accFmt(net('MTS')) + '</td><td class="num">' + accFmt(net('BFL')) + '</td><td class="num">' + accFmt(net('MTS') + net('BFL')) + '</td><td></td></tr></tbody></table>';
+    + '</tbody><tbody class="keep"><tr class="tot"><td></td><td>Total</td>' + cells(t) + '</tr><tr class="tot"><td></td><td>Net liability</td><td colspan="3"></td><td class="num">' + accFmt(net('MTS')) + '</td><td class="num">' + accFmt(net('BFL')) + '</td><td class="num">' + accFmt(net('MTS') + net('BFL')) + '</td><td></td></tr></tbody></table>';
 }
 function posDocParty(noZero) {
   var rows = posPartyRows().filter(function(r){ return !noZero || r.rec || r.pay || r.adv; }).sort(function(a, b){ return a.name.localeCompare(b.name); });
@@ -26474,21 +26434,34 @@ function posDocParty(noZero) {
   return accDocHead('Party summary', '<b>Both companies added together</b><br>' + rows.length + ' parties &middot; ' + rows.filter(function(r){ return r.both; }).length + ' in both')
     + '<table><thead><tr><th style="width:27%">Party</th><th class="num" style="width:13%">M.T.</th><th class="num" style="width:13%">Banga</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">Net</th></tr></thead><tbody>'
     + rows.map(function(r){ return '<tr><td>' + rqEsc(r.name) + (r.both ? ' <small>both</small>' : '') + '</td>' + cc(r.co.MTS) + cc(r.co.BFL) + '<td class="num">' + (r.rec ? accFmt(r.rec) : '') + '</td><td class="num">' + (r.pay ? accFmt(r.pay) : '') + '</td><td class="num">' + (r.adv ? accFmt(r.adv) : '') + '</td><td class="num"><b>' + (r.net < 0 ? '&minus;' : '') + accFmt(Math.abs(r.net)) + '</b></td></tr>'; }).join('')
-    + '<tr class="tot"><td>Total</td><td></td><td></td><td class="num">' + accFmt(t.rec) + '</td><td class="num">' + accFmt(t.pay) + '</td><td class="num">' + accFmt(t.adv) + '</td><td class="num">' + accFmt(t.rec + t.adv - t.pay) + '</td></tr></tbody></table>'
+    + '</tbody><tbody class="keep"><tr class="tot"><td>Total</td><td></td><td></td><td class="num">' + accFmt(t.rec) + '</td><td class="num">' + accFmt(t.pay) + '</td><td class="num">' + accFmt(t.adv) + '</td><td class="num">' + accFmt(t.rec + t.adv - t.pay) + '</td></tr></tbody></table>'
     + '<div class="none" style="margin-top:6px">Net = Receivable + Advance &minus; Payable (minus: we owe them).</div>';
 }
 function posDocReport() {
-  var R = posReport(), G = R.G, G1 = R.G1, dd = function(k){ if (!G1) return ''; var d = G[k] - G1[k]; return '<small>' + (d > 0 ? '&#x25B2; ' : d < 0 ? '&#x25BC; ' : '') + (d ? posShort(Math.abs(d)) : 'no change') + '</small>'; };
-  var range = R.cos.map(function(c){ return c.co.s + ' ' + (c.w1 ? rqDateTxt(c.w1.as_on) + ' &rarr; ' : '') + (c.w0 ? rqDateTxt(c.w0.as_on) : '&mdash;'); }).join('<br>');
-  return accDocHead('Weekly position report', '<b>Both companies</b><br>' + range)
-    + '<div class="kp"><div class="main"><span>PAD &middot; forced loan</span><b>' + accFmt(G.pad) + '</b>' + dd('pad') + '</div><div><span>Net liability</span><b>' + accFmt(G.net) + '</b>' + dd('net') + '</div><div><span>Party receivable</span><b>' + accFmt(G.prec) + '</b>' + dd('prec') + '</div><div><span>Party payable</span><b>' + accFmt(G.ppay) + '</b>' + dd('ppay') + '</div></div>'
-    + '<div class="sec"><span><i></i>By company</span></div><table><thead><tr><th>Company</th><th>As on</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">PAD</th><th class="num">Net liability</th></tr></thead><tbody>'
-    + R.cos.map(function(c){ var t = c.t0, p = c.t1; function n(k){ return '<td class="num">' + accFmt(t[k]) + (p ? '<small>' + (t[k] - p[k] > 0 ? '+' : t[k] - p[k] < 0 ? '&minus;' : '') + accFmt(Math.abs(t[k] - p[k])) + '</small>' : '') + '</td>'; } return '<tr><td>' + c.co.n + '</td><td>' + (c.w0 ? rqDateTxt(c.w0.as_on) : '') + '</td>' + n('rec') + n('pay') + n('adv') + n('pad') + n('net') + '</tr>'; }).join('') + '</tbody></table>'
-    + '<div class="sec"><span><i></i>Insights</span></div><table><tbody>' + R.ins.map(function(x){ return '<tr><td style="width:4%">' + x[0] + '</td><td><b>' + x[1] + '</b><small>' + x[2] + '</small></td></tr>'; }).join('') + '</tbody></table>';
+  var R = posReport(), G = R.G;
+  return accDocHead('Position insights', '<b>M.T. Sweaters &amp; Banga Fashion</b><br>Figures as at ' + rqDateTxt(todayStr()))
+    + '<div class="kp"><div class="main"><span>PAD &middot; forced loan</span><b>' + accFmt(G.pad) + '</b></div><div><span>Net liability</span><b>' + accFmt(G.net) + '</b></div><div><span>Party receivable</span><b>' + accFmt(G.prec) + '</b></div><div><span>Party payable</span><b>' + accFmt(G.ppay) + '</b></div></div>'
+    + '<div class="sec"><span><i></i>By company</span></div><table><thead><tr><th>Company</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">PAD</th><th class="num">Net liability</th></tr></thead><tbody class="keep">'
+    + R.cos.map(function(c){ var t = c.t0; function n(k){ return '<td class="num">' + accFmt(t[k]) + '</td>'; } return '<tr><td>' + c.co.n + '</td>' + n('rec') + n('pay') + n('adv') + n('pad') + n('net') + '</tr>'; }).join('') + '</tbody></table>'
+    + '<div class="sec"><span><i></i>Insights</span></div>' + R.ins.map(function(x){ return '<div class="ins' + (x[3] ? ' ' + x[3] : '') + '"><span class="ii">' + x[0] + '</span><div><b>' + x[1] + '</b><div>' + x[2] + '</div></div></div>'; }).join('');
+}
+// print: room on every edge, headings repeat on each page, sections and totals not split badly
+function posDocCss() {
+  return accDocCss() + '@page{size:A4;margin:17mm 15mm 18mm 15mm}'
+    + '@media print{.sheet{padding:0 2mm!important}}'
+    + '@page wide{size:A4 landscape;margin:15mm 16mm 16mm}.part.wide{page:wide}.dt{white-space:nowrap}'
+    + '.part+.part{break-before:page}.h,.kp,.sec{break-inside:avoid;break-after:avoid}'
+    + 'tbody.keep{break-inside:avoid}tr.stt td{border-top:1px solid #cfcfcf;background:#faf8f5}'
+    + '.ins{display:flex;gap:10px;border:1px solid #e6e2da;border-radius:7px;padding:8px 10px;margin-bottom:7px;break-inside:avoid}.ins .ii{font-size:14px}.ins b{font-size:11px}.ins div div{font-size:9.6px;color:#555;margin-top:2px;line-height:1.45}'
+    + '.ins.pad{border-color:#E7B9A2;background:#FBF1EC}.ins.bad{border-color:#F3C3BC;background:#FFF7F6}.ins.warn{border-color:#F2DB8A;background:#FFFCF0}';
 }
 function posPrint(parts, noZero) {
-  var out = parts.map(function(p){ return p === 'MTS' || p === 'BFL' ? posDocCompany(p, noZero) : p === 'group' ? posDocGroup(noZero) : p === 'party' ? posDocParty(noZero) : posDocReport(); });
-  accDocOpen('Position ' + todayStr(), out.join('<div style="break-before:page"></div>'));
+  var out = parts.map(function(p){ return '<div class="part' + (p === 'group' || p === 'party' ? ' wide' : '') + '">' + (p === 'MTS' || p === 'BFL' ? posDocCompany(p, noZero) : p === 'group' ? posDocGroup(noZero) : p === 'party' ? posDocParty(noZero) : posDocReport()) + '</div>'; });
+  var title = 'Position ' + todayStr();
+  var html = '<!doctype html><html><head><meta charset="utf-8"><title>' + rqEsc(title) + '</title><style>' + posDocCss() + '</style></head><body><div class="sheet">' + out.join('')
+    + '<div class="ft"><span>Printed ' + rqEsc(rqDateTime(new Date().toISOString())) + ' &middot; ' + rqEsc(S.user.name) + ' &middot; Shahana One</span><span>' + rqEsc(title) + '</span></div></div></body></html>';
+  if ($('ov-acc') && $('ov-acc').classList.contains('open')) { ACCM = null; closeModal('ov-acc'); }
+  openReportPreview(title, html);
 }
 function posExcel() {
   var parts = posPickedParts(), noZero = $('pp-zero') && $('pp-zero').checked; if (!parts.length) { toast('Tick at least one part', 'err'); return; }
@@ -26496,7 +26469,7 @@ function posExcel() {
   function n(p){ return Math.round(p) / 100; }
   parts.forEach(function(p){
     if (p === 'MTS' || p === 'BFL') {
-      var c = posCur(p), aoa = [[posCo(p).n + ' \u2014 Receivable & Credit Position'], ['As on', c.w0 ? rqDateTxt(c.w0.as_on) : ''], [], ['SN', 'Name / account', 'Nature', 'Receivable', 'Payable', 'Advance', 'Expiry', 'Updated', 'Bank', 'Section']];
+      var c = posCur(p), aoa = [[posCo(p).n + ' \u2014 Receivable & Credit Position'], ['As at', rqDateTxt(todayStr())], [], ['SN', 'Name / account', 'Nature', 'Receivable', 'Payable', 'Advance', 'Expiry', 'Updated', 'Bank', 'Section']];
       posGroups(posItemsOf(p)).forEach(function(g){ var list = g.items.filter(function(it){ return !noZero || !posZero(posValOf(c.w0, it.id)); }); if (!list.length) return; aoa.push([g.title.replace(/&amp;/g, '&')]);
         list.forEach(function(it, i){ var v = posValOf(c.w0, it.id); aoa.push([i + 1, posName(it), it.nature || '', v && v.rec != null ? Number(v.rec) : '', v && v.pay != null ? Number(v.pay) : '', v && v.adv != null ? Number(v.adv) : '', v && v.expiry ? rqDateTxt(v.expiry) : '', v && v.updated_on ? rqDateTxt(v.updated_on) : '', it.bank || '', posSec(it.section)[1].replace(/&amp;/g, '&')]); }); });
       aoa.push([], ['', 'Total', '', n(c.t0.rec), n(c.t0.pay), n(c.t0.adv)], ['', 'Net liability (Payable - Receivable)', '', '', n(c.t0.net)]);
@@ -26510,10 +26483,10 @@ function posExcel() {
       posPartyRows().filter(function(r){ return !noZero || r.rec || r.pay || r.adv; }).sort(function(a, b){ return a.name.localeCompare(b.name); }).forEach(function(r){ var m = r.co.MTS || {}, b = r.co.BFL || {}; a3.push([r.name, r.both ? 'yes' : '', n(m.rec || 0), n(m.pay || 0), n(m.adv || 0), n(b.rec || 0), n(b.pay || 0), n(b.adv || 0), n(r.rec), n(r.pay), n(r.adv), n(r.net)]); });
       sheets.push({ name: 'Party summary', aoa: a3, widths: [36, 7, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14] });
     } else {
-      var R = posReport(), a4 = [['Weekly position report'], [], ['Company', 'As on', 'Receivable', 'Payable', 'Advance', 'PAD', 'Net liability']];
-      R.cos.forEach(function(c){ a4.push([c.co.n, c.w0 ? rqDateTxt(c.w0.as_on) : '', n(c.t0.rec), n(c.t0.pay), n(c.t0.adv), n(c.t0.pad), n(c.t0.net)]); });
+      var R = posReport(), a4 = [['Position insights'], [], ['Company', 'As at', 'Receivable', 'Payable', 'Advance', 'PAD', 'Net liability']];
+      R.cos.forEach(function(c){ a4.push([c.co.n, rqDateTxt(todayStr()), n(c.t0.rec), n(c.t0.pay), n(c.t0.adv), n(c.t0.pad), n(c.t0.net)]); });
       a4.push([], ['Insights']); R.ins.forEach(function(x){ a4.push([x[1].replace(/<[^>]+>/g, '').replace(/&[a-z#0-9]+;/gi, ' '), x[2].replace(/<[^>]+>/g, '').replace(/&middot;/g, '\u00B7').replace(/&[a-z#0-9]+;/gi, ' ')]); });
-      sheets.push({ name: 'Weekly report', aoa: a4, widths: [44, 120] });
+      sheets.push({ name: 'Insights', aoa: a4, widths: [44, 120] });
     }
   });
   accXlsx('Position_' + todayStr(), sheets);
