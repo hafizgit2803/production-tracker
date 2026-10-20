@@ -272,6 +272,56 @@ table.rq-items input{width:100%;padding:5px 7px;border:1px solid var(--line);bor
 /* ── ACCOUNTS ── */
 .acc-v{font-size:20px!important;white-space:nowrap}
 .acc-owe{color:var(--amber)}.acc-over{color:var(--red)}.acc-paid{color:var(--green)}.acc-deep{color:#9A3F20}
+.ap-line{margin:0 0 10px;padding:8px 10px;border-radius:8px;background:var(--amber-soft);color:#7A5A00;font-size:13px;line-height:1.5}
+.ap-line.ok{background:var(--green-soft);color:var(--green)}.ap-line .btn{vertical-align:middle}
+.ap-block .ap-big{font-size:15px;font-weight:700;color:var(--red);line-height:1.45}
+.ap-asked{margin-top:10px;background:#EEF6FC;border:1px solid #9CC6E6;color:#1F5F8E;border-radius:8px;padding:7px 10px;font-size:13px}
+.ap-t .ap-amt{width:120px;text-align:right;font-family:var(--mono);padding:5px 8px}.ap-t td{vertical-align:middle}
+tr.ap-asked-row td{background:#FFFBEF}
+[data-theme="dark"] .ap-line{color:var(--amber)}[data-theme="dark"] tr.ap-asked-row td{background:#2E2814}[data-theme="dark"] .ap-asked{background:#1E3140;border-color:#3D6E93;color:#9CC6E6}
+.acc-g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 12px;margin-top:8px}
+.pos-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:-1px;position:relative}
+.pos-tab{padding:8px 16px;border-radius:9px 9px 0 0;font:inherit;font-weight:700;font-size:13.5px;color:var(--muted);background:var(--rail);border:1px solid transparent;cursor:pointer}
+.pos-tab.on{background:var(--bg);color:var(--ink);border-color:var(--line);border-bottom-color:var(--bg)}
+.pos-body{border-top:1px solid var(--line);padding-top:14px}
+.pos-tile .n{font-size:11.5px;margin-top:3px}
+.pos-pad{border:2px solid #B25A2E!important;background:#FBF1EC!important}.pos-pad .k,.pos-pad .v{color:#9A3412}
+.pos-pad-big{grid-column:span 2}.pos-pad-big .v{font-size:32px!important;white-space:nowrap}
+.pos-up{color:var(--red)}.pos-dn{color:var(--green)}
+.pos-t td.num{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+tr.pos-sec td{background:var(--rail);font-weight:700;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+tr.pos-sub td{font-weight:700;border-bottom:2px solid var(--line)}
+tr.pos-tot td{font-weight:800;border-top:1.5px solid var(--ink)}tr.pos-grand td{background:var(--accent-soft)}
+.pos-t td.pos-g{background:var(--accent-soft)}.pos-gt th.pos-ch{text-align:center}
+.pos-acts{white-space:nowrap;text-align:right}.pos-acts .btn{padding:2px 7px;margin-left:2px}
+.chip.pos-both{background:#E3EFF9;color:#1F5F8E}.chip.pos-cur{background:var(--rail);color:var(--muted)}
+.pos-closed{margin-top:12px}.pos-closed table{margin-top:8px}
+.pos-seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.pos-seg button{flex:1;padding:8px 6px;border:0;border-right:1px solid var(--line);background:var(--panel);font:inherit;font-weight:600;font-size:13px;cursor:pointer;color:var(--ink)}.pos-seg button:last-child{border-right:0}.pos-seg button.on{background:var(--accent);color:#fff}
+.pos-pills{display:flex;flex-wrap:wrap;gap:5px}.pos-pills button{padding:4px 10px;border:1px solid var(--line);border-radius:99px;background:var(--panel);font:inherit;font-size:12px;cursor:pointer;color:var(--ink)}.pos-pills button.on{background:var(--accent-soft);border-color:var(--accent);color:#B25A2E;font-weight:700}
+.pos-sugg{border:1px solid var(--line);border-radius:8px;margin-top:6px;font-size:13px;overflow:hidden}.pos-sg{padding:7px 10px;border-bottom:1px solid var(--line);cursor:pointer}.pos-sg:hover{background:var(--rail)}
+.pos-warn{background:#FFF6D6;color:#7A5A00;padding:8px 10px;font-size:13px}
+.pos-info{display:block;background:#EEF6FC;border:1px solid #9CC6E6;color:#1F5F8E;border-radius:8px;padding:8px 10px;font-size:13px;margin-top:8px}
+.pos-chk{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:9px;margin-bottom:6px;font-size:13.5px;cursor:pointer}.pos-chk-z{background:var(--rail)}
+.pos-upd-top{display:grid;grid-template-columns:170px 1fr 220px 200px;gap:12px;padding:12px 14px;margin-bottom:12px}
+.pos-upd td{vertical-align:middle}.pos-gt td,.pos-gt th{padding-left:6px;padding-right:6px}.pos-gt td.num{font-size:12px}
+.pos-upd .pos-in{width:140px;text-align:right;font-family:var(--mono);padding:5px 8px}.pos-upd .pos-in.bad{border-color:var(--red);background:var(--red-soft)}.pos-upd .pos-exp{padding:4px 6px;font-size:12px}
+.pos-ins{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 10px;display:flex;gap:12px}.pos-ins .i{font-size:20px;line-height:1.2}.pos-ins b{font-size:14px}.pos-ins div div{font-size:12.8px;color:var(--muted);margin-top:3px;line-height:1.5}
+.pos-ins.bad{border-color:#F3C3BC;background:#FFF7F6}.pos-ins.warn{border-color:#F2DB8A;background:#FFFCF0}.pos-ins.pad{border-color:#E7B9A2;background:#FBF1EC}
+.pos-spark{display:block}.ni .badge.pos-new{background:var(--accent)}
+[data-theme="dark"] .pos-pad{background:#3A2219!important}[data-theme="dark"] .pos-pad .k,[data-theme="dark"] .pos-pad .v{color:#F0A884}
+[data-theme="dark"] .pos-ins.bad{background:#2E1515;border-color:#5C2020}[data-theme="dark"] .pos-ins.warn{background:#2E2814;border-color:#6B5520}[data-theme="dark"] .pos-ins.pad{background:#3A2219;border-color:#7A3F25}
+[data-theme="dark"] .pos-info{background:#1E3140;border-color:#3D6E93;color:#9CC6E6}[data-theme="dark"] .pos-warn{background:#2E2814;color:#E8C35A}
+@media (max-width:760px){.pos-upd-top{grid-template-columns:1fr 1fr}.acc-g3{grid-template-columns:1fr}.pos-pad-big{grid-column:auto}.pos-tab{padding:7px 10px;font-size:12.5px}}
+.grt-wrap{position:fixed;inset:0;z-index:9990;display:flex;align-items:center;justify-content:center;background:rgba(25,24,23,0);transition:background .25s;padding:16px}
+.grt-wrap.in{background:rgba(25,24,23,.35)}
+.grt{width:400px;max-width:100%;border-radius:20px;overflow:hidden;background:#fff;color:#191817;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center;transform:translateY(14px) scale(.97);opacity:0;transition:transform .25s,opacity .25s}
+.grt-wrap.in .grt{transform:none;opacity:1}
+.grt-sky{height:130px;position:relative;overflow:hidden}.grt-orb{position:absolute;left:50%;width:62px;height:62px;margin-left:-31px;border-radius:50%}
+.grt-star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:.85}
+.grt-ic{position:absolute;right:28px;bottom:8px;font-size:34px}
+.grt-b{padding:16px 22px 20px}.grt-t{font-family:var(--serif);font-size:24px;font-weight:700}.grt-s{color:#73706A;font-size:13.5px;margin-top:6px}
+.grt-n{margin-top:12px;font-size:13px;background:#F7F5EF;border-radius:10px;padding:9px 12px}.grt-go{margin-top:14px}
+@media (prefers-reduced-motion:reduce){.grt-wrap,.grt{transition:none}}
 [data-theme="dark"] .acc-deep{color:var(--accent)}
 .stat.acc-main{background:#C2552F;border-color:#C2552F;color:#fff}.stat.acc-main .k,.stat.acc-main .n{color:#fff;opacity:.9}
 .stat.acc-on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
@@ -1629,6 +1679,7 @@ table.adm-users tr.adm-editrow td{background:var(--accent-soft);padding:4px 12px
 [data-theme="dark"] .rq-q{background:#3A3220;color:var(--ink);border-color:#8A6D1E}[data-theme="dark"] .rq-q.ans{background:#1E3140;border-color:#3D6E93}[data-theme="dark"] .rq-q .sub2{color:var(--muted)}
 .rq-qchip{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:99px;background:#FDF0D5;color:#9A6700;white-space:nowrap;margin-left:4px}
 .rq-qchip.ans{background:#E3EFF9;color:#1F5F8E}
+.rq-qchip.ret{background:#FBEAE0;color:#C05621}
 .btn.rq-ask{background:#FDF0D5;border-color:#E8C35A;color:#7A5A00}
 .sig-edit{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 .sig-box{width:260px;height:84px;border:1.5px dashed var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;padding:6px;box-sizing:border-box}
@@ -2063,7 +2114,7 @@ table.dyn-board .row-action-btn{height:24px;box-sizing:border-box;padding:0 9px;
   .ov.printing .inv-sheet tr{break-inside:avoid;page-break-inside:avoid}
   .ov.printing .inv-sheet td{padding-top:4px!important;padding-bottom:4px!important}
   .ov.printing .inv-sheet .inv-sec{padding-top:10px!important}
-  .ov.printing .inv-sheet .inv-sig{padding-top:18px!important}
+  .ov.printing .inv-sheet .inv-sig{padding-top:44px!important}
   .ov.printing .inv-sheet.inv-compact td{padding-top:3px!important;padding-bottom:3px!important}
   .ov.printing .inv-sheet.inv-dense{zoom:.64}
   .ov.printing .inv-sheet.inv-dense td{padding-top:2.5px!important;padding-bottom:2.5px!important}
@@ -2446,7 +2497,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.19.3</p>
+    <p class="login-ver">V.2026.10.19.5</p>
   </div></div>
 </div>
 
@@ -2488,7 +2539,7 @@ td.col-cm{min-width:96px;font-size:11px}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.19.3</div>
+  <div id="ver-stamp">V.2026.10.19.5</div>
 </div>
 
 
@@ -2722,6 +2773,7 @@ td.col-cm{min-width:96px;font-size:11px}
         <label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="tna-print-prod" checked style="margin-top:2px;width:16px;height:16px"><span><b>Include production quantities</b><br><span style="color:var(--muted);font-size:12px">Knitting, linking and packing pieces done so far</span></span></label>
       </div>
     </div>
+    <div id="inv-proceed-row" style="display:none;padding:0 22px 4px"><label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;background:#F1F8F3;border:1px solid #BFE0CB;border-radius:10px;padding:10px 12px;font-size:13.5px;color:#191817"><input type="checkbox" id="inv-proceed" style="margin-top:2px;width:17px;height:17px"><span><b>Proceed to production</b><br><span style="color:#55524C;font-size:12px">Adds the &ldquo;Proceed to production&rdquo; stamp with the merchant&rsquo;s signature. Leave unticked when the list is only an update.</span></span></label></div>
     <div class="m-f"><button class="btn pri" id="tna-print-generate-btn" style="width:100%" disabled onclick="tnaOptsGenerate()">Generate</button></div>
   </div>
 </div>
@@ -2862,6 +2914,7 @@ td.col-cm{min-width:96px;font-size:11px}
         <label style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" id="btna-progress" checked style="width:16px;height:16px"><span><b>Include progress</b> <span style="color:var(--muted)">(one full TNA page per order)</span></span></label>
         <label style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" id="btna-prod" checked style="width:16px;height:16px"><b>Include production quantities</b></label>
       </div>
+      <label id="btna-inv-row" style="display:none;gap:9px;align-items:center;cursor:pointer;background:#F1F8F3;border:1px solid #BFE0CB;border-radius:10px;padding:9px 12px;font-size:13px;color:#191817"><input type="checkbox" id="btna-inv-proceed" style="width:16px;height:16px"><span><b>Proceed to production</b> <span style="color:#55524C">&mdash; stamp on every sheet. Leave unticked for an update only.</span></span></label>
       <button class="btn pri" id="btna-generate-btn" style="width:100%" disabled onclick="btnaGenerate()">Generate</button>
     </div>
   </div>
@@ -4004,8 +4057,9 @@ function buildMaterialReportRows(input) {
   var yrQty = {}, yrLast = {};
   yr.forEach(function(r){ yrQty[r.booking_id] = (yrQty[r.booking_id]||0) + (Number(r.qty)||0);
     if (r.received_on && (!yrLast[r.booking_id] || r.received_on > yrLast[r.booking_id])) yrLast[r.booking_id] = r.received_on; });
-  var arQty = {}, arCount = {};
-  ar.forEach(function(r){ arQty[r.booking_id] = (arQty[r.booking_id]||0) + (Number(r.qty)||0); arCount[r.booking_id] = (arCount[r.booking_id]||0) + 1; });
+  var arQty = {}, arCount = {}, arLast = {};
+  ar.forEach(function(r){ arQty[r.booking_id] = (arQty[r.booking_id]||0) + (Number(r.qty)||0); arCount[r.booking_id] = (arCount[r.booking_id]||0) + 1;
+    if (r.received_on && (!arLast[r.booking_id] || r.received_on > arLast[r.booking_id])) arLast[r.booking_id] = r.received_on; });
   // A row shows the shared bookings plus bookings made for its own PO(s) —
   // whatever the current mode, so nothing entered earlier is ever hidden.
   function inScope(b, style, po, isPoWise, pos) {
@@ -4084,7 +4138,8 @@ function buildMaterialReportRows(input) {
         }
         var itemOut = ib.filter(function(b){ return b.qty == null ? !(arCount[b.id]||0) : (arQty[b.id]||0) < (Number(b.qty)||0); });
         var itemEta = ok ? null : etaOf(itemOut);
-        detail.push({ item: item, booked: true, hasQty: hasQty, recd: ib.reduce(function(s,b){ return s + (arQty[b.id]||0); }, 0), done: ok, eta: itemEta ? itemEta.date : null });
+        detail.push({ item: item, booked: true, hasQty: hasQty, recd: ib.reduce(function(s,b){ return s + (arQty[b.id]||0); }, 0), done: ok, eta: itemEta ? itemEta.date : null,
+          last: ib.reduce(function(m,b){ var x = arLast[b.id]; return x && (!m || x > m) ? x : m; }, null) });
         if (ok) done++; else { pending.push({ item: item, why: why }); itemOut.forEach(function(b){ outBks.push(b); }); }
       });
       var plan = earliest(cat === 'sewing' ? 'plan_sew' : 'plan_pack');
@@ -4800,7 +4855,7 @@ async function startApp() {
   $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading…</div>';
 
   // Department staff (requisitions only): none of the order data is loaded.
-  if (rqOnlyUser()) { await rqBoot(); return; }
+  if (rqOnlyUser()) { await rqBoot(); try { grtSchedule(); } catch (e) {} return; }
 
   // These were 13 sequential awaits — each one a full network round trip that
   // waited for the previous to finish, so boot cost ~13 RTTs of pure latency.
@@ -4890,6 +4945,7 @@ async function startApp() {
     console.error('render() failed:', err);
     $('content').innerHTML = '<div class="card" style="padding:20px;color:var(--red)">Render error: ' + (err.message||err) + '<br><br><button class="btn" onclick="location.reload()">Refresh</button></div>';
   }
+  try { grtSchedule(); } catch (e) {}
 }
 
 // ─── DATA ───
@@ -7834,7 +7890,7 @@ function openTNA(ordId, division) {
   var countryVal = getFieldValue(ordId, 'country') || '';
   var photoUrl = getStyleImage(o.merchant_id, o.style);
   function infoItem(label, val) {
-    if (!val) return '';
+    if (!val) val = '\u2014';
     return '<div class="tna-info-item"><div class="tna-info-lbl">'+label+'</div><div class="tna-info-val">'+htmlEsc(val)+'</div></div>';
   }
   var infoHTML = '<div class="tna-info-card">'
@@ -9507,7 +9563,7 @@ function apvChip(sum, type, ordId, div2, canUpd, planDate) {
     expLine = '<br><span class="apv-exp' + (ev && daysTo(ev) < 0 ? ' late' : ev && daysTo(ev) <= 3 ? ' soon' : '') + '">' + (ev ? 'Expected ' + short(ev) + (daysTo(ev) < 0 ? ' \u00b7 overdue' : '') : 'Expected date not set') + '</span>';
   }
   if (!latest) return '<button class="apv-chip not-sent" onclick="' + oc + '">' + notYetLabel + expLine + tnaWarn + '</button>';
-  if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">&#x2713; Approved<br><span style="font-weight:400;font-size:9.5px">' + short(latest.approved_on) + '</span></button>';
+  if (latest.approved_on) return '<button class="apv-chip approved" onclick="' + oc + '">&#x2713; ' + apvWords(type, ordId).done + '<br><span style="font-weight:400;font-size:9.5px">' + short(latest.approved_on) + '</span></button>';
   if (latest.rejected_on) return '<button class="apv-chip rejected" onclick="' + oc + '">&#x2717; Rejected<br><span style="font-weight:400;font-size:9.5px">' + short(latest.rejected_on) + '</span>' + expLine + tnaWarn + '</button>';
   if (latest.submitted_on) return '<button class="apv-chip submitted" onclick="' + oc + '">&#x23F3; ' + pendingLabel + '<br><span style="font-weight:400;font-size:9.5px">' + short(latest.submitted_on) + '</span>' + tnaWarn + '</button>';
   return '<button class="apv-chip not-sent" onclick="' + oc + '">Round ' + latest.round + tnaWarn + '</button>';
@@ -9553,6 +9609,7 @@ async function openApvFlow(ordId, type, division) {
 
 
 function renderApvModal() {
+  var _aw = apvWords(S_apv.type, S_apv.ordId);
   var o = findOrderAnywhere(S_apv.ordId) || {};
   var apvCfg = APV_TYPE_CONFIG[S_apv.type] || {};
   var planKey = apvCfg.planKey;
@@ -9580,7 +9637,7 @@ function renderApvModal() {
           var isOk=!!r.approved_on, isRj=!!r.rejected_on;
           var dot = isOk?'var(--green)':isRj?'var(--red)':'var(--amber)';
           var badge = isOk
-            ? '<span style="background:var(--green-soft);color:var(--green);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">\u2713 Approved</span>'
+            ? '<span style="background:var(--green-soft);color:var(--green);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">\u2713 ' + _aw.done + '</span>'
             : isRj
             ? '<span style="background:var(--red-soft);color:var(--red);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">\u2717 Rejected</span>'
             : '<span style="background:var(--amber-soft);color:var(--amber);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">Awaiting</span>';
@@ -9588,7 +9645,7 @@ function renderApvModal() {
             + '<div style="width:8px;height:8px;border-radius:50%;background:'+dot+';flex-shrink:0;margin-top:5px"></div>'
             + '<div style="flex:1"><div style="font-weight:600;font-size:12.5px;margin-bottom:4px">Round '+r.round+(_mixed && _hist.some(function(x){ return x !== r && (x.round||0) < (r.round||0) && !!x.shared_style !== !!r.shared_style && (x.submitted_on||'') === (r.submitted_on||'') && (x.approved_on||'') === (r.approved_on||'') && (x.rejected_on||'') === (r.rejected_on||''); }) ? ' <span style="font-size:9.5px;font-weight:400;font-style:italic;color:var(--muted)">carried over on Style/PO switch</span>' : '')+(_mixed?' <span style="font-size:9.5px;font-weight:700;padding:0 5px;border-radius:3px;background:var(--accent-soft);color:var(--accent)">'+(r.shared_style?'All POs':'This PO')+'</span>':'')+'</div>'
             + (r.submitted_on?'<div style="font-size:12px;color:var(--muted);margin-bottom:2px">'+(apvCfg.offerWording?'Offered':'Submitted')+' <strong style="color:var(--ink);font-family:var(--mono)">'+short(r.submitted_on)+'</strong></div>':'')
-            + (r.approved_on ?'<div style="font-size:12px;color:var(--green);font-weight:600">Approved <span style="font-family:var(--mono)">'+short(r.approved_on)+'</span></div>':'')
+            + (r.approved_on ?'<div style="font-size:12px;color:var(--green);font-weight:600">' + _aw.done + ' <span style="font-family:var(--mono)">'+short(r.approved_on)+'</span></div>':'')
             + (r.rejected_on ?'<div style="font-size:12px;color:var(--red)">Rejected <span style="font-family:var(--mono)">'+short(r.rejected_on)+'</span></div>':'')
             + '</div>'+badge+'</div>';
         }).join('')
@@ -9615,14 +9672,14 @@ function renderApvModal() {
     actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
       +'<div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px">Round '+(latest?latest.round:1)+' — What was the outcome?</div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-      +'<button class="apv-outcome-btn approve" onclick="apvPickDate(\'approve\')">\u2713 Approved</button>'
+      +'<button class="apv-outcome-btn approve" onclick="apvPickDate(\'approve\')">\u2713 ' + _aw.done + '</button>'
       +'<button class="apv-outcome-btn reject" onclick="apvPickDate(\'reject\')">\u2717 Rejected</button>'
       +'</div></div>';
   } else if (S_apv.step==='pick-approve') {
     actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
-      +'<div style="font-size:13px;color:var(--muted);margin-bottom:8px">Date buyer approved:</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:8px">' + _aw.dateQ + '</div>'
       +'<input class="apv-date-big" style="border-color:var(--green)" type="date" id="apv-result-date" value="'+today0+'"></div>';
-    footHTML='<button class="btn" onclick="apvBackToOutcome()">Back</button><button class="btn pri" style="background:var(--green);border-color:var(--green)" onclick="apvDoResult(\'approve\')">Confirm approved</button>';
+    footHTML='<button class="btn" onclick="apvBackToOutcome()">Back</button><button class="btn pri" style="background:var(--green);border-color:var(--green)" onclick="apvDoResult(\'approve\')">' + _aw.confirm + '</button>';
   } else if (S_apv.step==='pick-reject') {
     actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px">'
       +'<div style="font-size:13px;color:var(--muted);margin-bottom:8px">Date buyer rejected:</div>'
@@ -9632,9 +9689,9 @@ function renderApvModal() {
     var ar=S_apv.rounds.filter(function(r){return r.approved_on;}).slice(-1)[0];
     actionHTML='<div style="border-top:1px solid var(--line);padding-top:14px;text-align:center;padding-bottom:6px">'
       +'<div style="width:44px;height:44px;border-radius:50%;background:var(--green-soft);border:2px solid #4ADE80;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:var(--green)">\u2713</div>'
-      +'<div style="font-size:16px;font-weight:600;color:var(--green);margin-bottom:4px">Approved</div>'
+      +'<div style="font-size:16px;font-weight:600;color:var(--green);margin-bottom:4px">' + _aw.done + '</div>'
       +'<div style="font-size:12.5px;color:var(--muted)">'+short(ar?ar.approved_on:'')+'  ·  Round '+(ar?ar.round:'')+'</div></div>';
-    if (canAct) footHTML='<button class="btn" onclick="apvUndoLatest()" style="color:var(--red)">&#x21A9; Undo approval</button><button class="btn pri" onclick="closeModal(\'ov-apv-flow\')">Done</button>';
+    if (canAct) footHTML='<button class="btn" onclick="apvUndoLatest()" style="color:var(--red)">&#x21A9; ' + _aw.undo + '</button><button class="btn pri" onclick="closeModal(\'ov-apv-flow\')">Done</button>';
   } else {
     actionHTML=!canAct
       ?'<div style="border-top:1px solid var(--line);padding-top:12px;font-size:12.5px;color:var(--muted)">View only — the merchandiser manages this approval.</div>':'' ;
@@ -9902,6 +9959,8 @@ function openBulkTNASelect(uid, mode) {
   _btnaMode = mode === 'inv' ? 'inv' : 'tna';
   $('btna-title').textContent = _btnaMode === 'inv' ? 'Inventory List to Planning' : 'Send TNA to Planning';
   $('btna-extra').style.display = _btnaMode === 'inv' ? 'none' : '';
+  if ($('btna-inv-row')) $('btna-inv-row').style.display = _btnaMode === 'inv' ? 'flex' : 'none';
+  if ($('btna-inv-proceed')) $('btna-inv-proceed').checked = false;
   _btnaUid = uid;
   _btnaSelected = {};
   _btnaAudience = null;
@@ -10058,6 +10117,8 @@ function openTNAPrintOptions(inv) {
   _invMode = !!inv;
   $('tna-opts-title').textContent = _invMode ? 'Print Inventory List' : 'Print TNA';
   $('tna-opts-extra').style.display = _invMode ? 'none' : '';
+  if ($('inv-proceed-row')) $('inv-proceed-row').style.display = _invMode ? '' : 'none';
+  if ($('inv-proceed')) $('inv-proceed').checked = false;
   _tnaPrintAudience = null;
   document.getElementById('tna-aud-planning').classList.remove('sel');
   document.getElementById('tna-aud-mgmt').classList.remove('sel');
@@ -10116,7 +10177,7 @@ function tnaPrintSheet(o, audience, buffer, withProg, withProd) {
   var nowStamp = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) + ', ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
   function infoItem(label, val) {
-    if (!val) return '';
+    if (!val) val = '\u2014';
     return '<div style="min-width:0"><div style="font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700">'+label+'</div><div style="font-size:13px;font-weight:600;color:#191817;margin-top:2px">'+htmlEsc(String(val))+'</div></div>';
   }
 
@@ -10179,7 +10240,7 @@ function tnaPrintSheet(o, audience, buffer, withProg, withProd) {
     + '<div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px 16px">'
     + infoItem('Style', o.style) + infoItem('PO Number', o.po_number) + infoItem('Buyer', o.buyer) + infoItem('Buying House', o.house)
     + infoItem('Country', countryVal) + infoItem('Merchant', merch?merch.name:'')
-    + infoItem('Order Confirmed', o.confirm_date?short(o.confirm_date):'') + infoItem('Quantity', o.qty?fmt(o.qty)+' pcs':'') + infoItem('Ship Date', o.ship_date?short(o.ship_date):'')
+    + infoItem('Order Confirmed', o.confirm_date?short(o.confirm_date):'') + infoItem('Quantity', o.qty?fmt(o.qty)+' pcs':'') + infoItem('Ship Date', (function(){ var _sd = buffer ? shiftDate(tnaPlanFor(o, 'ship'), buffer) : o.ship_date; return _sd ? short(_sd) : ''; })())
     + '</div></div>'
     + '<div style="padding:12px 28px;background:#FBEFE8;border-bottom:2px solid #E8CFC2;font-size:15px;font-weight:700;color:#191817">'
     + '<span style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#B25A2E;margin-right:6px">&#x1F9F5; Attachment:</span>'
@@ -10241,7 +10302,7 @@ async function loadMaterialInputs(uid, orders) {
   }
   var second = await Promise.all([
     out.yb.length ? receipts('yarn_receipts', 'id,booking_id,qty,received_on', out.yb.map(function(b){ return b.id; })) : [],
-    out.ab.length ? receipts('accessory_receipts', 'id,booking_id,qty', out.ab.map(function(b){ return b.id; })) : []
+    out.ab.length ? receipts('accessory_receipts', 'id,booking_id,qty,received_on', out.ab.map(function(b){ return b.id; })) : []
   ]);
   out.yr = second[0]; out.ar = second[1];
   return out;
@@ -10267,7 +10328,7 @@ function invColours(o) {
 
 // One PO's sheet. row = this order's Material Report row; allOrders = the
 // merchant's live orders (to name the POs a style-wise booking is shared by).
-function inventorySheet(o, row, audience, buffer, allOrders, people) {
+function inventorySheet(o, row, audience, buffer, allOrders, people, proceed) {
   people = people || {};
   var E = htmlEsc;
   var merch = userById(o.merchant_id);
@@ -10287,6 +10348,7 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
   var chip = function(t, bg, fg){ return '<span style="display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap;background:' + bg + ';color:' + fg + ';-webkit-print-color-adjust:exact;print-color-adjust:exact">' + t + '</span>'; };
   var C = {
     ok:   function(){ return chip('In-house', '#E3F2E8', '#1D7A46'); },
+    adv:  function(){ return chip('In-house &middot; Advance', '#DDEFE3', '#155C34'); },
     late: function(){ return chip('Overdue', '#FBE4E1', '#B42318'); },
     soon: function(){ return chip('Due soon', '#FDF0D5', '#9A6700'); },
     pend: function(){ return chip('Pending', '#ECE9E1', '#55524C'); },
@@ -10305,16 +10367,20 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
   function box(on){ return '<span style="display:inline-block;width:11px;height:11px;border:1.5px solid #191817;border-radius:2px;margin-right:7px;vertical-align:-1px;text-align:center;line-height:10px;font-size:10px">' + (on ? '&#x2713;' : '') + '</span>'; }
 
   // ── TNA milestones (same rules and words as the TNA print)
+  // the planning copy never shows the real buyer date: same date as its Shipment row
+  var shipTop = buffer ? shiftDate(tnaPlanFor(o, 'ship'), buffer) : (o.ship_date || tnaPlanFor(o, 'ship'));
   var tnaRows = VMILES.map(function(x){
     var p = tnaPlanFor(o, x.k);
     if (buffer && (x.k === 'insp' || x.k === 'ship')) p = shiftDate(p, buffer);
-    var a = o['act_' + x.k] || null, delay = '', st = chip('No plan', '#ECE9E1', '#55524C');
+    var a = o['act_' + x.k] || null, delay = '', st = chip('No plan', '#ECE9E1', '#55524C'), left = '&mdash;';
+    if (a) left = '<span style="color:#1D7A46;font-weight:700">&#x2713; Done</span>';
+    else if (p) { var dL = daysTo(p); left = dL < 0 ? '<span style="color:#B42318;font-weight:700">' + (-dL) + 'd overdue</span>' : '<span style="' + (dL <= 3 ? 'color:#9A6700;font-weight:700' : 'color:#55524C') + '">' + (dL === 0 ? 'today' : dL + 'd left') + '</span>'; }
     if (a && !p) st = chip('Done', '#E3F2E8', '#1D7A46');
     if (p) {
       if (a) { var dl = Math.round((toDate(a) - toDate(p)) / 86400000); if (dl > 0) { delay = '<span style="color:#B42318;font-weight:700">+' + dl + 'd</span>'; st = chip('Late', '#FBE4E1', '#B42318'); } else st = chip('On time', '#E3F2E8', '#1D7A46'); }
       else { var d2 = daysTo(p); st = d2 < 0 ? chip('Overdue', '#FBE4E1', '#B42318') : d2 <= 3 ? chip('Due soon', '#FDF0D5', '#9A6700') : chip('Pending', '#ECE9E1', '#55524C'); }
     }
-    return '<tr><td style="' + td + ';font-weight:600">' + E(x.n) + '</td><td style="' + td + mono + '">' + dd(p) + '</td><td style="' + td + mono + '">' + dd(a) + '</td><td style="' + td + mono + '">' + delay + '</td><td style="' + td + '">' + st + '</td></tr>';
+    return '<tr><td style="' + td + ';font-weight:600">' + E(x.n) + '</td><td style="' + td + mono + '">' + dd(p) + '</td><td style="' + td + mono + '">' + dd(a) + '</td><td style="' + td + mono + ';white-space:nowrap">' + left + '</td><td style="' + td + mono + '">' + delay + '</td><td style="' + td + '">' + st + '</td></tr>';
   }).join('');
 
   // ── Yarn / fabric: one line per booking, in-house quantity only
@@ -10323,7 +10389,8 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
   var yarnBody;
   if (!yl.length) yarnBody = '<tr><td colspan="6" style="' + td + ';color:#73706A">No ' + matLabel.toLowerCase() + ' booked yet.</td></tr>';
   else yarnBody = yl.map(function(l){
-      var s = l.done ? 'ok' : etaState(l.eta);
+      var yPlan = o.plan_yarn || (y && y.plan) || null;
+      var s = l.done ? (l.last && yPlan && l.last < yPlan ? 'adv' : 'ok') : etaState(l.eta);
       return '<tr><td style="' + td + ';font-weight:600">' + (E(l.supplier) || '&mdash;') + '</td><td style="' + td + '">' + (E(l.composition) || '&mdash;') + '</td>'
         + '<td style="' + td + mono + ';font-weight:700">' + n(l.recd) + '</td><td style="' + td + mono + '">' + dd(l.last) + '</td>'
         + '<td style="' + td + mono + (s === 'late' ? ';color:#B42318;font-weight:700' : '') + '">' + (l.done ? '&mdash;' : dd(l.eta)) + '</td><td style="' + td + '">' + C[s]() + '</td></tr>';
@@ -10346,7 +10413,8 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
     var a = row ? row.acc[cat] : null, items = (a && a.items) || [];
     var head = '<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:700;margin:0 0 6px"><span>' + title + '</span><span style="color:#73706A">' + (a ? a.done : 0) + '/' + items.length + ' ' + title + ' Acc. Inhoused</span></div>';
     var trs = items.map(function(it){
-      var s = it.done ? 'ok' : !it.booked ? 'nb' : etaState(it.eta);
+      var aPlan = o[cat === 'sewing' ? 'plan_sew' : 'plan_pack'] || (row && row.acc[cat].plan) || null;
+      var s = it.done ? (it.last && aPlan && it.last < aPlan ? 'adv' : 'ok') : !it.booked ? 'nb' : etaState(it.eta);
       var q = !it.booked ? '&mdash;' : it.hasQty ? n(it.recd) : (it.done ? 'Received' : '0');
       return '<tr><td style="' + tdA + ';font-weight:600">' + box(it.done) + E(it.item) + '</td><td style="' + tdA + mono + ';white-space:nowrap">' + q + '</td>'
         + '<td style="' + tdA + mono + ';white-space:nowrap' + (s === 'late' ? ';color:#B42318;font-weight:700' : '') + '">' + (it.done || !it.booked ? '&mdash;' : dd(it.eta)) + '</td><td style="' + tdA + '">' + C[s]() + '</td></tr>';
@@ -10366,7 +10434,7 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
   var gaugeVal = o.gauge ? (isKnit ? E(o.gauge) : E(typeof fmtGauge === 'function' ? fmtGauge(o.gauge) : o.gauge)) : '';
   var G4 = 'display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 20px';
   // names filled in from the order: its merchant, that merchant's manager, the HOD
-  var pm = people.merchant || merch, sig = sigBoxHtml('Concerned Merchant', pm && pm.id, pm && pm.name)
+  var pm = people.merchant || merch, sig = sigBoxHtml('Concerned Merchant', pm && pm.id, pm && pm.name, proceed ? { stamp: '&#x2713; PROCEED TO PRODUCTION' } : null)
     + sigBoxHtml('Manager', people.manager && people.manager.id, people.manager && people.manager.name)
     + sigBoxHtml('HOD', people.hod && people.hod.id, people.hod && people.hod.name);
 
@@ -10380,7 +10448,7 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
     + (photoUrl ? '<img src="' + photoUrl + '" style="width:150px;height:150px;border-radius:12px;object-fit:contain;background:#fff;flex-shrink:0;border:1px solid #E5E2D9">'
                 : '<div style="width:150px;height:150px;border-radius:12px;background:#fff;border:1px solid #E5E2D9;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#A0A09A;font-size:11px">No photo</div>')
     + '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between">'
-    + '<div style="' + G4 + '">' + big('PO Number', E(o.po_number)) + big('Buyer', E(o.buyer)) + big('Quantity', o.qty ? fmt(o.qty) + ' pcs' : '') + big('Ship Date', o.ship_date ? dd(o.ship_date) : '') + '</div>'
+    + '<div style="' + G4 + '">' + big('PO Number', E(o.po_number)) + big('Buyer', E(o.buyer)) + big('Quantity', o.qty ? fmt(o.qty) + ' pcs' : '') + big('Ship Date', shipTop ? dd(shipTop) : '') + '</div>'
     + '<div style="margin-top:10px">' + big('Colour', colours) + '</div>'
     + '<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 20px;margin-top:12px;padding-top:12px;border-top:1px solid #E5E2D9">'
     + info('Style', E(o.style)) + info('Buying House', E(o.house)) + info('Country', E(countryVal)) + info('Gauge', gaugeVal) + info('Merchant', merch ? E(merch.name) : '') + info('Confirmed', o.confirm_date ? dd(o.confirm_date) : '')
@@ -10388,10 +10456,8 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
     + '<div style="padding:10px 28px;background:#FBEFE8;border-bottom:2px solid #E8CFC2;font-size:14px;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact"><span style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#B25A2E;margin-right:6px">Attachment:</span>' + (attachList.length ? attachList.map(E).join(', ') : 'No attachment') + '</div>'
     + '<div style="padding:16px 28px 0"><div style="display:flex;gap:10px;flex-wrap:wrap">'
     + tile(matLabel + ' Inhoused', n(yTotal) + ' ' + unit) + tile('Sewing Acc. Inhoused', sew.done + ' / ' + sew.total) + tile('Packing Acc. Inhoused', pack.done + ' / ' + pack.total)
-    + '</div><div style="margin-top:8px;font-size:11px;color:#73706A">'
-    + (buffer ? 'Final Inspection and Shipment are shown ' + buffer + ' day' + (buffer === 1 ? '' : 's') + ' earlier on this sheet. Material dates are real supplier dates.' : 'All dates are the real plan dates.')
     + '</div></div>'
-    + sec('TNA milestones') + '<div style="padding:0 28px"><table style="width:100%;border-collapse:collapse">' + th(['Milestone', 'Plan', 'Actual', 'Delay', 'Status']) + tnaRows + '</table></div>'
+    + sec('TNA milestones') + '<div style="padding:0 28px"><table style="width:100%;border-collapse:collapse">' + th(['Milestone', 'Plan', 'Actual', 'Days left', 'Delay', 'Status']) + tnaRows + '</table></div>'
     + sec(matLabel + ' in-house', yarnSub) + '<div style="padding:0 28px"><table style="width:100%;border-collapse:collapse">' + th(['Supplier', 'Composition', 'In-house qty (' + unit + ')', 'Last recd', 'Expected', 'Status']) + yarnBody + '</table></div>'
     + sec('Accessories in-house') + '<div style="padding:0 28px;display:flex;gap:' + (density === 'dense' ? '0' : '22px') + ';flex-wrap:wrap">' + accTable('sewing', 'Sewing') + accTable('packing', 'Packing') + '</div>'
     + '<div class="inv-sig" style="padding:34px 28px 8px;display:flex;gap:40px;break-inside:avoid;page-break-inside:avoid">' + sig + '</div>'
@@ -10400,7 +10466,7 @@ function inventorySheet(o, row, audience, buffer, allOrders, people) {
 }
 
 // Builds the sheets for the chosen orders of one merchant (one data load).
-async function buildInventorySheets(uid, chosen, audience, buffer) {
+async function buildInventorySheets(uid, chosen, audience, buffer, proceed) {
   var live = (S.boardCache[uid] || await loadBoardOrders(uid) || []).filter(function(o){ return o.stage !== 'shipped'; });
   // the rows are worked out over the merchant's live orders, exactly like the Material Report
   var base = live.filter(function(o){ return o.stage === 'live' || !o.stage; });
@@ -10420,7 +10486,7 @@ async function buildInventorySheets(uid, chosen, audience, buffer) {
   var sorted = chosen.slice().sort(function(a, b){ return String(a.buyer || '').localeCompare(String(b.buyer || '')) || String(a.ship_date || '9999').localeCompare(String(b.ship_date || '9999')); });
   return sorted.map(function(o, i){
     var full = base.find(function(x){ return x.id === o.id; }) || o;
-    return '<div class="tna-sheet-page" style="' + (i < sorted.length - 1 ? 'break-after:page;page-break-after:always;' : '') + '">' + inventorySheet(full, rowOf[o.id] || null, audience, buffer, base, people) + '</div>';
+    return '<div class="tna-sheet-page" style="' + (i < sorted.length - 1 ? 'break-after:page;page-break-after:always;' : '') + '">' + inventorySheet(full, rowOf[o.id] || null, audience, buffer, base, people, !!proceed) + '</div>';
   }).join('');
 }
 
@@ -10436,7 +10502,7 @@ async function generateInventoryPrint() {
   var btn = $('tna-print-generate-btn');
   _invBusy = true; if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
   try {
-    var html = await buildInventorySheets(o.merchant_id, [o], _tnaPrintAudience, buffer);
+    var html = await buildInventorySheets(o.merchant_id, [o], _tnaPrintAudience, buffer, !!($('inv-proceed') && $('inv-proceed').checked));
     $('tnapdf-title').textContent = 'Inventory List Preview';
     $('tnapdf-sub').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'}) + ' · For: ' + (_tnaPrintAudience === 'planning' ? 'Planning Team' : 'Management');
     $('tnapdf-body').innerHTML = html;
@@ -10465,7 +10531,7 @@ async function generateBulkInventoryPrint() {
   var btn = $('btna-generate-btn');
   _invBusy = true; if (btn) { btn.disabled = true; btn.textContent = 'Preparing…'; }
   try {
-    var html = await buildInventorySheets(_btnaUid, orders, _btnaAudience, buffer);
+    var html = await buildInventorySheets(_btnaUid, orders, _btnaAudience, buffer, !!($('btna-inv-proceed') && $('btna-inv-proceed').checked));
     var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
     $('btnapdf-title').textContent = 'Inventory List Preview';
     $('btnapdf-sub').textContent = genDate + ' · For: ' + (_btnaAudience === 'planning' ? 'Planning Team' : 'Management') + ' · ' + orders.length + ' order' + (orders.length === 1 ? '' : 's');
@@ -10671,7 +10737,7 @@ async function openOrderChecklist(ordId) {
   var photoUrl = getStyleImage(o.merchant_id, o.style);
   var genDate = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
   function infoItem(label, val) {
-    if (!val) return '';
+    if (!val) val = '\u2014';
     return '<div style="min-width:0"><div style="font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#73706A;font-weight:700">'+label+'</div><div style="font-size:13px;font-weight:600;color:#191817;margin-top:2px">'+htmlEsc(String(val))+'</div></div>';
   }
 
@@ -19736,7 +19802,8 @@ var BACKUP_TABLES = [ // known tables, parents before children (restore goes in 
   'buyer_invoice_details',
   'buyer_logos','buyer_team','buyer_contacts','buyer_notes','buyer_payment','buyer_banking','buyer_bank_changes','buyer_addresses','buyer_change_log',
   'rq_settings','rq_counters','rq_requisitions','rq_events','rq_quotations','rq_queries',
-  'acc_banks','acc_iou_people','acc_cheques','acc_payments','acc_iou_entries'
+  'acc_banks','acc_iou_people','acc_cheques','acc_payments','acc_iou_entries','acc_pay_approvals',
+  'pos_parties','pos_items','pos_weeks','pos_vals'
 ];
 var BACKUP_EXCLUDE = ['user_password_view'];
 var _backupBusy = false;
@@ -20153,6 +20220,11 @@ var SETUP_KNOWN = { // every column the app uses: for tables a backup has no row
   tna_requests: 'created_at:timestamptz,dismissed_by:text,id:uuid,merchant_id:uuid,merchant_seen:boolean,milestone:text,new_date:date,old_date:date,order_id:uuid,reason:text,requested_by:text,requester_seen:boolean,reviewed_at:timestamptz,reviewed_by:text,status:text',
   user_password_view: 'password:text,updated_at:timestamptz,user_id:uuid',
   user_signatures: 'img:text,updated_at:timestamptz,updated_by:text,user_id:text',
+  acc_pay_approvals: 'amount:numeric,by_id:text,by_name:text,created_at:timestamptz,dept:text,done_at:timestamptz,done_note:text,id:uuid,kind:text,note:text,req_id:uuid,withdraw_reason:text,withdrawn_at:timestamptz,withdrawn_by_name:text',
+  pos_parties: 'created_at:timestamptz,created_by_name:text,id:uuid,name:text,norm:text',
+  pos_items: 'active:boolean,bank:text,close_reason:text,closed_at:timestamptz,closed_by_name:text,company:text,created_at:timestamptz,created_by_name:text,currency:text,id:uuid,kind:text,name:text,nature:text,note:text,party_id:uuid,section:text,sort:integer,sub:text,updated_at:timestamptz,updated_by_name:text',
+  pos_weeks: 'as_on:date,company:text,created_at:timestamptz,created_by_name:text,id:uuid,note:text,totals:jsonb',
+  pos_vals: 'adv:numeric,expiry:date,id:uuid,item_id:uuid,pay:numeric,rec:numeric,updated_on:date,week_id:uuid',
   rq_queries: 'answer:text,answered_at:timestamptz,answered_by:text,answered_by_name:text,asked_at:timestamptz,asked_by:text,asked_by_name:text,changes:text,dept:text,est_at_ask:numeric,id:uuid,nq_at_ask:integer,question:text,req_id:uuid,status:text,step:text',
   users: 'accessory_booking_mode:text,created_at:timestamptz,division:text,id:uuid,name:text,password:text,role:text,title:text,updated_at:timestamptz,yarn_booking_mode:text',
   yarn_bookings: 'booked_on:date,category:text,composition:text,created_at:timestamptz,created_by:text,expected_note:text,expected_on:date,id:uuid,item:text,lc_number:text,material_type:text,merchant_id:uuid,order_id:uuid,pi_number:text,po_number:text,pp_expected_on:date,price_per_lb:numeric,qty:numeric,received_on:date,round:integer,style:text,supplier:text,updated_at:timestamptz,updated_by:text',
@@ -20398,7 +20470,7 @@ var RQ_TABS = [
   { k: 'pending', n: 'Approval pending' },
   { k: 'wip', n: 'Work in progress' },
   { k: 'done', n: 'Completed' },
-  { k: 'closed', n: 'Returned / rejected' }
+  { k: 'closed', n: 'Rejected / cancelled' }
 ];
 var RQ = { rows: [], loaded: false, missing: false, stagesOk: null, settings: null, events: {}, openId: null, filter: { co: '', q: '', st: '', dp: '', mine: false, checked: false }, channel: null, editId: null };
 
@@ -20474,12 +20546,13 @@ function rqTargetFrom(r, start) {
 function rqOverdue(r) { return (r.status === 'wip' || r.status === 'hold') && r.target_date && r.target_date < todayStr(); }
 function rqOverBudget(r) { var a = Number(r.approved_cost), s = Number(r.status === 'done' ? (r.final_cost != null ? r.final_cost : r.spent) : r.spent); return a > 0 && s > a * 1.1; }
 function rqTabOf(r) {
-  if (r.status === 'pending') return 'pending';
+  if (r.status === 'pending' || r.status === 'returned') return 'pending';
   if (r.status === 'wip' || r.status === 'hold') return 'wip';
   if (r.status === 'done') return 'done';
   return 'closed';
 }
 function rqNeedsMe(r) {
+  if (S.user && r.status === 'returned') { var _ms = rqStageOfRole(S.user.role); return !!_ms && _ms.k === 'mgmt' && !rqIsOwn(r); }
   if (!S.user || r.status !== 'pending') return false;
   var st = rqStageOfRole(S.user.role);
   return !!st && !r[st.k + '_status'] && !rqIsOwn(r);
@@ -20529,6 +20602,8 @@ async function rqLoad() {
   try { await rqqLoad(); } catch (e) { console.error('quotations:', e); }
   try { await rqQLoad(); } catch (e) { console.error('questions:', e); }
   try { await accLoadPays(); } catch (e) { console.error('payments:', e); }
+  try { await apLoad(); } catch (e) { console.error('payment approvals:', e); }
+  try { if (posCanSee() && !POS.weeks.length) await posLoadWeeks(); } catch (e) { console.error('position weeks:', e); }
 }
 async function rqLoadSettings(force) {
   if (RQ.settings && !force) return RQ.settings;
@@ -20591,6 +20666,9 @@ function rqSubscribe() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_banks' }, function(p){ accRealtime('acc_banks', p); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_iou_people' }, function(p){ accRealtime('acc_iou_people', p); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_iou_entries' }, function(p){ accRealtime('acc_iou_entries', p); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'acc_pay_approvals' }, function(p){ try { apRealtime(p); } catch (e) { console.error('payment approvals live:', e); } })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_weeks' }, function(p){ try { posRealtime('pos_weeks', p); } catch (e) { console.error('position live:', e); } })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_items' }, function(p){ try { posRealtime('pos_items', p); } catch (e) { console.error('position live:', e); } })
       .subscribe();
   } catch (e) { console.error('rqSubscribe:', e); }
 }
@@ -20650,7 +20728,7 @@ function rqRailHtml() {
       + item('rq:' + d.k + ':pending', '&#x23F3;', 'Approval pending', c.pending, c.pending > 0 && !rqIsDeptUser())
       + item('rq:' + d.k + ':wip', '&#x2692;', 'Work in progress', c.wip, c.overdue > 0)
       + item('rq:' + d.k + ':done', '&#x2713;', 'Completed', c.done)
-      + item('rq:' + d.k + ':closed', '&#x21A9;', 'Returned / rejected', c.closed);
+      + item('rq:' + d.k + ':closed', '&#x21A9;', 'Rejected / cancelled', c.closed);
     if (flat) { h += '<div class="rail-label">' + d.n + ' department</div>' + body; return; }
     h += '<div class="rail-section-hdr" onclick="toggleSection(\'' + key + '\')"><div class="rail-label" style="padding:0;margin:0">' + d.n + '</div><span class="rail-section-arrow' + (open ? ' open' : '') + '">&#x25B6;</span></div>'
       + '<div class="rail-section-body" id="sec-' + key + '" style="max-height:' + (open ? '2000px' : '0') + '">' + body + '</div>';
@@ -20717,7 +20795,7 @@ function rqFiltered(list) {
   });
 }
 function rqTable(list, tab, showDept) {
-  if (!list.length) return '<div class="empty"><h4>Nothing here</h4>' + ({ pending: 'No requisitions waiting for approval.', wip: 'No work in progress.', done: 'No completed work yet.', closed: 'Nothing returned or rejected.' }[tab] || 'No requisitions.') + '</div>';
+  if (!list.length) return '<div class="empty"><h4>Nothing here</h4>' + ({ pending: 'No requisitions waiting for approval.', wip: 'No work in progress.', done: 'No completed work yet.', closed: 'Nothing rejected or cancelled.' }[tab] || 'No requisitions.') + '</div>';
   var today = todayStr();
   var cols;
   if (tab === 'pending') cols = ['Job no.', 'Date', 'Company', 'Location', 'Type of work', 'Priority', 'Est. cost', 'Approvals', 'Raised by', 'Waiting'];
@@ -20728,7 +20806,7 @@ function rqTable(list, tab, showDept) {
   var body = list.map(function(r){
     var loc = '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '');
     var nq = rqqOn() ? rqqList(r.id).length : 0;
-    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>' + rqQChip(r) + (nq ? '<div class="sub2 rqq-n">' + nq + ' quote' + (nq === 1 ? '' : 's') + '</div>' : '');
+    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>' + rqQChip(r) + rqReturnedTag(r) + (nq ? '<div class="sub2 rqq-n">' + nq + ' quote' + (nq === 1 ? '' : 's') + '</div>' : '');
     var co = '<span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span>';
     var cells;
     if (tab === 'pending') {
@@ -20823,7 +20901,8 @@ function rqRenderAll(d) {
 }
 function rqRenderApprovals() {
   var me = S.user.role, st = rqStageOfRole(me);
-  var all = RQ.rows.filter(function(r){ return r.status === 'pending' && (me === 'admin' || rqNeedsMe(r)); });
+  var all = RQ.rows.filter(function(r){ return (r.status === 'pending' && (me === 'admin' || rqNeedsMe(r))) || (r.status === 'returned' && rqNeedsMe(r)); });
+  var _retList = all.filter(function(r){ return r.status === 'returned'; }); all = all.filter(function(r){ return r.status !== 'returned'; });
   // audit / management: which ones the earlier steps have already checked
   var earlier = st ? RQ_STAGES.slice(0, RQ_STAGES.indexOf(st)).filter(rqStageOn) : [];
   var checked = function(r){ return earlier.every(function(e){ return r[e.k + '_status'] === 'approved'; }); };
@@ -20835,7 +20914,9 @@ function rqRenderApprovals() {
     + '<button class="rq-tally' + (RQ.filter.checked ? ' on' : '') + '" onclick="RQ.filter.checked=true;rqRender(S.view)">Checked by ' + names + ' <b>' + nChecked + '</b></button></div>' : '';
   var sub = { audit: 'Audit approval is recorded; management approval starts the work.', management: 'Your approval moves the work straight to Work in progress.', agm: 'Your check is recorded before audit and management decide.', cao: 'Your check is recorded before audit and management decide.' }[me] || '';
   rqSetHead('Requisitions', me === 'admin' ? 'All requisitions waiting for approval' : 'Waiting for my approval', sub, '');
-  $('content').innerHTML = chips + '<div class="card"><div class="card-h"><h3>Waiting <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, 'pending', true) + '</div>';
+  var _ret = rqSortForTab(rqFiltered(_retList), 'pending');
+  $('content').innerHTML = chips + '<div class="card"><div class="card-h"><h3>Waiting <span class="rq-count">' + list.length + '</span></h3>' + rqFilterBar() + '</div>' + rqTable(list, 'pending', true) + '</div>'
+    + (_ret.length ? '<div class="card" style="margin-top:14px"><div class="card-h"><h3>Returned <span class="rq-count">' + _ret.length + '</span></h3><span class="note">Sent back to the department for changes. You can still approve them as they are.</span></div>' + rqTable(_ret, 'pending', true) + '</div>' : '');
 }
 function rqRenderOverview() {
   var today = todayStr(), m0 = today.slice(0, 7);
@@ -21094,7 +21175,7 @@ async function rqOpen(id) {
   if (RQ.openId === id) rqRenderDetail(id, true);
 }
 function rqKv(k, v) { return '<div class="rq-kv"><div class="k">' + k + '</div><div class="v">' + (v == null || v === '' ? '&mdash;' : v) + '</div></div>'; }
-var RQ_EVENT_TXT = { asked: 'Question / change asked', answered: 'Answered', created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled', paid: 'Payment recorded', pay_reversed: 'Payment reversed (admin)', cheque_cleared: 'Cheque cleared', cheque_bounced: 'Cheque bounced', cheque_cancelled: 'Cheque cancelled (admin)' };
+var RQ_EVENT_TXT = { asked: 'Question / change asked', answered: 'Answered', created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled', paid: 'Payment recorded', pay_reversed: 'Payment reversed (admin)', cheque_cleared: 'Cheque cleared', cheque_bounced: 'Cheque bounced', cheque_cancelled: 'Cheque cancelled (admin)', pay_ok: 'Payment approved by Management', pay_ok_withdrawn: 'Payment approval withdrawn', pay_asked: 'Accounts asked for payment approval' };
 function rqRenderDetail(id, withEvents) {
   var r = RQ.rows.find(function(x){ return x.id === id; });
   if (!r) { closeModal('ov-rq'); return; }
@@ -21135,7 +21216,7 @@ function rqRenderDetail(id, withEvents) {
   var ev = RQ.events[id];
   h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
     : '<div class="rq-hist">' + ev.slice().reverse().map(function(e){
-      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done', 'quote_added', 'quote_removed', 'paid', 'pay_reversed', 'cheque_cleared', 'cheque_bounced', 'cheque_cancelled'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
+      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done', 'quote_added', 'quote_removed', 'paid', 'pay_reversed', 'pay_ok', 'pay_ok_withdrawn', 'pay_asked', 'cheque_cleared', 'cheque_bounced', 'cheque_cancelled'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
         + (e.note ? '<div class="rq-ev-note">' + rqEsc(e.note) + '</div>' : '') + '<div class="sub2">' + rqEsc(e.by_name || '') + ' &middot; ' + rqDateTime(e.at) + '</div></div></div>';
     }).join('') + '</div>') + '</div>';
   $('rq-body').innerHTML = h;
@@ -21241,7 +21322,8 @@ function sigBoxHtml(label, uid, name, opts) {
   opts = opts || {};
   var img = sigImg(uid);
   return '<div style="flex:1;text-align:center;min-width:0">'
-    + '<div style="height:' + (opts.h || 52) + 'px;border-bottom:1.5px solid #191817;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px">' + (img ? '<img src="' + img + '" alt="" style="max-height:' + ((opts.h || 52) - 4) + 'px;max-width:90%;object-fit:contain">' : '') + '</div>'
+    + '<div style="position:relative;height:' + (opts.h || 52) + 'px;border-bottom:1.5px solid #191817;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px">'
+    + (opts.stamp ? '<span style="position:absolute;left:-4px;top:-26px;transform:rotate(-4deg);font-size:11px;font-weight:800;color:#1D7A46;border:2px solid #1D7A46;border-radius:6px;padding:2px 8px;background:#EAF5EE;letter-spacing:.04em;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact">' + opts.stamp + '</span>' : '') + (img ? '<img src="' + img + '" alt="" style="max-height:' + ((opts.h || 52) - 4) + 'px;max-width:90%;object-fit:contain">' : '') + '</div>'
     + '<div style="font-size:11px;font-weight:700;margin-top:6px">' + htmlEsc(label) + '</div>'
     + '<div style="font-size:12px;margin-top:1px">' + (name ? htmlEsc(name) : '&nbsp;') + '</div>'
     + (opts.sub ? '<div style="font-size:10px;color:#73706A">' + opts.sub + '</div>' : '') + '</div>';
@@ -21527,6 +21609,19 @@ function rqQRealtime(p) {
 var ACC_IOU_ON = false;
 function accMethodsShown() { return ACC_METHODS.filter(function(m){ return ACC_IOU_ON || m[0] !== 'iou'; }); }
 
+// ── Lock Sample for Auchan is "collected", not "approved" (wording only; hardcoded on request)
+function apvWords(type, ordId) {
+  var o = ordId ? (findOrderAnywhere(ordId) || {}) : {};
+  if (type === 'lock_sample' && /auchan/i.test(String(o.buyer || ''))) return { done: 'Collected', dateQ: 'Date collected:', confirm: 'Confirm collected', undo: 'Undo collected' };
+  return { done: 'Approved', dateQ: 'Date buyer approved:', confirm: 'Confirm approved', undo: 'Undo approval' };
+}
+// ── Returned requisitions stay in "Approval pending" with a tag
+function rqReturnedTag(r) {
+  if (!r || r.status !== 'returned') return '';
+  var dr = rqDecider(r, 'returned');
+  return ' <span class="rq-qchip ret" title="' + rqEsc(dr && dr.note ? dr.note : '') + '">Returned' + (dr ? ' by ' + rqEsc(dr.st.n) : '') + '</span>';
+}
+
 function rqStaleMsg(id) {
   return rqRefreshOne(id).then(function(){ toast('Someone else has already acted on this — showing the latest', 'err'); renderRail(); rqRender(S.view); rqOpen(id); });
 }
@@ -21646,7 +21741,7 @@ async function rqHold(id, hold) {
 }
 async function rqCancelReq(id) {
   var r = RQ.rows.find(function(x){ return x.id === id; }); if (!r || !rqCanEditReq(r)) return;
-  if (!(await appConfirm('Cancel ' + r.job_no + '? It stays on record under Returned / rejected, and its job number is not used again.', { title: 'Cancel requisition', okText: 'Cancel requisition', cancelText: 'Keep it', danger: true }))) return;
+  if (!(await appConfirm('Cancel ' + r.job_no + '? It stays on record under Rejected / cancelled, and its job number is not used again.', { title: 'Cancel requisition', okText: 'Cancel requisition', cancelText: 'Keep it', danger: true }))) return;
   var q = db.from('rq_requisitions').update({ status: 'cancelled', updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).eq('status', r.status);
   if (r.status === 'pending') (RQ.stagesOk === true ? ['agm', 'cao', 'audit', 'mgmt'] : ['audit', 'mgmt']).forEach(function(k){ q = q.is(k + '_status', null); });
   var res = await q.select();
@@ -21796,6 +21891,7 @@ function rqPrintHtml(r, st, ev, formOnly) {
       return '<div><div class="k">' + who + '</div><b>' + lbl + '</b>' + (by ? ' &middot; ' + E(by) + ' &middot; ' + E(rqDateTime(at)) : '') + (amt != null ? '<div>Approved amount: <b>' + E(rqMoneyTxt(amt)) + '</b></div>' : '') + (note ? '<div>' + E(note) + '</div>' : '') + '</div>';
     }
     var pst = rqStagesFor(r);
+    try { extra += apPrintHtml(r, E); } catch (e) { console.error('payment approval print:', e); }
     extra += '<div class="box"><h3>APPROVAL</h3><div class="ap" style="grid-template-columns:repeat(' + pst.length + ',1fr)">' + pst.map(function(s2){ return ap(E(s2.full), r[s2.k + '_status'], r[s2.k + '_by_name'], r[s2.k + '_at'], r[s2.k + '_note'], s2.k === 'mgmt' && mgmtOk ? r.approved_cost : null); }).join('') + '</div></div>';
     var pq = rqqOn() ? rqqList(r.id) : [];
     if (pq.length) {
@@ -24248,11 +24344,13 @@ function accRailHtml() {
   var cqHot = (ACC.cheques || []).filter(function(c){ return c.status === 'bounced' || (c.status === 'issued' && c.clear_date && c.clear_date <= t); }).length;
   var iouN = ACC.people ? ACC.people.filter(function(p){ var x = accCalc()[p.id]; return x && x.bal !== 0; }).length : 0;
   return h + item('rq:acc:wait', '&#x23F3;', 'Waiting for payment', w, w > 0 && accIsAcc())
+    + (apOn() && apCanSeePage() ? (function(){ var n = apNeedList().length; return item('rq:acc:okpay', '&#x2714;', 'Payments to approve', n, n > 0 && apCanApprove()); })() : '')
     + item('rq:acc:pays', '&#x2713;', 'Payments by month')
     + item('rq:acc:cq', '&#x1F3E6;', 'Cheque statement', cqHot, cqHot > 0)
     + item('rq:acc:cqh', '&#x2630;', 'Cheque history')
     + (ACC_IOU_ON ? item('rq:acc:iou', '&#x1F4B5;', 'IOU / advances', iouN, false) : '')
-    + item('rq:acc:banks', '&#x2699;', accCanBanks() ? 'Banks &amp; seals' : 'Bank accounts');
+    + item('rq:acc:banks', '&#x2699;', accCanBanks() ? 'Banks &amp; seals' : 'Bank accounts')
+    + posRailHtml();
 }
 
 // ─── PAGES ───
@@ -24264,6 +24362,8 @@ function accRender(p) {
     $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>accounts-migration.sql</b> once in Supabase &rarr; SQL Editor, then refresh this page.</div></div>';
     return;
   }
+  if (pg === 'okpay') return apRender();
+  if (/^pos/.test(pg)) return posRender(p);
   accLoadSealsOnce(function(){ if (String(S.view).indexOf('rq:acc:') === 0 && !accIouTyping()) rqRender(S.view); });
   var need = [];
   if (['cq', 'cqh', 'banks', 'wait'].indexOf(pg) !== -1 && !ACC.cheques) need.push(accLoadBooks());
@@ -24303,6 +24403,7 @@ function accRenderWait() {
   var cq7 = (ACC.cheques || []).filter(function(c){ return c.status === 'issued' && c.clear_date && c.clear_date <= wk; }).reduce(function(s, c){ return s + accP(c.amount); }, 0);
   var tiles = '<div class="stats">'
     + '<div class="stat' + (waiting.length ? ' alert' : '') + '"><div class="k">Waiting for payment</div><div class="v">' + waiting.length + '</div></div>'
+    + (apOn() ? '<div class="stat"><div class="k">Payment approved by Management</div><div class="v">' + waiting.filter(function(x){ return apInfo(x.r).avail > 0; }).length + '</div><div class="n">of ' + waiting.length + ' waiting</div></div>' : '')
     + '<div class="stat"><div class="k">Approved, still to pay</div><div class="v acc-v">' + accTk(owed) + '</div></div>'
     + '<div class="stat"><div class="k">Paid this month</div><div class="v acc-v">' + accTk(paidMonth) + '</div></div>'
     + (ACC.cheques ? '<div class="stat"><div class="k">Cheques to clear (7 days)</div><div class="v acc-v">' + accTk(cq7) + '</div></div>' : '') + '</div>';
@@ -24315,11 +24416,11 @@ function accRenderWait() {
     return '<tr onclick="rqOpen(\'' + r.id + '\')"><td><span class="rq-job">' + rqEsc(r.job_no) + '</span></td><td>' + rqEsc((rqDept(r.dept) || {}).n || r.dept) + '</td><td><span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span></td>'
       + '<td><b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '') + '</td><td>' + rqEsc(r.work_type || '') + '</td>'
       + '<td class="num"><b>' + accTk(s.target) + '</b></td><td class="num">' + accTk(s.paid) + '</td><td class="num"><b class="' + (s.bal > 0 ? 'acc-owe' : '') + '">' + accTk(s.bal) + '</b></td>'
-      + '<td>' + (r.mgmt_at ? rqDateTxt(rqLocalDate(r.mgmt_at)) : '&mdash;') + '</td><td>' + rqEsc(r.mgmt_by_name || '') + '</td><td>' + accPayChip(r) + '</td></tr>';
+      + '<td>' + (r.mgmt_at ? rqDateTxt(rqLocalDate(r.mgmt_at)) : '&mdash;') + '</td><td>' + rqEsc(r.mgmt_by_name || '') + '</td><td>' + accPayChip(r) + '</td>' + (apOn() ? '<td>' + apChip(r) + '</td>' : '') + '</tr>';
   }).join('');
   rqSetHead('Accounts', 'Waiting for payment', 'Requisitions approved by Management. Open one to record a payment.', '');
   $('content').innerHTML = tiles + tabs + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>' + ({ wait: 'Waiting for payment', paid: 'Fully paid', all: 'All approved' }[f.tab]) + ' <span class="rq-count">' + list.length + '</span></h3>' + bar + '</div>'
-    + (list.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Job no.</th><th>Department</th><th>Company</th><th>Location</th><th>Type of work</th><th class="num">Approved</th><th class="num">Paid</th><th class="num">Still to pay</th><th>Approved on</th><th>By</th><th>Payment</th></tr></thead><tbody>' + body + '</tbody></table></div>'
+    + (list.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Job no.</th><th>Department</th><th>Company</th><th>Location</th><th>Type of work</th><th class="num">Approved</th><th class="num">Paid</th><th class="num">Still to pay</th><th>Approved on</th><th>By</th><th>Payment</th>' + (apOn() ? '<th>Payment approval</th>' : '') + '</tr></thead><tbody>' + body + '</tbody></table></div>'
       : '<div class="empty"><h4>Nothing here</h4>' + (f.tab === 'wait' ? 'Every approved requisition is paid.' : 'No requisitions.') + '</div>') + '</div>';
 }
 
@@ -24343,6 +24444,7 @@ function accPaySection(r) {
     + (canRec ? '<button class="btn pri sm" style="text-transform:none;letter-spacing:0" onclick="accPayForm(\'' + r.id + '\')">&#x002B; Record payment</button>' : (!accCanRecord() ? '<span class="chip ' + ({ none: 'run', part: 'warn', paid: 'ok', over: 'bad' }[st]) + '" style="text-transform:none;letter-spacing:0">' + ({ none: 'Not paid yet', part: 'Part paid', paid: 'Paid', over: 'Paid over approved' }[st]) + ' &middot; view only</span>' : '')) + '</div>'
     + '<div class="acc-box"><div class="acc-pay3"><div><span>Approved</span><b>' + accTk(s.target) + '</b></div><div><span>Paid</span><b class="acc-paid">' + accTk(s.paid) + '</b>' + (s.wait ? '<small>' + (s.done ? accTk(s.done) + ' paid &middot; ' : '') + accTk(s.wait) + ' by cheque, not cleared yet</small>' : '') + '</div>'
     + '<div><span>' + (s.bal < 0 ? 'Paid over approved' : 'Still to pay') + '</span><b class="' + (s.bal > 0 ? 'acc-owe' : s.bal < 0 ? 'acc-over' : '') + '">' + accTk(Math.abs(s.bal)) + '</b>' + (s.bounced ? '<small class="acc-over">' + accTk(s.bounced) + ' bounced, not counted</small>' : '') + '</div></div>'
+    + apLineHtml(r)
     + (pays.length ? '<div class="scroller"><table class="rq-t acc-paytab"><thead><tr><th>Date</th><th>Paid to</th><th>Method</th><th>Reference</th><th class="num">Amount</th><th>Recorded by</th>' + (accIsAdmin() ? '<th></th>' : '') + '</tr></thead><tbody>' + rows + '</tbody></table></div>'
       : '<div class="sub2" style="padding:4px 2px">Nothing paid yet.</div>') + '</div></div>';
 }
@@ -24361,11 +24463,15 @@ async function accPayForm(reqId) {
   var r = RQ.rows.find(function(x){ return x.id === reqId; });
   if (!r || !accCanRecord() || !accPayable(r)) { toast('Payments can only be recorded on requisitions approved by Management', 'err'); return; }
   await accLoadBooks();
+  if (AP.ok !== true && AP.ok !== false) await apLoad();
+  if (AP.ok !== true && AP.ok !== false) { toast('Could not check the payment approval just now. Check the connection and try again.', 'err'); return; }
+  if (apOn()) { try { await apLoadReq(reqId); } catch (e) {} if (apInfo(r).avail <= 0) { apBlock(r); return; } }
   var s = accSum(r), t = todayStr(), sup = accSuppliers(reqId);
+  var _ap = apInfo(r), _def = apOn() ? Math.min(s.bal, _ap.avail) : s.bal;
   var ids = { pay: accUuid(), cq: accUuid() };
-  accForm({ title: 'Record payment', sub: rqEsc(r.job_no) + ' &middot; approved ' + accTk(s.target) + ' &middot; still to pay <b>' + accTk(s.bal) + '</b>',
+  accForm({ title: 'Record payment', sub: rqEsc(r.job_no) + ' &middot; approved ' + accTk(s.target) + ' &middot; still to pay <b>' + accTk(s.bal) + '</b>' + (apOn() ? ' &middot; Management approved for payment <b>' + accTk(Math.max(0, _ap.avail)) + '</b>' : ''),
     body: '<div class="acc-g2">'
-      + '<div class="f"><label>Amount (Tk)</label><input id="ap-amt" inputmode="decimal" value="' + (s.bal > 0 ? accFmt(s.bal) : '') + '" oninput="accPayOverCheck()"></div>'
+      + '<div class="f"><label>Amount (Tk)</label><input id="ap-amt" inputmode="decimal" value="' + (_def > 0 ? accFmt(_def) : '') + '" oninput="accPayOverCheck()"></div>'
       + '<div class="f"><label>Date</label><input id="ap-date" type="date" value="' + t + '"></div>'
       + '<div class="f"><label>Paid to</label><input id="ap-to" list="ap-sup" maxlength="160" value="' + rqEsc(sup[0] || '') + '"><datalist id="ap-sup">' + sup.map(function(x){ return '<option value="' + rqEsc(x) + '">'; }).join('') + '</datalist></div>'
       + '<div class="f"><label>Method</label><select id="ap-meth" onchange="accPayMeth()">' + accMethodsShown().map(function(m){ return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') + '</select></div>'
@@ -24402,6 +24508,11 @@ async function accPayForm(reqId) {
       if ((pr.data || []).some(function(x){ return x.id === ids.pay; })) { (pr.data || []).forEach(accPutPay); return accPaySaved(reqId, amt, to); } // the first try did save
       ACC.pays = ACC.pays.filter(function(x){ return x.req_id !== reqId; }).concat(pr.data || []); ACC.byReq = null;
       var s2 = accSum(fresh);
+      if (AP.ok !== false) {
+        try { if (AP.ok !== true) await apLoad(); if (AP.ok === true) await apLoadReq(reqId); } catch (e) { return 'Could not check the payment approval just now. Try again.'; }
+        if (AP.ok !== true && AP.ok !== false) return 'Could not check the payment approval just now. Try again.';
+        if (apOn() && amt > apInfo(fresh).avail) { apBlock(fresh, amt); return 'Payment not approved'; }
+      }
       if (amt > s2.bal && !over) { $('ap-over-w').style.display = ''; $('ap-over').focus(); return 'This is more than what is left to pay (' + accTkTxt(Math.max(0, s2.bal)) + '). Write why, then save again.'; }
       var b = cq ? accBank(cq.bank) : null;
       var row = { id: ids.pay, req_id: reqId, dept: fresh.dept, company: fresh.company, amount: accAmtVal(amt), pay_date: date, method: meth, paid_to: to, reference: ref || null,
@@ -25203,6 +25314,1302 @@ function accImportPreview(list, fname) {
     } });
 }
 
+
+// ═══════════════════════════════════════════════════════════════════════
+// PAYMENT APPROVAL. After Management approves a requisition, Accounts still
+// needs Management's PAYMENT approval for an amount before paying. Accounts
+// can pay up to what is approved; more needs a new approval. Payments made
+// before the first approval (the old records) do not use it up. If the table
+// is not there yet the rule is off and payments work as before.
+// ═══════════════════════════════════════════════════════════════════════
+var AP = { ok: null, rows: [] };
+function apOn() { return AP.ok === true; }
+function apMissingErr(e) { return !!e && (e.code === '42P01' || e.code === 'PGRST205' || /does not exist|schema cache|could not find the table/i.test(e.message || '')); }
+async function apLoad() {
+  if (!rqCanSee()) { AP.rows = []; return; }
+  try {
+    var rows = await fetchAllRows(function(){ var q = db.from('acc_pay_approvals').select('*'); if (rqIsDeptUser()) q = q.eq('dept', S.user.division); return q.order('id'); });
+    AP.rows = rows || []; AP.ok = true;
+  } catch (e) {
+    if (apMissingErr(e)) { AP.ok = false; AP.rows = []; }
+    else { console.error('apLoad:', e); if (AP.ok !== true) AP.ok = null; }
+  }
+}
+async function apLoadReq(reqId) {
+  if (!apOn()) return;
+  var r = await db.from('acc_pay_approvals').select('*').eq('req_id', reqId);
+  if (r.error) throw r.error;
+  AP.rows = AP.rows.filter(function(x){ return x.req_id !== reqId; }).concat(r.data || []);
+}
+function apTime(x) { var t = new Date(x).getTime(); return isNaN(t) ? 0 : t; }
+function apActive(reqId) { return AP.rows.filter(function(x){ return x.req_id === reqId && x.kind === 'approval' && !x.withdrawn_at; }).sort(function(a, b){ return apTime(a.created_at) - apTime(b.created_at); }); }
+function apOpenReq(reqId) { return AP.rows.filter(function(x){ return x.req_id === reqId && x.kind === 'request' && !x.done_at; }).sort(function(a, b){ return apTime(b.created_at) - apTime(a.created_at); })[0] || null; }
+// what is approved for payment, what of it was used, what is left (all in paisa)
+function apInfo(r) {
+  var out = { on: apOn(), approved: 0, used: 0, avail: 0, list: [], ask: null };
+  if (!out.on || !r) return out;
+  out.list = apActive(r.id); out.ask = apOpenReq(r.id);
+  if (!out.list.length) return out;
+  var t0 = apTime(out.list[0].created_at);
+  out.approved = out.list.reduce(function(s, a){ return s + accP(a.amount); }, 0);
+  out.used = accPaysOf(r.id).reduce(function(s, p){ return s + (accPayLive(p) && apTime(p.created_at) >= t0 ? accP(p.amount) : 0); }, 0);
+  out.avail = out.approved - out.used;
+  return out;
+}
+function apCanApprove() { return !!S.user && S.user.role === 'management'; }
+function apCanSeePage() { return !!S.user && ['management', 'admin', 'audit'].indexOf(S.user.role) !== -1; }
+// requisitions that still need payment approval (approved for work, something left to pay, not enough approved)
+function apNeedList() {
+  if (!apOn() || !accOn()) return [];
+  return RQ.rows.filter(accPayable).map(function(r){ return { r: r, s: accSum(r), a: apInfo(r) }; })
+    .filter(function(x){ return (x.s.bal > 0 && x.a.avail < x.s.bal) || !!x.a.ask; });
+}
+// what Management is offered to approve: the rest of the balance, or what Accounts asked for (e.g. paying over)
+function apDefault(s, a) { return Math.max(s.bal - Math.max(0, a.avail), a.ask ? accP(a.ask.amount) : 0, 0); }
+function apChip(r) {
+  if (!apOn()) return '';
+  var s = accSum(r), a = apInfo(r);
+  if (s.bal <= 0) return a.list.length ? '<span class="chip ok">&#x2713; Approved</span>' : '<span class="sub2">&mdash;</span>';
+  var last = a.list[a.list.length - 1];
+  if (a.avail >= s.bal) return '<span class="chip ok">&#x2713; Approved</span><div class="sub2">' + rqEsc(last.by_name || '') + ' &middot; ' + rqDateTxt(rqLocalDate(last.created_at)) + '</div>';
+  if (a.avail > 0) return '<span class="chip warn">' + accTk(a.avail) + ' approved</span><div class="sub2">of ' + accTk(s.bal) + ' to pay</div>';
+  if (a.ask) return '<span class="chip run">Asked Management</span><div class="sub2">waiting &middot; ' + rqDateTxt(rqLocalDate(a.ask.created_at)) + '</div>';
+  return '<span class="chip warn">Not approved yet</span>';
+}
+// one line in the requisition's payment part, for everyone who sees it
+function apLineHtml(r) {
+  if (!apOn() || !accPayable(r)) return '';
+  var s = accSum(r), a = apInfo(r), h;
+  if (a.list.length) {
+    var last = a.list[a.list.length - 1];
+    h = '<b>Payment approval:</b> ' + accTk(a.approved) + ' approved' + (a.list.length > 1 ? ' (' + a.list.length + ' times)' : '') + ' &middot; last by ' + rqEsc(last.by_name || '') + ', ' + rqDateTime(last.created_at)
+      + ' &middot; <b>' + accTk(Math.max(0, a.avail)) + '</b> can still be paid';
+  } else h = '<b>Payment approval:</b> not approved for payment yet' + (a.ask ? ' &middot; Accounts asked ' + rqDateTime(a.ask.created_at) : '');
+  var btn = apCanApprove() && ((s.bal > 0 && a.avail < s.bal) || a.ask) ? ' <button class="btn sm pri" style="margin-left:6px" onclick="apApproveOne(\'' + r.id + '\')">Approve payment</button>' : '';
+  return '<div class="ap-line' + (a.avail > 0 || s.bal <= 0 ? ' ok' : '') + '">' + h + btn + '</div>';
+}
+// Accounts tried to pay without (enough) approval
+function apBlock(r, tried) {
+  var s = accSum(r), a = apInfo(r), need = Math.max(0, (tried || s.bal) - Math.max(0, a.avail));
+  var msg = !a.list.length ? 'Management has not approved this payment yet.'
+    : 'Management approved ' + accTk(a.approved) + ' for payment. ' + (a.used ? accTk(a.used) + ' of it is already paid, so ' : '') + accTk(Math.max(0, a.avail)) + ' can be paid now.';
+  var asked = a.ask ? '<div class="ap-asked">Asked on ' + rqDateTime(a.ask.created_at) + ' by ' + rqEsc(a.ask.by_name || '') + ' &mdash; waiting for Management.</div>' : '';
+  accForm({ title: 'Payment not approved', sub: rqEsc(r.job_no) + ' &middot; still to pay <b>' + accTk(s.bal) + '</b>',
+    body: '<div class="ap-block"><div class="ap-big">&#x26D4; ' + msg + '</div>' + (tried ? '<div class="sub2" style="margin-top:6px">You entered ' + accTk(tried) + '.</div>' : '')
+      + asked + '<div class="sub2" style="margin-top:8px">' + (a.ask ? 'You can send a reminder; it shows on Management&rsquo;s &ldquo;Payments to approve&rdquo; page.' : 'Ask Management to approve it. They see it at once on their &ldquo;Payments to approve&rdquo; page.') + '</div></div>',
+    ok: a.ask ? 'Send a reminder' : 'Ask Management to approve',
+    after: function(){ setTimeout(function(){ var b = $('acc-m-ok'); if (b && ACCM && ACCM.title === 'Payment not approved') try { b.focus(); } catch (e) {} }, 30); },
+    onOk: async function(){ return apAsk(r.id, need || s.bal); } });
+}
+async function apAsk(reqId, amt) {
+  var r = RQ.rows.find(function(x){ return x.id === reqId; }); if (!r) return 'Not found';
+  try { await apLoadReq(reqId); } catch (e) { return accErrMsg(e); }
+  var open = apOpenReq(reqId), now = new Date().toISOString();
+  if (open && apTime(now) - apTime(open.created_at) < 60000) return true; // just asked: once is enough
+  var row = { id: accUuid(), req_id: reqId, dept: r.dept, kind: 'request', amount: accAmtVal(Math.max(0, amt || 0)), by_id: S.user.id, by_name: S.user.name, note: open ? 'reminder' : null };
+  var res = await db.from('acc_pay_approvals').insert(row).select('*').single();
+  if (res.error) return accErrMsg(res.error);
+  if (open) await db.from('acc_pay_approvals').update({ done_at: now, done_note: 'replaced by a reminder' }).eq('id', open.id).is('done_at', null);
+  await apLoadReq(reqId).catch(function(){});
+  await rqEvent(reqId, 'pay_asked', { amount: row.amount, note: open ? 'Reminder' : null });
+  await apEvents(reqId);
+  toast(open ? 'Reminder sent to Management' : 'Sent to Management for payment approval', 'ok-t');
+  setTimeout(function(){ accRedraw(reqId); }, 0);
+  return true;
+}
+function apApproveOne(reqId) {
+  var r = RQ.rows.find(function(x){ return x.id === reqId; }); if (!r || !apCanApprove()) return;
+  var s = accSum(r), a = apInfo(r), def = apDefault(s, a);
+  accForm({ title: 'Approve payment', sub: rqEsc(r.job_no) + ' &middot; still to pay <b>' + accTk(s.bal) + '</b>' + (a.avail > 0 ? ' &middot; already approved, not paid: ' + accTk(a.avail) : ''),
+    body: '<div class="f"><label>Amount Accounts may pay (Tk)</label><input id="ap-one" inputmode="decimal" value="' + accFmt(def) + '"></div><div class="f" style="margin-top:8px"><label>Note (optional)</label><input id="ap-one-n" maxlength="200"></div>',
+    ok: 'Approve payment', onOk: async function(){ var v = accParseAmt($('ap-one').value); if (!v) return 'Write the amount.'; return apApprove([{ id: reqId, amt: v, note: $('ap-one-n').value.trim() }]); } });
+}
+async function apApprove(list) {
+  if (!apCanApprove()) return 'Only Management approves payments.';
+  list = list.filter(function(x){ return x.amt > 0; });
+  if (!list.length) return 'Write the amount to approve.';
+  var now = new Date().toISOString();
+  var rows = list.map(function(x){ var r = RQ.rows.find(function(y){ return y.id === x.id; }) || {}; return { id: accUuid(), req_id: x.id, dept: r.dept || null, kind: 'approval', amount: accAmtVal(x.amt), by_id: S.user.id, by_name: S.user.name, note: x.note || null }; });
+  var res = await db.from('acc_pay_approvals').insert(rows).select('*');
+  if (res.error) return accErrMsg(res.error);
+  AP.rows = AP.rows.concat(res.data || []);
+  var ids = list.map(function(x){ return x.id; });
+  var dr = await db.from('acc_pay_approvals').update({ done_at: now, done_note: 'approved' }).in('req_id', ids).eq('kind', 'request').is('done_at', null).select('*');
+  if (!dr.error) (dr.data || []).forEach(function(x){ var i = AP.rows.findIndex(function(y){ return y.id === x.id; }); if (i >= 0) AP.rows[i] = x; });
+  for (var i = 0; i < rows.length; i++) await rqEvent(rows[i].req_id, 'pay_ok', { amount: rows[i].amount, note: rows[i].note });
+  if (RQ.openId && ids.indexOf(RQ.openId) !== -1) await apEvents(RQ.openId);
+  toast(rows.length === 1 ? 'Payment approved: ' + accTkTxt(accP(rows[0].amount)) : rows.length + ' payments approved', 'ok-t');
+  setTimeout(function(){ accRedraw(rows.length === 1 ? rows[0].req_id : null); }, 0);
+  return true;
+}
+// approved but nothing paid since: Management (own) or Admin can take it back
+function apCanWithdraw(a) {
+  if (!a || a.kind !== 'approval' || a.withdrawn_at || !S.user) return false;
+  if (!(S.user.role === 'admin' || (S.user.role === 'management' && a.by_id === S.user.id))) return false;
+  return !accPaysOf(a.req_id).some(function(p){ return accPayLive(p) && apTime(p.created_at) >= apTime(a.created_at); });
+}
+function apWithdraw(aid) {
+  var a = AP.rows.find(function(x){ return x.id === aid; }); if (!apCanWithdraw(a)) { toast('This approval can no longer be withdrawn (something was paid after it)', 'err'); return; }
+  var r = RQ.rows.find(function(x){ return x.id === a.req_id; }) || {};
+  accForm({ title: 'Withdraw payment approval', sub: rqEsc(r.job_no || '') + ' &middot; ' + accTk(accP(a.amount)) + ' approved by ' + rqEsc(a.by_name || ''), danger: true,
+    body: '<div class="f"><label>Why</label><input id="ap-wr" maxlength="200" placeholder="e.g. approved by mistake"></div>', ok: 'Withdraw',
+    onOk: async function(){
+      var why = $('ap-wr').value.trim(); if (!why) return 'Write why.';
+      await accLoadPays();
+      if (!apCanWithdraw(a)) return 'Something was paid after this approval, so it can no longer be withdrawn.';
+      var res = await db.from('acc_pay_approvals').update({ withdrawn_at: new Date().toISOString(), withdrawn_by_name: S.user.name, withdraw_reason: why }).eq('id', aid).is('withdrawn_at', null).select('*');
+      if (res.error) return accErrMsg(res.error);
+      if (!res.data || !res.data.length) { await apLoadReq(a.req_id); return 'Already withdrawn.'; }
+      var i = AP.rows.findIndex(function(x){ return x.id === aid; }); if (i >= 0) AP.rows[i] = res.data[0];
+      await rqEvent(a.req_id, 'pay_ok_withdrawn', { amount: a.amount, note: why });
+      await apEvents(a.req_id);
+      toast('Payment approval withdrawn', 'ok-t'); setTimeout(function(){ accRedraw(a.req_id); }, 0);
+      return true;
+    } });
+}
+// Management: Payments to approve
+var AP_UI = { sel: {} };
+function apRender() {
+  if (!apCanSeePage()) { setView(rqHomeView()); return; }
+  if (!apOn()) { rqSetHead('Accounts', 'Payments to approve', '', ''); $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>shahana-one-v3-migration.sql</b> once in Supabase, then refresh.</div></div>'; return; }
+  var can = apCanApprove();
+  var need = apNeedList().sort(function(a, b){ return (b.a.ask ? 1 : 0) - (a.a.ask ? 1 : 0) || String(a.r.mgmt_at || '').localeCompare(String(b.r.mgmt_at || '')); });
+  var t = todayStr();
+  var total = need.reduce(function(s, x){ return s + apDefault(x.s, x.a); }, 0), asked = need.filter(function(x){ return x.a.ask; }).length;
+  var body = need.map(function(x){
+    var r = x.r, s = x.s, a = x.a, def = apDefault(s, a), days = r.mgmt_at ? rqDaysBetween(rqLocalDate(r.mgmt_at), t) : null;
+    return '<tr' + (a.ask ? ' class="ap-asked-row"' : '') + '>' + (can ? '<td onclick="event.stopPropagation()"><input type="checkbox" class="ap-cb" data-id="' + r.id + '"' + (AP_UI.sel[r.id] ? ' checked' : '') + ' onchange="AP_UI.sel[this.dataset.id]=this.checked;apSelCount()"></td>' : '')
+      + '<td onclick="rqOpen(\'' + r.id + '\')"><span class="rq-job">' + rqEsc(r.job_no) + '</span>' + (a.ask ? ' <span class="rq-qchip">Accounts asked</span>' : '') + '</td>'
+      + '<td>' + rqEsc((rqDept(r.dept) || {}).n || r.dept) + '</td><td><span class="rq-co">' + rqEsc(r.company) + '</span></td><td>' + rqEsc(r.work_type || '') + '<div class="sub2">' + rqEsc(r.location || '') + '</div></td>'
+      + '<td class="num">' + accTk(s.target) + '</td><td class="num">' + accTk(s.paid) + '</td><td class="num"><b>' + accTk(s.bal) + '</b></td><td class="num">' + (a.avail > 0 ? accTk(a.avail) : '&mdash;') + '</td>'
+      + '<td>' + (days == null ? '&mdash;' : days + 'd') + '</td>'
+      + (can ? '<td onclick="event.stopPropagation()"><input class="ap-amt" id="ap-amt-' + r.id + '" inputmode="decimal" value="' + accFmt(def) + '" onkeydown="if(event.key===\'Enter\'){event.preventDefault();apApproveRow(\'' + r.id + '\');}"></td><td onclick="event.stopPropagation()"><button class="btn sm pri" onclick="apApproveRow(\'' + r.id + '\')">Approve</button></td>' : '') + '</tr>';
+  }).join('');
+  var open = AP.rows.filter(function(x){ return x.kind === 'approval' && !x.withdrawn_at; }).map(function(x){ var r = RQ.rows.find(function(y){ return y.id === x.req_id; }); return r && accPayable(r) && accSum(r).bal > 0 ? { x: x, r: r } : null; }).filter(Boolean)
+    .sort(function(a, b){ return apTime(b.x.created_at) - apTime(a.x.created_at); });
+  var body2 = open.map(function(o){ var a = apInfo(o.r);
+    return '<tr><td onclick="rqOpen(\'' + o.r.id + '\')"><span class="rq-job">' + rqEsc(o.r.job_no) + '</span></td><td class="num">' + accTk(accP(o.x.amount)) + '</td><td>' + rqEsc(o.x.by_name || '') + '</td><td>' + rqDateTime(o.x.created_at) + '</td><td class="num">' + accTk(Math.max(0, a.avail)) + '</td><td>' + rqEsc(o.x.note || '') + '</td>'
+      + '<td>' + (apCanWithdraw(o.x) ? '<button class="btn sm" onclick="apWithdraw(\'' + o.x.id + '\')">Withdraw</button>' : '') + '</td></tr>'; }).join('');
+  rqSetHead('Accounts', 'Payments to approve', 'Approved requisitions waiting for payment. Accounts can pay only what you approve here.', can && need.length ? '<button class="btn pri" id="ap-selbtn" onclick="apApproveSel()">Approve selected</button>' : '');
+  $('content').innerHTML = '<div class="stats"><div class="stat' + (need.length ? ' alert' : '') + '"><div class="k">Waiting for payment approval</div><div class="v">' + need.length + '</div></div>'
+    + '<div class="stat"><div class="k">Amount</div><div class="v acc-v">' + accTk(total) + '</div></div><div class="stat"><div class="k">Accounts asked</div><div class="v">' + asked + '</div></div></div>'
+    + '<div class="card"><div class="card-h"><h3>Waiting for payment approval <span class="rq-count">' + need.length + '</span></h3>' + (can && need.length ? '<label class="rq-mine"><input type="checkbox" onchange="apSelAll(this.checked)"> Select all</label>' : '') + '</div>'
+    + (need.length ? '<div class="scroller"><table class="rq-t ap-t"><thead><tr>' + (can ? '<th></th>' : '') + '<th>Job no.</th><th>Department</th><th>Company</th><th>Work</th><th class="num">Approved cost</th><th class="num">Paid</th><th class="num">Still to pay</th><th class="num">Approved, not paid</th><th>Waiting</th>' + (can ? '<th>Approve (Tk)</th><th></th>' : '') + '</tr></thead><tbody>' + body + '</tbody></table></div>'
+      : '<div class="empty"><h4>Nothing waiting</h4>Every approved requisition has its payment approved.</div>') + '</div>'
+    + (open.length ? '<div class="card" style="margin-top:14px"><div class="card-h"><h3>Approved, waiting to be paid <span class="rq-count">' + open.length + '</span></h3><span class="note">An approval can be withdrawn until something is paid after it.</span></div><div class="scroller"><table class="rq-t"><thead><tr><th>Job no.</th><th class="num">Approved</th><th>By</th><th>When</th><th class="num">Left to pay</th><th>Note</th><th></th></tr></thead><tbody>' + body2 + '</tbody></table></div></div>' : '');
+  apSelCount();
+}
+function apSelCount() { var n = Object.keys(AP_UI.sel).filter(function(k){ return AP_UI.sel[k] && document.querySelector('.ap-cb[data-id="' + k + '"]'); }).length, b = $('ap-selbtn'); if (b) { b.textContent = n ? 'Approve selected (' + n + ')' : 'Approve selected'; b.disabled = !n; } }
+function apSelAll(on) { document.querySelectorAll('.ap-cb').forEach(function(c){ c.checked = on; AP_UI.sel[c.dataset.id] = on; }); apSelCount(); }
+async function apApproveRow(id) {
+  if (AP_UI.busy) return;
+  var e = $('ap-amt-' + id); var v = e ? accParseAmt(e.value) : 0; if (!v) { toast('Write the amount', 'err'); if (e) e.focus(); return; }
+  AP_UI.busy = true; var res;
+  try { res = await apApprove([{ id: id, amt: v }]); } catch (x) { res = accErrMsg(x); } finally { AP_UI.busy = false; }
+  if (res !== true) toast(res, 'err'); else { delete AP_UI.sel[id]; }
+}
+async function apApproveSel() {
+  if (AP_UI.busy) return;
+  var ids = Object.keys(AP_UI.sel).filter(function(k){ return AP_UI.sel[k] && document.querySelector('.ap-cb[data-id="' + k + '"]'); });
+  if (!ids.length) return;
+  var list = [], bad = null;
+  ids.forEach(function(id){ var e = $('ap-amt-' + id), v = e ? accParseAmt(e.value) : 0; if (!v) bad = bad || id; list.push({ id: id, amt: v }); });
+  if (bad) { toast('Write the amount for every selected row', 'err'); var e = $('ap-amt-' + bad); if (e) e.focus(); return; }
+  var tot = list.reduce(function(s, x){ return s + x.amt; }, 0);
+  AP_UI.busy = true;
+  try {
+  if (!(await appConfirm('Approve payment for ' + list.length + ' requisition' + (list.length === 1 ? '' : 's') + ', ' + accTkTxt(tot) + ' in total?', { title: 'Approve payments', okText: 'Approve' }))) return;
+  var res = await apApprove(list);
+  if (res !== true) toast(res, 'err'); else AP_UI.sel = {};
+  } catch (x) { toast(accErrMsg(x), 'err'); } finally { AP_UI.busy = false; }
+}
+function apRealtime(p) {
+  var id = (p.new && p.new.id) || (p.old && p.old.id); if (!id || !apOn()) return;
+  db.from('acc_pay_approvals').select('*').eq('id', id).maybeSingle().then(function(res){
+    if (res.error || !res.data) return;
+    var x = res.data;
+    if (rqIsDeptUser() && x.dept && x.dept !== S.user.division) return;
+    var had = AP.rows.some(function(y){ return y.id === id; });
+    var i = AP.rows.findIndex(function(y){ return y.id === id; }); if (i >= 0) AP.rows[i] = x; else AP.rows.push(x);
+    var r = RQ.rows.find(function(y){ return y.id === x.req_id; });
+    if (!had && r && x.by_id !== S.user.id) {
+      if (x.kind === 'request' && apCanApprove()) toast('Accounts asked for payment approval: ' + r.job_no + ' (' + accTkTxt(accP(x.amount)) + ')', 'ok-t');
+      if (x.kind === 'approval' && (accIsAcc() || S.user.role === 'admin')) toast('Management approved payment: ' + r.job_no + ' (' + accTkTxt(accP(x.amount)) + ')', 'ok-t');
+    }
+    accRedraw(x.req_id);
+  });
+}
+
+function apEvents(reqId) { return RQ.openId === reqId ? rqLoadEvents(reqId).catch(function(){}) : Promise.resolve(); }
+// requisition print: each payment approval (withdrawn ones crossed out)
+function apPrintHtml(r, E) {
+  if (!apOn() || !r) return '';
+  var all = AP.rows.filter(function(x){ return x.req_id === r.id && x.kind === 'approval'; }).sort(function(a, b){ return apTime(a.created_at) - apTime(b.created_at); });
+  if (!all.length) return '';
+  var a = apInfo(r);
+  return '<div class="box"><h3>PAYMENT APPROVAL (MANAGEMENT)</h3><div style="font-size:9.4px;line-height:1.5">' + all.map(function(x){
+    var t = E(rqMoneyTxt(x.amount)) + ' by ' + E(x.by_name || '') + ' &middot; ' + E(rqDateTime(x.created_at)) + (x.note ? ' (' + E(x.note) + ')' : '');
+    return x.withdrawn_at ? '<s>' + t + '</s> withdrawn by ' + E(x.withdrawn_by_name || '') + (x.withdraw_reason ? ': ' + E(x.withdraw_reason) : '') : t;
+  }).join(' &nbsp;|&nbsp; ') + ' &nbsp;&middot;&nbsp; <b>Can still be paid: ' + E(rqMoneyTxt(accAmtVal(Math.max(0, a.avail)))) + '</b></div></div>';
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// POSITION: receivable & credit position of M.T. Sweaters and Banga Fashion.
+// Each company keeps its own lines (parties and bank accounts). A party can be
+// in both companies (one pos_parties row, a line in each). Bank lines are never
+// added across companies. Every weekly update is a new "week" with a value for
+// every open line, so past weeks stay as they were.
+// Accounts (any) and Admin edit; Management and Audit view; nobody else sees it.
+// Read only when a Position page is opened (weeks are read at start for the badge).
+// ═══════════════════════════════════════════════════════════════════════
+var POS_COS = [{ c: 'MTS', n: 'M.T. Sweaters', s: 'M.T.' }, { c: 'BFL', n: 'Banga Fashion', s: 'Banga' }];
+var POS_SECS = [ // key, heading, party section?, main column
+  ['local', 'Receivable against Local Sales &amp; L/C', 1, 'rec'],
+  ['various', 'Payable against Various Party', 1, 'pay'],
+  ['subcon', 'Payable against Subcontract Party', 1, 'pay'],
+  ['fdr', 'Receivable against FDR', 0, 'rec'],
+  ['bankrec', 'Receivable against Bank', 0, 'rec'],
+  ['hbl', 'Liability against General HBL', 0, 'pay'],
+  ['term', 'Liability against Term Loan A/C', 0, 'pay'],
+  ['pad', 'Liability against PAD A/C', 0, 'pay'],
+  ['pc', 'Liability against P.C. A/C', 0, 'pay'],
+  ['cashlc', 'Liability against Cash L/C', 0, 'pay'],
+  ['bg', 'Local BG liability', 0, 'pay'],
+  ['export', 'Receivable against Export (foreign)', 0, 'rec'],
+  ['lease', 'Liability against Lease Finance A/C', 0, 'pay'],
+  ['btb_fd', 'Liability for Foreign BTB L/C (acceptance done)', 0, 'pay'],
+  ['btb_ld', 'Liability for Local BTB L/C (acceptance done)', 0, 'pay'],
+  ['btb_fn', 'Liability for Foreign BTB L/C (acceptance not done)', 0, 'pay'],
+  ['btb_ln', 'Liability for Local BTB L/C (acceptance not done)', 0, 'pay'],
+  ['current', 'Liability against Current Account', 0, 'pay']
+];
+// "+ Add bank account" types: label, section, column, nature written on the line
+var POS_BANK_TYPES = [
+  ['FDR', 'fdr', 'rec', 'FDR'], ['Cash L/C margin', 'bankrec', 'rec', 'Cash L/C margin'], ['FC', 'bankrec', 'rec', 'FC'], ['Build up', 'bankrec', 'rec', 'Build up'],
+  ['ERQ', 'bankrec', 'rec', 'ERQ'], ['Security deposit', 'bankrec', 'rec', 'Security deposit'],
+  ['General HBL', 'hbl', 'pay', 'HBL'], ['Term Loan', 'term', 'pay', 'Term Loan'], ['PAD', 'pad', 'pay', 'PAD'], ['PC', 'pc', 'pay', 'PC'],
+  ['Cash L/C', 'cashlc', 'pay', 'Cash L/C'], ['Local BG', 'bg', 'pay', 'Local BG'], ['Export (foreign)', 'export', 'rec', 'Export (foreign)'], ['Lease finance', 'lease', 'pay', 'Lease finance'],
+  ['Foreign BTB L/C (acceptance done)', 'btb_fd', 'pay', 'Foreign BTB L/C'], ['Local BTB L/C (acceptance done)', 'btb_ld', 'pay', 'Local BTB L/C'],
+  ['Foreign BTB L/C (acceptance not done)', 'btb_fn', 'pay', 'Foreign BTB L/C'], ['Local BTB L/C (acceptance not done)', 'btb_ln', 'pay', 'Local BTB L/C'],
+  ['CD (current account)', 'current', 'rec', 'CD'], ['Overdraft', 'current', 'pay', 'Overdraft'], ['TOD', 'current', 'pay', 'TOD'], ['SOD', 'current', 'pay', 'SOD']
+];
+var POS_COLS = [['rec', 'Receivable'], ['pay', 'Payable'], ['adv', 'Advance']];
+var POS_EXPIRY_WARN = ['pc', 'fdr']; // PAD is past its date by nature: never warned
+var POS_CLOSE_WHY = ['Loan paid off', 'Business ended', 'Entered by mistake', 'Other'];
+var POS = { ok: null, weeks: [], parties: null, items: null, vals: {}, byId: {}, pById: {}, loadedAt: 0, stale: false,
+  ui: { q: '', sec: '', zero: false, att: false, both: false, psort: 'name', closed: false } };
+function posCanSee() { return !!S.user && ['admin', 'management', 'audit', 'accounts'].indexOf(S.user.role) !== -1; }
+function posCanEdit() { return !!S.user && (S.user.role === 'accounts' || S.user.role === 'admin'); }
+function posCo(c) { return POS_COS.find(function(x){ return x.c === c; }) || POS_COS[0]; }
+function posSec(k) { return POS_SECS.find(function(x){ return x[0] === k; }) || [k, k, 0, 'pay']; }
+function posMissing(e) { return !!e && (e.code === '42P01' || e.code === 'PGRST205' || /does not exist|schema cache|could not find the table/i.test(e.message || '')); }
+function posNorm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+function posMain(it) { if (it.section === 'current') return it.nature === 'CD' ? 'rec' : 'pay'; return posSec(it.section)[3]; }
+function posD(d) { if (!d) return ''; var s = String(d).slice(0, 10).split('-'); return s.length === 3 ? s[2] + '.' + s[1] + '.' + s[0].slice(2) : String(d); }
+// short money for tiles and insights: 1.20 cr, 12.6 L, 9,500
+function posShort(p) { var a = Math.abs(p), s = p < 0 ? '-' : ''; if (a >= 1e9) return s + (a / 1e9).toFixed(2) + ' cr'; if (a >= 1e7) return s + (a / 1e7).toFixed(1) + ' L'; return s + accFmt(a, 0); }
+function posTkS(p) { return 'Tk ' + posShort(p); }
+function posAmt(v) { return v == null ? '' : accFmt(accP(v)); }
+// up / down change; good = which way is good news (for colour)
+function posCh(d, good, noTxt) {
+  if (d == null) return '<span class="sub2">' + (noTxt || 'first week') + '</span>';
+  if (!d) return '<span class="sub2">no change</span>';
+  var up = d > 0, cls = good === 0 ? '' : ((up ? 1 : -1) === good ? 'pos-dn' : 'pos-up');
+  return '<span class="' + cls + '">' + (up ? '&#x25B2; ' : '&#x25BC; ') + posShort(Math.abs(d)) + '</span>';
+}
+// "1,90,000" "1,90,000.50" "" (empty) -> paisa; null = empty; false = not a number
+function posParse(s) {
+  s = String(s == null ? '' : s).replace(/[\u09E6-\u09EF]/g, function(c){ return String(c.charCodeAt(0) - 0x09E6); }).replace(/tk|\u09F3|,|\s/gi, '');
+  if (s === '' || s === '-') return null;
+  if (!/^\d+(\.\d{1,2})?$/.test(s)) return false;
+  var p = Math.round(parseFloat(s) * 100);
+  return p < 1e15 ? p : false;
+}
+// date typed as dd.mm.yy / dd.mm.yyyy / yyyy-mm-dd -> yyyy-mm-dd; '' -> null; false = bad
+function posDateIn(s) {
+  s = String(s || '').trim(); if (!s) return null;
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) { m = /^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2}|\d{4})$/.exec(s); if (!m) return false; var y = +m[3]; if (y < 100) y += 2000; s = y + '-' + String(m[2]).padStart(2, '0') + '-' + String(m[1]).padStart(2, '0'); }
+  return accValidDate(s) ? s : false;
+}
+
+// ─── DATA ───
+async function posLoadWeeks() {
+  if (!posCanSee()) return;
+  try {
+    var rows = await fetchAllRows(function(){ return db.from('pos_weeks').select('*').order('id'); });
+    POS.weeks = rows || []; if (POS.ok !== true) POS.ok = true;
+  } catch (e) { if (posMissing(e)) { POS.ok = false; POS.weeks = []; } else console.error('posLoadWeeks:', e); }
+}
+function posWeeksOf(co) { return POS.weeks.filter(function(w){ return w.company === co; }).sort(function(a, b){ return String(b.as_on).localeCompare(String(a.as_on)) || String(b.created_at).localeCompare(String(a.created_at)); }); }
+async function posLoad(force) {
+  if (!posCanSee()) return;
+  if (POS.items && !force && !POS.stale && Date.now() - POS.loadedAt < 300000) return;
+  if (POS._p) return POS._p;
+  POS._p = (async function(){
+    try {
+      var r = await Promise.all([
+        fetchAllRows(function(){ return db.from('pos_weeks').select('*').order('id'); }),
+        fetchAllRows(function(){ return db.from('pos_parties').select('*').order('id'); }),
+        fetchAllRows(function(){ return db.from('pos_items').select('*').order('id'); })
+      ]);
+      POS.weeks = r[0]; POS.parties = r[1]; POS.items = r[2];
+      var ids = []; POS_COS.forEach(function(co){ posWeeksOf(co.c).slice(0, 2).forEach(function(w){ ids.push(w.id); }); });
+      var vals = ids.length ? await fetchAllRows(function(){ return db.from('pos_vals').select('*').in('week_id', ids).order('id'); }) : [];
+      POS.vals = {}; ids.forEach(function(id){ POS.vals[id] = {}; });
+      vals.forEach(function(v){ (POS.vals[v.week_id] = POS.vals[v.week_id] || {})[v.item_id] = v; });
+      posIndex(); POS.ok = true; POS.loadedAt = Date.now(); POS.stale = false;
+    } catch (e) {
+      if (posMissing(e)) POS.ok = false; else { console.error('posLoad:', e); POS.err = (e && e.message) || String(e); }
+    } finally { POS._p = null; }
+  })();
+  return POS._p;
+}
+function posIndex() {
+  POS.byId = {}; (POS.items || []).forEach(function(i){ POS.byId[i.id] = i; });
+  POS.pById = {}; (POS.parties || []).forEach(function(p){ POS.pById[p.id] = p; });
+}
+function posItemsOf(co, all) { return (POS.items || []).filter(function(i){ return i.company === co && (all || i.active !== false); }); }
+function posValOf(w, iid) { return w && POS.vals[w.id] ? POS.vals[w.id][iid] || null : null; }
+function posPv(v) { return { rec: v && v.rec != null ? accP(v.rec) : 0, pay: v && v.pay != null ? accP(v.pay) : 0, adv: v && v.adv != null ? accP(v.adv) : 0 }; }
+function posZero(v) { var x = posPv(v); return !x.rec && !x.pay && !x.adv; }
+function posName(it) { var p = it.party_id ? POS.pById[it.party_id] : null; return p ? p.name : it.name; }
+// totals of one week. active: only lines still open (the current week)
+function posTot(co, w, active) {
+  var t = { rec: 0, pay: 0, adv: 0, pad: 0, padN: 0, prec: 0, ppay: 0, padv: 0, n: 0 };
+  if (!w || !POS.vals[w.id]) return t;
+  var vs = POS.vals[w.id];
+  Object.keys(vs).forEach(function(iid){
+    var it = POS.byId[iid]; if (!it || it.company !== co) return;
+    if (active && it.active === false) return;
+    var x = posPv(vs[iid]);
+    t.rec += x.rec; t.pay += x.pay; t.adv += x.adv; t.n++;
+    if (it.section === 'pad') { t.pad += x.pay; if (x.pay) t.padN++; }
+    if (it.kind === 'party') { t.prec += x.rec; t.ppay += x.pay; t.padv += x.adv; }
+  });
+  t.net = t.pay - t.rec;
+  return t;
+}
+function posCur(co) { var ws = posWeeksOf(co); return { w0: ws[0] || null, w1: ws[1] || null, t0: posTot(co, ws[0], true), t1: ws[1] ? posTot(co, ws[1], false) : null }; }
+// groups in the order of the Excel: party sections, then each bank's sections
+function posGroups(items) {
+  var bySec = {}, banks = [];
+  items.slice().sort(function(a, b){ return (a.sort || 0) - (b.sort || 0); }).forEach(function(it){
+    var bk = it.kind === 'bank' ? (it.bank || 'Bank') : '';
+    if (bk && banks.indexOf(bk) === -1) banks.push(bk);
+    var key = bk + '|' + it.section + '|' + (it.section === 'cashlc' ? (it.sub || '') : '');
+    (bySec[key] = bySec[key] || []).push(it);
+  });
+  var out = [];
+  function add(bk, s){
+    var keys = Object.keys(bySec).filter(function(k){ var p = k.split('|'); return p[0] === bk && p[1] === s[0]; });
+    keys.sort(function(a, b){ return (bySec[a][0].sort || 0) - (bySec[b][0].sort || 0); });
+    keys.forEach(function(k){ var sub = k.split('|')[2]; out.push({ key: k, bank: bk, sec: s[0], sub: sub, title: s[0] === 'cashlc' && sub ? 'Liability against Cash L/C (' + rqEsc(sub) + ')' : s[1], items: bySec[k] }); });
+  }
+  POS_SECS.filter(function(s){ return s[2]; }).forEach(function(s){ add('', s); });
+  banks.forEach(function(bk){ POS_SECS.filter(function(s){ return !s[2]; }).forEach(function(s){ add(bk, s); }); });
+  return out;
+}
+function posInOther(it) { if (!it.party_id) return null; var o = (POS.items || []).find(function(x){ return x.party_id === it.party_id && x.company !== it.company && x.active !== false; }); return o ? posCo(o.company) : null; }
+function posExpChip(it, v, t) {
+  if (!v || !v.expiry) return '';
+  if (it.section === 'pad' || posZero(v)) return '';
+  var d = rqDaysBetween(t, v.expiry);
+  if (d < 0) return ' <span class="chip bad">Expired ' + (-d) + 'd</span>';
+  if (d === 0) return ' <span class="chip bad">Today</span>';
+  if (d <= 30) return ' <span class="chip warn">in ' + d + 'd</span>';
+  return '';
+}
+function posAttention(co, t) {
+  var c = posCur(co), out = { exp: 0, soon: 0, list: [] };
+  posItemsOf(co).forEach(function(it){
+    if (it.section === 'pad') return;
+    var v = posValOf(c.w0, it.id); if (!v || !v.expiry || posZero(v)) return;
+    var d = rqDaysBetween(t, v.expiry);
+    if (d < 0) { out.exp++; out.list.push(it.id); } else if (d <= 30) { out.soon++; out.list.push(it.id); }
+  });
+  return out;
+}
+// new-report badge for Management / Admin / Audit
+function posSeenKey() { return 'pos_seen:' + (S.user && S.user.id); }
+function posNewWeeks() {
+  if (!S.user || S.user.role === 'accounts' || !posCanSee()) return 0;
+  var seen = ''; try { seen = localStorage.getItem(posSeenKey()) || ''; } catch (e) {}
+  return POS.weeks.filter(function(w){ return String(w.created_at || '') > seen && w.created_by_name !== S.user.name; }).length;
+}
+function posMarkSeen() { var m = POS.weeks.reduce(function(a, w){ return String(w.created_at || '') > a ? String(w.created_at) : a; }, ''); try { if (m) localStorage.setItem(posSeenKey(), m); } catch (e) {} }
+function posRailHtml() {
+  if (!posCanSee() || POS.ok === false) return '';
+  var nw = posNewWeeks(), v = String(S.view);
+  function b(view, icon, label, on, badge){ return '<button class="ni' + (on ? ' on' : '') + ' rq-ni" onclick="setView(\'' + view + '\')"><span class="av" style="font-size:12px">' + icon + '</span><span class="nm">' + label + '</span>' + (badge || '') + '</button>'; }
+  return b('rq:acc:pos', '&#x2696;', 'Position', v.indexOf('rq:acc:pos') === 0 && v !== 'rq:acc:posrep')
+    + b('rq:acc:posrep', '&#x1F4C8;', 'Weekly position report', v === 'rq:acc:posrep', nw ? '<span class="badge pos-new">new</span>' : '');
+}
+// someone saved a weekly update or changed a line
+var _posRtT = null;
+function posRealtime(table, p) {
+  if (!posCanSee()) return;
+  var row = p.new || {};
+  if (table === 'pos_weeks') {
+    if (p.eventType !== 'INSERT' || !row.id) return; // an update only changes the stored totals
+    if (POS.weeks.some(function(w){ return w.id === row.id; })) return; // already here
+    POS.weeks.push(row);
+    if (row.created_by_name === S.user.name) return; // my own update: already loaded
+    if (S.user.role !== 'accounts') toast('Weekly position updated: ' + posCo(row.company).n + ' as on ' + rqDateTxt(row.as_on), 'ok-t');
+  } else if (row.id && POS.byId[row.id]) {
+    var loc = POS.byId[row.id]; // my own change comes back too: nothing new
+    if (String(loc.updated_at || '') === String(row.updated_at || '') && loc.active === row.active && loc.name === row.name) return;
+  }
+  POS.stale = true;
+  clearTimeout(_posRtT);
+  _posRtT = setTimeout(function(){
+    try { renderRail(); } catch (e) {}
+    if (String(S.view).indexOf('rq:acc:pos') !== 0 || String(S.view).indexOf('rq:acc:posupd') === 0) return;
+    if (ACCM && $('ov-acc') && $('ov-acc').classList.contains('open')) return;
+    if (POS.items) posLoad(true).then(function(){ if (String(S.view).indexOf('rq:acc:pos') === 0 && String(S.view).indexOf('rq:acc:posupd') !== 0) rqRender(S.view); });
+  }, 2500);
+}
+
+// ─── PAGES ───
+function posRender(p) {
+  if (!posCanSee()) { setView(rqHomeView()); return; }
+  var pg = p[2], arg = p[3];
+  if (POS.ok === false) { rqSetHead('Accounts', 'Receivable & Credit Position', '', ''); $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>shahana-one-v3-migration.sql</b> once in Supabase, then refresh.</div></div>'; return; }
+  if (pg === 'posupd' && $('pos-upd') && $('pos-upd').dataset.co === arg) return; // keep what is being typed
+  if (!POS.items || POS.stale || Date.now() - POS.loadedAt > 300000) {
+    var wait = !POS.items || pg === 'posupd'; // the weekly update always starts from the latest figures
+    if (wait) $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading the position&hellip;</div>';
+    var v = S.view;
+    posLoad(!!POS.items).then(function(){
+      if (S.view !== v) return;
+      if (!POS.items) { $('content').innerHTML = '<div class="card"><div class="empty"><h4>Could not load the position</h4>' + rqEsc(POS.err || '') + '<div style="margin-top:10px"><button class="btn" onclick="rqRender(S.view)">Try again</button></div></div></div>'; return; }
+      renderRail();
+      if (ACCM && $('ov-acc') && $('ov-acc').classList.contains('open')) return;
+      if (pg === 'posupd' && $('pos-upd') && $('pos-upd').dataset.co === arg) return;
+      posRenderNow(pg, arg);
+    });
+    if (wait) return;
+  }
+  posRenderNow(pg, arg);
+}
+function posRenderNow(pg, arg) {
+  if (pg === 'posrep') return posRenderReport();
+  if (pg === 'posupd') { if (!posCanEdit()) { setView('rq:acc:pos'); return; } return posRenderUpdate(arg === 'BFL' ? 'BFL' : 'MTS'); }
+  var tab = arg === 'BFL' || arg === 'party' || arg === 'group' ? arg : 'MTS';
+  try { sessionStorage.setItem('pos_tab', tab); } catch (e) {}
+  posHead(tab);
+  var tabs = '<div class="pos-tabs">' + [['MTS', 'M.T. Sweaters'], ['BFL', 'Banga Fashion'], ['party', 'Party summary (both)'], ['group', 'Group summary']].map(function(x){
+    return '<button class="pos-tab' + (tab === x[0] ? ' on' : '') + '" onclick="setView(\'rq:acc:pos' + (x[0] === 'MTS' ? '' : ':' + x[0]) + '\')">' + x[1] + '</button>'; }).join('') + '</div>';
+  var body = tab === 'party' ? posPartyHtml() : tab === 'group' ? posGroupHtml() : posCompanyHtml(tab);
+  $('content').innerHTML = tabs + '<div class="pos-body">' + body + '</div>';
+}
+function posHead(tab) {
+  var asOn = POS_COS.map(function(co){ var w = posWeeksOf(co.c)[0]; return co.s + ' ' + (w ? rqDateTxt(w.as_on) : '&mdash;'); }).join(' &middot; ');
+  var co = tab === 'BFL' ? 'BFL' : 'MTS';
+  var w = posWeeksOf(co)[0];
+  var sub = (tab === 'MTS' || tab === 'BFL') ? (w ? 'As on ' + rqDateTxt(w.as_on) + ' &middot; updated by ' + rqEsc(w.created_by_name || '') : 'Nothing entered yet') : 'As on ' + asOn;
+  var acts = '<button class="btn" onclick="setView(\'rq:acc:posrep\')">&#x1F4C8; Weekly report</button>'
+    + (posCanEdit() ? '<button class="btn" onclick="setView(\'rq:acc:posupd:' + co + '\')">&#x270E; Weekly update</button><button class="btn" onclick="posAddParty(\'' + co + '\')">+ Add party</button><button class="btn" onclick="posAddBank(\'' + co + '\')">+ Add bank account</button>' : '')
+    + '<button class="btn pri" onclick="posPrintModal()">&#x1F5A8; Print</button>';
+  rqSetHead('Accounts', 'Receivable & Credit Position', sub + (posCanEdit() ? '' : ' &middot; view only'), acts);
+}
+function posTile(k, v, ch, cls, click) { return '<div class="stat pos-tile' + (cls ? ' ' + cls : '') + '"' + (click ? ' onclick="' + click + '" style="cursor:pointer"' : '') + '><div class="k">' + k + '</div><div class="v acc-v">' + v + '</div><div class="n">' + ch + '</div></div>'; }
+function posTilesHtml(co) {
+  var c = posCur(co), t = c.t0, p = c.t1, at = posAttention(co, todayStr());
+  var d = function(f){ return p ? t[f] - p[f] : null; }, vs = c.w1 ? 'vs ' + posD(c.w1.as_on) : '';
+  return '<div class="stats pos-tiles">'
+    + posTile('Receivable', posTkS(t.rec), posCh(d('rec'), 1) + ' <span class="sub2">' + vs + '</span>')
+    + posTile('Payable', posTkS(t.pay), posCh(d('pay'), -1))
+    + posTile('Advance', posTkS(t.adv), posCh(d('adv'), 0))
+    + posTile('Net liability', posTkS(t.net), posCh(d('net'), -1) + '<div class="sub2">Payable &minus; Receivable</div>')
+    + '<div class="stat pos-tile pos-pad"><div class="k">PAD &middot; forced loan</div><div class="v acc-v">' + posTkS(t.pad) + '</div><div class="n">' + t.padN + ' line' + (t.padN === 1 ? '' : 's') + ' &middot; ' + posCh(d('pad'), -1) + '</div></div>'
+    + posTile('Needs attention', at.exp || at.soon ? (at.exp ? at.exp + ' expired' : '') + (at.exp && at.soon ? ' &middot; ' : '') + (at.soon ? at.soon + ' soon' : '') : 'Nothing', 'PC / FDR / other dates' + (POS.ui.att ? ' &middot; <b>showing these</b>' : at.list.length ? ' &middot; click to show' : ''), at.exp ? 'alert' : '', at.list.length || POS.ui.att ? 'POS.ui.att=!POS.ui.att;rqRender(S.view)' : '')
+    + '</div>';
+}
+function posCompanyHtml(co) {
+  var c = posCur(co), f = POS.ui, t = todayStr(), can = posCanEdit();
+  var items = posItemsOf(co), q = posNorm(f.q), att = f.att ? posAttention(co, t).list : null;
+  var groups = posGroups(items);
+  var secOpts = '<option value="">All sections</option>' + POS_SECS.filter(function(s){ return items.some(function(i){ return i.section === s[0]; }); }).map(function(s){ return '<option value="' + s[0] + '"' + (f.sec === s[0] ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('');
+  var bar = '<div class="rq-filter pos-bar"><input type="search" id="pos-q" placeholder="Search party or account&hellip;" value="' + rqEsc(f.q) + '" oninput="POS.ui.q=this.value;clearTimeout(POS._qt);POS._qt=setTimeout(function(){rqRender(S.view);var i=$(\'pos-q\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)">'
+    + '<select onchange="POS.ui.sec=this.value;rqRender(S.view)">' + secOpts + '</select>'
+    + '<label class="rq-mine"><input type="checkbox"' + (f.zero ? ' checked' : '') + ' onchange="POS.ui.zero=this.checked;rqRender(S.view)"> Hide zero balances</label></div>';
+  var tot = { party: [0, 0, 0], bank: [0, 0, 0] }, shown = 0, filtered = !!(q || f.sec || f.zero || att);
+  var rows = groups.map(function(g){
+    var list = g.items.filter(function(it){
+      var v = posValOf(c.w0, it.id);
+      if (f.sec && it.section !== f.sec) return false;
+      if (f.zero && posZero(v)) return false;
+      if (att && att.indexOf(it.id) === -1) return false;
+      if (q && [posName(it), it.nature, it.bank, it.sub, it.note].join(' ').toLowerCase().replace(/[^a-z0-9]/g, '').indexOf(q) === -1) return false;
+      return true;
+    });
+    if (!list.length) return '';
+    var st = [0, 0, 0];
+    var body = list.map(function(it, i){
+      var v = posValOf(c.w0, it.id), x = posPv(v), oth = posInOther(it);
+      st[0] += x.rec; st[1] += x.pay; st[2] += x.adv; shown++;
+      return '<tr><td class="sub2">' + (i + 1) + '</td><td><b>' + rqEsc(posName(it)) + '</b>' + (oth ? ' <span class="chip pos-both">also ' + oth.s + '</span>' : '') + (it.currency && it.currency !== 'BDT' ? ' <span class="chip pos-cur">' + rqEsc(it.currency) + '</span>' : '') + (it.note ? '<div class="sub2">' + rqEsc(it.note) + '</div>' : '') + '</td>'
+        + '<td>' + rqEsc(it.nature || '') + '</td>'
+        + '<td class="num">' + posAmt(v && v.rec) + '</td><td class="num">' + posAmt(v && v.pay) + '</td><td class="num">' + posAmt(v && v.adv) + '</td>'
+        + '<td>' + (v && v.expiry ? posD(v.expiry) : '') + posExpChip(it, v, t) + '</td><td class="sub2">' + posD(v && v.updated_on) + '</td>'
+        + (can ? '<td class="pos-acts"><button class="btn sm" title="Edit" onclick="posEdit(\'' + it.id + '\')">&#x270E;</button><button class="btn sm" title="Delete / closed" onclick="posDelete(\'' + it.id + '\')">&#x1F5D1;</button></td>' : '') + '</tr>';
+    }).join('');
+    var k = g.bank ? 'bank' : 'party'; for (var i = 0; i < 3; i++) tot[k][i] += st[i];
+    return '<tr class="pos-sec"><td colspan="' + (can ? 9 : 8) + '">' + (g.bank ? rqEsc(g.bank) + ' &middot; ' : '') + g.title + ' <span class="sub2">' + list.length + '</span></td></tr>' + body
+      + '<tr class="pos-sub"><td></td><td>Sub total</td><td></td><td class="num">' + accFmt(st[0]) + '</td><td class="num">' + accFmt(st[1]) + '</td><td class="num">' + accFmt(st[2]) + '</td><td colspan="' + (can ? 3 : 2) + '"></td></tr>';
+  }).join('');
+  function trow(lbl, a, cls) { return '<tr class="' + cls + '"><td></td><td>' + lbl + '</td><td></td><td class="num">' + accFmt(a[0]) + '</td><td class="num">' + accFmt(a[1]) + '</td><td class="num">' + accFmt(a[2]) + '</td><td colspan="' + (can ? 3 : 2) + '"></td></tr>'; }
+  var g = [tot.party[0] + tot.bank[0], tot.party[1] + tot.bank[1], tot.party[2] + tot.bank[2]];
+  var foot = trow('Total (Party)', tot.party, 'pos-tot') + trow('Total (Bank)', tot.bank, 'pos-tot') + trow('Grand total (Party + Bank)', g, 'pos-tot pos-grand')
+    + '<tr class="pos-tot"><td></td><td>Net liability (Payable &minus; Receivable)</td><td></td><td></td><td class="num"><b>' + accFmt(g[1] - g[0]) + '</b></td><td></td><td colspan="' + (can ? 3 : 2) + '"></td></tr>';
+  var closed = posItemsOf(co, true).filter(function(i){ return i.active === false; }).sort(function(a, b){ return String(b.closed_at || '').localeCompare(String(a.closed_at || '')); });
+  var closedHtml = closed.length ? '<div class="pos-closed"><button class="btn sm" onclick="POS.ui.closed=!POS.ui.closed;rqRender(S.view)">' + (f.closed ? '&#x25BE;' : '&#x25B8;') + ' Deleted / closed lines (' + closed.length + ')</button>'
+    + (f.closed ? '<table class="rq-t"><thead><tr><th>Name / account</th><th>Nature</th><th>Section</th><th>Closed</th><th>By</th><th>Why</th></tr></thead><tbody>' + closed.map(function(it){ return '<tr class="acc-off"><td>' + rqEsc(posName(it)) + '</td><td>' + rqEsc(it.nature || '') + '</td><td>' + posSec(it.section)[1] + '</td><td>' + rqDateTime(it.closed_at) + '</td><td>' + rqEsc(it.closed_by_name || '') + '</td><td>' + rqEsc(it.close_reason || '') + '</td></tr>'; }).join('') + '</tbody></table>' : '') + '</div>' : '';
+  if (!c.w0 && !items.length) return posTilesHtml(co) + '<div class="card"><div class="empty"><h4>Nothing entered for ' + posCo(co).n + ' yet</h4>' + (can ? 'Use <b>+ Add party</b> or <b>+ Add bank account</b>.' : '') + '</div></div>';
+  return posTilesHtml(co) + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>' + posCo(co).n + ' <span class="rq-count">' + shown + '</span></h3>' + bar + '</div>'
+    + (filtered ? '<div class="sub2" style="padding:0 2px 6px">Filtered: totals are for the lines shown. <a href="#" onclick="POS.ui.q=\'\';POS.ui.sec=\'\';POS.ui.zero=false;POS.ui.att=false;rqRender(S.view);return false">Show all</a></div>' : '')
+    + (shown ? '<div class="scroller"><table class="rq-t pos-t"><thead><tr><th>SN</th><th>Name / account</th><th>Nature</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th>Expiry</th><th>Updated</th>' + (can ? '<th></th>' : '') + '</tr></thead><tbody>' + rows + foot + '</tbody></table></div>'
+      : '<div class="empty"><h4>Nothing matches</h4>Change the search or filters.</div>') + '</div>' + closedHtml;
+}
+// party summary: both companies added together
+function posPartyRows() {
+  var by = {}, ws = {};
+  POS_COS.forEach(function(co){ ws[co.c] = posWeeksOf(co.c)[0]; });
+  (POS.items || []).forEach(function(it){
+    if (it.kind !== 'party' || it.active === false) return;
+    var key = it.party_id || it.id, x = posPv(posValOf(ws[it.company], it.id));
+    var r = by[key] = by[key] || { name: posName(it), co: { MTS: null, BFL: null }, rec: 0, pay: 0, adv: 0 };
+    var c = r.co[it.company] = r.co[it.company] || { rec: 0, pay: 0, adv: 0 };
+    ['rec', 'pay', 'adv'].forEach(function(k){ c[k] += x[k]; r[k] += x[k]; });
+  });
+  return Object.keys(by).map(function(k){ var r = by[k]; r.net = r.rec + r.adv - r.pay; r.both = !!(r.co.MTS && r.co.BFL); return r; });
+}
+function posCoCell(c) {
+  if (!c) return '<span class="sub2">&mdash;</span>';
+  var a = []; if (c.rec) a.push('Rec ' + accFmt(c.rec)); if (c.pay) a.push('Pay ' + accFmt(c.pay)); if (c.adv) a.push('Adv ' + accFmt(c.adv));
+  return a.length ? a.join('<br>') : '0';
+}
+function posPartyHtml() {
+  var f = POS.ui, q = posNorm(f.q), all = posPartyRows(), nBoth = all.filter(function(r){ return r.both; }).length;
+  var list = all.filter(function(r){ return (!f.both || r.both) && (!f.zero || r.rec || r.pay || r.adv) && (!q || posNorm(r.name).indexOf(q) !== -1); });
+  list.sort(f.psort === 'net' ? function(a, b){ return Math.abs(b.net) - Math.abs(a.net); } : function(a, b){ return a.name.localeCompare(b.name); });
+  var t = list.reduce(function(s, r){ s.rec += r.rec; s.pay += r.pay; s.adv += r.adv; s.net += r.net; return s; }, { rec: 0, pay: 0, adv: 0, net: 0 });
+  var bar = '<div class="rq-filter pos-bar"><input type="search" id="pos-q" placeholder="Search party&hellip;" value="' + rqEsc(f.q) + '" oninput="POS.ui.q=this.value;clearTimeout(POS._qt);POS._qt=setTimeout(function(){rqRender(S.view);var i=$(\'pos-q\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)">'
+    + '<select onchange="POS.ui.psort=this.value;rqRender(S.view)"><option value="name">Sort by name</option><option value="net"' + (f.psort === 'net' ? ' selected' : '') + '>Largest net first</option></select>'
+    + '<label class="rq-mine"><input type="checkbox"' + (f.both ? ' checked' : '') + ' onchange="POS.ui.both=this.checked;rqRender(S.view)"> Only parties in both companies (' + nBoth + ')</label>'
+    + '<label class="rq-mine"><input type="checkbox"' + (f.zero ? ' checked' : '') + ' onchange="POS.ui.zero=this.checked;rqRender(S.view)"> Hide zero balances</label></div>';
+  var body = list.map(function(r){
+    return '<tr><td><b>' + rqEsc(r.name) + '</b>' + (r.both ? ' <span class="chip pos-both">both</span>' : '') + '</td><td class="num">' + posCoCell(r.co.MTS) + '</td><td class="num">' + posCoCell(r.co.BFL) + '</td>'
+      + '<td class="num">' + (r.rec ? accFmt(r.rec) : '') + '</td><td class="num">' + (r.pay ? accFmt(r.pay) : '') + '</td><td class="num">' + (r.adv ? accFmt(r.adv) : '') + '</td><td class="num"><b class="' + (r.net > 0 ? 'pos-dn' : r.net < 0 ? 'pos-up' : '') + '">' + (r.net > 0 ? '+' : r.net < 0 ? '&minus;' : '') + accFmt(Math.abs(r.net)) + '</b></td></tr>';
+  }).join('');
+  return '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>Party summary <span class="rq-count">' + list.length + '</span></h3>' + bar + '</div>'
+    + (list.length ? '<div class="scroller"><table class="rq-t pos-t"><thead><tr><th>Party</th><th class="num">M.T. Sweaters</th><th class="num">Banga Fashion</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">Net</th></tr></thead><tbody>' + body
+      + '<tr class="pos-tot"><td>Total</td><td></td><td></td><td class="num">' + accFmt(t.rec) + '</td><td class="num">' + accFmt(t.pay) + '</td><td class="num">' + accFmt(t.adv) + '</td><td class="num"><b>' + (t.net < 0 ? '&minus;' : '+') + accFmt(Math.abs(t.net)) + '</b></td></tr></tbody></table></div>' : '<div class="empty"><h4>Nothing matches</h4></div>')
+    + '<div class="sub2" style="padding:8px 2px 2px">Net = Receivable + Advance &minus; Payable &middot; green: they owe us &middot; red: we owe them. Bank accounts are not added here.</div></div>';
+}
+// group summary: by type of account, both companies (like the SUMMERY sheet)
+var POS_GROUP_LINES = [
+  ['Receivable (local sales + L/C)', function(i){ return i.section === 'local'; }],
+  ['Party payable', function(i){ return i.section === 'various' || i.section === 'subcon'; }],
+  ['FDR', function(i){ return i.section === 'fdr'; }],
+  ['Marginal deposit (Cash L/C)', function(i){ return i.section === 'bankrec' && i.nature === 'Cash L/C margin'; }],
+  ['FC', function(i){ return i.section === 'bankrec' && i.nature === 'FC'; }],
+  ['Build up', function(i){ return i.section === 'bankrec' && i.nature === 'Build up'; }],
+  ['ERQ', function(i){ return i.section === 'bankrec' && i.nature === 'ERQ'; }],
+  ['Security deposit and other bank receivable', function(i){ return i.section === 'bankrec' && ['Cash L/C margin', 'FC', 'Build up', 'ERQ'].indexOf(i.nature) === -1; }],
+  ['HBL + Term loan + Lease finance', function(i){ return i.section === 'hbl' || i.section === 'term' || i.section === 'lease'; }],
+  ['PAD', function(i){ return i.section === 'pad'; }],
+  ['PC', function(i){ return i.section === 'pc'; }],
+  ['Cash L/C', function(i){ return i.section === 'cashlc'; }],
+  ['Receivable against export (foreign)', function(i){ return i.section === 'export'; }],
+  ['Foreign BTB L/C (acceptance done)', function(i){ return i.section === 'btb_fd'; }],
+  ['Local BTB L/C (acceptance done)', function(i){ return i.section === 'btb_ld'; }],
+  ['Local BG liability', function(i){ return i.section === 'bg'; }],
+  ['Foreign BTB L/C (acceptance not done)', function(i){ return i.section === 'btb_fn'; }],
+  ['Local BTB L/C (acceptance not done)', function(i){ return i.section === 'btb_ln'; }],
+  ['Current account', function(i){ return i.section === 'current'; }]
+];
+function posGroupData() {
+  var ws = {}; POS_COS.forEach(function(co){ ws[co.c] = posWeeksOf(co.c)[0]; });
+  var lines = POS_GROUP_LINES.map(function(g){ return { n: g[0], f: g[1], MTS: { rec: 0, pay: 0, adv: 0 }, BFL: { rec: 0, pay: 0, adv: 0 }, used: false }; });
+  (POS.items || []).forEach(function(it){
+    if (it.active === false) return;
+    var l = lines.find(function(x){ return x.f(it); }); if (!l) return;
+    var x = posPv(posValOf(ws[it.company], it.id)); l.used = true;
+    ['rec', 'pay', 'adv'].forEach(function(k){ l[it.company][k] += x[k]; });
+  });
+  var tot = { MTS: { rec: 0, pay: 0, adv: 0 }, BFL: { rec: 0, pay: 0, adv: 0 } };
+  lines.forEach(function(l){ ['MTS', 'BFL'].forEach(function(c){ ['rec', 'pay', 'adv'].forEach(function(k){ tot[c][k] += l[c][k]; }); }); });
+  return { lines: lines.filter(function(l){ return l.used; }), tot: tot };
+}
+function posGroupHtml() {
+  var d = posGroupData(), z = POS.ui.zero;
+  function cells(o){ var g = { rec: o.MTS.rec + o.BFL.rec, pay: o.MTS.pay + o.BFL.pay, adv: o.MTS.adv + o.BFL.adv };
+    function n(v, b){ return '<td class="num' + (b ? ' pos-g' : '') + '">' + (v ? accFmt(v) : '') + '</td>'; }
+    return n(o.MTS.rec) + n(o.BFL.rec) + n(g.rec, 1) + n(o.MTS.pay) + n(o.BFL.pay) + n(g.pay, 1) + n(g.adv, 1); }
+  var shown = d.lines.filter(function(l){ return !z || ['MTS', 'BFL'].some(function(c){ return l[c].rec || l[c].pay || l[c].adv; }); });
+  var t = d.tot, net = function(c){ return t[c].pay - t[c].rec; };
+  return '<div class="card"><div class="card-h"><h3>Group summary &mdash; M.T. Sweaters &amp; Banga Fashion</h3><label class="rq-mine"><input type="checkbox"' + (z ? ' checked' : '') + ' onchange="POS.ui.zero=this.checked;rqRender(S.view)"> Hide zero balances</label></div>'
+    + '<div class="scroller"><table class="rq-t pos-t pos-gt"><thead><tr><th rowspan="2">SN</th><th rowspan="2">Particulars</th><th colspan="3" class="pos-ch">Receivable</th><th colspan="3" class="pos-ch">Payable</th><th rowspan="2" class="num">Advance</th></tr><tr><th class="num">M.T.</th><th class="num">Banga</th><th class="num">Group</th><th class="num">M.T.</th><th class="num">Banga</th><th class="num">Group</th></tr></thead><tbody>'
+    + shown.map(function(l, i){ return '<tr><td class="sub2">' + (i + 1) + '</td><td><b>' + l.n + '</b></td>' + cells(l) + '</tr>'; }).join('')
+    + '<tr class="pos-tot"><td></td><td>Total</td>' + cells(t) + '</tr>'
+    + '<tr class="pos-tot pos-grand"><td></td><td>Net liability (Payable &minus; Receivable)</td><td colspan="3"></td><td class="num">' + accFmt(net('MTS')) + '</td><td class="num">' + accFmt(net('BFL')) + '</td><td class="num pos-g"><b>' + accFmt(net('MTS') + net('BFL')) + '</b></td><td></td></tr>'
+    + '</tbody></table></div><div class="sub2" style="padding:8px 2px 2px">Bank accounts of each company stay in their own company; this page only adds the totals by type.</div></div>';
+}
+
+// ─── ADD / EDIT / DELETE ───
+// the newest week of the company, read again (someone may have saved a weekly update meanwhile)
+async function posEnsureWeek(co) {
+  var r = await db.from('pos_weeks').select('*').eq('company', co).order('as_on', { ascending: false }).limit(1);
+  if (r.error) throw r.error;
+  var w = (r.data || [])[0], mine = posWeeksOf(co)[0];
+  if (w && (!mine || mine.id !== w.id)) { await posLoad(true); return { stale: true }; }
+  if (w) return { w: mine };
+  var nw = { id: accUuid(), company: co, as_on: todayStr(), created_by_name: S.user.name, note: 'Started when the first line was added' };
+  var ins = await db.from('pos_weeks').insert(nw).select('*').single();
+  if (ins.error) { if (accDup(ins.error)) { await posLoad(true); return { stale: true }; } throw ins.error; }
+  POS.weeks.push(ins.data); POS.vals[ins.data.id] = {};
+  return { w: ins.data };
+}
+var POS_STALE_MSG = 'Someone has just saved a weekly update, so the list was refreshed. Check the figures and save again.';
+async function posPutVal(w, iid, v) {
+  var row = Object.assign({ week_id: w.id, item_id: iid }, v);
+  var r = await db.from('pos_vals').upsert(row, { onConflict: 'week_id,item_id' }).select('*').single();
+  if (r.error) throw r.error;
+  (POS.vals[w.id] = POS.vals[w.id] || {})[iid] = r.data;
+  return r.data;
+}
+function posTotJson(co, w) { var t = posTot(co, w, true); return { v: 1, rec: t.rec, pay: t.pay, adv: t.adv, pad: t.pad, prec: t.prec, ppay: t.ppay, padv: t.padv, n: t.n }; }
+async function posRecalc(co, w) {
+  if (!w) return;
+  var tj = posTotJson(co, w);
+  var r = await db.from('pos_weeks').update({ totals: tj }).eq('id', w.id);
+  if (!r.error) w.totals = tj;
+}
+async function posTouch(iid, extra) {
+  var up = Object.assign({ updated_at: new Date().toISOString(), updated_by_name: S.user.name }, extra || {});
+  var r = await db.from('pos_items').update(up).eq('id', iid).select('*');
+  if (r.error) throw r.error;
+  if (r.data && r.data[0]) { var i = POS.items.findIndex(function(x){ return x.id === iid; }); if (i >= 0) POS.items[i] = r.data[0]; posIndex(); }
+  return r.data && r.data[0];
+}
+function posAfterSave(msg) { toast(msg, 'ok-t'); setTimeout(function(){ renderRail(); if (String(S.view).indexOf('rq:acc:pos') === 0) rqRender(S.view); }, 0); }
+function posNextSort(co) { return posItemsOf(co, true).reduce(function(m, i){ return Math.max(m, i.sort || 0); }, 0) + 1; }
+function posAmtInputs(v, pre) {
+  pre = pre || 'pf';
+  return '<div class="acc-g3">' + POS_COLS.map(function(c){ return '<div class="f"><label>' + c[1] + ' (Tk)</label><input id="' + pre + '-' + c[0] + '" inputmode="decimal" value="' + (v && v[c[0]] != null ? accFmt(accP(v[c[0]])) : '') + '"></div>'; }).join('') + '</div>';
+}
+function posReadAmts(pre) {
+  var out = {};
+  for (var i = 0; i < POS_COLS.length; i++) { var k = POS_COLS[i][0], p = posParse($(pre + '-' + k).value); if (p === false) return 'Check the ' + POS_COLS[i][1].toLowerCase() + ': numbers only, up to 2 decimals.'; out[k] = p == null ? null : accAmtVal(p); }
+  return out;
+}
+var POS_BTN_ENTER = ' onkeydown="if(event.key===\'Enter\'){event.preventDefault();event.stopPropagation();accModalOk();}"';
+function posSeg(id, opts, sel, onch) { return '<div class="pos-seg" id="' + id + '">' + opts.map(function(o){ return '<button type="button"' + POS_BTN_ENTER + ' class="' + (o[0] === sel ? 'on' : '') + '" data-v="' + rqEsc(o[0]) + '" onclick="posSegPick(\'' + id + '\',this)' + (onch ? ';' + onch : '') + '">' + o[1] + '</button>'; }).join('') + '</div>'; }
+function posSegPick(id, b) { document.querySelectorAll('#' + id + ' button').forEach(function(x){ x.classList.toggle('on', x === b); }); }
+function posSegVal(id) { var b = document.querySelector('#' + id + ' button.on'); return b ? b.dataset.v : ''; }
+// + Add party
+function posAddParty(co) {
+  if (!posCanEdit()) return;
+  POS._addId = { party: accUuid(), item: accUuid() };
+  accForm({ title: 'Add party', sub: 'A party line of one company. The same party can have a line in each company.',
+    body: '<div class="f"><label>Company</label>' + posSeg('pp-co', POS_COS.map(function(c){ return [c.c, c.n]; }), co, 'posPartyHint()') + '</div>'
+      + '<div class="f" style="margin-top:8px"><label>Party name</label><input id="pp-name" maxlength="160" autocomplete="off" oninput="posPartyHint()"></div><div id="pp-sugg"></div>'
+      + '<div class="f" style="margin-top:8px"><label>Section</label><select id="pp-sec">' + POS_SECS.filter(function(s){ return s[2]; }).map(function(s){ return '<option value="' + s[0] + '"' + (s[0] === 'various' ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('') + '</select></div>'
+      + posAmtInputs(null, 'pp')
+      + '<div class="f" style="margin-top:8px"><label>Currency label</label>' + posSeg('pp-cur', [['BDT', 'BDT'], ['USD', 'USD']], 'BDT') + '</div>'
+      + '<div class="f" style="margin-top:8px"><label>Note (optional)</label><input id="pp-note" maxlength="200"></div>',
+    ok: 'Save party', onOk: posAddPartySave });
+}
+function posPartyMatch(name, co) {
+  var n = posNorm(name), same = null, other = null;
+  if (!n) return { same: null, other: null };
+  (POS.items || []).forEach(function(it){
+    if (it.kind !== 'party' || it.active === false || posNorm(posName(it)) !== n) return;
+    if (it.company === co) same = same || it; else other = other || it;
+  });
+  return { same: same, other: other };
+}
+function posPartyHint() {
+  var el = $('pp-sugg'); if (!el) return;
+  var name = $('pp-name').value, co = posSegVal('pp-co'), n = posNorm(name), m = posPartyMatch(name, co), h = '';
+  if (n.length >= 2) {
+    var seen = {}, list = [];
+    (POS.items || []).forEach(function(it){ if (it.kind !== 'party' || it.active === false) return; var nm = posName(it), k = posNorm(nm); if (k.indexOf(n) === -1) return; (seen[k] = seen[k] || { name: nm, cos: [] }).cos.indexOf(it.company) === -1 && seen[k].cos.push(it.company); if (list.indexOf(k) === -1) list.push(k); });
+    h += list.slice(0, 6).map(function(k){ var s = seen[k]; return '<div class="pos-sg" onclick="$(\'pp-name\').value=this.dataset.n;posPartyHint()" data-n="' + rqEsc(s.name) + '"><b>' + rqEsc(s.name) + '</b> &mdash; ' + s.cos.map(function(c){ return c === co ? '<span class="acc-over">already in ' + posCo(c).n + '</span>' : 'in ' + posCo(c).n; }).join(' &middot; ') + '</div>'; }).join('');
+  }
+  if (m.same) h += '<div class="pos-warn">&#x26A0; &ldquo;' + rqEsc(posName(m.same)) + '&rdquo; is already in ' + posCo(co).n + '. Edit that line to change its balance instead.</div>';
+  else if (m.other) h += '<label class="pos-info"><input type="checkbox" id="pp-link" checked> Same party as &ldquo;' + rqEsc(posName(m.other)) + '&rdquo; in ' + posCo(m.other.company).n + ' (the party summary adds them together)</label>';
+  el.innerHTML = h ? '<div class="pos-sugg">' + h + '</div>' : '';
+}
+async function posAddPartySave() {
+  var co = posSegVal('pp-co'), name = $('pp-name').value.trim().replace(/\s+/g, ' '), sec = $('pp-sec').value, cur = posSegVal('pp-cur') || 'BDT', note = $('pp-note').value.trim();
+  if (!name) return 'Write the party name.';
+  var amts = posReadAmts('pp'); if (typeof amts === 'string') return amts;
+  var m = posPartyMatch(name, co);
+  if (m.same) return '"' + posName(m.same) + '" is already in ' + posCo(co).n + '. Edit that line instead.';
+  var ids = POS._addId || { party: accUuid(), item: accUuid() };
+  var ew = await posEnsureWeek(co); if (ew.stale) return POS_STALE_MSG;
+  var link = m.other && $('pp-link') && $('pp-link').checked, pid = link ? m.other.party_id : ids.party;
+  if (!link) {
+    var pr = await db.from('pos_parties').upsert({ id: ids.party, name: name, norm: posNorm(name), created_by_name: S.user.name }, { onConflict: 'id' }).select('*').single();
+    if (pr.error) return accErrMsg(pr.error);
+    accPut(POS.parties, pr.data);
+  }
+  var it = { id: ids.item, company: co, kind: 'party', section: sec, sub: null, party_id: pid, name: name, nature: null, bank: null, currency: cur, note: note || null, sort: posNextSort(co), active: true, created_by_name: S.user.name };
+  var ir = await db.from('pos_items').upsert(it, { onConflict: 'id' }).select('*').single();
+  if (ir.error) return accErrMsg(ir.error);
+  accPut(POS.items, ir.data); posIndex();
+  try { await posPutVal(ew.w, ids.item, Object.assign({ expiry: null, updated_on: todayStr() }, amts)); } catch (e) { return accErrMsg(e) + ' (the party was added; press Save again to save its balance)'; }
+  await posRecalc(co, ew.w);
+  POS._addId = null;
+  posAfterSave(name + ' added to ' + posCo(co).n);
+  return true;
+}
+// + Add bank account / loan
+function posBankList(co) { var b = []; (POS.items || []).forEach(function(i){ if (i.kind === 'bank' && i.bank && b.indexOf(i.bank) === -1) b.push(i.bank); }); if (!b.length) b.push('Pubali Bank PLC'); return b; }
+function posAddBank(co) {
+  if (!posCanEdit()) return;
+  POS._addId = { item: accUuid() };
+  var banks = posBankList(co);
+  accForm({ title: 'Add bank account', sub: 'Also used for a new loan. A bank line belongs to one company and is never added across companies.', wide: true,
+    body: '<div class="acc-g2"><div class="f"><label>Company</label><select id="pb-co">' + POS_COS.map(function(c){ return '<option value="' + c.c + '"' + (c.c === co ? ' selected' : '') + '>' + c.n + '</option>'; }).join('') + '</select></div>'
+      + '<div class="f"><label>Bank</label><select id="pb-bank" onchange="$(\'pb-newbank-w\').style.display=this.value===\'+\'?\'\':\'none\'">' + banks.map(function(b){ return '<option>' + rqEsc(b) + '</option>'; }).join('') + '<option value="+">+ New bank&hellip;</option></select></div>'
+      + '<div class="f" id="pb-newbank-w" style="display:none;grid-column:1/-1"><label>New bank name</label><input id="pb-newbank" maxlength="80" placeholder="e.g. Dutch-Bangla Bank PLC"></div></div>'
+      + '<div class="f" style="margin-top:8px"><label>Type</label><div class="pos-pills" id="pb-type">' + POS_BANK_TYPES.map(function(t, i){ return '<button type="button"' + POS_BTN_ENTER + ' data-i="' + i + '" onclick="posBankType(' + i + ')">' + rqEsc(t[0]) + '</button>'; }).join('') + '</div></div>'
+      + '<div id="pb-info" class="pos-info" style="display:none"></div>'
+      + '<div class="acc-g2" style="margin-top:4px"><div class="f"><label>Account number</label><input id="pb-acc" maxlength="80"></div><div class="f"><label id="pb-amt-l">Amount (Tk)</label><input id="pb-amt" inputmode="decimal"></div>'
+      + '<div class="f" id="pb-sub-w" style="display:none"><label>Supplier (for Cash L/C)</label><input id="pb-sub" maxlength="120" list="pb-subs"><datalist id="pb-subs">' + (function(){ var s = []; (POS.items || []).forEach(function(i){ if (i.sub && s.indexOf(i.sub) === -1) s.push(i.sub); }); return s.map(function(x){ return '<option value="' + rqEsc(x) + '">'; }).join(''); })() + '</datalist></div>'
+      + '<div class="f"><label>Expiry / maturity date (optional)</label><input id="pb-exp" type="date"></div><div class="f"><label>Note (optional)</label><input id="pb-note" maxlength="200"></div></div>',
+    ok: 'Save account', onOk: posAddBankSave });
+}
+function posBankType(i) {
+  document.querySelectorAll('#pb-type button').forEach(function(b){ b.classList.toggle('on', +b.dataset.i === i); });
+  var t = POS_BANK_TYPES[i]; POS._bt = i;
+  var inf = $('pb-info'); inf.style.display = '';
+  inf.innerHTML = rqEsc(t[0]) + ' is ' + (t[2] === 'rec' ? 'an <b>asset</b>: the amount is entered as <b>Receivable</b>.' : 'a <b>liability</b>: the amount is entered as <b>Payable</b>.') + ' It goes under &ldquo;' + posSec(t[1])[1] + '&rdquo;.' + (t[1] === 'pad' ? ' PAD is past its date by nature, so no expiry warning is shown for it.' : '');
+  $('pb-amt-l').textContent = (t[2] === 'rec' ? 'Receivable' : 'Payable') + ' (Tk)';
+  $('pb-sub-w').style.display = t[1] === 'cashlc' ? '' : 'none';
+}
+async function posAddBankSave() {
+  var co = $('pb-co').value, bank = $('pb-bank').value, acc = $('pb-acc').value.trim(), note = $('pb-note').value.trim(), exp = $('pb-exp').value || null;
+  if (bank === '+') { bank = $('pb-newbank').value.trim().replace(/\s+/g, ' '); if (!bank) return 'Write the new bank name.'; }
+  if (POS._bt == null) return 'Choose the type.';
+  var t = POS_BANK_TYPES[POS._bt];
+  if (!acc) return 'Write the account number.';
+  var sub = t[1] === 'cashlc' ? $('pb-sub').value.trim() : null;
+  if (t[1] === 'cashlc' && !sub) return 'Write the supplier of the Cash L/C.';
+  var amt = posParse($('pb-amt').value); if (amt === false) return 'Check the amount: numbers only, up to 2 decimals.';
+  if (exp && !accValidDate(exp)) return 'Check the expiry date.';
+  var dup = posItemsOf(co).find(function(i){ return i.kind === 'bank' && i.section === t[1] && posNorm(i.name) === posNorm(acc) && (i.bank || '') === bank; });
+  if (dup) return 'Account ' + acc + ' (' + t[0] + ') is already in ' + posCo(co).n + '. Edit that line instead.';
+  var ew = await posEnsureWeek(co); if (ew.stale) return POS_STALE_MSG;
+  var ids = POS._addId || { item: accUuid() };
+  var it = { id: ids.item, company: co, kind: 'bank', section: t[1], sub: sub, party_id: null, name: acc, nature: t[3], bank: bank, currency: 'BDT', note: note || null, sort: posNextSort(co), active: true, created_by_name: S.user.name };
+  var ir = await db.from('pos_items').upsert(it, { onConflict: 'id' }).select('*').single();
+  if (ir.error) return accErrMsg(ir.error);
+  accPut(POS.items, ir.data); posIndex();
+  var v = { rec: null, pay: null, adv: null, expiry: exp, updated_on: todayStr() }; v[t[2]] = amt == null ? null : accAmtVal(amt);
+  try { await posPutVal(ew.w, ids.item, v); } catch (e) { return accErrMsg(e) + ' (the account was added; press Save again to save its amount)'; }
+  await posRecalc(co, ew.w);
+  POS._addId = null; POS._bt = null;
+  posAfterSave(t[0] + ' ' + acc + ' added to ' + posCo(co).n);
+  return true;
+}
+// edit a line (its balance in the newest week, its name, section, expiry)
+function posEdit(iid) {
+  var it = POS.byId[iid]; if (!it || !posCanEdit()) return;
+  var w = posWeeksOf(it.company)[0], v = posValOf(w, iid), party = it.kind === 'party';
+  var oth = posInOther(it);
+  accForm({ title: 'Edit \u2014 ' + posName(it), sub: posCo(it.company).n + ' &middot; ' + (party ? 'party' : rqEsc(it.bank || '') + ' &middot; ' + rqEsc(it.nature || '')) + (w ? ' &middot; as on ' + rqDateTxt(w.as_on) : ''),
+    body: '<div class="f"><label>' + (party ? 'Party name' : 'Account number') + '</label><input id="pe-name" maxlength="160" value="' + rqEsc(posName(it)) + '"></div>'
+      + (party && oth ? '<div class="sub2" style="margin-top:4px">Renaming changes it in ' + oth.n + ' too (same party).</div>' : '')
+      + (party ? '<div class="f" style="margin-top:8px"><label>Section</label><select id="pe-sec">' + POS_SECS.filter(function(s){ return s[2]; }).map(function(s){ return '<option value="' + s[0] + '"' + (s[0] === it.section ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('') + '</select></div>' : '')
+      + (it.section === 'cashlc' ? '<div class="f" style="margin-top:8px"><label>Supplier</label><input id="pe-sub" maxlength="120" value="' + rqEsc(it.sub || '') + '"></div>' : '')
+      + posAmtInputs(v, 'pe')
+      + '<div class="acc-g2" style="margin-top:4px">' + (party ? '<div class="f"><label>Currency label</label>' + posSeg('pe-cur', [['BDT', 'BDT'], ['USD', 'USD']], it.currency || 'BDT') + '</div>' : '<div class="f"><label>Expiry / maturity date</label><input id="pe-exp" type="date" value="' + rqEsc((v && v.expiry) || '') + '"></div>')
+      + '<div class="f"><label>Note (optional)</label><input id="pe-note" maxlength="200" value="' + rqEsc(it.note || '') + '"></div></div>',
+    extra: '<button class="btn danger" onclick="posDelete(\'' + iid + '\')">&#x1F5D1; Delete / closed</button>',
+    ok: 'Save', onOk: function(){ return posEditSave(iid); } });
+}
+async function posEditSave(iid) {
+  var it = POS.byId[iid]; if (!it) return 'This line is no longer there.';
+  var party = it.kind === 'party', name = $('pe-name').value.trim().replace(/\s+/g, ' ');
+  if (!name) return party ? 'Write the party name.' : 'Write the account number.';
+  var amts = posReadAmts('pe'); if (typeof amts === 'string') return amts;
+  var exp = party ? undefined : ($('pe-exp').value || null);
+  if (exp && !accValidDate(exp)) return 'Check the expiry date.';
+  var note = $('pe-note').value.trim() || null, sec = party ? $('pe-sec').value : it.section, sub = it.section === 'cashlc' ? ($('pe-sub').value.trim() || it.sub) : it.sub;
+  if (party && posNorm(name) !== posNorm(posName(it))) {
+    var clash = (POS.items || []).find(function(x){ return x.kind === 'party' && x.active !== false && x.party_id !== it.party_id && posNorm(posName(x)) === posNorm(name) && (x.company === it.company || (POS.items || []).some(function(y){ return y.party_id === it.party_id && y.company === x.company && y.active !== false; })); });
+    if (clash) return '"' + posName(clash) + '" is already in ' + posCo(clash.company).n + '.';
+  }
+  if (!party && posNorm(name) !== posNorm(it.name) && posItemsOf(it.company).some(function(x){ return x.id !== iid && x.kind === 'bank' && x.section === it.section && posNorm(x.name) === posNorm(name) && x.bank === it.bank; })) return 'Account ' + name + ' is already in this section.';
+  var ew = await posEnsureWeek(it.company); if (ew.stale) return POS_STALE_MSG;
+  var old = posValOf(ew.w, iid), nv = Object.assign({}, amts);
+  nv.expiry = exp === undefined ? (old ? old.expiry : null) : exp;
+  var changed = !old || ['rec', 'pay', 'adv'].some(function(k){ return accP(old[k] || 0) !== accP(nv[k] || 0); }) || (old.expiry || null) !== (nv.expiry || null);
+  nv.updated_on = changed ? todayStr() : (old && old.updated_on) || todayStr();
+  if (changed || !old) await posPutVal(ew.w, iid, nv);
+  var cur = party ? (posSegVal('pe-cur') || 'BDT') : it.currency;
+  if (party && it.party_id && name !== posName(it)) {
+    var pr = await db.from('pos_parties').update({ name: name, norm: posNorm(name) }).eq('id', it.party_id).select('*');
+    if (pr.error) return accErrMsg(pr.error);
+    if (pr.data && pr.data[0]) accPut(POS.parties, pr.data[0]);
+  }
+  await posTouch(iid, { name: name, section: sec, sub: sub, note: note, currency: cur });
+  if (changed) await posRecalc(it.company, ew.w);
+  posAfterSave(changed ? 'Saved ' + name : 'Saved');
+  return true;
+}
+function posDelete(iid) {
+  var it = POS.byId[iid]; if (!it || !posCanEdit()) return;
+  var v = posValOf(posWeeksOf(it.company)[0], iid), x = posPv(v);
+  var amt = x.rec || x.pay || x.adv;
+  accForm({ title: 'Delete this line?', danger: true, sub: posCo(it.company).n + ' &middot; ' + rqEsc(posName(it)) + (it.nature ? ' &middot; ' + rqEsc(it.nature) : '') + (amt ? ' &middot; ' + accTk(amt) : ''),
+    body: '<div class="f"><label>Why</label>' + posSeg('pd-why', POS_CLOSE_WHY.map(function(w){ return [w, w]; }), it.kind === 'bank' ? 'Loan paid off' : 'Business ended', "$('pd-other-w').style.display=posSegVal('pd-why')==='Other'?'':'none'") + '</div>'
+      + '<div class="f" id="pd-other-w" style="display:none;margin-top:8px"><label>Write why</label><input id="pd-other" maxlength="200"></div>'
+      + '<div class="pos-info">It leaves the current list and the totals. Past weekly reports still show it, and the next weekly report lists it as closed. It stays under &ldquo;Deleted / closed lines&rdquo; with your name and the reason.</div>',
+    ok: 'Delete', onOk: async function(){
+      var why = posSegVal('pd-why'); if (why === 'Other') { why = $('pd-other').value.trim(); if (!why) return 'Write why.'; }
+      if (!why) return 'Choose why.';
+      try { await posTouch(iid, { active: false, closed_at: new Date().toISOString(), closed_by_name: S.user.name, close_reason: why }); } catch (e) { return accErrMsg(e); }
+      await posRecalc(it.company, posWeeksOf(it.company)[0]);
+      posAfterSave(posName(it) + ' deleted (' + why.toLowerCase() + ')');
+      return true;
+    } });
+}
+
+// ─── WEEKLY UPDATE ───
+function posUpdRows(co) {
+  var w = posWeeksOf(co)[0], out = [];
+  posGroups(posItemsOf(co)).forEach(function(g){
+    out.push({ head: (g.bank ? rqEsc(g.bank) + ' &middot; ' : '') + g.title });
+    g.items.forEach(function(it){
+      var v = posValOf(w, it.id), x = posPv(v);
+      var cols = POS_COLS.filter(function(c){ return v && v[c[0]] != null && accP(v[c[0]]) !== 0; }).map(function(c){ return c[0]; });
+      if (!cols.length) cols = [posMain(it)];
+      cols.forEach(function(k, j){ out.push({ it: it, col: k, last: x[k], first: j === 0, v: v }); });
+    });
+  });
+  return out;
+}
+function posDraftKey(co) { var w = posWeeksOf(co)[0]; return 'pos_draft:' + co + ':' + (w ? w.id : 'none'); }
+function posRenderUpdate(co) {
+  var w = posWeeksOf(co)[0], rows = posUpdRows(co), t = todayStr();
+  POS._upd = { co: co, rows: rows };
+  var draft = null; try { draft = JSON.parse(localStorage.getItem(posDraftKey(co)) || 'null'); } catch (e) {}
+  var n = 0;
+  var body = rows.map(function(r){
+    if (r.head) return '<tr class="pos-sec"><td colspan="6">' + r.head + '</td></tr>';
+    var i = n++, it = r.it;
+    return '<tr data-q="' + rqEsc(posNorm(posName(it) + ' ' + (it.nature || ''))) + '"><td>' + (r.first ? '<b>' + rqEsc(posName(it)) + '</b>' + (it.kind === 'bank' && it.nature ? ' <span class="sub2">' + rqEsc(it.nature) + '</span>' : '') : '') + '</td>'
+      + '<td>' + ({ rec: 'Receivable', pay: 'Payable', adv: 'Advance' }[r.col]) + '</td><td class="num">' + accFmt(r.last) + '</td>'
+      + '<td class="num"><input class="pos-in" id="pu-' + i + '" data-i="' + i + '" inputmode="decimal" value="' + accFmt(r.last) + '" oninput="posUpdChange(' + i + ')" onkeydown="posUpdKey(event,' + i + ')"></td>'
+      + '<td class="num" id="pc-' + i + '"><span class="sub2">&mdash;</span></td>'
+      + '<td>' + (r.first && it.kind === 'bank' ? '<input type="date" class="pos-exp" id="pe-' + i + '" data-i="' + i + '" value="' + rqEsc((r.v && r.v.expiry) || '') + '" onchange="posUpdChange(' + i + ')"' + (it.section === 'pad' ? ' title="PAD: no expiry warning is shown"' : '') + '>' : '') + '</td></tr>';
+  }).join('');
+  POS._upd.n = n;
+  rqSetHead('Accounts \u203A Position', 'Weekly update \u2014 ' + posCo(co).n, (w ? 'Last update as on <b>' + rqDateTxt(w.as_on) + '</b> by ' + rqEsc(w.created_by_name || '') + ' &middot; ' : '') + 'Enter moves to the next box &middot; <span id="pu-count">0 changed</span>',
+    '<button class="btn" onclick="setView(\'rq:acc:pos' + (co === 'BFL' ? ':BFL' : '') + '\')">Cancel</button><button class="btn pri" id="pu-save" onclick="posUpdSave()">Save update</button>');
+  $('content').innerHTML = '<div id="pos-upd" data-co="' + co + '">'
+    + '<div class="card pos-upd-top"><div class="f"><label>New &ldquo;as on&rdquo; date</label><input type="date" id="pu-date" value="' + t + '"></div>'
+    + '<div class="f"><label>Note (optional)</label><input id="pu-note" maxlength="200" placeholder="e.g. after Thursday bank statement"></div>'
+    + '<div class="f"><label>Find a line</label><input type="search" id="pu-q" placeholder="Search&hellip;" oninput="posUpdFilter(this.value)"></div>'
+    + '<div class="f"><label>Company</label><select onchange="setView(\'rq:acc:posupd:\'+this.value)">' + POS_COS.map(function(c){ return '<option value="' + c.c + '"' + (c.c === co ? ' selected' : '') + '>' + c.n + '</option>'; }).join('') + '</select></div></div>'
+    + (draft && draft.v && Object.keys(draft.v).length ? '<div class="pos-info" id="pu-draft">You have unsaved figures from ' + rqDateTime(draft.at) + ' (' + Object.keys(draft.v).length + ' boxes). <button class="btn sm pri" onclick="posUpdRestore()">Bring them back</button> <button class="btn sm" onclick="posUpdDropDraft()">Discard</button></div>' : '')
+    + '<div class="card"><div class="scroller"><table class="rq-t pos-t pos-upd"><thead><tr><th>Name / account</th><th>Column</th><th class="num">Last (' + (w ? posD(w.as_on) : '&mdash;') + ')</th><th class="num">This week</th><th class="num">Change</th><th>Expiry</th></tr></thead><tbody>' + body + '</tbody></table></div>'
+    + (n ? '' : '<div class="empty"><h4>No lines yet</h4>Add parties and bank accounts first.</div>') + '</div></div>';
+  var f = $('pu-0'); if (f) try { f.focus(); f.select(); } catch (e) {}
+}
+function posUpdFilter(q) { q = posNorm(q); document.querySelectorAll('#pos-upd tbody tr').forEach(function(tr){ if (tr.classList.contains('pos-sec')) { tr.style.display = q ? 'none' : ''; return; } tr.style.display = !q || (tr.dataset.q || '').indexOf(q) !== -1 ? '' : 'none'; }); }
+function posUpdVal(i) { var e = $('pu-' + i); return e ? posParse(e.value) : null; }
+function posUpdChange(i) {
+  var U = POS._upd; if (!U) return; var r = U.rows.filter(function(x){ return !x.head; })[i]; if (!r) return;
+  var p = posUpdVal(i), c = $('pc-' + i), e = $('pu-' + i);
+  if (e) e.classList.toggle('bad', p === false);
+  if (c) c.innerHTML = p === false ? '<span class="acc-over">not a number</span>' : (function(){ var d = (p || 0) - r.last; return d ? '<span class="' + (d > 0 === (r.col === 'rec' || r.col === 'adv') ? 'pos-dn' : 'pos-up') + '">' + (d > 0 ? '+' : '&minus;') + accFmt(Math.abs(d)) + ((p || 0) === 0 ? ' &middot; settled' : '') + '</span>' : '<span class="sub2">&mdash;</span>'; })();
+  clearTimeout(U._t); U._t = setTimeout(posUpdCount, 150);
+}
+function posUpdCollect() {
+  var U = POS._upd, rows = U.rows.filter(function(x){ return !x.head; }), by = {}, bad = -1, changed = 0, draft = {};
+  rows.forEach(function(r, i){
+    var p = posUpdVal(i); if (p === false && bad < 0) bad = i;
+    var o = by[r.it.id] = by[r.it.id] || { it: r.it, v: r.v, set: {}, exp: undefined };
+    o.set[r.col] = p === false ? r.last : (p == null ? 0 : p);
+    if ((p || 0) !== r.last) { changed++; draft[r.it.id + '|' + r.col] = $('pu-' + i).value; }
+    var e = $('pe-' + i); if (e) { o.exp = e.value || null; if ((o.exp || null) !== ((r.v && r.v.expiry) || null)) { changed++; draft[r.it.id + '|exp'] = o.exp || ''; } }
+  });
+  return { by: by, bad: bad, changed: changed, draft: draft };
+}
+function posUpdCount() {
+  var U = POS._upd; if (!U || !$('pu-count')) return;
+  var c = posUpdCollect(); $('pu-count').textContent = c.changed + ' changed' + (c.bad >= 0 ? ' \u00B7 1 box is not a number' : '');
+  try { if (c.changed) localStorage.setItem(posDraftKey(U.co), JSON.stringify({ at: new Date().toISOString(), v: c.draft })); else localStorage.removeItem(posDraftKey(U.co)); } catch (e) {}
+}
+function posUpdRestore() {
+  var U = POS._upd; if (!U) return; var d = null; try { d = JSON.parse(localStorage.getItem(posDraftKey(U.co)) || 'null'); } catch (e) {}
+  if (!d || !d.v) return;
+  U.rows.filter(function(x){ return !x.head; }).forEach(function(r, i){
+    var k = r.it.id + '|' + r.col; if (d.v[k] != null && $('pu-' + i)) { $('pu-' + i).value = d.v[k]; posUpdChange(i); }
+    var ke = r.it.id + '|exp'; if (d.v[ke] != null && $('pe-' + i)) $('pe-' + i).value = d.v[ke];
+  });
+  var b = $('pu-draft'); if (b) b.remove(); posUpdCount();
+}
+function posUpdDropDraft() { var U = POS._upd; try { localStorage.removeItem(posDraftKey(U.co)); } catch (e) {} var b = $('pu-draft'); if (b) b.remove(); }
+function posUpdKey(e, i) {
+  if (e.key !== 'Enter' || e.isComposing) return;
+  e.preventDefault();
+  var list = Array.prototype.filter.call(document.querySelectorAll('#pos-upd .pos-in'), function(x){ return x.closest('tr').style.display !== 'none'; });
+  var k = list.indexOf(e.target);
+  if (k >= 0 && k < list.length - 1) { list[k + 1].focus(); list[k + 1].select(); } else posUpdSave();
+}
+async function posUpdSave() {
+  var U = POS._upd; if (!U || U.busy || !posCanEdit()) return;
+  U.busy = true;
+  try { await posUpdSave2(U); } finally { U.busy = false; var b = $('pu-save'); if (b) { b.disabled = false; b.textContent = 'Save update'; } }
+}
+async function posUpdSave2(U) {
+  var co = U.co, asOn = $('pu-date').value, note = $('pu-note').value.trim(), c = posUpdCollect();
+  if (c.bad >= 0) { toast('One box is not a number. Fix it first.', 'err'); var b = $('pu-' + c.bad); if (b) { b.focus(); b.select(); } return; }
+  if (!accValidDate(asOn)) { toast('Choose the "as on" date', 'err'); $('pu-date').focus(); return; }
+  if (asOn > rqAddDays(todayStr(), 7)) { toast('The "as on" date is more than a week ahead', 'err'); return; }
+  var last = posWeeksOf(co)[0];
+  if (last && asOn <= last.as_on) { toast('The new "as on" date must be after the last update (' + rqDateTxt(last.as_on) + ')', 'err'); $('pu-date').focus(); return; }
+  if (!c.changed && !(await appConfirm('Nothing has changed since ' + (last ? rqDateTxt(last.as_on) : 'the last update') + '. Save it as on ' + rqDateTxt(asOn) + ' anyway?', { title: 'Weekly update', okText: 'Save' }))) return;
+  if (c.changed && !(await appConfirm('Save the weekly update of ' + posCo(co).n + ' as on ' + rqDateTxt(asOn) + '? ' + c.changed + ' figure' + (c.changed === 1 ? '' : 's') + ' changed. Management is told.', { title: 'Weekly update', okText: 'Save update' }))) return;
+  var btn = $('pu-save'); if (btn) { btn.disabled = true; btn.textContent = 'Saving\u2026'; }
+  var res = await posUpdWrite(co, asOn, note, c, last);
+  if (res !== true) { toast(res, 'err'); if (/added meanwhile/.test(res)) { var el = $('pos-upd'); if (el) el.dataset.co = ''; rqRender(S.view); } return; }
+  try { localStorage.removeItem('pos_draft:' + co + ':' + (last ? last.id : 'none')); } catch (e) {}
+  toast('Weekly update saved: ' + posCo(co).n + ' as on ' + rqDateTxt(asOn), 'ok-t');
+  setView('rq:acc:posrep');
+}
+async function posUpdWrite(co, asOn, note, c, last) {
+  // the newest week again: someone may have saved one meanwhile
+  var chk = await db.from('pos_weeks').select('id,as_on').eq('company', co).order('as_on', { ascending: false }).limit(1);
+  if (chk.error) return accErrMsg(chk.error);
+  var top = (chk.data || [])[0];
+  if (top && (!last || top.id !== last.id)) { await posLoad(true); return 'Someone else has just saved an update for ' + posCo(co).n + '. Open the weekly update again to start from it.'; }
+  // a line added meanwhile by someone else would be left out of the new week
+  var li = await db.from('pos_items').select('id').eq('company', co).eq('active', true);
+  if (li.error) return accErrMsg(li.error);
+  var miss = (li.data || []).filter(function(x){ return !c.by[x.id]; });
+  if (miss.length) { await posLoad(true); return miss.length + ' line' + (miss.length === 1 ? ' was' : 's were') + ' added meanwhile. Open the weekly update again; your figures are kept (press \u201CBring them back\u201D).'; }
+  var wid = accUuid(), rows = [];
+  Object.keys(c.by).forEach(function(iid){
+    var o = c.by[iid], v = o.v, x = posPv(v);
+    var nv = { week_id: wid, item_id: iid, rec: v ? v.rec : null, pay: v ? v.pay : null, adv: v ? v.adv : null, expiry: v ? v.expiry : null };
+    var ch = false;
+    Object.keys(o.set).forEach(function(k){ if (o.set[k] !== x[k]) ch = true; nv[k] = o.set[k] === 0 && (!v || v[k] == null) ? null : accAmtVal(o.set[k]); });
+    if (o.exp !== undefined) { if ((o.exp || null) !== ((v && v.expiry) || null)) ch = true; nv.expiry = o.exp || null; }
+    nv.updated_on = ch || !v ? asOn : (v.updated_on || asOn);
+    rows.push(nv);
+  });
+  // totals for the trend
+  var tmp = {}; rows.forEach(function(r){ tmp[r.item_id] = r; });
+  var wk = { id: wid, company: co, as_on: asOn, note: note || null, created_by_name: S.user.name };
+  POS.vals[wid] = tmp; wk.totals = posTotJson(co, wk); delete POS.vals[wid];
+  var wi = await db.from('pos_weeks').insert(wk).select('*').single();
+  if (wi.error) return accDup(wi.error) ? 'An update as on ' + rqDateTxt(asOn) + ' is already saved for ' + posCo(co).n + '.' : accErrMsg(wi.error);
+  for (var i = 0; i < rows.length; i += 200) {
+    var r = await db.from('pos_vals').insert(rows.slice(i, i + 200));
+    if (r.error) {
+      await db.from('pos_vals').delete().eq('week_id', wid);
+      await db.from('pos_weeks').delete().eq('id', wid);
+      return 'Could not save the figures (' + (r.error.message || r.error) + '). Nothing was saved; your figures are still on the screen.';
+    }
+  }
+  await posLoad(true);
+  return true;
+}
+
+// ─── WEEKLY REPORT ───
+function posReport() {
+  var t = todayStr(), R = { cos: [], ins: [], any2: false, t: t };
+  var all0 = [], all1 = {};
+  POS_COS.forEach(function(co){
+    var c = posCur(co.c); c.co = co; R.cos.push(c); if (c.w1) R.any2 = true;
+    posItemsOf(co.c, true).forEach(function(it){
+      var v0 = it.active !== false ? posValOf(c.w0, it.id) : null, v1 = posValOf(c.w1, it.id);
+      if (v0) all0.push({ it: it, v: v0, x: posPv(v0), w: c.w0 });
+      if (v1) all1[it.id] = { it: it, v: v1, x: posPv(v1) };
+    });
+  });
+  var G = { rec: 0, pay: 0, adv: 0, pad: 0, padN: 0, prec: 0, ppay: 0, padv: 0, net: 0 }, G1 = R.any2 ? { rec: 0, pay: 0, adv: 0, pad: 0, prec: 0, ppay: 0, padv: 0, net: 0 } : null;
+  R.cos.forEach(function(c){ Object.keys(G).forEach(function(k){ G[k] += c.t0[k] || 0; if (G1 && k in G1) G1[k] += (c.t1 || c.t0)[k] || 0; }); });
+  R.G = G; R.G1 = G1;
+  function L(list, n) { return list.slice(0, n).map(function(x){ return rqEsc(posName(x.it)) + ' ' + posShort(x.a); }).join(' &middot; '); }
+  // PAD (forced loan): big, every week
+  var pads = all0.filter(function(x){ return x.it.section === 'pad' && x.x.pay; }).map(function(x){ return { it: x.it, a: x.x.pay }; }).sort(function(a, b){ return b.a - a.a; });
+  var padTxt = 'Largest: ' + L(pads, 3) + '.';
+  if (G1) { var dp = G.pad - G1.pad, newP = pads.filter(function(x){ return !all1[x.it.id] || !all1[x.it.id].x.pay; }).length, clr = Object.keys(all1).filter(function(id){ var o = all1[id]; return o.it.section === 'pad' && o.x.pay && !all0.some(function(x){ return x.it.id === id && x.x.pay; }); }).length;
+    padTxt += ' This week ' + (dp > 0 ? 'up ' + posTkS(dp) : dp < 0 ? 'down ' + posTkS(-dp) : 'no change') + (newP ? ' &middot; ' + newP + ' new' : '') + (clr ? ' &middot; ' + clr + ' cleared' : '') + '.'; }
+  R.pads = pads;
+  if (pads.length) R.ins.push(['&#x1F3E6;', 'PAD: ' + posTkS(G.pad) + ' forced loan across ' + pads.length + ' lines', padTxt, 'pad']);
+  // PC ladder
+  var pcs = all0.filter(function(x){ return x.it.section === 'pc' && x.x.pay; });
+  if (pcs.length) {
+    var B = [['past the date', -99999, -1], ['next 15 days', 0, 15], ['16\u201330 days', 16, 30], ['31\u201360 days', 31, 60], ['61\u2013120 days', 61, 120], ['later', 121, 99999]].map(function(b){ return { n: b[0], lo: b[1], hi: b[2], a: 0, c: 0 }; }), nodate = { a: 0, c: 0 };
+    pcs.forEach(function(x){ if (!x.v.expiry) { nodate.a += x.x.pay; nodate.c++; return; } var d = rqDaysBetween(t, x.v.expiry); var b = B.find(function(b){ return d >= b.lo && d <= b.hi; }); b.a += x.x.pay; b.c++; });
+    var first = pcs.filter(function(x){ return x.v.expiry && x.v.expiry >= t; }).sort(function(a, b){ return a.v.expiry.localeCompare(b.v.expiry); })[0];
+    var nb = B.slice(1).find(function(b){ return b.c; });
+    R.ins.push([B[0].c ? '&#x26A0;' : '&#x1F4C5;', (B[0].c ? B[0].c + ' PC line' + (B[0].c === 1 ? ' is' : 's are') + ' past the date (' + posTkS(B[0].a) + ')' : nb ? 'PC repayments due: ' + posTkS(nb.a) + ' in the ' + (nb === B[1] ? 'next 15 days' : nb.n) : 'PC lines have no repayment date'),
+      B.slice(1).filter(function(b){ return b.c && (B[0].c || b !== nb); }).map(function(b){ return b.n + ': ' + posTkS(b.a) + ' (' + b.c + ')'; }).join(' &middot; ') + (first ? ' &middot; first: ' + rqEsc(posName(first.it)) + ' on ' + posD(first.v.expiry) : '') + (nodate.c ? ' &middot; ' + nodate.c + ' without a date' : '') + '.', B[0].c ? 'bad' : '']);
+  }
+  // FDR
+  var fdrs = all0.filter(function(x){ return x.it.section === 'fdr' && x.x.rec; });
+  if (fdrs.length) {
+    var fa = fdrs.reduce(function(s, x){ return s + x.x.rec; }, 0), fn = fdrs.filter(function(x){ return !x.v.expiry; }).length, fp = fdrs.filter(function(x){ return x.v.expiry && x.v.expiry < t; }).length;
+    var f30 = fdrs.filter(function(x){ return x.v.expiry && x.v.expiry >= t && rqDaysBetween(t, x.v.expiry) <= 30; });
+    if (fn || fp || f30.length) R.ins.push(['&#x1F4CB;', (f30.length ? f30.length + ' FDR' + (f30.length === 1 ? ' matures' : 's mature') + ' in the next 30 days' + (fn || fp ? '; ' : '') : '') + (fn ? fn + ' of ' + fdrs.length + ' FDRs have no maturity date' : '') + (fp ? (fn ? ', ' : '') + fp + ' show a past date' : ''), 'FDRs total ' + posTkS(fa) + '.' + (f30.length ? ' Next: ' + rqEsc(posName(f30[0].it)) + ' on ' + posD(f30[0].v.expiry) + '.' : '') + (fn ? ' Fill in the dates once so the app can warn before maturity.' : ''), fp ? 'warn' : '']);
+  }
+  // other dated lines past their date (not PAD / PC / FDR)
+  var oth = all0.filter(function(x){ return ['pad', 'pc', 'fdr'].indexOf(x.it.section) === -1 && x.v.expiry && x.v.expiry < t && !posZero(x.v); });
+  if (oth.length) R.ins.push(['&#x26A0;', oth.length + ' other line' + (oth.length === 1 ? ' is' : 's are') + ' past the expiry date', oth.slice(0, 4).map(function(x){ return rqEsc(posName(x.it)) + ' (' + rqEsc(x.it.nature || posSec(x.it.section)[1]) + ', ' + posD(x.v.expiry) + ')'; }).join(' &middot; ') + '.', 'warn']);
+  // parties, both companies together
+  var pr = posPartyRows();
+  var recs = pr.filter(function(r){ return r.rec > 0; }).sort(function(a, b){ return b.rec - a.rec; }), recT = recs.reduce(function(s, r){ return s + r.rec; }, 0);
+  if (recs.length >= 3 && recT) { var top2 = recs[0].rec + recs[1].rec; R.ins.push(['&#x1F465;', 'Receivables: 2 parties hold ' + Math.round(top2 * 100 / recT) + '%', rqEsc(recs[0].name) + ' ' + posShort(recs[0].rec) + ' &middot; ' + rqEsc(recs[1].name) + ' ' + posShort(recs[1].rec) + ' &middot; all others ' + posShort(recT - top2) + ' (of ' + posTkS(recT) + ').', '']); }
+  var pays = pr.filter(function(r){ return r.pay > 0; }).sort(function(a, b){ return b.pay - a.pay; }), payT = pays.reduce(function(s, r){ return s + r.pay; }, 0);
+  if (pays.length >= 5 && payT) { var t5 = pays.slice(0, 5).reduce(function(s, r){ return s + r.pay; }, 0); R.ins.push(['&#x1F4B3;', 'Party payables: top 5 are ' + Math.round(t5 * 100 / payT) + '% of ' + posTkS(payT), pays.slice(0, 5).map(function(r){ return rqEsc(r.name) + ' ' + posShort(r.pay); }).join(' &middot; ') + '.', '']); }
+  var advs = pr.filter(function(r){ return r.adv > 0; }).sort(function(a, b){ return b.adv - a.adv; }), advT = advs.reduce(function(s, r){ return s + r.adv; }, 0);
+  var old90 = all0.filter(function(x){ return x.it.kind === 'party' && x.x.adv && x.v.updated_on && rqDaysBetween(x.v.updated_on, t) >= 90; });
+  if (advs.length) R.ins.push(['&#x1F4B8;', 'Advances: ' + posTkS(advT) + ' with ' + advs.length + ' part' + (advs.length === 1 ? 'y' : 'ies'), advs.slice(0, 3).map(function(r){ return rqEsc(r.name) + ' ' + posShort(r.adv); }).join(' &middot; ') + (old90.length ? ' &middot; <b>' + old90.length + ' unchanged for 90+ days</b> (e.g. ' + rqEsc(posName(old90[0].it)) + ')' : '') + '. Ask the large holders for bills to adjust.', old90.length ? 'warn' : '']);
+  var small = all0.filter(function(x){ var m = Math.max(x.x.rec, x.x.pay, x.x.adv); return x.it.kind === 'party' && m > 0 && m < 1000000; }).sort(function(a, b){ return Math.max(a.x.rec, a.x.pay, a.x.adv) - Math.max(b.x.rec, b.x.pay, b.x.adv); });
+  if (small.length) R.ins.push(['&#x1F9F9;', small.length + ' party balance' + (small.length === 1 ? ' is' : 's are') + ' under Tk 10,000', 'e.g. ' + small.slice(0, 3).map(function(x){ return rqEsc(posName(x.it)) + ' ' + accFmt(Math.max(x.x.rec, x.x.pay, x.x.adv)); }).join(', ') + ' &mdash; settle and delete to keep the list short.', '']);
+  // week on week
+  var ch = [];
+  if (R.any2) {
+    all0.forEach(function(x){ var o = all1[x.it.id]; if (!o) return; ['rec', 'pay', 'adv'].forEach(function(k){ var d = x.x[k] - o.x[k]; if (d) ch.push({ it: x.it, k: k, d: d }); }); });
+    var inc = ch.filter(function(c){ return c.d > 0; }).sort(function(a, b){ return b.d - a.d; }), dec = ch.filter(function(c){ return c.d < 0; }).sort(function(a, b){ return a.d - b.d; });
+    var lbl = { rec: 'receivable', pay: 'payable', adv: 'advance' };
+    if (inc.length) R.ins.push(['&#x1F4C8;', 'Biggest increases', inc.slice(0, 5).map(function(c){ return rqEsc(posName(c.it)) + ' +' + posShort(c.d) + ' ' + lbl[c.k]; }).join(' &middot; ') + '.', '']);
+    if (dec.length) R.ins.push(['&#x1F4C9;', 'Biggest decreases', dec.slice(0, 5).map(function(c){ return rqEsc(posName(c.it)) + ' &minus;' + posShort(-c.d) + ' ' + lbl[c.k]; }).join(' &middot; ') + '.', '']);
+    var nw = all0.filter(function(x){ var c = R.cos.find(function(c){ return c.co.c === x.it.company; }); return c.w1 && !all1[x.it.id]; });
+    var cl = Object.keys(all1).map(function(id){ return all1[id]; }).filter(function(o){ return o.it.active === false; });
+    if (nw.length || cl.length) R.ins.push(['&#x2795;', 'New / closed this week', (nw.length ? 'Added: ' + nw.slice(0, 5).map(function(x){ return rqEsc(posName(x.it)) + (x.it.nature ? ' ' + rqEsc(x.it.nature) : '') + ' ' + posShort(x.x.rec || x.x.pay || x.x.adv); }).join(' &middot; ') : '') + (nw.length && cl.length ? ' &middot; ' : '') + (cl.length ? 'Closed: ' + cl.slice(0, 5).map(function(o){ return rqEsc(posName(o.it)) + ' (' + rqEsc(String(o.it.close_reason || '').toLowerCase()) + ')'; }).join(' &middot; ') : '') + '.', '']);
+  }
+  R.ch = ch;
+  var stale = all0.filter(function(x){ return x.it.kind === 'party' && !posZero(x.v) && x.v.updated_on && rqDaysBetween(x.v.updated_on, x.w.as_on) >= 56; });
+  if (stale.length) R.ins.push(['&#x23F8;', stale.length + ' part' + (stale.length === 1 ? 'y has' : 'ies have') + ' not changed in 8+ weeks', 'e.g. ' + stale.slice(0, 4).map(function(x){ return rqEsc(posName(x.it)); }).join(', ') + ' &mdash; old balances worth checking or closing.', '']);
+  if (!R.any2) R.ins.push(['&#x1F4C8;', 'Week on week starts from the second update', 'After the next weekly update this report shows the biggest increases and decreases, new and closed lines, parties unchanged for 8+ weeks and a 12-week trend.', '']);
+  return R;
+}
+function posSpark(co, key) {
+  var ws = posWeeksOf(co).filter(function(w){ return w.totals && w.totals[key === 'net' ? 'pay' : key] != null; }).slice(0, 12).reverse();
+  if (ws.length < 2) return '';
+  var v = ws.map(function(w){ return key === 'net' ? w.totals.pay - w.totals.rec : w.totals[key]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), W = 150, H = 34;
+  var pts = v.map(function(y, i){ return (i * W / (v.length - 1)).toFixed(1) + ',' + (mx === mn ? H / 2 : H - 3 - (y - mn) * (H - 6) / (mx - mn)).toFixed(1); }).join(' ');
+  return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" class="pos-spark"><polyline fill="none" stroke="#C96442" stroke-width="2" points="' + pts + '"/></svg><div class="sub2">' + posD(ws[0].as_on) + ' &rarr; ' + posD(ws[ws.length - 1].as_on) + '</div>';
+}
+function posRenderReport() {
+  var R = posReport(), G = R.G, G1 = R.G1;
+  posMarkSeen(); setTimeout(function(){ try { renderRail(); } catch (e) {} }, 0);
+  var d = function(k){ return G1 ? G[k] - G1[k] : null; };
+  var range = R.cos.map(function(c){ return c.co.s + ' ' + (c.w1 ? posD(c.w1.as_on) + ' &rarr; ' : '') + (c.w0 ? posD(c.w0.as_on) : '&mdash;'); }).join(' &middot; ');
+  rqSetHead('Accounts \u203A Position', 'Weekly position report', 'Both companies &middot; ' + range, '<button class="btn" onclick="setView(\'rq:acc:pos\')">&larr; Position</button><button class="btn pri" onclick="posPrintModal(\'rep\')">&#x1F5A8; Print</button>');
+  var padCo = R.cos.map(function(c){ return c.co.s + ' ' + posShort(c.t0.pad); }).join(' &middot; ');
+  var tiles = '<div class="stats pos-tiles"><div class="stat pos-tile pos-pad pos-pad-big"><div class="k">PAD &middot; forced loan</div><div class="v">' + posTkS(G.pad) + '</div><div class="n">' + G.padN + ' lines &middot; ' + padCo + ' &middot; ' + posCh(d('pad'), -1, 'weekly change from the 2nd update') + '</div></div>'
+    + posTile('Net liability (group)', posTkS(G.net), posCh(d('net'), -1, 'from the 2nd update'))
+    + posTile('Party receivable', posTkS(G.prec), posCh(d('prec'), 1, '&nbsp;'))
+    + posTile('Party payable', posTkS(G.ppay), posCh(d('ppay'), -1, '&nbsp;'))
+    + posTile('Advance', posTkS(G.padv), posCh(d('padv'), 0, '&nbsp;')) + '</div>';
+  var cmp = '<div class="card"><div class="card-h"><h3>By company</h3></div><div class="scroller"><table class="rq-t pos-t"><thead><tr><th>Company</th><th>As on</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">PAD</th><th class="num">Net liability</th><th>Trend (net liability)</th></tr></thead><tbody>'
+    + R.cos.map(function(c){ var t = c.t0, p = c.t1;
+      function cell(k, good){ return '<td class="num"><b>' + accFmt(t[k]) + '</b><div>' + (p ? posCh(t[k] - p[k], good) : '') + '</div></td>'; }
+      return '<tr><td><b>' + c.co.n + '</b></td><td>' + (c.w0 ? rqDateTxt(c.w0.as_on) : '&mdash;') + (c.w1 ? '<div class="sub2">last ' + rqDateTxt(c.w1.as_on) + '</div>' : '') + '</td>' + cell('rec', 1) + cell('pay', -1) + cell('adv', 0) + cell('pad', -1) + cell('net', -1) + '<td>' + (posSpark(c.co.c, 'net') || '<span class="sub2">from the 2nd update</span>') + '</td></tr>'; }).join('')
+    + '</tbody></table></div></div>';
+  var ins = '<div class="card"><div class="card-h"><h3>Insights</h3><span class="note">Worked out from the figures; nothing is sent anywhere.</span></div>' + R.ins.map(function(x){ return '<div class="pos-ins' + (x[3] ? ' ' + x[3] : '') + '"><span class="i">' + x[0] + '</span><div><b>' + x[1] + '</b><div>' + x[2] + '</div></div></div>'; }).join('') + '</div>';
+  $('content').innerHTML = tiles + ins + cmp;
+}
+
+// ─── PRINT / EXCEL ───
+function posPrintModal(pre) {
+  var parts = [['MTS', 'M.T. Sweaters &mdash; full details'], ['BFL', 'Banga Fashion &mdash; full details'], ['group', 'Group summary', 'by type of account, both companies'], ['party', 'Party summary', 'parties of both companies added together'], ['rep', 'Weekly report', 'changes and insights']];
+  var on = pre === 'rep' ? { rep: 1 } : { MTS: 1, BFL: 1, group: 1 };
+  var asOn = POS_COS.map(function(co){ var w = posWeeksOf(co.c)[0]; return co.s + ' ' + (w ? rqDateTxt(w.as_on) : '&mdash;'); }).join(' &middot; ');
+  accForm({ title: 'Print position', sub: 'As on ' + asOn,
+    body: parts.map(function(p){ return '<label class="pos-chk"><input type="checkbox" class="pp-part" value="' + p[0] + '"' + (on[p[0]] ? ' checked' : '') + '><span><b>' + p[1] + '</b>' + (p[2] ? ' &middot; ' + p[2] : '') + '</span></label>'; }).join('')
+      + '<label class="pos-chk pos-chk-z"><input type="checkbox" id="pp-zero" checked><span><b>Leave out zero balances</b></span></label>',
+    extra: '<button class="btn" onclick="posExcel()">Excel</button>', ok: 'Print / Save as PDF',
+    onOk: function(){ var p = posPickedParts(); if (!p.length) return 'Tick at least one part.'; posPrint(p, $('pp-zero').checked); return true; } });
+}
+function posPickedParts() { return Array.prototype.filter.call(document.querySelectorAll('.pp-part'), function(c){ return c.checked; }).map(function(c){ return c.value; }); }
+function posDocCompany(co, noZero) {
+  var c = posCur(co), t = c.t0, groups = posGroups(posItemsOf(co)), tot = { party: [0, 0, 0], bank: [0, 0, 0] };
+  var h = accDocHead('Receivable &amp; Credit Position', '<b>' + posCo(co).n + '</b><br>As on ' + (c.w0 ? rqDateTxt(c.w0.as_on) : '&mdash;') + (c.w0 ? '<br>Updated by ' + rqEsc(c.w0.created_by_name || '') : ''))
+    + '<div class="kp"><div><span>Receivable</span><b>' + accFmt(t.rec) + '</b></div><div><span>Payable</span><b>' + accFmt(t.pay) + '</b></div><div><span>Advance</span><b>' + accFmt(t.adv) + '</b></div><div class="main"><span>Net liability</span><b>' + accFmt(t.net) + '</b></div></div>'
+    + '<table><thead><tr><th style="width:5%">SN</th><th style="width:31%">Name / account</th><th style="width:10%">Nature</th><th class="num" style="width:13%">Receivable</th><th class="num" style="width:13%">Payable</th><th class="num" style="width:12%">Advance</th><th style="width:8%">Expiry</th><th style="width:8%">Updated</th></tr></thead><tbody>';
+  groups.forEach(function(g){
+    var list = g.items.filter(function(it){ return !noZero || !posZero(posValOf(c.w0, it.id)); }); if (!list.length) return;
+    var st = [0, 0, 0];
+    h += '<tr><td colspan="8" class="cl">' + (g.bank ? rqEsc(g.bank) + ' &middot; ' : '') + g.title + '</td></tr>' + list.map(function(it, i){
+      var v = posValOf(c.w0, it.id), x = posPv(v); st[0] += x.rec; st[1] += x.pay; st[2] += x.adv;
+      return '<tr><td class="sl">' + (i + 1) + '</td><td>' + rqEsc(posName(it)) + (it.currency && it.currency !== 'BDT' ? ' <small>' + rqEsc(it.currency) + '</small>' : '') + '</td><td>' + rqEsc(it.nature || '') + '</td><td class="num">' + posAmt(v && v.rec) + '</td><td class="num">' + posAmt(v && v.pay) + '</td><td class="num">' + posAmt(v && v.adv) + '</td><td>' + posD(v && v.expiry) + '</td><td class="sl">' + posD(v && v.updated_on) + '</td></tr>';
+    }).join('') + '<tr><td></td><td><b>Sub total</b></td><td></td><td class="num"><b>' + accFmt(st[0]) + '</b></td><td class="num"><b>' + accFmt(st[1]) + '</b></td><td class="num"><b>' + accFmt(st[2]) + '</b></td><td colspan="2"></td></tr>';
+    var k = g.bank ? 'bank' : 'party'; for (var i = 0; i < 3; i++) tot[k][i] += st[i];
+  });
+  var g3 = [0, 1, 2].map(function(i){ return tot.party[i] + tot.bank[i]; });
+  function tr(l, a){ return '<tr class="tot"><td></td><td>' + l + '</td><td></td><td class="num">' + accFmt(a[0]) + '</td><td class="num">' + accFmt(a[1]) + '</td><td class="num">' + accFmt(a[2]) + '</td><td colspan="2"></td></tr>'; }
+  return h + tr('Total (Party)', tot.party) + tr('Total (Bank)', tot.bank) + tr('Grand total (Party + Bank)', g3) + '<tr class="tot"><td></td><td>Net liability (Payable &minus; Receivable)</td><td></td><td></td><td class="num">' + accFmt(g3[1] - g3[0]) + '</td><td colspan="3"></td></tr></tbody></table>';
+}
+function posDocGroup(noZero) {
+  var d = posGroupData(), t = d.tot;
+  var asOn = POS_COS.map(function(co){ var w = posWeeksOf(co.c)[0]; return co.s + ' ' + (w ? rqDateTxt(w.as_on) : '&mdash;'); }).join('<br>');
+  function cells(o){ var g = { rec: o.MTS.rec + o.BFL.rec, pay: o.MTS.pay + o.BFL.pay, adv: o.MTS.adv + o.BFL.adv }; function n(v){ return '<td class="num">' + (v ? accFmt(v) : '') + '</td>'; } return n(o.MTS.rec) + n(o.BFL.rec) + '<td class="num"><b>' + (g.rec ? accFmt(g.rec) : '') + '</b></td>' + n(o.MTS.pay) + n(o.BFL.pay) + '<td class="num"><b>' + (g.pay ? accFmt(g.pay) : '') + '</b></td>' + n(g.adv); }
+  var net = function(c){ return t[c].pay - t[c].rec; };
+  return accDocHead('Group summary', '<b>M.T. Sweaters &amp; Banga Fashion</b><br>' + asOn)
+    + '<div class="kp"><div><span>Receivable</span><b>' + accFmt(t.MTS.rec + t.BFL.rec) + '</b></div><div><span>Payable</span><b>' + accFmt(t.MTS.pay + t.BFL.pay) + '</b></div><div><span>Advance</span><b>' + accFmt(t.MTS.adv + t.BFL.adv) + '</b></div><div class="main"><span>Net liability</span><b>' + accFmt(net('MTS') + net('BFL')) + '</b></div></div>'
+    + '<table><thead><tr><th style="width:4%">SN</th><th style="width:24%">Particulars</th><th class="num">Rec. M.T.</th><th class="num">Rec. Banga</th><th class="num">Receivable</th><th class="num">Pay. M.T.</th><th class="num">Pay. Banga</th><th class="num">Payable</th><th class="num">Advance</th></tr></thead><tbody>'
+    + d.lines.filter(function(l){ return !noZero || ['MTS', 'BFL'].some(function(c){ return l[c].rec || l[c].pay || l[c].adv; }); }).map(function(l, i){ return '<tr><td class="sl">' + (i + 1) + '</td><td>' + l.n + '</td>' + cells(l) + '</tr>'; }).join('')
+    + '<tr class="tot"><td></td><td>Total</td>' + cells(t) + '</tr><tr class="tot"><td></td><td>Net liability</td><td colspan="3"></td><td class="num">' + accFmt(net('MTS')) + '</td><td class="num">' + accFmt(net('BFL')) + '</td><td class="num">' + accFmt(net('MTS') + net('BFL')) + '</td><td></td></tr></tbody></table>';
+}
+function posDocParty(noZero) {
+  var rows = posPartyRows().filter(function(r){ return !noZero || r.rec || r.pay || r.adv; }).sort(function(a, b){ return a.name.localeCompare(b.name); });
+  var t = rows.reduce(function(s, r){ s.rec += r.rec; s.pay += r.pay; s.adv += r.adv; return s; }, { rec: 0, pay: 0, adv: 0 });
+  function cc(c){ if (!c) return '<td class="num sl">&mdash;</td>'; var a = []; if (c.rec) a.push('R ' + accFmt(c.rec)); if (c.pay) a.push('P ' + accFmt(c.pay)); if (c.adv) a.push('A ' + accFmt(c.adv)); return '<td class="num">' + (a.join('<br>') || '0') + '</td>'; }
+  return accDocHead('Party summary', '<b>Both companies added together</b><br>' + rows.length + ' parties &middot; ' + rows.filter(function(r){ return r.both; }).length + ' in both')
+    + '<table><thead><tr><th style="width:27%">Party</th><th class="num" style="width:13%">M.T.</th><th class="num" style="width:13%">Banga</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">Net</th></tr></thead><tbody>'
+    + rows.map(function(r){ return '<tr><td>' + rqEsc(r.name) + (r.both ? ' <small>both</small>' : '') + '</td>' + cc(r.co.MTS) + cc(r.co.BFL) + '<td class="num">' + (r.rec ? accFmt(r.rec) : '') + '</td><td class="num">' + (r.pay ? accFmt(r.pay) : '') + '</td><td class="num">' + (r.adv ? accFmt(r.adv) : '') + '</td><td class="num"><b>' + (r.net < 0 ? '&minus;' : '') + accFmt(Math.abs(r.net)) + '</b></td></tr>'; }).join('')
+    + '<tr class="tot"><td>Total</td><td></td><td></td><td class="num">' + accFmt(t.rec) + '</td><td class="num">' + accFmt(t.pay) + '</td><td class="num">' + accFmt(t.adv) + '</td><td class="num">' + accFmt(t.rec + t.adv - t.pay) + '</td></tr></tbody></table>'
+    + '<div class="none" style="margin-top:6px">Net = Receivable + Advance &minus; Payable (minus: we owe them).</div>';
+}
+function posDocReport() {
+  var R = posReport(), G = R.G, G1 = R.G1, dd = function(k){ if (!G1) return ''; var d = G[k] - G1[k]; return '<small>' + (d > 0 ? '&#x25B2; ' : d < 0 ? '&#x25BC; ' : '') + (d ? posShort(Math.abs(d)) : 'no change') + '</small>'; };
+  var range = R.cos.map(function(c){ return c.co.s + ' ' + (c.w1 ? rqDateTxt(c.w1.as_on) + ' &rarr; ' : '') + (c.w0 ? rqDateTxt(c.w0.as_on) : '&mdash;'); }).join('<br>');
+  return accDocHead('Weekly position report', '<b>Both companies</b><br>' + range)
+    + '<div class="kp"><div class="main"><span>PAD &middot; forced loan</span><b>' + accFmt(G.pad) + '</b>' + dd('pad') + '</div><div><span>Net liability</span><b>' + accFmt(G.net) + '</b>' + dd('net') + '</div><div><span>Party receivable</span><b>' + accFmt(G.prec) + '</b>' + dd('prec') + '</div><div><span>Party payable</span><b>' + accFmt(G.ppay) + '</b>' + dd('ppay') + '</div></div>'
+    + '<div class="sec"><span><i></i>By company</span></div><table><thead><tr><th>Company</th><th>As on</th><th class="num">Receivable</th><th class="num">Payable</th><th class="num">Advance</th><th class="num">PAD</th><th class="num">Net liability</th></tr></thead><tbody>'
+    + R.cos.map(function(c){ var t = c.t0, p = c.t1; function n(k){ return '<td class="num">' + accFmt(t[k]) + (p ? '<small>' + (t[k] - p[k] > 0 ? '+' : t[k] - p[k] < 0 ? '&minus;' : '') + accFmt(Math.abs(t[k] - p[k])) + '</small>' : '') + '</td>'; } return '<tr><td>' + c.co.n + '</td><td>' + (c.w0 ? rqDateTxt(c.w0.as_on) : '') + '</td>' + n('rec') + n('pay') + n('adv') + n('pad') + n('net') + '</tr>'; }).join('') + '</tbody></table>'
+    + '<div class="sec"><span><i></i>Insights</span></div><table><tbody>' + R.ins.map(function(x){ return '<tr><td style="width:4%">' + x[0] + '</td><td><b>' + x[1] + '</b><small>' + x[2] + '</small></td></tr>'; }).join('') + '</tbody></table>';
+}
+function posPrint(parts, noZero) {
+  var out = parts.map(function(p){ return p === 'MTS' || p === 'BFL' ? posDocCompany(p, noZero) : p === 'group' ? posDocGroup(noZero) : p === 'party' ? posDocParty(noZero) : posDocReport(); });
+  accDocOpen('Position ' + todayStr(), out.join('<div style="break-before:page"></div>'));
+}
+function posExcel() {
+  var parts = posPickedParts(), noZero = $('pp-zero') && $('pp-zero').checked; if (!parts.length) { toast('Tick at least one part', 'err'); return; }
+  var sheets = [];
+  function n(p){ return Math.round(p) / 100; }
+  parts.forEach(function(p){
+    if (p === 'MTS' || p === 'BFL') {
+      var c = posCur(p), aoa = [[posCo(p).n + ' \u2014 Receivable & Credit Position'], ['As on', c.w0 ? rqDateTxt(c.w0.as_on) : ''], [], ['SN', 'Name / account', 'Nature', 'Receivable', 'Payable', 'Advance', 'Expiry', 'Updated', 'Bank', 'Section']];
+      posGroups(posItemsOf(p)).forEach(function(g){ var list = g.items.filter(function(it){ return !noZero || !posZero(posValOf(c.w0, it.id)); }); if (!list.length) return; aoa.push([g.title.replace(/&amp;/g, '&')]);
+        list.forEach(function(it, i){ var v = posValOf(c.w0, it.id); aoa.push([i + 1, posName(it), it.nature || '', v && v.rec != null ? Number(v.rec) : '', v && v.pay != null ? Number(v.pay) : '', v && v.adv != null ? Number(v.adv) : '', v && v.expiry ? rqDateTxt(v.expiry) : '', v && v.updated_on ? rqDateTxt(v.updated_on) : '', it.bank || '', posSec(it.section)[1].replace(/&amp;/g, '&')]); }); });
+      aoa.push([], ['', 'Total', '', n(c.t0.rec), n(c.t0.pay), n(c.t0.adv)], ['', 'Net liability (Payable - Receivable)', '', '', n(c.t0.net)]);
+      sheets.push({ name: posCo(p).s + ' details', aoa: aoa, widths: [5, 36, 14, 15, 15, 15, 11, 11, 18, 36] });
+    } else if (p === 'group') {
+      var d = posGroupData(), a2 = [['Group summary \u2014 M.T. Sweaters & Banga Fashion'], [], ['Particulars', 'Rec. M.T.', 'Rec. Banga', 'Receivable', 'Pay. M.T.', 'Pay. Banga', 'Payable', 'Advance']];
+      d.lines.forEach(function(l){ if (noZero && !['MTS', 'BFL'].some(function(c){ return l[c].rec || l[c].pay || l[c].adv; })) return; a2.push([l.n, n(l.MTS.rec), n(l.BFL.rec), n(l.MTS.rec + l.BFL.rec), n(l.MTS.pay), n(l.BFL.pay), n(l.MTS.pay + l.BFL.pay), n(l.MTS.adv + l.BFL.adv)]); });
+      sheets.push({ name: 'Group summary', aoa: a2, widths: [40, 15, 15, 15, 15, 15, 15, 15] });
+    } else if (p === 'party') {
+      var a3 = [['Party summary \u2014 both companies'], [], ['Party', 'In both', 'M.T. Rec', 'M.T. Pay', 'M.T. Adv', 'Banga Rec', 'Banga Pay', 'Banga Adv', 'Receivable', 'Payable', 'Advance', 'Net']];
+      posPartyRows().filter(function(r){ return !noZero || r.rec || r.pay || r.adv; }).sort(function(a, b){ return a.name.localeCompare(b.name); }).forEach(function(r){ var m = r.co.MTS || {}, b = r.co.BFL || {}; a3.push([r.name, r.both ? 'yes' : '', n(m.rec || 0), n(m.pay || 0), n(m.adv || 0), n(b.rec || 0), n(b.pay || 0), n(b.adv || 0), n(r.rec), n(r.pay), n(r.adv), n(r.net)]); });
+      sheets.push({ name: 'Party summary', aoa: a3, widths: [36, 7, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14] });
+    } else {
+      var R = posReport(), a4 = [['Weekly position report'], [], ['Company', 'As on', 'Receivable', 'Payable', 'Advance', 'PAD', 'Net liability']];
+      R.cos.forEach(function(c){ a4.push([c.co.n, c.w0 ? rqDateTxt(c.w0.as_on) : '', n(c.t0.rec), n(c.t0.pay), n(c.t0.adv), n(c.t0.pad), n(c.t0.net)]); });
+      a4.push([], ['Insights']); R.ins.forEach(function(x){ a4.push([x[1].replace(/<[^>]+>/g, '').replace(/&[a-z#0-9]+;/gi, ' '), x[2].replace(/<[^>]+>/g, '').replace(/&middot;/g, '\u00B7').replace(/&[a-z#0-9]+;/gi, ' ')]); });
+      sheets.push({ name: 'Weekly report', aoa: a4, widths: [44, 120] });
+    }
+  });
+  accXlsx('Position_' + todayStr(), sheets);
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════
+// GREETING: a small sky card when someone opens the app. Two a day per person
+// (the first open before 2 pm, the first open from 2 pm). Uses only what is
+// already loaded: nothing is read from or written to the database.
+// Closes on Enter, Escape, a click, or by itself.
+// ═══════════════════════════════════════════════════════════════════════
+var GRT_SLOTS = [
+  { k: 'morning', from: 5, to: 11, icon: '&#x2615;', sky: 'linear-gradient(180deg,#FFD9A8,#FCEBD4)', orb: 'top:26px;background:radial-gradient(circle,#FFC44D,#F59E0B);box-shadow:0 0 40px #FCD34D',
+    title: function(n){ return 'Good morning, ' + n; },
+    lines: ['Coffee first, then the day.', 'A fresh start \u2014 let\u2019s make it a good one.', 'Fresh coffee, fresh plans.', 'Good things get planned in the morning.', 'One clear list and a hot cup of coffee.'] },
+  { k: 'noon', from: 11, to: 14, icon: '&#x1F37D;', sky: 'linear-gradient(180deg,#7DC3F0,#DCEFFC)', orb: 'top:10px;background:radial-gradient(circle,#FFF3B0,#FBBF24);box-shadow:0 0 50px #FDE68A',
+    title: function(n){ return 'Good noon, ' + n; },
+    lines: ['Lunch soon \u2014 half the day done.', 'Midday check: you\u2019re doing well.', 'Don\u2019t skip lunch today.', 'Half way there. Keep it steady.'] },
+  { k: 'afternoon', from: 14, to: 17, icon: '&#x1F375;', sky: 'linear-gradient(180deg,#9CC6E6,#F3E6C8)', orb: 'top:30px;background:radial-gradient(circle,#FFE08A,#F59E0B);box-shadow:0 0 34px #FDE68A',
+    title: function(n){ return 'Tea time, ' + n; },
+    lines: ['A cup of tea and the last push.', 'Good afternoon \u2014 time for a short break.', 'Tea, a deep breath, then the next thing.', 'The afternoon is for finishing things.'] },
+  { k: 'evening', from: 17, to: 20, icon: '&#x1F307;', sky: 'linear-gradient(180deg,#F59E7A,#FBD3B4)', orb: 'top:62px;background:radial-gradient(circle,#FFB070,#EA580C);box-shadow:0 0 40px #FDBA74',
+    title: function(n){ return 'Good evening, ' + n; },
+    lines: ['Nice work today. Wrap up and rest.', 'Almost done for the day \u2014 well done.', 'Time to wrap up. Tomorrow is another good day.', 'A good day\u2019s work. Head home soon.'] },
+  { k: 'night', from: 20, to: 29, icon: '&#x1F319;', sky: 'linear-gradient(180deg,#1E2A4A,#3B4A7A)', orb: 'top:22px;width:54px;height:54px;margin-left:-27px;background:radial-gradient(circle at 35% 35%,#FFFBEA,#E5E7EB);box-shadow:0 0 30px #C7D2FE', stars: true,
+    title: function(n){ return 'Working late, ' + n + '?'; },
+    lines: ['Don\u2019t forget to rest. The work will wait.', 'Late again? Get some sleep soon.', 'Thank you for the extra hours \u2014 now rest.', 'The night is for rest. Finish up soon.'] }
+];
+function grtSlot(h) { var x = h < 5 ? h + 24 : h; return GRT_SLOTS.find(function(s){ return x >= s.from && x < s.to; }) || GRT_SLOTS[0]; }
+function grtKey(d) { return 'pt_greet:' + S.user.id + ':' + rqLocalDate(d) + ':' + (d.getHours() < 14 ? 'a' : 'b'); }
+function grtFirst(n) { var p = String(n || '').trim().split(/\s+/); return p[0] && p[0].length > 2 ? p[0] : String(n || '').trim(); }
+function grtN(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+// one useful line for this person, from what is already loaded
+function grtNote(slot) {
+  var r = S.user.role, a = [];
+  try {
+    var late = slot.k === 'evening' || slot.k === 'night';
+    if (typeof RQ !== 'undefined' && RQ.loaded && !RQ.missing && rqCanSee()) {
+      if (r === 'management') {
+        var m = RQ.rows.filter(rqNeedsMe).length; if (m) a.push(grtN(m, 'requisition') + ' waiting for your approval');
+        var pp = typeof apNeedList === 'function' ? apNeedList().length : 0; if (pp) a.push(grtN(pp, 'payment') + ' to approve');
+        var nw = typeof posNewWeeks === 'function' ? posNewWeeks() : 0; if (nw) a.push('a new weekly position report');
+      } else if (r === 'accounts') {
+        var w = accOn() ? accWaitingList() : [], ok = w.filter(function(x){ return apOn() && apInfo(x).avail > 0; }).length;
+        if (w.length) a.push(grtN(w.length, 'requisition') + ' waiting for payment' + (ok ? ' (' + ok + ' approved to pay)' : ''));
+      } else if (r === 'dept') {
+        var q = rqQOn() ? rqQCount(S.user.division) : 0; if (q) a.push(grtN(q, 'question') + ' waiting on your requisitions');
+        var c = rqCounts(S.user.division); if (c.overdue) a.push(grtN(c.overdue, 'job') + ' past the target date');
+      } else if (['agm', 'cao', 'audit', 'admin'].indexOf(r) !== -1) {
+        var mm = RQ.rows.filter(rqNeedsMe).length; if (mm) a.push(grtN(mm, 'requisition') + ' waiting for your approval');
+      }
+    }
+    if (!a.length && S.orders && S.orders.length && ['merchant', 'jm', 'manager', 'hod', 'admin', 'management'].indexOf(r) !== -1) {
+      var day = late ? rqAddDays(todayStr(), 1) : todayStr(), n = 0;
+      S.orders.forEach(function(o){ if (o.shipped) return; ['yarn', 'pp', 'knit', 'sew', 'pack', 'insp', 'ship'].forEach(function(k){ if (o['plan_' + k] && String(o['plan_' + k]).slice(0, 10) === day && !o['act_' + k]) n++; }); });
+      if (n) a.push((late ? 'Tomorrow: ' : '') + grtN(n, 'milestone') + ' due' + (late ? '' : ' today'));
+    }
+  } catch (e) {}
+  if (a.length) return a.slice(0, 2).join(' &middot; ');
+  return slot.k === 'night' ? 'All saved &middot; nothing urgent tonight' : 'Nothing urgent waiting for you';
+}
+function grtSchedule() {
+  if (!S.user || document.getElementById('grt')) return;
+  var now = new Date(), key = grtKey(now);
+  try { if (localStorage.getItem(key)) return; } catch (e) { return; } // no storage: no greeting (it would show every time)
+  setTimeout(function(){ try { grtShow(key); } catch (e) { console.error('greeting:', e); } }, 1500);
+}
+function grtShow(key) {
+  if (!S.user || document.getElementById('grt') || document.hidden) return;
+  try { if (localStorage.getItem(key)) return; localStorage.setItem(key, '1'); } catch (e) { return; }
+  var now = new Date(), slot = grtSlot(now.getHours()), name = rqEsc(grtFirst(S.user.name));
+  var line = slot.lines[Math.floor(Math.random() * slot.lines.length)];
+  var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], mons = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var when = days[now.getDay()] + ', ' + now.getDate() + ' ' + mons[now.getMonth()];
+  var stars = slot.stars ? [[40, 20], [90, 60], [280, 30], [310, 80], [200, 92], [150, 26], [60, 96]].map(function(p){ return '<span class="grt-star" style="left:' + p[0] + 'px;top:' + p[1] + 'px"></span>'; }).join('') : '';
+  var el = document.createElement('div');
+  el.id = 'grt'; el.className = 'grt-wrap'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Greeting');
+  el.innerHTML = '<div class="grt" onclick="event.stopPropagation()"><div class="grt-sky" style="background:' + slot.sky + '"><div class="grt-orb" style="' + slot.orb + '"></div>' + stars + '<div class="grt-ic">' + slot.icon + '</div></div>'
+    + '<div class="grt-b"><div class="grt-t">' + slot.title(name) + '</div><div class="grt-s">' + when + ' &middot; ' + line + '</div><div class="grt-n">' + grtNote(slot) + '</div>'
+    + '<button class="btn pri grt-go" onclick="grtClose()">' + (slot.k === 'morning' || slot.k === 'noon' ? 'Let&rsquo;s go' : 'Continue') + '</button></div></div>';
+  el.onclick = grtClose;
+  document.body.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add('in'); });
+  window.addEventListener('keydown', grtKeyH, true);
+  GRT._t = setTimeout(grtClose, 9000);
+}
+var GRT = { _t: null };
+function grtKeyH(e) { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); grtClose(); } }
+function grtClose() {
+  clearTimeout(GRT._t); window.removeEventListener('keydown', grtKeyH, true);
+  var el = document.getElementById('grt'); if (!el) return;
+  el.classList.remove('in'); el.id = 'grt-gone';
+  setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 260);
+}
+
 // ─── THE ACCOUNTS POPUP WINDOW (Enter = the main button) ───
 var ACCM = null;
 function accForm(o) {
@@ -25246,6 +26653,7 @@ function accLoginNotice() {
   var due = (ACC.cheques || []).filter(function(c){ return c.status === 'issued' && c.clear_date && c.clear_date <= t; }), bounced = (ACC.cheques || []).filter(function(c){ return c.status === 'bounced'; });
   var lines = [];
   if (w.length) lines.push(w.length + ' requisition' + (w.length === 1 ? '' : 's') + ' approved by Management ' + (w.length === 1 ? 'is' : 'are') + ' waiting for payment (' + accTkTxt(w.reduce(function(s, r){ return s + accSum(r).bal; }, 0)) + ').');
+  if (w.length && apOn()) { var _ok = w.filter(function(r){ return apInfo(r).avail > 0; }).length; lines.push(_ok ? _ok + ' of them ' + (_ok === 1 ? 'is' : 'are') + ' approved by Management for payment.' : 'None of them is approved by Management for payment yet.'); }
   if (due.length) lines.push(due.length + ' cheque' + (due.length === 1 ? ' is' : 's are') + ' due today or past the clearance date.');
   if (bounced.length) lines.push(bounced.length + ' bounced cheque' + (bounced.length === 1 ? '' : 's') + ' still open.');
   if (!lines.length) return;
