@@ -2598,7 +2598,7 @@ table.wo-t-buy td{vertical-align:top}
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.27.1</p>
+    <p class="login-ver">V.2026.10.28.1</p>
   </div></div>
 </div>
 
@@ -2640,7 +2640,7 @@ table.wo-t-buy td{vertical-align:top}
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.27.1</div>
+  <div id="ver-stamp">V.2026.10.28.1</div>
 </div>
 
 
@@ -3519,7 +3519,7 @@ table.wo-t-buy td{vertical-align:top}
 
 <div class="ov" id="ov-report-preview" onclick="if(event.target===this)closeReportPreview()">
   <div class="modal" style="max-width:1400px;width:96vw;height:90vh;display:flex;flex-direction:column">
-    <div class="m-h" style="flex-shrink:0"><div><h3 id="rp-title">Report</h3><div class="msub">Preview — use Print to save as PDF or print</div></div>
+    <div class="m-h" style="flex-shrink:0"><div><h3 id="rp-title">Report</h3><div class="msub" id="rp-sub">Preview — use Print to save as PDF or print</div></div>
       <div style="display:flex;gap:8px"><button class="btn pri" onclick="printReportPreview()">&#x1F5A8; Print / Save PDF</button><button class="btn" onclick="closeReportPreview()">Close</button></div></div>
     <iframe id="rp-frame" title="Report preview" style="flex:1;width:100%;border:0;background:#fff;border-radius:0 0 14px 14px"></iframe>
   </div>
@@ -4113,10 +4113,18 @@ function openReportPreview(title, html) {
         else if (e.key === 'Escape') { closeReportPreview(); }
       });
     } catch (err) {}
+    // the print rule: show the real pages (same size, margins and breaks as paper)
+    var sub = $('rp-sub'); if (sub) sub.textContent = 'Preview \u2014 laying out the pages\u2026';
+    RPV.p = rpPaginate(f.contentDocument).catch(function(e){ console.error('print preview:', e); return 0; }).then(function(n){
+      if (sub) sub.textContent = n ? 'Preview \u2014 ' + n + ' page' + (n === 1 ? '' : 's') + ', exactly as printed. Use Print to save as PDF or print' : 'Preview \u2014 use Print to save as PDF or print';
+      return n;
+    });
   };
+  RPV.p = null;
   f.srcdoc = html;
   openModal('ov-report-preview');
 }
+var RPV = { p: null };
 function closeReportPreview() {
   var f = $('rp-frame');
   closeModal('ov-report-preview'); f.srcdoc = '';
@@ -4124,7 +4132,7 @@ function closeReportPreview() {
 }
 function printReportPreview() {
   var f = $('rp-frame');
-  try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Could not open the print dialog', 'err'); }
+  Promise.resolve(RPV.p).then(function(){ try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { toast('Could not open the print dialog', 'err'); } });
 }
 
 // ─── MATERIAL STATUS REPORT (yarn + accessories, for the weekly review) ───
@@ -28284,39 +28292,45 @@ function woStatusTxt(w) {
   return d ? 'Part received (' + d + ' of ' + ls.length + ')' : 'Ordered, waiting';
 }
 // ─── the printed work order ───
-function woDocCss() {
+function woDocCss() { // clear lines all round (thin, so little ink): boxes, a full grid on the items, signature boxes
   return accDocCss() + lowInkCss()
-    + '.wo-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.wo-hd .addr{font-size:8.6px;color:#666;margin-top:4px;line-height:1.5}'
-    + '.wo-meta{text-align:right;font-size:10px;line-height:1.75}.wo-meta b{font-family:Menlo,Consolas,monospace;font-size:11.5px}'
-    + '.wo-box{display:grid;grid-template-columns:1fr 1fr;border:1px solid #d9d4ca;border-radius:6px;margin:16px 0 14px}.wo-box div{padding:8px 12px;font-size:10.5px;line-height:1.55}.wo-box div+div{border-left:1px solid #d9d4ca}'
-    + '.wo-box span,.wo-note span{display:block;font-size:8px;letter-spacing:.12em;color:#888;font-weight:700;margin-bottom:2px;text-transform:uppercase}'
-    + 'table.wo-t{width:100%;border-collapse:collapse}table.wo-t th{font-size:8px;letter-spacing:.1em;color:#777;text-transform:uppercase;text-align:left;border-bottom:1.3px solid #1c1c1c;padding:5px 5px;background:none}'
-    + 'table.wo-t td{padding:6px 5px;border-bottom:1px solid #e6e2da;vertical-align:top;font-size:10.5px}table.wo-t .num{text-align:right;font-family:Menlo,Consolas,monospace}table.wo-t small{display:block;color:#888;font-size:8.6px}'
-    + 'table.wo-t tr.tot td{font-weight:700;border-top:1.3px solid #1c1c1c;border-bottom:none}.wo-words{font-size:9.6px;color:#555;margin-top:5px}'
-    + '.wo-note{margin-top:14px;font-size:10px;line-height:1.6}.wo-sig{display:flex;justify-content:space-between;align-items:flex-end;margin-top:70px;break-inside:avoid}'
-    + '.wo-sig div{width:190px;text-align:center;font-size:9.6px}.wo-sig .ln{border-top:1px solid #1c1c1c;padding-top:4px}.wo-sig img{max-height:46px;max-width:170px;display:block;margin:0 auto 2px}';
+    + '.wo-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.wo-hd .addr{font-size:8.6px;color:#555;margin-top:4px;line-height:1.5}'
+    + '.wo-meta{border:1px solid #7d786f;padding:6px 10px;font-size:10px;line-height:1.7;min-width:150px}.wo-meta div{display:flex;justify-content:space-between;gap:14px}.wo-meta b{font-family:Menlo,Consolas,monospace;font-size:11px}'
+    + '.wo-box{display:grid;grid-template-columns:1fr 1fr;border:1px solid #7d786f;margin:14px 0 12px}.wo-box div{padding:8px 11px;font-size:10.5px;line-height:1.55}.wo-box div+div{border-left:1px solid #7d786f}'
+    + '.wo-box span,.wo-note span{display:block;font-size:8px;letter-spacing:.12em;color:#666;font-weight:700;margin-bottom:3px;text-transform:uppercase}'
+    + 'table.wo-t{width:100%;border-collapse:collapse;border:1px solid #7d786f}table.wo-t th{font-size:8px;letter-spacing:.08em;color:#333;text-transform:uppercase;text-align:left;border:1px solid #7d786f;border-bottom:1.4px solid #1c1c1c;padding:6px 6px;background:none}'
+    + 'table.wo-t td{padding:6px 6px;border:.8px solid #b3ada2;vertical-align:top;font-size:10.5px}table.wo-t .num{text-align:right;font-family:Menlo,Consolas,monospace}table.wo-t th.num{text-align:right}table.wo-t small{display:block;color:#777;font-size:8.6px;margin-top:1px}'
+    + 'table.wo-t tr{break-inside:avoid}table.wo-t tr.tot td{font-weight:700;border-top:1.4px solid #1c1c1c}.wo-words{font-size:9.6px;color:#333;margin-top:5px}'
+    + '.wo-note{margin-top:12px;font-size:10px;line-height:1.6;border:1px solid #7d786f;padding:7px 11px}'
+    + '.wo-sig{display:grid;grid-template-columns:1fr 1fr;border:1px solid #7d786f;margin-top:22px;break-inside:avoid}.wo-sig>div{padding:8px 12px 7px;min-height:96px;display:flex;flex-direction:column;justify-content:flex-end;text-align:center;font-size:9.6px}.wo-sig>div+div{border-left:1px solid #7d786f}'
+    + '.wo-sig .cap{font-size:8px;letter-spacing:.12em;color:#666;font-weight:700;text-transform:uppercase;text-align:left;margin-bottom:auto}.wo-sig .ln{border-top:1px solid #1c1c1c;padding-top:4px;margin:0 14px}.wo-sig img{max-height:48px;max-width:180px;display:block;margin:4px auto 2px}';
 }
+// the signature printed for the person who made it: their own (Admin -> Users), or for
+// Management the picture set in Admin -> Requisitions (the same rule as the requisition print)
+function woSigOf(w) { return sigImg(w.made_by) || (w.made_by_role === 'management' && RQ.settings ? RQ.settings.mgmt_sign || null : null); }
 function woDocHtml(w, ls) {
   var show = !!w.show_prices, tot = woTotal(ls), E = rqEsc, def = WO.src[w.source] || {};
   var qt = ls.reduce(function(s, l){ return s + Number(l.qty || 0); }, 0), oneUnit = ls.every(function(l){ return (l.unit || '') === (ls[0].unit || ''); });
-  var sig = sigImg(w.made_by);
+  var sig = woSigOf(w);
   var rows = ls.map(function(l, i){ var a = woLineAmt(l);
     return '<tr><td>' + (i + 1) + '</td><td><b>' + E(l.item) + '</b>' + (l.spec ? '<small>' + E(l.spec) + '</small>' : '') + '</td><td>' + E(l.ref_no || '') + '</td><td class="num">' + woQtyTxt(l.qty, l.unit) + '</td>'
       + (show ? '<td class="num">' + (l.unit_price != null ? accFmt(accP(l.unit_price)) : '&mdash;') + '</td><td class="num">' + (a == null ? '&mdash;' : accFmt(a)) + '</td>' : '') + '</tr>'; }).join('');
   return '<div class="top"></div><div class="wo-hd"><div><div class="co">Shahana Group</div><h1>Work Order</h1><div class="addr">M.T. Sweaters Ltd &middot; Banga Fashion Ltd &middot; Banga Knitwear Ltd<br>Gacha, Gazipur, Bangladesh</div></div>'
-    + '<div class="wo-meta">No. <b>' + E(w.wo_no) + '</b><br>Date ' + rqDateTxt(w.wo_date) + (w.deliver_by ? '<br>Deliver by <b>' + rqDateTxt(w.deliver_by) + '</b>' : '') + (w.status === 'cancelled' ? '<br><b>CANCELLED</b>' : '') + '</div></div>'
+    + '<div class="wo-meta"><div><span>No.</span><b>' + E(w.wo_no) + '</b></div><div><span>Date</span><b>' + rqDateTxt(w.wo_date) + '</b></div>' + (w.deliver_by ? '<div><span>Deliver by</span><b>' + rqDateTxt(w.deliver_by) + '</b></div>' : '') + (w.status === 'cancelled' ? '<div><b>CANCELLED</b></div>' : '') + '</div></div>'
     + '<div class="wo-box"><div><span>To</span><b>' + E(w.party_name) + '</b>' + (w.party_address ? '<br>' + E(w.party_address) : '') + (w.party_phone ? '<br>Phone ' + E(w.party_phone) : '') + '</div>'
     + '<div><span>Deliver to</span>' + E(w.deliver_to || '') + '</div></div>'
     + '<table class="wo-t"><thead><tr><th style="width:5%">SN</th><th>Item / description</th><th style="width:15%">' + E(def.refHead || 'Ref.') + '</th><th class="num" style="width:11%">Qty</th>' + (show ? '<th class="num" style="width:13%">Unit price</th><th class="num" style="width:15%">Amount (Tk)</th>' : '') + '</tr></thead><tbody>' + rows
     + '<tr class="tot"><td></td><td>Total</td><td></td><td class="num">' + (oneUnit ? woQtyTxt(qt, ls[0] && ls[0].unit) : '') + '</td>' + (show ? '<td></td><td class="num">' + (tot.p ? accFmt(tot.p) : '&mdash;') + '</td>' : '') + '</tr></tbody></table>'
     + (show && tot.p && tot.all ? '<div class="wo-words">In words: ' + woTkWords(tot.p) + '.</div>' : '')
     + (w.note ? '<div class="wo-note"><span>Note</span>' + E(w.note) + '</div>' : '')
-    + '<div class="wo-sig"><div><div class="ln">Received by (party)</div></div><div>' + (sig ? '<img src="' + sig + '" alt="">' : '') + '<div class="ln"><b>' + E(w.made_by_name || '') + '</b><br>' + E(woRoleTxt(w.made_by_role)) + '</div></div></div>';
+    + '<div class="wo-sig"><div><div class="cap">Received by the party</div><div class="ln">Name, signature and date</div></div><div><div class="cap">For Shahana Group</div>' + (sig ? '<img src="' + sig + '" alt="">' : '') + '<div class="ln"><b>' + E(w.made_by_name || '') + '</b><br>' + E(woRoleTxt(w.made_by_role)) + '</div></div></div>';
 }
 function woRoleTxt(r) { return r === 'admin' ? 'Admin' : r === 'management' ? 'Management' : (r || ''); }
 async function woPrint(id) {
   var w = woById(id); if (!w) return;
   await sigNeed([w.made_by]);
+  if (w.made_by_role === 'management') { try { await rqLoadSettings(); } catch (e) {} } // Management's signature picture (Admin -> Requisitions)
+  if (!woSigOf(w) && w.made_by === S.user.id) toast('No signature on file for you: upload it in My account (or Admin \u2192 Users), then print again', 'err');
   var html = '<!doctype html><html><head><meta charset="utf-8"><title>' + rqEsc(w.wo_no) + '</title><style>' + woDocCss() + '</style></head><body><div class="sheet">' + woDocHtml(w, woLinesOf(id))
     + '<div class="ft"><span>Printed ' + rqEsc(rqDateTime(new Date().toISOString())) + ' &middot; ' + rqEsc(S.user.name) + ' &middot; Shahana One</span><span>' + rqEsc(w.wo_no) + '</span></div></div></body></html>';
   if ($('ov-acc') && $('ov-acc').classList.contains('open')) { ACCM = null; closeModal('ov-acc'); }
@@ -28498,6 +28512,222 @@ async function woSetBuy(id, on) {
   r = rqPut(res.data[0]);
   toast(r.job_no + (on ? ': Management will buy it' : ': Accounts will pay it'), 'ok-t');
   renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// V.2026.10.28.1: PRINT RULE, for every print that opens in the preview
+// The preview lays the document out exactly as paper does (the print's own
+// page size and margins, its print styles, its page breaks) and shows each
+// page as its own sheet with page numbers. Print / Save PDF prints those same
+// pages, so what is on screen is what comes out. Rules every page follows:
+//   - a table that runs over a page carries its heading row on the next page
+//   - rows are never cut in half; groups marked to stay together
+//     (break-inside:avoid, e.g. tbody.keep) move to the next page whole
+//   - a heading (break-after:avoid) is never left alone at the bottom
+//   - break-before:page / break-after:page and named pages (landscape
+//     parts) start a new page of the right size
+//   - "Page x of y" at the bottom (and the print's own footer text)
+// A print that draws its own pages (@page margin 0) is shown as it is.
+// A print can opt out with <meta name="pp" content="off">.
+// If anything goes wrong the plain preview is shown, so printing never stops.
+// ═══════════════════════════════════════════════════════════════════════
+var RP_SIZES = { A3: [297, 420], A4: [210, 297], A5: [148, 210], B5: [176, 250], LETTER: [215.9, 279.4], LEGAL: [215.9, 355.6] };
+function rpMm(v) { var m = /^\s*(-?[\d.]+)\s*(mm|cm|in|px|pt)?\s*$/.exec(String(v == null ? '' : v)); if (!m) return null; var n = parseFloat(m[1]), u = m[2] || 'px'; return u === 'mm' ? n : u === 'cm' ? n * 10 : u === 'in' ? n * 25.4 : u === 'pt' ? n * 25.4 / 72 : n * 25.4 / 96; }
+// every rule list in the print's style sheets, with whether it applies on paper
+function rpEachRule(doc, fn) {
+  function walk(list, onPaper) {
+    for (var i = 0; i < list.length; i++) {
+      var r = list[i];
+      if (r.type === 4) { var mt = String(r.media.mediaText || '').toLowerCase(); walk(r.cssRules, onPaper && (!mt || /\b(print|all)\b/.test(mt)) && !/^\s*not\s+print/.test(mt)); } // @media
+      else fn(r, onPaper);
+    }
+  }
+  Array.prototype.forEach.call(doc.styleSheets, function(sh){ var rules; try { rules = sh.cssRules; } catch (e) { return; } var mt = sh.media && sh.media.mediaText; walk(rules, !mt || /\b(print|all)\b/i.test(mt)); });
+}
+// @page rules: '' = the default page, other keys = named pages ({ w, h, m: [top, right, bottom, left] } in mm)
+function rpPageRules(doc) {
+  var raw = {};
+  rpEachRule(doc, function(r, onPaper){
+    if (r.type !== 6 || !onPaper) return; // @page
+    var sel = String(r.selectorText || '').trim(); if (/:/.test(sel)) return; // :first / :left pages are not used by the app
+    var p = raw[sel] = raw[sel] || {}, st = r.style;
+    var size = st.getPropertyValue('size'); if (size) p.size = size;
+    ['top', 'right', 'bottom', 'left'].forEach(function(k, i){ var v = rpMm(st.getPropertyValue('margin-' + k)); if (v != null) (p.m = p.m || [null, null, null, null])[i] = v; });
+  });
+  function sizeOf(txt, base) {
+    var w = base[0], h = base[1], t = String(txt || '').trim().split(/\s+/).filter(Boolean), lens = [];
+    t.forEach(function(x){ var k = x.toUpperCase(); if (RP_SIZES[k]) { w = RP_SIZES[k][0]; h = RP_SIZES[k][1]; } else if (k === 'LANDSCAPE') { var a = Math.min(w, h), b = Math.max(w, h); w = b; h = a; } else if (k === 'PORTRAIT') { var c = Math.min(w, h), d = Math.max(w, h); w = c; h = d; } else { var l = rpMm(x); if (l != null) lens.push(l); } });
+    if (lens.length === 1) { w = h = lens[0]; } else if (lens.length >= 2) { w = lens[0]; h = lens[1]; }
+    if (/landscape/i.test(txt) && w < h) { var s = w; w = h; h = s; }
+    return [w, h];
+  }
+  var d = raw[''] || {}, dm = (d.m || []).map(function(x){ return x == null ? 10 : x; });
+  if (dm.length < 4) dm = [10, 10, 10, 10];
+  var out = { '': { w: 0, h: 0, m: dm } }, ds = sizeOf(d.size, RP_SIZES.A4); out[''].w = ds[0]; out[''].h = ds[1];
+  Object.keys(raw).forEach(function(k){ if (!k) return; var p = raw[k], s = sizeOf(p.size || d.size, RP_SIZES.A4); out[k] = { w: s[0], h: s[1], m: [0, 1, 2, 3].map(function(i){ return p.m && p.m[i] != null ? p.m[i] : dm[i]; }) }; });
+  return out;
+}
+// the print's own footer text (@bottom-left / -center / -right), with counter(page) and counter(pages)
+function rpMarginText(doc) {
+  var txt = Array.prototype.map.call(doc.querySelectorAll('style'), function(s){ return s.textContent; }).join('\n'), out = {};
+  var re = /@bottom-(left|center|right)\s*\{\s*content\s*:\s*((?:"(?:[^"\\]|\\.)*"|counter\([a-z]+\)|\s)+)/g, m;
+  while ((m = re.exec(txt))) {
+    var parts = [], tr = /"((?:[^"\\]|\\.)*)"|counter\((page|pages)\)/g, t;
+    while ((t = tr.exec(m[2]))) parts.push(t[2] ? { c: t[2] } : { s: t[1].replace(/\\([0-9a-fA-F]{1,6})\s?/g, function(_, h){ return String.fromCodePoint(parseInt(h, 16)); }).replace(/\\(.)/g, '$1') });
+    out[m[1]] = parts;
+  }
+  return out;
+}
+// show the print's paper styles on screen: print-only rules on, screen-only rules off
+function rpPaperLook(doc) {
+  rpEachRule(doc, function(){});
+  Array.prototype.forEach.call(doc.styleSheets, function(sh){
+    var rules; try { rules = sh.cssRules; } catch (e) { return; }
+    (function walk(list){ for (var i = 0; i < list.length; i++) { var r = list[i]; if (r.type !== 4) continue; var mt = String(r.media.mediaText || '').toLowerCase().trim();
+      if (/^print$/.test(mt)) r.media.mediaText = 'all';
+      else if (/^screen$/.test(mt)) r.media.mediaText = 'not all';
+      walk(r.cssRules); } })(rules);
+  });
+}
+async function rpPaginate(doc) {
+  if (!doc || !doc.body || doc.body.getAttribute('data-pp')) return 0;
+  if (doc.querySelector('meta[name="pp"][content="off"]')) return 0;
+  if (!Array.prototype.some.call(doc.body.children, function(n){ return !/^(SCRIPT|STYLE|LINK|META|TEMPLATE)$/.test(n.tagName); })) return 0; // an empty preview (closed)
+  var rules = rpPageRules(doc), def = rules[''];
+  if (Math.max.apply(null, def.m) < 0.5) return 0; // draws its own pages
+  doc.body.setAttribute('data-pp', '1');
+  var win = doc.defaultView, body = doc.body, mtext = rpMarginText(doc);
+  rpPaperLook(doc);
+  try { if (doc.fonts && doc.fonts.ready) await doc.fonts.ready; } catch (e) {}
+  // the content, copied; the original stays (hidden) to fall back to
+  var keep = /^(SCRIPT|STYLE|LINK|META|TEMPLATE)$/;
+  var src = doc.createElement('div'); src.className = 'pp-src';
+  Array.prototype.slice.call(body.childNodes).forEach(function(n){ if (!(n.nodeType === 1 && keep.test(n.tagName))) src.appendChild(n); });
+  body.appendChild(src);
+  var bcs = win.getComputedStyle(body), bpad = [bcs.marginTop, bcs.marginRight, bcs.marginBottom, bcs.marginLeft].join(' ');
+  var css = doc.createElement('style'); css.id = 'pp-css';
+  var names = Object.keys(rules), key = {}; names.forEach(function(n, i){ key[n] = 'pp' + i; });
+  css.textContent = 'html,body{margin:0!important;padding:0!important}'
+    + '.pp-pages{background:#e8e6e1;padding:16px 0 4px;min-height:100vh;box-sizing:border-box}'
+    + '.pp-page{background:#fff;margin:0 auto 16px;box-shadow:0 2px 12px rgba(0,0,0,.18);position:relative;box-sizing:border-box;overflow:hidden}'
+    + '.pp-c{box-sizing:border-box;position:relative;overflow:visible}.pp-src{display:none!important}.pp-page *{page:auto!important}' // each page box carries its size; names inside would override it
+    + '.pp-mb{position:absolute;font:8.5px Arial,sans-serif;color:#9a9a9a;white-space:nowrap}'
+    + '@media print{html,body{background:#fff!important}.pp-pages{padding:0!important;background:none!important;min-height:0!important}.pp-page{margin:0!important;box-shadow:none!important;break-after:page;page-break-after:always}.pp-page:last-child{break-after:auto;page-break-after:auto}'
+    + names.map(function(n){ var r = rules[n]; return (n ? '@page ' + key[n] : '@page') + '{size:' + r.w + 'mm ' + r.h + 'mm;margin:0}.pp-page.' + key[n] + '{page:' + key[n] + '}'; }).join('') + '}';
+  doc.head.appendChild(css);
+  var pages = doc.createElement('div'); pages.className = 'pp-pages'; body.appendChild(pages);
+  try {
+    // let the copied pictures load before measuring
+    var work = src.cloneNode(true); work.className = ''; work.style.cssText = 'position:absolute;left:-99999px;top:0;visibility:hidden';
+    await Promise.all(Array.prototype.map.call(work.querySelectorAll('img'), function(im){ return im.complete ? null : new Promise(function(res){ im.onload = im.onerror = res; setTimeout(res, 3000); }); }));
+    var page = null, chain = [], shells = [], units = new Set();
+    body.appendChild(work);
+    // each element's break rules, read once while the copy is laid out (a detached element has no styles)
+    var info = new WeakMap();
+    Array.prototype.forEach.call(work.querySelectorAll('*'), function(el){ var s = win.getComputedStyle(el); info.set(el, { bb: s.breakBefore || s.pageBreakBefore, ba: s.breakAfter || s.pageBreakAfter, bi: s.breakInside || s.pageBreakInside, page: s.page, d: s.display }); });
+    function cs(el) { return el && el.nodeType === 1 ? (info.get(el) || {}) : {}; }
+    function nameOf(el) { var p = cs(el).page; return p && p !== 'auto' && rules[p] ? p : null; }
+    function want(el) { var n = el && nameOf(el); if (n) return n; for (var i = chain.length - 1; i >= 0; i--) { var x = nameOf(chain[i].src); if (x) return x; } return ''; }
+    function shellOf(el) {
+      var c = el.cloneNode(false);
+      if (el.tagName === 'TABLE') Array.prototype.forEach.call(el.children, function(k){ if (/^(CAPTION|COLGROUP|THEAD)$/.test(k.tagName)) c.appendChild(k.cloneNode(true)); });
+      shells.push(c); return c;
+    }
+    function newPage(name) {
+      var r = rules[name] || def, pg = doc.createElement('div'); pg.className = 'pp-page ' + key[rules[name] ? name : ''];
+      pg.style.cssText = 'width:' + r.w + 'mm;height:' + r.h + 'mm;padding:' + r.m[0] + 'mm ' + r.m[1] + 'mm ' + r.m[2] + 'mm ' + r.m[3] + 'mm';
+      var box = doc.createElement('div'); box.className = 'pp-c'; box.style.cssText = 'height:' + (r.h - r.m[0] - r.m[2]) + 'mm;padding:' + bpad;
+      pg.appendChild(box); pages.appendChild(pg);
+      page = { el: pg, box: box, name: name, n: 0, r: r };
+      var p = box; chain.forEach(function(c){ c.cur = shellOf(c.src); p.appendChild(c.cur); p = c.cur; });
+    }
+    function top() { return chain.length ? chain[chain.length - 1].cur : page.box; }
+    function over() { return page.box.scrollHeight > page.box.clientHeight + 1; }
+    function brk(v) { return /^(page|always|left|right|recto|verso)$/.test(v || ''); }
+    function avoidAfter(el) { return /^avoid/.test(cs(el).ba || ''); }
+    function avoidIn(el) { return /^avoid/.test(cs(el).bi || ''); }
+    function partsOf(el) { // what an element can be split into (null = keep whole)
+      if (el.nodeType !== 1) return null;
+      var t = el.tagName;
+      if (t === 'TABLE') { var a = []; Array.prototype.forEach.call(el.children, function(k){ if (/^(TBODY|TFOOT)$/.test(k.tagName)) a.push(k); else if (k.tagName === 'TR') a.push(k); }); return a.length ? a : null; }
+      if (t === 'TBODY' || t === 'TFOOT') { var r = Array.prototype.filter.call(el.children, function(k){ return k.tagName === 'TR'; }); return r.length ? r : null; }
+      if (/^(TR|TD|TH|IMG|SVG|CANVAS|UL|OL|P|H1|H2|H3|H4|H5|H6|PRE|svg)$/.test(t)) return null;
+      var kids = Array.prototype.slice.call(el.childNodes);
+      if (kids.some(function(k){ return k.nodeType === 3 && k.textContent.trim(); })) return null; // has its own text: one piece
+      var els = kids.filter(function(k){ return k.nodeType === 1; });
+      var d = cs(el).d || ''; if (/flex|grid|inline/.test(d)) return null;
+      return els.length ? els : null; // a lone child: step into it
+    }
+    var pendingBreak = false;
+    function place(node, depth, left) { // left: how many pieces of its parent are still to come (this one included)
+      if (node.nodeType === 3) { if (node.textContent.trim()) top().appendChild(node); return; }
+      if (node.nodeType !== 1) return;
+      var w = want(node);
+      if (page === null) newPage(w);
+      else if (w !== page.name || ((pendingBreak || brk(cs(node).bb)) && page.n > 0)) newPage(w);
+      pendingBreak = false;
+      top().appendChild(node);
+      if (!over()) { page.n++; units.add(node); if (brk(cs(node).ba)) pendingBreak = true; return; }
+      top().removeChild(node);
+      var parts = partsOf(node), alone = page.n === 0;
+      if (parts && (!avoidIn(node) || alone)) {
+        var sh = shellOf(node); top().appendChild(sh);
+        chain.push({ src: node, cur: sh });
+        parts.forEach(function(k, i){ place(k, depth + 1, parts.length - i); });
+        chain.pop();
+        if (brk(cs(node).ba)) pendingBreak = true;
+        return;
+      }
+      if (!alone) {
+        // headings that must stay with what follows go to the new page with it
+        var carry = [], t = top();
+        while (t.lastElementChild && avoidAfter(t.lastElementChild) && t.lastElementChild !== t.firstElementChild && units.has(t.lastElementChild)) { var x = t.lastElementChild; t.removeChild(x); carry.unshift(x); }
+        // the last row of a table never goes over alone (e.g. a total): the row before it comes too
+        if (!carry.length && node.tagName === 'TR' && left === 1 && t.children.length > 2 && t.lastElementChild && t.lastElementChild.tagName === 'TR' && units.has(t.lastElementChild)) { var y = t.lastElementChild; t.removeChild(y); carry.unshift(y); }
+        newPage(w);
+        carry.forEach(function(x){ top().appendChild(x); page.n++; });
+        top().appendChild(node);
+        if (!over()) { page.n++; units.add(node); if (brk(cs(node).ba)) pendingBreak = true; return; }
+        top().removeChild(node);
+        if (parts) { var sh2 = shellOf(node); top().appendChild(sh2); chain.push({ src: node, cur: sh2 }); parts.forEach(function(k, i){ place(k, depth + 1, parts.length - i); }); chain.pop(); return; }
+      }
+      // bigger than a whole page and cannot be split: it gets the page to itself (the page grows)
+      top().appendChild(node); page.n++; units.add(node);
+      page.el.style.height = 'auto'; page.box.style.height = 'auto'; page.box.style.minHeight = (page.r.h - page.r.m[0] - page.r.m[2]) + 'mm';
+    }
+    var top0 = Array.prototype.slice.call(work.childNodes); top0.forEach(function(n, i){ place(n, 0, top0.length - i); });
+    work.remove();
+    if (!page) { work.remove(); throw new Error('nothing to print'); }
+    // copies of tables / boxes that ended up with nothing in them
+    for (var i = shells.length - 1; i >= 0; i--) {
+      var e = shells[i]; if (!e.parentNode) continue;
+      var empty = e.tagName === 'TABLE' ? !e.querySelector('tbody tr, tfoot tr, :scope > tr') : !Array.prototype.some.call(e.childNodes, function(k){ return k.nodeType === 1 || (k.nodeType === 3 && k.textContent.trim()); });
+      if (e.tagName === 'TBODY' || e.tagName === 'TFOOT') empty = !e.querySelector('tr');
+      if (empty) e.remove();
+    }
+    // pages left empty (e.g. a forced break at the very end)
+    Array.prototype.slice.call(pages.children).forEach(function(pg){ if (!pg.querySelector('.pp-c *') || !pg.querySelector('.pp-c').textContent.trim() && !pg.querySelector('.pp-c img')) pg.remove(); });
+    var all = pages.children, n = all.length;
+    Array.prototype.forEach.call(all, function(pg, k){
+      var r = rules[Object.keys(key).find(function(nm){ return pg.classList.contains(key[nm]); })] || def, bottom = Math.max(2, r.m[2] / 2 - 1.5);
+      var txt = function(parts){ return parts.map(function(x){ return x.c === 'page' ? String(k + 1) : x.c === 'pages' ? String(n) : x.s; }).join(''); };
+      var boxes = { left: mtext.left, center: mtext.center, right: mtext.right || (n > 1 ? [{ s: 'Page ' }, { c: 'page' }, { s: ' of ' }, { c: 'pages' }] : null) };
+      ['left', 'center', 'right'].forEach(function(pos){
+        if (!boxes[pos]) return;
+        var d = doc.createElement('div'); d.className = 'pp-mb'; d.textContent = txt(boxes[pos]);
+        d.style.bottom = bottom + 'mm';
+        if (pos === 'left') d.style.left = r.m[3] + 'mm'; else if (pos === 'right') d.style.right = r.m[1] + 'mm'; else { d.style.left = '0'; d.style.right = '0'; d.style.textAlign = 'center'; }
+        pg.appendChild(d);
+      });
+    });
+    return n;
+  } catch (e) {
+    console.error('print preview pages:', e);
+    pages.remove(); css.remove();
+    while (src.firstChild) body.insertBefore(src.firstChild, src);
+    src.remove();
+    return 0;
+  }
 }
 </script>
 </body>
