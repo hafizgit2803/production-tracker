@@ -2566,6 +2566,16 @@ tr.pl-new .pl-in{border:1px dashed var(--line)}.pl-live{font-family:var(--mono);
 .apv-sib.off{opacity:.6;cursor:default}.apv-sib.off .apv-sib-st{color:var(--ink);font-weight:600}
 .apv-sibs-n{font-size:11px;color:var(--muted);margin-top:6px}
 #ov-pp-colour .apv-sibs{margin:12px 0 4px}
+
+/* V.2026.10.27.1: work orders */
+.wo-buytick{display:flex;align-items:center;gap:6px;margin:2px 0 8px;font-weight:600}
+.wo-chip{color:#7a4a12;white-space:nowrap}.wo-ok{color:var(--green)}
+.wo-reqbox{border-left:3px solid var(--amber);padding-left:10px}
+.wo-flines table td{padding:3px 4px;vertical-align:middle}.wo-flines .wo-in{width:100%;min-width:60px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);font:inherit;color:var(--ink)}
+.wo-flines .wo-in.num{text-align:right;font-family:var(--mono);min-width:80px}.wo-flines td:nth-child(2) .wo-in{min-width:150px}
+tr.wo-ftot td{font-weight:800;border-top:1.5px solid var(--ink)}.wo-showp{display:flex;gap:6px;align-items:center;margin:8px 0}
+table.wo-t-buy td{vertical-align:top}
+.wo-rq,.wo-rp{padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);font-family:var(--mono);color:var(--ink);text-align:right}.wo-rq:focus,.wo-rp:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
 </style>
 </head>
 <body>
@@ -2588,7 +2598,7 @@ tr.pl-new .pl-in{border:1px dashed var(--line)}.pl-live{font-family:var(--mono);
     <button class="btn pri" onclick="doLogin()">Sign in <span class="arr">&rarr;</span></button>
     <p class="login-hint">Forgot password? Contact Admin.</p>
     <div class="maint-note" id="maint-login-note">&#x1F6A7; System maintenance in progress &mdash; login temporarily restricted.</div>
-    <p class="login-ver">V.2026.10.26.1</p>
+    <p class="login-ver">V.2026.10.27.1</p>
   </div></div>
 </div>
 
@@ -2630,7 +2640,7 @@ tr.pl-new .pl-in{border:1px dashed var(--line)}.pl-live{font-family:var(--mono);
     <div id="float-hscroll" class="float-hscroll no-print" aria-hidden="true"><div class="float-hscroll-inner"></div></div>
     <div id="float-thead" class="card float-thead no-print" aria-hidden="true"></div>
   </main>
-  <div id="ver-stamp">V.2026.10.26.1</div>
+  <div id="ver-stamp">V.2026.10.27.1</div>
 </div>
 
 
@@ -19844,7 +19854,7 @@ var BACKUP_TABLES = [ // known tables, parents before children (restore goes in 
   'buyer_logos','buyer_team','buyer_contacts','buyer_notes','buyer_payment','buyer_banking','buyer_bank_changes','buyer_addresses','buyer_change_log',
   'rq_settings','rq_counters','rq_requisitions','rq_events','rq_quotations','rq_queries',
   'acc_banks','acc_iou_people','acc_cheques','acc_payments','acc_iou_entries','acc_pay_approvals',
-  'pos_parties','pos_items','pos_weeks','pos_vals','costing_settings','costings','costing_history','acc_petty_cash','rq_plan_lines'
+  'pos_parties','pos_items','pos_weeks','pos_vals','costing_settings','costings','costing_history','acc_petty_cash','rq_plan_lines','wo_parties','work_orders','work_order_lines'
 ];
 var BACKUP_EXCLUDE = ['user_password_view'];
 var _backupBusy = false;
@@ -20212,7 +20222,7 @@ var SETUP_KNOWN = { // every column the app uses: for tables a backup has no row
   acc_payments: 'amount:numeric,bank_label:text,cheque_clear_date:date,cheque_id:uuid,cheque_no:text,cheque_status:text,cheque_status_on:date,company:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,id:uuid,method:text,over_reason:text,paid_to:text,pay_date:date,reference:text,req_id:uuid,reverse_reason:text,reversed_at:timestamptz,reversed_by_name:text',
   acc_iou_people: 'created_at:timestamptz,created_by_name:text,dept:text,id:uuid,import_key:text,name:text,note:text,phone:text',
   acc_iou_entries: 'cr:numeric,created_at:timestamptz,created_by:text,created_by_name:text,dr:numeric,entry_date:date,id:uuid,import_key:text,kind:text,note:text,person_id:uuid,reverse_reason:text,reversed_at:timestamptz,reversed_by_name:text',
-  rq_requisitions: 'agm_at:timestamptz,agm_by:text,agm_by_name:text,agm_note:text,agm_status:text,cao_at:timestamptz,cao_by:text,cao_by_name:text,cao_note:text,cao_status:text,approved_cost:numeric,audit_at:timestamptz,audit_by:text,audit_by_name:text,audit_note:text,audit_status:text,company:text,completed_at:timestamptz,completion_note:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,est_cost:numeric,final_cost:numeric,id:uuid,items:jsonb,job_no:text,kind:text,location:text,location_detail:text,mgmt_at:timestamptz,mgmt_by:text,mgmt_by_name:text,mgmt_note:text,mgmt_status:text,priority:text,progress:integer,remarks:text,req_date:date,seq:integer,spent:numeric,started_at:timestamptz,status:text,target_date:date,time_unit:text,time_value:numeric,updated_at:timestamptz,updated_by:text,work_type:text,yr:integer',
+  rq_requisitions: 'agm_at:timestamptz,agm_by:text,agm_by_name:text,agm_note:text,agm_status:text,cao_at:timestamptz,cao_by:text,cao_by_name:text,cao_note:text,cao_status:text,approved_cost:numeric,audit_at:timestamptz,audit_by:text,audit_by_name:text,audit_note:text,audit_status:text,company:text,completed_at:timestamptz,completion_note:text,created_at:timestamptz,created_by:text,created_by_name:text,dept:text,est_cost:numeric,final_cost:numeric,id:uuid,items:jsonb,job_no:text,kind:text,location:text,location_detail:text,mgmt_at:timestamptz,mgmt_buy:boolean,mgmt_by:text,mgmt_by_name:text,mgmt_note:text,mgmt_status:text,priority:text,progress:integer,remarks:text,req_date:date,seq:integer,spent:numeric,started_at:timestamptz,status:text,target_date:date,time_unit:text,time_value:numeric,updated_at:timestamptz,updated_by:text,work_type:text,yr:integer',
   rq_events: 'amount:numeric,at:timestamptz,by_id:text,by_name:text,id:uuid,kind:text,note:text,pct:integer,req_id:uuid',
   rq_quotations: 'amount:numeric,bytes:integer,created_at:timestamptz,created_by:text,created_by_name:text,currency:text,dept:text,id:uuid,images_deleted_at:timestamptz,keep_changed_by:text,keep_until:date,page_count:integer,pages:jsonb,req_id:uuid,supplier:text,valid_until:date',
   rq_counters: 'dept:text,last:integer,yr:integer',
@@ -20268,6 +20278,9 @@ var SETUP_KNOWN = { // every column the app uses: for tables a backup has no row
   pos_vals: 'adv:numeric,expiry:date,id:uuid,item_id:uuid,pay:numeric,rec:numeric,updated_on:date,week_id:uuid',
   costing_settings: 'id:integer,rates:jsonb,rates_date:timestamptz,updated_by_name:text',
   costings: 'created_at:timestamptz,data:jsonb,deleted_at:timestamptz,deleted_by_name:text,dev_option_id:uuid,development_id:uuid,id:uuid,owner_id:text,owner_name:text,pic:text,thumb:text,updated_at:timestamptz',
+  wo_parties: 'address:text,contact:text,created_at:timestamptz,created_by_name:text,id:uuid,name:text,norm:text,phone:text,updated_at:timestamptz,updated_by_name:text',
+  work_orders: 'cancel_reason:text,cancelled_at:timestamptz,cancelled_by_name:text,created_at:timestamptz,deliver_by:date,deliver_to:text,id:uuid,made_by:text,made_by_name:text,made_by_role:text,note:text,party_address:text,party_id:uuid,party_name:text,party_phone:text,received_on:date,seq:integer,show_prices:boolean,source:text,status:text,updated_at:timestamptz,updated_by_name:text,wo_date:date,wo_no:text,yr:integer',
+  work_order_lines: 'created_at:timestamptz,dept:text,id:uuid,item:text,qty:numeric,recv_on:date,recv_price:numeric,recv_qty:numeric,ref_id:uuid,ref_no:text,sort:integer,source:text,spec:text,unit:text,unit_price:numeric,wo_id:uuid',
   rq_plan_lines: 'amount:numeric,created_at:timestamptz,created_by_name:text,dept:text,description:text,id:uuid,qty:numeric,remarks:text,req_id:uuid,sort:integer,unit:text,updated_at:timestamptz,updated_by_name:text,week_start:date',
   acc_petty_cash: 'balance:numeric,created_at:timestamptz,day:date,details:text,entered_by:text,entered_by_name:text,history:jsonb,id:uuid,updated_at:timestamptz,updated_by_name:text',
   costing_history: 'costing_id:uuid,data:jsonb,id:uuid,saved_at:timestamptz,saved_by_name:text',
@@ -20639,13 +20652,14 @@ async function rqLoad() {
     return;
   }
   RQ.missing = false;
-  RQ.rows = res.data || [];
+  RQ.rows = (res.data || []).filter(function(r){ return !(S.user.role === 'accounts' && r.mgmt_buy); }); // Management buys these itself: not for Accounts
   RQ.loaded = true;
   if (RQ.stagesOk !== true) {
     var pr = await db.from('rq_requisitions').select('agm_status,cao_status').limit(1);
     RQ.stagesOk = !pr.error;
   }
   try { await rqqLoad(); } catch (e) { console.error('quotations:', e); }
+  if (S.user.role !== 'accounts') { try { await woLoad(true); } catch (e) { console.error('work orders:', e); } } // Management purchases, and the chip on the requisition
   try { await rqQLoad(); } catch (e) { console.error('questions:', e); }
   try { await accLoadPays(); } catch (e) { console.error('payments:', e); }
   try { await apLoad(); } catch (e) { console.error('payment approvals:', e); }
@@ -20669,7 +20683,7 @@ async function rqRefreshOne(id) {
   var i = RQ.rows.findIndex(function(x){ return x.id === id; });
   if (res.data) {
     if (rqIsDeptUser() && res.data.dept !== S.user.division) return null;
-    if (S.user.role === 'accounts' && res.data.mgmt_status !== 'approved') { if (i >= 0) RQ.rows.splice(i, 1); return null; }
+    if (S.user.role === 'accounts' && (res.data.mgmt_status !== 'approved' || res.data.mgmt_buy)) { if (i >= 0) RQ.rows.splice(i, 1); return null; }
     if (S.user.role === 'accounts' && i < 0 && accPayable(res.data)) toast('Approved by Management: ' + res.data.job_no + ' is waiting for payment', 'ok-t');
     if (i >= 0) RQ.rows[i] = res.data; else RQ.rows.unshift(res.data);
   } else if (i >= 0 && !res.error) RQ.rows.splice(i, 1);
@@ -20764,6 +20778,7 @@ function rqRailHtml() {
       + item('rq:x:pending', '&#x23F3;', 'Approval pending', _st ? all.mine : all.pending, !!_st && all.mine > 0)
       + item('rq:x:wip', '&#x2692;', 'Work in progress', all.wip, all.overdue > 0)
       + item('rq:x:done', '&#x2713;', 'Completed', all.done)
+      + (woRqCanView() && woOn() ? (function(){ var n = woToBuyN(); return item('rq:buy', '&#x1F6D2;', 'Management purchases', n, n > 0 && woRqCanEdit()); })() : '')
       + item('rq:plan', '&#x1F4C5;', 'Weekly plans')
       + item('rq:report', '&#x25A4;', 'Monthly spend report');
     var dueQ = S.user.role === 'admin' ? rqqDueSoon(null).length : 0;
@@ -20826,6 +20841,7 @@ function rqRender(view) {
   if (p[1] === 'overview') return rqRenderOverview();
   if (p[1] === 'x') { if (rqIsDeptUser()) { setView(rqHomeView()); return; } RQ.editId = null; return rqRenderCombined(p[2]); }
   if (p[1] === 'plan') { RQ.editId = null; return plRender(p); }
+  if (p[1] === 'buy') { if (p[2]) { WO.ui.tab.rq = p[2]; setView('rq:buy'); return; } RQ.editId = null; return woRenderPage('rq'); }
   if (p[1] === 'all') return rqRenderAll(null);
   if (p[1] === 'report') { if (rqIsDeptUser()) { setView(rqHomeView()); return; } return rqRenderReport(); }
   var d = rqDept(p[1]);
@@ -20862,7 +20878,7 @@ function rqTable(list, tab, showDept) {
   var body = list.map(function(r){
     var loc = '<b>' + rqEsc(r.location || '') + '</b>' + (r.location_detail ? '<div class="sub2">' + rqEsc(r.location_detail) + '</div>' : '');
     var nq = rqqOn() ? rqqList(r.id).length : 0;
-    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>' + rqQChip(r) + rqReturnedTag(r) + (nq ? '<div class="sub2 rqq-n">' + nq + ' quote' + (nq === 1 ? '' : 's') + '</div>' : '') + plReqChip(r.id);
+    var job = '<span class="rq-job">' + rqEsc(r.job_no) + '</span>' + rqQChip(r) + rqReturnedTag(r) + (nq ? '<div class="sub2 rqq-n">' + nq + ' quote' + (nq === 1 ? '' : 's') + '</div>' : '') + plReqChip(r.id) + woReqChip(r);
     var co = '<span class="rq-co" title="' + rqEsc(rqCompany(r.company).n) + '">' + rqEsc(r.company) + '</span>';
     var cells;
     if (tab === 'pending') {
@@ -21212,7 +21228,7 @@ async function rqOpen(id) {
   if (RQ.openId === id) rqRenderDetail(id, true);
 }
 function rqKv(k, v) { return '<div class="rq-kv"><div class="k">' + k + '</div><div class="v">' + (v == null || v === '' ? '&mdash;' : v) + '</div></div>'; }
-var RQ_EVENT_TXT = { asked: 'Question / change asked', answered: 'Answered', created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled', paid: 'Payment recorded', pay_reversed: 'Payment reversed (admin)', cheque_cleared: 'Cheque cleared', cheque_bounced: 'Cheque bounced', cheque_cancelled: 'Cheque cancelled (admin)', pay_ok: 'Payment approved by Management', pay_ok_withdrawn: 'Payment approval withdrawn', pay_asked: 'Accounts asked for payment approval' };
+var RQ_EVENT_TXT = { mgmt_buy: 'Management will buy it', mgmt_buy_off: 'Accounts will pay it', wo_ordered: 'Put on a work order', wo_cancelled: 'Off the work order', wo_received: 'Received (bought by Management)', asked: 'Question / change asked', answered: 'Answered', created: 'Raised the requisition', edited: 'Changed the requisition', resubmitted: 'Changed it and sent it again', agm_approved: 'AGM approved', cao_approved: 'CAO approved', audit_approved: 'Audit approved', mgmt_approved: 'Management approved', returned: 'Returned for changes', rejected: 'Rejected', progress: 'Progress update', hold: 'Put on hold', resumed: 'Work resumed', cost: 'Cost spent', quote_added: 'Quotation added', quote_removed: 'Quotation removed', done: 'Marked the work complete', reopened: 'Reopened', cancelled: 'Cancelled', paid: 'Payment recorded', pay_reversed: 'Payment reversed (admin)', cheque_cleared: 'Cheque cleared', cheque_bounced: 'Cheque bounced', cheque_cancelled: 'Cheque cancelled (admin)', pay_ok: 'Payment approved by Management', pay_ok_withdrawn: 'Payment approval withdrawn', pay_asked: 'Accounts asked for payment approval' };
 function rqRenderDetail(id, withEvents) {
   var r = RQ.rows.find(function(x){ return x.id === id; });
   if (!r) { closeModal('ov-rq'); return; }
@@ -21248,13 +21264,14 @@ function rqRenderDetail(id, withEvents) {
       + '</div>' + (r.completion_note ? '<div class="rq-remarks" style="margin-top:8px">' + rqEsc(r.completion_note) + '</div>' : '') + '</div>';
   }
   if ((r.status === 'pending' || r.status === 'returned') && rqCanWork(r.dept)) h += '<div class="rq-hint">Need signatures on paper first? Use <b>Print form for signing</b> below. The approvers then record their approval here.</div>';
+  try { h += woReqBoxHtml(r); } catch (e) { console.error('work order box:', e); }
   try { h += accPaySection(r); } catch (e) { console.error('accPaySection:', e); }
   try { h += rqQSectionHtml(r); } catch (e) { console.error('questions:', e); }
   h += '<div id="rq-actions">' + rqActionsHtml(r) + '</div>';
   var ev = RQ.events[id];
   h += '<div class="rq-sec"><div class="rq-sec-h">History</div>' + (!withEvents && !ev ? '<div class="sub2">Loading&hellip;</div>' : !ev || !ev.length ? '<div class="sub2">No history yet.</div>'
     : '<div class="rq-hist">' + ev.slice().reverse().map(function(e){
-      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done', 'quote_added', 'quote_removed', 'paid', 'pay_reversed', 'pay_ok', 'pay_ok_withdrawn', 'pay_asked', 'cheque_cleared', 'cheque_bounced', 'cheque_cancelled'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
+      return '<div class="rq-ev rq-ev-' + rqEsc(e.kind) + '"><div class="rq-ev-dot"></div><div><div><b>' + rqEsc(RQ_EVENT_TXT[e.kind] || e.kind) + '</b>' + (e.pct != null ? ' &middot; ' + e.pct + '%' : '') + (e.amount != null && ['cost', 'mgmt_approved', 'done', 'wo_received', 'quote_added', 'quote_removed', 'paid', 'pay_reversed', 'pay_ok', 'pay_ok_withdrawn', 'pay_asked', 'cheque_cleared', 'cheque_bounced', 'cheque_cancelled'].indexOf(e.kind) !== -1 ? ' &middot; ' + rqMoney(e.amount) : '') + '</div>'
         + (e.note ? '<div class="rq-ev-note">' + rqEsc(e.note) + '</div>' : '') + '<div class="sub2">' + rqEsc(e.by_name || '') + ' &middot; ' + rqDateTime(e.at) + '</div></div></div>';
     }).join('') + '</div>') + '</div>';
   $('rq-body').innerHTML = h;
@@ -21273,7 +21290,7 @@ function rqActionsHtml(r) {
       h += '<div class="rq-act"><div class="rq-sec-h">' + rqEsc(myStep.full) + ' decision</div>'
         + (notYet.length ? '<div class="rq-warn">&#x26A0; Not yet checked by: <b>' + notYet.join(', ') + '</b></div>' : '')
         + (qWait ? '<div class="rq-warn">&#x2753; Waiting for the department to answer ' + qWait + ' question' + (qWait === 1 ? '' : 's') + '. Final approval opens once they answer.</div>' : '')
-        + (myStep.k === 'mgmt' ? '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>' : '')
+        + (myStep.k === 'mgmt' ? woBuyTickHtml() + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>' : '')
         + note(myStep.note, rqQOn() ? (myStep.reject ? 'Comment / question (needed to ask, return or reject)' : 'Comment / question (needed to ask or return)') : (myStep.reject ? 'Comment (needed to return or reject)' : 'Comment (needed to return)'))
         + '<div class="rq-btns"><button class="btn pri" ' + (qWait ? 'disabled title="Waiting for the department to answer" ' : '') + 'onclick="rqDecide(\'' + r.id + '\',\'' + myStep.k + '\',\'approved\')">&#x2713; ' + (myStep.k === 'mgmt' ? 'Approve &mdash; start the work' : 'Approve') + '</button>'
         + (rqQOn() ? '<button class="btn rq-ask" onclick="rqAsk(\'' + r.id + '\',\'' + myStep.k + '\')">&#x2753; Ask / Request change</button>' : '')
@@ -21287,13 +21304,13 @@ function rqActionsHtml(r) {
     if (role === 'management' && !rqIsOwn(r) && rqStageOn(rqStage('mgmt'))) {
       var _rd = rqDecider(r, 'returned');
       h += '<div class="rq-act"><div class="rq-sec-h">Returned' + (_rd ? ' by ' + rqEsc(_rd.st.n) : '') + ' for changes. Management can still approve it as it is.</div>'
-        + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '" onkeydown="if(event.key===\'Enter\'){event.preventDefault();rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\');}"></div>'
+        + woBuyTickHtml() + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '" onkeydown="if(event.key===\'Enter\'){event.preventDefault();rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\');}"></div>'
         + note('rq-m-note', 'Comment') + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\')">&#x2713; Approve anyway</button></div></div>';
     }
   } else if (r.status === 'rejected') {
     if (role === 'management' && r.mgmt_status !== 'rejected' && !rqIsOwn(r)) {
       h += '<div class="rq-act"><div class="rq-sec-h">Audit rejected this. Management can still approve it.</div>'
-        + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>'
+        + woBuyTickHtml() + '<div class="f" style="max-width:240px;margin-bottom:6px"><label>Approved amount (Tk)</label><input id="rq-m-amt" type="number" min="0" step="1" value="' + rqEsc(r.est_cost == null ? '' : r.est_cost) + '"></div>'
         + note('rq-m-note', 'Comment') + '<div class="rq-btns"><button class="btn pri" onclick="rqDecide(\'' + r.id + '\',\'mgmt\',\'approved\')">&#x2713; Approve anyway</button></div></div>';
     }
   } else if ((r.status === 'wip' || r.status === 'hold') && rqCanWork(r.dept)) {
@@ -21697,6 +21714,7 @@ async function rqDecide(id, who, decision) {
   if (who === 'mgmt' && decision === 'approved') {
     upd.status = 'wip'; upd.approved_cost = amt; upd.started_at = now; upd.progress = 0;
     upd.target_date = rqTargetFrom(r, todayStr());
+    if (woBuyTicked()) upd.mgmt_buy = true; // Management buys it itself: no payment approval, not for Accounts
   }
   var q = db.from('rq_requisitions').update(upd).eq('id', id);
   if (who === 'mgmt' && r.status === 'returned' && decision === 'approved') q = q.eq('status', 'returned');
@@ -21711,6 +21729,7 @@ async function rqDecide(id, who, decision) {
   }
   var kind = decision === 'approved' ? step.k + '_approved' : decision;
   await rqEvent(id, kind, { note: step.n + (noteTxt ? ': ' + noteTxt : ''), amount: amt });
+  if (upd.mgmt_buy) await rqEvent(id, 'mgmt_buy', { note: 'Management will buy it (no payment approval)' });
   if (decision !== 'approved') { try { await rqQCloseAll(id); } catch (e) { console.error(e); } }
   r = rqPut(res.data[0]);
   toast(r.job_no + ' — ' + (decision === 'approved' ? (who === 'mgmt' ? 'approved, work can start' : step.n + ' approval recorded') : decision), 'ok-t');
@@ -24307,7 +24326,7 @@ function accSum(r) {
   s.paid = s.done + s.wait; s.bal = s.target - s.paid;
   return s;
 }
-function accPayable(r) { return !!r && r.mgmt_status === 'approved' && ['wip', 'hold', 'done'].indexOf(r.status) !== -1; }
+function accPayable(r) { return !!r && r.mgmt_status === 'approved' && !r.mgmt_buy && ['wip', 'hold', 'done'].indexOf(r.status) !== -1; } // mgmt_buy: Management buys it itself
 function accState(s) { if (s.paid <= 0) return 'none'; if (s.bal > 0) return 'part'; if (s.bal < 0) return 'over'; return 'paid'; }
 function accPayChip(r) {
   if (!accOn()) return '';
@@ -27829,9 +27848,9 @@ function rqRenderCombined(tab) {
 
 // ─── 5. PROGRESS 100%: CLOSE THE WORK IN ONE STEP ───
 // completed date (today = now), final cost and note; Enter completes
-async function rqCompleteCore(id, cost, noteTxt, day) {
+async function rqCompleteCore(id, cost, noteTxt, day, from) { // from: the statuses it may close from (default: in progress)
   var now = new Date().toISOString(), at = !day || day === todayStr() ? now : new Date(day + 'T12:00:00').toISOString();
-  var res = await db.from('rq_requisitions').update({ status: 'done', progress: 100, final_cost: cost, completion_note: noteTxt, completed_at: at, updated_at: now, updated_by: S.user.name }).eq('id', id).eq('status', 'wip').select();
+  var res = await db.from('rq_requisitions').update({ status: 'done', progress: 100, final_cost: cost, completion_note: noteTxt, completed_at: at, updated_at: now, updated_by: S.user.name }).eq('id', id).in('status', from || ['wip']).select();
   if (res.error) return { error: res.error };
   if (!res.data || !res.data.length) return { stale: true };
   await rqEvent(id, 'done', { pct: 100, amount: cost, note: noteTxt });
@@ -27970,6 +27989,515 @@ function posXlsParty(a3, noZero) {
   });
   var t = posPartyTot(rows);
   a3.push(['Total (parties)', '', '', '', '', '', '', '', n(t.rec), n(t.pay), n(t.adv), n(t.net)]);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// V.2026.10.27.1: WORK ORDERS
+// Part A is general: parties, numbering, the form, the print (with the
+// signature of the person who made it), receiving and cancelling. It knows
+// nothing about requisitions. A part of the app that wants work orders
+// registers a "source" (woSource) that says which items can be ordered,
+// who may make / see them, and what happens when items are received.
+// Part B is the first source: requisitions Management buys itself.
+// Money is in paisa inside the app (accP / accFmt), Tk in the database.
+// ═══════════════════════════════════════════════════════════════════════
+
+// ─── A. GENERAL WORK ORDERS ───
+var WO = { ok: null, rows: [], lines: [], parties: null, at: 0, _p: null, src: {}, ui: { tab: {}, sel: {}, q: '', dp: '', cancelled: false } };
+// def: { key, label, refHead, canEdit(), canView(), candidates() -> [{ ref_id, ref_no, dept, item, spec, qty, unit, price_p, group }],
+//        deliverTo(lines), afterSave(wo, lines, kind) , onReceived(wo, lines, day), rqView }
+function woSource(def) { WO.src[def.key] = def; }
+function woOn() { return WO.ok === true; }
+function woMissing(e) { return !!e && (e.code === '42P01' || e.code === 'PGRST205' || e.code === '42703' || e.code === 'PGRST204' || /work_order|wo_parties|mgmt_buy|does not exist|schema cache|could not find the table/i.test(e.message || '')); }
+function woErr(e) { return woMissing(e) ? 'Work orders need shahana-one-v8-migration.sql. Run it once in Supabase, then refresh.' : 'Could not save: ' + ((e && e.message) || e); }
+// every work order and line, read at once (they are few); departments read only their own lines
+async function woLoad(force) {
+  if (!force && WO.ok === true && Date.now() - WO.at < 20000) return;
+  if (WO._p) return WO._p;
+  WO._p = (async function(){
+    try {
+      var dept = rqIsDeptUser() ? S.user.division : null;
+      var lines = await fetchAllRows(function(){ var q = db.from('work_order_lines').select('*'); if (dept) q = q.eq('dept', dept); return q.order('wo_id').order('sort').order('id'); });
+      var rows;
+      if (dept) {
+        var ids = Array.from(new Set(lines.map(function(l){ return l.wo_id; }))); rows = [];
+        for (var i = 0; i < ids.length; i += 150) { var r = await db.from('work_orders').select('*').in('id', ids.slice(i, i + 150)); if (r.error) throw r.error; rows = rows.concat(r.data || []); }
+      } else rows = await fetchAllRows(function(){ return db.from('work_orders').select('*').order('created_at', { ascending: false }).order('id'); });
+      WO.rows = rows; WO.lines = lines; WO.ok = true; WO.at = Date.now();
+    } catch (e) { if (woMissing(e)) { WO.ok = false; WO.rows = []; WO.lines = []; } else { console.error('work orders:', e); if (WO.ok !== true) WO.ok = null; } }
+    finally { WO._p = null; }
+  })();
+  return WO._p;
+}
+async function woPartiesLoad() {
+  if (WO.parties) return WO.parties;
+  var r = await db.from('wo_parties').select('*').order('name');
+  WO.parties = r.error ? [] : (r.data || []);
+  return WO.parties;
+}
+function woNorm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9\u0980-\u09ff]/g, ''); }
+function woById(id) { return WO.rows.find(function(w){ return w.id === id; }) || null; }
+function woLinesOf(id) { return WO.lines.filter(function(l){ return l.wo_id === id; }).sort(function(a, b){ return (a.sort || 0) - (b.sort || 0); }); }
+function woLive(w) { return !!w && w.status !== 'cancelled'; }
+// lines on a work order that is not cancelled
+function woActiveLines(source) { var live = {}; WO.rows.forEach(function(w){ if (woLive(w) && (!source || w.source === source)) live[w.id] = w; }); return WO.lines.filter(function(l){ return live[l.wo_id]; }); }
+function woLineDone(l) { return l.recv_qty != null && Number(l.recv_qty) >= Number(l.qty || 0); }
+function woLineLeft(l) { return Math.max(0, Number(l.qty || 0) - Number(l.recv_qty || 0)); }
+function woHasReceipts(id) { return woLinesOf(id).some(function(l){ return l.recv_qty != null && Number(l.recv_qty) > 0; }); }
+function woLineAmt(l, recv) { var p = recv && l.recv_price != null ? l.recv_price : l.unit_price; var q = recv ? Number(l.recv_qty || 0) : Number(l.qty || 0); return p == null || p === '' ? null : accP(Number(p) * q); }
+function woTotal(lines, recv) { var t = 0, all = true; lines.forEach(function(l){ var a = woLineAmt(l, recv); if (a == null) all = false; else t += a; }); return { p: t, all: all }; }
+function woQtyTxt(q, u) { return q == null || q === '' ? '' : Number(q).toLocaleString('en-IN', { maximumFractionDigits: 3 }) + (u ? ' ' + rqEsc(u) : ''); }
+function woTkWords(p) { var w = Math.floor(Math.abs(p) / 100), c = Math.abs(p) % 100; return 'Taka ' + ciWords(w) + (c ? ' and Paisa ' + ciWords(c) : '') + ' only'; }
+function woNoOf(yr, seq) { return 'WO-' + String(yr).slice(-2) + '-' + String(seq).padStart(4, '0'); }
+// next number for the year: one read, and the unique index stops two people taking the same one
+async function woNextSeq(yr) {
+  var r = await db.from('work_orders').select('seq').eq('yr', yr).order('seq', { ascending: false }).limit(1);
+  if (r.error) throw r.error;
+  return (r.data && r.data.length ? Number(r.data[0].seq) || 0 : 0) + 1;
+}
+
+// the form: new (picks = lines to order) or change (wo = the work order; only before anything is received)
+function woForm(source, picks, wo) {
+  var def = WO.src[source]; if (!def || !def.canEdit()) return;
+  if (wo && (wo.status !== 'ordered' || woHasReceipts(wo.id))) { toast('Something on this work order is already received, so it can no longer be changed', 'err'); return; }
+  var lines = wo ? woLinesOf(wo.id).map(function(l){ return { ref_id: l.ref_id, ref_no: l.ref_no, dept: l.dept, item: l.item, spec: l.spec, qty: l.qty, unit: l.unit, price_p: l.unit_price == null ? null : accP(l.unit_price), group: l.ref_id || l.id }; }) : picks.slice();
+  if (!lines.length) { toast('Tick at least one item', 'err'); return; }
+  WO.form = { source: source, wo: wo || null, lines: lines };
+  woPartiesLoad().then(function(){
+    var t = todayStr(), w = wo || {};
+    var head = '<div class="acc-g2"><div class="f"><label>Party (name)</label><input id="wo-party" list="wo-party-l" maxlength="120" autocomplete="off" value="' + rqEsc(w.party_name || '') + '" placeholder="Type a name or pick a saved party" oninput="woPartyFill()"><datalist id="wo-party-l">' + WO.parties.map(function(p){ return '<option value="' + rqEsc(p.name) + '">'; }).join('') + '</datalist></div>'
+      + '<div class="f"><label>Phone</label><input id="wo-phone" maxlength="60" value="' + rqEsc(w.party_phone || '') + '"></div></div>'
+      + '<div class="f"><label>Address</label><input id="wo-addr" maxlength="240" value="' + rqEsc(w.party_address || '') + '"></div>'
+      + '<div class="acc-g2"><div class="f"><label>Date</label><input type="date" id="wo-date" value="' + (w.wo_date || t) + '"></div><div class="f"><label>Deliver by (optional)</label><input type="date" id="wo-by" value="' + (w.deliver_by || '') + '"></div></div>'
+      + '<div class="f"><label>Deliver to</label><input id="wo-to" maxlength="240" value="' + rqEsc(w.deliver_to != null ? w.deliver_to : def.deliverTo(lines)) + '"></div>';
+    accForm({ title: wo ? 'Change ' + wo.wo_no : 'New work order', sub: (def.label || 'Items') + ' &middot; ' + lines.length + ' line' + (lines.length === 1 ? '' : 's') + '. Prices are optional; tick &ldquo;Show prices&rdquo; to print them.', wide: true,
+      body: head + '<div id="wo-lines"></div>'
+        + '<label class="rq-mine wo-showp"><input type="checkbox" id="wo-showp"' + (w.show_prices ? ' checked' : '') + ' onchange="woFormTotal()"> Show prices on the work order</label>'
+        + '<div class="f"><label>Note (printed)</label><input id="wo-note" maxlength="500" value="' + rqEsc(w.note || '') + '" placeholder="e.g. Deliver with invoice and challan quoting the work order number"></div>',
+      ok: wo ? 'Save changes' : 'Make work order',
+      after: function(){ woFormLines(); setTimeout(function(){ var e = $('wo-party'); if (e) e.focus(); }, 0); },
+      onOk: woFormSave });
+  });
+}
+function woFormLines() {
+  var F = WO.form, def = WO.src[F.source], groups = {}, order = [];
+  F.lines.forEach(function(l, i){ l._i = i; var g = l.group || l.ref_id || ('x' + i); if (!groups[g]) { groups[g] = []; order.push(g); } groups[g].push(l); });
+  var h = '<div class="scroller wo-flines"><table class="rq-t" data-copy-xl="1"><thead><tr><th>' + rqEsc(def.refHead || 'Ref.') + '</th><th>Item</th><th>Specification</th><th class="num">Qty</th><th>Unit</th><th class="num">Unit price (Tk)</th><th class="num">Amount</th><th></th></tr></thead><tbody>';
+  order.forEach(function(g){
+    groups[g].forEach(function(l, k){
+      h += '<tr><td>' + (k === 0 ? '<span class="rq-job">' + rqEsc(l.ref_no || '') + '</span>' : '') + '</td>'
+        + '<td><input class="wo-in" data-i="' + l._i + '" data-k="item" maxlength="160" value="' + rqEsc(l.item || '') + '"></td>'
+        + '<td><input class="wo-in" data-i="' + l._i + '" data-k="spec" maxlength="240" value="' + rqEsc(l.spec || '') + '"></td>'
+        + '<td><input class="wo-in num" data-i="' + l._i + '" data-k="qty" inputmode="decimal" value="' + rqEsc(l.qty == null ? '' : l.qty) + '" oninput="woFormTotal()"></td>'
+        + '<td><input class="wo-in" data-i="' + l._i + '" data-k="unit" maxlength="20" style="width:70px" value="' + rqEsc(l.unit || '') + '"></td>'
+        + '<td><input class="wo-in num" data-i="' + l._i + '" data-k="price" inputmode="decimal" placeholder="optional" value="' + (l.price_p == null ? '' : accFmt(l.price_p)) + '" oninput="woFormTotal()"></td>'
+        + '<td class="num" data-amt="' + l._i + '"></td>'
+        + '<td>' + (k === 0 && order.length > 1 ? '<button type="button" class="btn sm" tabindex="-1" title="Leave this out of the work order" onclick="woFormDrop(\'' + rqEsc(g) + '\')">&#x2715;</button>' : '') + '</td></tr>';
+    });
+  });
+  $('wo-lines').innerHTML = h + '</tbody><tfoot><tr class="wo-ftot"><td colspan="6">Total</td><td class="num" id="wo-ftot"></td><td></td></tr></tfoot></table></div>';
+  woFormTotal();
+}
+function woFormRead() { // the boxes back into WO.form.lines; returns an error text or ''
+  var F = WO.form, bad = '';
+  document.querySelectorAll('#wo-lines .wo-in').forEach(function(e){
+    var l = F.lines[Number(e.dataset.i)], k = e.dataset.k, v = e.value.trim();
+    if (k === 'qty') { var q = v === '' ? null : Number(v.replace(/,/g, '')); if (q == null || !isFinite(q) || q <= 0) bad = bad || 'Write the quantity for every line'; l.qty = q; }
+    else if (k === 'price') { if (v === '') l.price_p = null; else { var p = accParseAmt(v); if (p == null) bad = bad || 'A price is not a number'; l.price_p = p; } }
+    else if (k === 'item') { if (!v) bad = bad || 'Every line needs an item'; l.item = v; }
+    else l[k] = v;
+  });
+  return bad;
+}
+function woFormTotal() {
+  if (!WO.form) return;
+  woFormRead();
+  var t = 0, all = true;
+  WO.form.lines.forEach(function(l){ var c = document.querySelector('[data-amt="' + l._i + '"]'); var a = l.price_p != null && l.qty ? Math.round(l.price_p * l.qty) : null; if (a == null) all = false; else t += a; if (c) c.innerHTML = a == null ? '<span class="sub2">&mdash;</span>' : accFmt(a); });
+  var ft = $('wo-ftot'); if (ft) ft.innerHTML = t ? accFmt(t) + (all ? '' : ' <span class="sub2">(some lines without price)</span>') : '<span class="sub2">no prices</span>';
+}
+function woFormDrop(g) { woFormRead(); WO.form.lines = WO.form.lines.filter(function(l){ return (l.group || l.ref_id) !== g; }); woFormLines(); }
+function woPartyFill() {
+  var p = (WO.parties || []).find(function(x){ return woNorm(x.name) === woNorm($('wo-party').value); }); if (!p) return;
+  if (!$('wo-phone').value) $('wo-phone').value = p.phone || '';
+  if (!$('wo-addr').value) $('wo-addr').value = p.address || '';
+}
+// save the party for next time (or update its phone / address); returns its id
+async function woPartySave(name, addr, phone) {
+  var n = woNorm(name), p = (WO.parties || []).find(function(x){ return x.norm === n; });
+  if (p) {
+    if ((addr && addr !== (p.address || '')) || (phone && phone !== (p.phone || ''))) {
+      var u = { updated_at: new Date().toISOString(), updated_by_name: S.user.name }; if (addr) u.address = addr; if (phone) u.phone = phone;
+      var ur = await db.from('wo_parties').update(u).eq('id', p.id); if (!ur.error) Object.assign(p, u);
+    }
+    return p.id;
+  }
+  var row = { id: accUuid(), name: name, norm: n, address: addr || null, phone: phone || null, created_by_name: S.user.name, updated_by_name: S.user.name };
+  var r = await db.from('wo_parties').insert(row);
+  if (r.error) { if (accDup(r.error)) { WO.parties = null; await woPartiesLoad(); var q = WO.parties.find(function(x){ return x.norm === n; }); return q ? q.id : null; } throw r.error; }
+  WO.parties.push(row); WO.parties.sort(function(a, b){ return a.name.localeCompare(b.name); });
+  return row.id;
+}
+async function woFormSave() {
+  var F = WO.form, def = WO.src[F.source], wo = F.wo;
+  if (!def || !def.canEdit()) return 'You can\u2019t make work orders';
+  var bad = woFormRead(); if (bad) return bad;
+  if (!F.lines.length) return 'No lines left on the work order.';
+  var name = $('wo-party').value.trim(), addr = $('wo-addr').value.trim(), phone = $('wo-phone').value.trim(), day = $('wo-date').value, by = $('wo-by').value;
+  if (!name) { $('wo-party').focus(); return 'Write the party\u2019s name.'; }
+  if (!accValidDate(day)) return 'Pick the date of the work order.';
+  if (by && (!accValidDate(by) || by < day)) return 'The delivery date can\u2019t be before the work order date.';
+  var pid = await woPartySave(name, addr, phone);
+  var now = new Date().toISOString();
+  var head = { party_id: pid, party_name: name, party_address: addr || null, party_phone: phone || null, deliver_to: $('wo-to').value.trim() || null, wo_date: day, deliver_by: by || null,
+    show_prices: $('wo-showp').checked, note: $('wo-note').value.trim() || null, updated_at: now, updated_by_name: S.user.name };
+  var rows = function(woId){ return F.lines.map(function(l, i){ return { id: accUuid(), wo_id: woId, sort: i + 1, source: F.source, ref_id: l.ref_id || null, ref_no: l.ref_no || null, dept: l.dept || null, item: l.item, spec: l.spec || null, qty: l.qty, unit: l.unit || null, unit_price: l.price_p == null ? null : accAmtVal(l.price_p) }; }); };
+  if (wo) { // change: lines replaced (nothing received yet, checked again on the server row)
+    var fr = await db.from('work_orders').select('status').eq('id', wo.id).maybeSingle();
+    if (fr.error) return woErr(fr.error);
+    if (!fr.data || fr.data.status !== 'ordered') return 'This work order was changed by someone else meanwhile. Close and open it again.';
+    var got = await db.from('work_order_lines').select('id').eq('wo_id', wo.id).not('recv_qty', 'is', null).limit(1);
+    if (got.data && got.data.length) return 'Something on this work order was received meanwhile, so it can no longer be changed.';
+    var u = await db.from('work_orders').update(head).eq('id', wo.id).eq('status', 'ordered').select();
+    if (u.error) return woErr(u.error);
+    var nl = rows(wo.id), dropped = woLinesOf(wo.id).filter(function(l){ return !F.lines.some(function(x){ return x.ref_id && x.ref_id === l.ref_id; }); });
+    var d = await db.from('work_order_lines').delete().eq('wo_id', wo.id); if (d.error) return woErr(d.error);
+    var ins = await db.from('work_order_lines').insert(nl); if (ins.error) return woErr(ins.error);
+    Object.assign(wo, u.data && u.data[0] ? u.data[0] : head);
+    WO.lines = WO.lines.filter(function(l){ return l.wo_id !== wo.id; }).concat(nl);
+    if (def.afterSave) await def.afterSave(wo, nl, 'changed', dropped);
+    toast(wo.wo_no + ' saved', 'ok-t');
+  } else {
+    var yr = Number(day.slice(0, 4)), seq = await woNextSeq(yr), w0 = null, err = null;
+    for (var tries = 0; tries < 6 && !w0; tries++) {
+      var id = accUuid(), wrow = Object.assign({ id: id, wo_no: woNoOf(yr, seq), yr: yr, seq: seq, source: F.source, status: 'ordered', made_by: S.user.id, made_by_name: S.user.name, made_by_role: S.user.role, created_at: now }, head);
+      var r = await db.from('work_orders').insert(wrow);
+      if (!r.error) { w0 = wrow; break; }
+      if (!accDup(r.error)) { err = r.error; break; }
+      seq++; // someone took that number a moment ago
+    }
+    if (!w0) return err ? woErr(err) : 'Could not get a work order number, try again.';
+    var nl2 = rows(w0.id), li = await db.from('work_order_lines').insert(nl2);
+    if (li.error) { await db.from('work_orders').delete().eq('id', w0.id); return woErr(li.error); }
+    WO.rows.unshift(w0); WO.lines = WO.lines.concat(nl2); WO.ui.sel = {};
+    if (def.afterSave) await def.afterSave(w0, nl2, 'new');
+    toast(w0.wo_no + ' made for ' + name, 'ok-t');
+    wo = w0;
+  }
+  WO.form = null;
+  var keep = wo.id;
+  setTimeout(function(){ renderRail(); rqRender(S.view); woPrint(keep); }, 0);
+  return true;
+}
+
+// receiving: what came in (all by default), the date, and the price paid
+function woReceive(id) {
+  var w = woById(id), def = w && WO.src[w.source]; if (!w || !def || !def.canEdit() || w.status !== 'ordered') return;
+  var open = woLinesOf(id).filter(function(l){ return !woLineDone(l); });
+  if (!open.length) { toast('Everything on ' + w.wo_no + ' is received', ''); return; }
+  accForm({ title: 'Received: ' + w.wo_no, sub: rqEsc(w.party_name) + '. Write what came in. A line fully received closes its ' + rqEsc((def.refName || 'item').toLowerCase()) + '.', wide: true,
+    body: '<div class="f" style="max-width:220px"><label>Received on</label><input type="date" id="wo-rday" value="' + todayStr() + '" max="' + todayStr() + '"></div>'
+      + '<div class="scroller"><table class="rq-t" data-copy-xl="1"><thead><tr><th>' + rqEsc(def.refHead || 'Ref.') + '</th><th>Item</th><th class="num">Ordered</th><th class="num">Already in</th><th class="num">Received now</th><th class="num">Price paid (Tk, per unit)</th></tr></thead><tbody>'
+      + open.map(function(l){ return '<tr><td><span class="rq-job">' + rqEsc(l.ref_no || '') + '</span></td><td><b>' + rqEsc(l.item) + '</b>' + (l.spec ? '<div class="sub2">' + rqEsc(l.spec) + '</div>' : '') + '</td><td class="num">' + woQtyTxt(l.qty, l.unit) + '</td><td class="num">' + (l.recv_qty ? woQtyTxt(l.recv_qty, l.unit) : '&mdash;') + '</td>'
+        + '<td><input class="wo-rq num" data-id="' + l.id + '" inputmode="decimal" value="' + woLineLeft(l) + '" style="width:90px"></td><td><input class="wo-rp num" data-id="' + l.id + '" inputmode="decimal" placeholder="optional" value="' + (l.recv_price != null ? accFmt(accP(l.recv_price)) : l.unit_price != null ? accFmt(accP(l.unit_price)) : '') + '" style="width:120px"></td></tr>'; }).join('')
+      + '</tbody></table></div>',
+    ok: 'Save received',
+    onOk: function(){ return woReceiveSave(id); } });
+}
+async function woReceiveSave(id) {
+  var w = woById(id), def = WO.src[w.source], day = $('wo-rday').value;
+  if (!accValidDate(day) || day > todayStr()) return 'Pick the date it was received (not in the future).';
+  var upd = [], bad = '';
+  document.querySelectorAll('.wo-rq').forEach(function(e){
+    var l = WO.lines.find(function(x){ return x.id === e.dataset.id; }); if (!l) return;
+    var v = e.value.trim(), q = v === '' ? 0 : Number(v.replace(/,/g, ''));
+    if (!isFinite(q) || q < 0) { bad = 'A received quantity is not a number'; return; }
+    if (!q) return;
+    if (q > woLineLeft(l) + 1e-9) { bad = 'More than ordered for ' + l.item + ' (' + woQtyTxt(woLineLeft(l), l.unit) + ' still to come)'; return; }
+    var pe = document.querySelector('.wo-rp[data-id="' + l.id + '"]'), pv = pe ? pe.value.trim() : '', pp = pv === '' ? null : accParseAmt(pv);
+    if (pv !== '' && pp == null) { bad = 'A price is not a number'; return; }
+    upd.push({ l: l, recv_qty: Math.round((Number(l.recv_qty || 0) + q) * 1000) / 1000, recv_price: pp == null ? (l.recv_price != null ? l.recv_price : null) : accAmtVal(pp) });
+  });
+  if (bad) return bad;
+  if (!upd.length) return 'Nothing written as received.';
+  // re-check on the server: still ordered, the lines not received by someone else meanwhile
+  var fr = await db.from('work_orders').select('status').eq('id', id).maybeSingle();
+  if (fr.error) return woErr(fr.error);
+  if (!fr.data || fr.data.status !== 'ordered') return 'This work order was changed meanwhile. Close and open it again.';
+  // lines with the same change go in one update; each only if nobody recorded it meanwhile
+  var grp = {};
+  upd.forEach(function(x){ var k = JSON.stringify([x.l.recv_qty == null ? null : Number(x.l.recv_qty), x.recv_qty, x.recv_price]); (grp[k] = grp[k] || []).push(x); });
+  var keys = Object.keys(grp);
+  for (var i = 0; i < keys.length; i++) {
+    var g = grp[keys[i]], x0 = g[0], ids = g.map(function(x){ return x.l.id; });
+    var q = db.from('work_order_lines').update({ recv_qty: x0.recv_qty, recv_on: day, recv_price: x0.recv_price }).in('id', ids);
+    q = x0.l.recv_qty == null ? q.is('recv_qty', null) : q.eq('recv_qty', x0.l.recv_qty);
+    var r = await q.select('id');
+    if (r.error) return woErr(r.error);
+    var ok = (r.data || []).map(function(y){ return y.id; });
+    g.forEach(function(x){ if (ok.indexOf(x.l.id) !== -1) { x.l.recv_qty = x.recv_qty; x.l.recv_on = day; x.l.recv_price = x.recv_price; } });
+    if (ok.length < ids.length) { await woLoad(true); return 'Someone recorded part of this delivery meanwhile. Close and check again.'; }
+  }
+  var all = woLinesOf(id).every(woLineDone);
+  if (all) { var u = await db.from('work_orders').update({ status: 'received', received_on: day, updated_at: new Date().toISOString(), updated_by_name: S.user.name }).eq('id', id).eq('status', 'ordered'); if (!u.error) { w.status = 'received'; w.received_on = day; } }
+  if (def.onReceived) { try { await def.onReceived(w, upd.map(function(x){ return x.l; }), day); } catch (e) { console.error('after receiving:', e); toast('Received saved; updating the ' + (def.refName || 'items').toLowerCase() + ' failed: ' + (e.message || e), 'err'); } }
+  toast(w.wo_no + (all ? ' fully received' : ': received part saved'), 'ok-t');
+  setTimeout(function(){ renderRail(); rqRender(S.view); }, 0);
+  return true;
+}
+async function woCancel(id) {
+  var w = woById(id), def = w && WO.src[w.source]; if (!w || !def || !def.canEdit() || w.status !== 'ordered') return;
+  if (woHasReceipts(id)) { toast('Something on ' + w.wo_no + ' is already received, so it can\u2019t be cancelled', 'err'); return; }
+  accForm({ title: 'Cancel ' + w.wo_no + '?', sub: rqEsc(w.party_name) + '. Its items go back to the list to buy. The work order stays on record as cancelled.',
+    body: '<div class="f"><label>Why (kept with it)</label><input id="wo-cr" maxlength="300" placeholder="e.g. party could not supply"></div>', ok: 'Cancel work order', danger: true,
+    onOk: async function(){
+      var why = $('wo-cr').value.trim(); if (!why) return 'Write why it is cancelled.';
+      var got = await db.from('work_order_lines').select('id').eq('wo_id', id).not('recv_qty', 'is', null).limit(1);
+      if (got.data && got.data.length) return 'Something was received meanwhile, so it can\u2019t be cancelled.';
+      var u = await db.from('work_orders').update({ status: 'cancelled', cancelled_at: new Date().toISOString(), cancelled_by_name: S.user.name, cancel_reason: why, updated_at: new Date().toISOString(), updated_by_name: S.user.name }).eq('id', id).eq('status', 'ordered').select();
+      if (u.error) return woErr(u.error);
+      if (!u.data || !u.data.length) return 'This work order was changed meanwhile. Close and open it again.';
+      Object.assign(w, u.data[0]);
+      if (def.afterSave) await def.afterSave(w, woLinesOf(id), 'cancelled');
+      toast(w.wo_no + ' cancelled; its items are back in the list', 'ok-t');
+      setTimeout(function(){ renderRail(); rqRender(S.view); }, 0);
+      return true;
+    } });
+}
+// one work order on screen (status of each line, and the buttons)
+function woView(id) {
+  var w = woById(id), def = w && WO.src[w.source]; if (!w || !def) return;
+  var ls = woLinesOf(id), can = def.canEdit() && w.status === 'ordered', tot = woTotal(ls);
+  accForm({ title: w.wo_no + ' \u00b7 ' + rqEsc(w.party_name), sub: woStatusTxt(w) + ' &middot; made by ' + rqEsc(w.made_by_name || '') + ' on ' + rqDateTxt(w.wo_date) + (w.deliver_by ? ' &middot; deliver by ' + rqDateTxt(w.deliver_by) : ''), wide: true, view: true,
+    body: '<div class="scroller"><table class="rq-t" data-copy-xl="1"><thead><tr><th>' + rqEsc(def.refHead || 'Ref.') + '</th><th>Item</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th><th>Received</th></tr></thead><tbody>'
+      + ls.map(function(l){ var a = woLineAmt(l); return '<tr><td><a href="#" class="rq-job" onclick="event.preventDefault();' + (def.openRef ? 'accClose();' + def.openRef + '(\'' + l.ref_id + '\')' : '') + '">' + rqEsc(l.ref_no || '') + '</a></td><td><b>' + rqEsc(l.item) + '</b>' + (l.spec ? '<div class="sub2">' + rqEsc(l.spec) + '</div>' : '') + '</td><td class="num">' + woQtyTxt(l.qty, l.unit) + '</td><td class="num">' + (l.unit_price != null ? accFmt(accP(l.unit_price)) : '&mdash;') + '</td><td class="num">' + (a == null ? '&mdash;' : accFmt(a)) + '</td>'
+        + '<td>' + (woLineDone(l) ? '<span class="chip ok">&#x2713; ' + rqDateTxt(l.recv_on) + '</span>' : l.recv_qty ? '<span class="chip warn">' + woQtyTxt(l.recv_qty, l.unit) + ' of ' + woQtyTxt(l.qty, l.unit) + '</span>' : w.status === 'cancelled' ? '<span class="sub2">&mdash;</span>' : '<span class="chip run">Waiting</span>') + '</td></tr>'; }).join('')
+      + '</tbody>' + (tot.p ? '<tfoot><tr class="wo-ftot"><td colspan="4">Total' + (tot.all ? '' : ' (lines with a price)') + '</td><td class="num">' + accFmt(tot.p) + '</td><td></td></tr></tfoot>' : '') + '</table></div>'
+      + (w.note ? '<div class="sub2" style="margin-top:8px">Note: ' + rqEsc(w.note) + '</div>' : '') + (w.status === 'cancelled' ? '<div class="rq-warn" style="margin-top:8px">Cancelled by ' + rqEsc(w.cancelled_by_name || '') + ' ' + rqDateTime(w.cancelled_at) + ': ' + rqEsc(w.cancel_reason || '') + '</div>' : ''),
+    extra: '<button class="btn" onclick="woPrint(\'' + id + '\')">&#x1F5A8; Print / PDF</button>'
+      + (can ? '<button class="btn pri" onclick="accClose();woReceive(\'' + id + '\')">Received&hellip;</button>' + (woHasReceipts(id) ? '' : '<button class="btn" onclick="accClose();woForm(\'' + w.source + '\',null,woById(\'' + id + '\'))">Change</button><button class="btn danger" onclick="accClose();woCancel(\'' + id + '\')">Cancel work order</button>') : '') });
+}
+function woStatusTxt(w) {
+  if (w.status === 'cancelled') return 'Cancelled';
+  if (w.status === 'received') return 'Received ' + rqDateTxt(w.received_on);
+  var ls = woLinesOf(w.id), d = ls.filter(woLineDone).length;
+  return d ? 'Part received (' + d + ' of ' + ls.length + ')' : 'Ordered, waiting';
+}
+// ─── the printed work order ───
+function woDocCss() {
+  return accDocCss() + lowInkCss()
+    + '.wo-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.wo-hd .addr{font-size:8.6px;color:#666;margin-top:4px;line-height:1.5}'
+    + '.wo-meta{text-align:right;font-size:10px;line-height:1.75}.wo-meta b{font-family:Menlo,Consolas,monospace;font-size:11.5px}'
+    + '.wo-box{display:grid;grid-template-columns:1fr 1fr;border:1px solid #d9d4ca;border-radius:6px;margin:16px 0 14px}.wo-box div{padding:8px 12px;font-size:10.5px;line-height:1.55}.wo-box div+div{border-left:1px solid #d9d4ca}'
+    + '.wo-box span,.wo-note span{display:block;font-size:8px;letter-spacing:.12em;color:#888;font-weight:700;margin-bottom:2px;text-transform:uppercase}'
+    + 'table.wo-t{width:100%;border-collapse:collapse}table.wo-t th{font-size:8px;letter-spacing:.1em;color:#777;text-transform:uppercase;text-align:left;border-bottom:1.3px solid #1c1c1c;padding:5px 5px;background:none}'
+    + 'table.wo-t td{padding:6px 5px;border-bottom:1px solid #e6e2da;vertical-align:top;font-size:10.5px}table.wo-t .num{text-align:right;font-family:Menlo,Consolas,monospace}table.wo-t small{display:block;color:#888;font-size:8.6px}'
+    + 'table.wo-t tr.tot td{font-weight:700;border-top:1.3px solid #1c1c1c;border-bottom:none}.wo-words{font-size:9.6px;color:#555;margin-top:5px}'
+    + '.wo-note{margin-top:14px;font-size:10px;line-height:1.6}.wo-sig{display:flex;justify-content:space-between;align-items:flex-end;margin-top:70px;break-inside:avoid}'
+    + '.wo-sig div{width:190px;text-align:center;font-size:9.6px}.wo-sig .ln{border-top:1px solid #1c1c1c;padding-top:4px}.wo-sig img{max-height:46px;max-width:170px;display:block;margin:0 auto 2px}';
+}
+function woDocHtml(w, ls) {
+  var show = !!w.show_prices, tot = woTotal(ls), E = rqEsc, def = WO.src[w.source] || {};
+  var qt = ls.reduce(function(s, l){ return s + Number(l.qty || 0); }, 0), oneUnit = ls.every(function(l){ return (l.unit || '') === (ls[0].unit || ''); });
+  var sig = sigImg(w.made_by);
+  var rows = ls.map(function(l, i){ var a = woLineAmt(l);
+    return '<tr><td>' + (i + 1) + '</td><td><b>' + E(l.item) + '</b>' + (l.spec ? '<small>' + E(l.spec) + '</small>' : '') + '</td><td>' + E(l.ref_no || '') + '</td><td class="num">' + woQtyTxt(l.qty, l.unit) + '</td>'
+      + (show ? '<td class="num">' + (l.unit_price != null ? accFmt(accP(l.unit_price)) : '&mdash;') + '</td><td class="num">' + (a == null ? '&mdash;' : accFmt(a)) + '</td>' : '') + '</tr>'; }).join('');
+  return '<div class="top"></div><div class="wo-hd"><div><div class="co">Shahana Group</div><h1>Work Order</h1><div class="addr">M.T. Sweaters Ltd &middot; Banga Fashion Ltd &middot; Banga Knitwear Ltd<br>Gacha, Gazipur, Bangladesh</div></div>'
+    + '<div class="wo-meta">No. <b>' + E(w.wo_no) + '</b><br>Date ' + rqDateTxt(w.wo_date) + (w.deliver_by ? '<br>Deliver by <b>' + rqDateTxt(w.deliver_by) + '</b>' : '') + (w.status === 'cancelled' ? '<br><b>CANCELLED</b>' : '') + '</div></div>'
+    + '<div class="wo-box"><div><span>To</span><b>' + E(w.party_name) + '</b>' + (w.party_address ? '<br>' + E(w.party_address) : '') + (w.party_phone ? '<br>Phone ' + E(w.party_phone) : '') + '</div>'
+    + '<div><span>Deliver to</span>' + E(w.deliver_to || '') + '</div></div>'
+    + '<table class="wo-t"><thead><tr><th style="width:5%">SN</th><th>Item / description</th><th style="width:15%">' + E(def.refHead || 'Ref.') + '</th><th class="num" style="width:11%">Qty</th>' + (show ? '<th class="num" style="width:13%">Unit price</th><th class="num" style="width:15%">Amount (Tk)</th>' : '') + '</tr></thead><tbody>' + rows
+    + '<tr class="tot"><td></td><td>Total</td><td></td><td class="num">' + (oneUnit ? woQtyTxt(qt, ls[0] && ls[0].unit) : '') + '</td>' + (show ? '<td></td><td class="num">' + (tot.p ? accFmt(tot.p) : '&mdash;') + '</td>' : '') + '</tr></tbody></table>'
+    + (show && tot.p && tot.all ? '<div class="wo-words">In words: ' + woTkWords(tot.p) + '.</div>' : '')
+    + (w.note ? '<div class="wo-note"><span>Note</span>' + E(w.note) + '</div>' : '')
+    + '<div class="wo-sig"><div><div class="ln">Received by (party)</div></div><div>' + (sig ? '<img src="' + sig + '" alt="">' : '') + '<div class="ln"><b>' + E(w.made_by_name || '') + '</b><br>' + E(woRoleTxt(w.made_by_role)) + '</div></div></div>';
+}
+function woRoleTxt(r) { return r === 'admin' ? 'Admin' : r === 'management' ? 'Management' : (r || ''); }
+async function woPrint(id) {
+  var w = woById(id); if (!w) return;
+  await sigNeed([w.made_by]);
+  var html = '<!doctype html><html><head><meta charset="utf-8"><title>' + rqEsc(w.wo_no) + '</title><style>' + woDocCss() + '</style></head><body><div class="sheet">' + woDocHtml(w, woLinesOf(id))
+    + '<div class="ft"><span>Printed ' + rqEsc(rqDateTime(new Date().toISOString())) + ' &middot; ' + rqEsc(S.user.name) + ' &middot; Shahana One</span><span>' + rqEsc(w.wo_no) + '</span></div></div></body></html>';
+  if ($('ov-acc') && $('ov-acc').classList.contains('open')) { ACCM = null; closeModal('ov-acc'); }
+  openReportPreview(w.wo_no + ' \u00b7 ' + w.party_name, html);
+}
+// ─── the page: To buy / Ordered / Received (each source shows its own) ───
+function woRenderPage(source, tab) {
+  var def = WO.src[source]; if (!def || !def.canView()) { setView(rqHomeView()); return; }
+  if (WO.ok !== true || Date.now() - WO.at > 20000) {
+    if (WO.ok === null) $('content').innerHTML = '<div class="loading"><span class="spin"></span> Loading&hellip;</div>';
+    woLoad().then(function(){ if (String(S.view).indexOf(def.view) === 0 && WO.ok !== null) woRenderPage(source, tab); });
+    if (WO.ok === null) return;
+  }
+  if (WO.ok === false) { rqSetHead(def.crumb, def.title, '', ''); $('content').innerHTML = '<div class="card"><div class="empty"><h4>Database update needed</h4>Run <b>shahana-one-v8-migration.sql</b> once in Supabase &rarr; SQL Editor, then refresh this page.</div></div>'; return; }
+  if (['buy', 'ord', 'rec'].indexOf(tab) !== -1) WO.ui.tab[source] = tab;
+  tab = WO.ui.tab[source] || 'buy';
+  var can = def.canEdit(), f = WO.ui, cands = def.candidates();
+  var mine = WO.rows.filter(function(w){ return w.source === source; });
+  var ord = mine.filter(function(w){ return w.status === 'ordered'; }), rec = mine.filter(function(w){ return w.status === 'received'; }), canc = mine.filter(function(w){ return w.status === 'cancelled'; });
+  var groups = woGroups(cands);
+  var tabs = '<div class="rq-tallies">' + [['buy', 'To buy', groups.length], ['ord', 'Ordered', ord.length], ['rec', 'Received', rec.length]].map(function(x){
+    return '<button class="rq-tally' + (tab === x[0] ? ' on' : '') + '" onclick="WO.ui.tab.' + source + '=\'' + x[0] + '\';rqRender(S.view)">' + x[1] + ' <b>' + x[2] + '</b></button>'; }).join('') + '</div>';
+  var q = String(f.q || '').trim().toLowerCase();
+  var bar = '<div class="rq-filter">' + (def.depts ? '<select onchange="WO.ui.dp=this.value;rqRender(S.view)"><option value="">All departments</option>' + def.depts().map(function(d){ return '<option value="' + d.k + '"' + (f.dp === d.k ? ' selected' : '') + '>' + d.n + '</option>'; }).join('') + '</select>' : '')
+    + '<input type="search" id="wo-q" placeholder="Search job no., item, party&hellip;" value="' + rqEsc(f.q) + '" oninput="WO.ui.q=this.value;clearTimeout(WO._qt);WO._qt=setTimeout(function(){rqRender(S.view);var i=$(\'wo-q\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},250)"></div>';
+  var acts = '', body = '';
+  if (tab === 'buy') {
+    var list = groups.filter(function(g){ return (!f.dp || g.dept === f.dp) && (!q || (g.ref_no + ' ' + g.lines.map(function(l){ return l.item + ' ' + (l.spec || ''); }).join(' ') + ' ' + (g.extra || '')).toLowerCase().indexOf(q) !== -1); });
+    Object.keys(f.sel).forEach(function(k){ if (!groups.some(function(g){ return g.key === k; })) delete f.sel[k]; });
+    acts = (list.length ? '<button class="btn" onclick="woPrintList(\'' + source + '\')">&#x1F5A8; Print list</button>' : '') + (can && list.length ? '<button class="btn pri" id="wo-mk" onclick="woMakeSel(\'' + source + '\')">Make work order</button>' : '');
+    body = '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>To buy <span class="rq-count">' + list.length + '</span></h3>' + (can && list.length ? '<label class="rq-mine"><input type="checkbox" onchange="woSelAll(this.checked)"> Tick all</label>' : '') + bar + '</div>'
+      + (list.length ? '<div class="scroller"><table class="rq-t wo-t-buy"><thead><tr>' + (can ? '<th></th>' : '') + '<th>' + rqEsc(def.refHead) + '</th><th>Department</th><th>Item(s)</th><th class="num">Qty</th><th class="num">Approved</th><th>Approved on</th><th>Waiting</th></tr></thead><tbody>'
+        + list.map(function(g){ return '<tr>' + (can ? '<td onclick="event.stopPropagation()"><input type="checkbox" class="wo-cb" data-k="' + rqEsc(g.key) + '"' + (f.sel[g.key] ? ' checked' : '') + ' onchange="WO.ui.sel[this.dataset.k]=this.checked;woSelCount()"></td>' : '')
+          + '<td onclick="' + (def.openRef ? def.openRef + '(\'' + g.ref_id + '\')' : '') + '"><span class="rq-job">' + rqEsc(g.ref_no) + '</span></td><td>' + rqEsc(g.deptName || '') + '</td>'
+          + '<td>' + g.lines.map(function(l){ return '<b>' + rqEsc(l.item) + '</b>' + (l.spec ? ' <span class="sub2">' + rqEsc(l.spec) + '</span>' : ''); }).join('<br>') + '</td>'
+          + '<td class="num">' + g.lines.map(function(l){ return woQtyTxt(l.qty, l.unit); }).join('<br>') + '</td><td class="num">' + (g.approved != null ? rqMoney(g.approved) : '&mdash;') + '</td><td>' + (g.since ? rqDateTxt(g.since) : '') + '</td><td>' + (g.since ? rqDaysBetween(g.since, todayStr()) + 'd' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>'
+        : '<div class="empty"><h4>Nothing to buy</h4>' + (groups.length ? 'Nothing matches the filter.' : 'Requisitions Management buys itself show here once approved.') + '</div>') + '</div>';
+  } else {
+    var wl = (tab === 'ord' ? ord : f.cancelled ? canc : rec).filter(function(w){
+      var ls = woLinesOf(w.id);
+      if (f.dp && !ls.some(function(l){ return l.dept === f.dp; })) return false;
+      return !q || (w.wo_no + ' ' + w.party_name + ' ' + ls.map(function(l){ return (l.ref_no || '') + ' ' + l.item; }).join(' ')).toLowerCase().indexOf(q) !== -1;
+    });
+    if (tab === 'rec') wl.sort(function(a, b){ return String(b.received_on || b.cancelled_at || '').localeCompare(String(a.received_on || a.cancelled_at || '')); });
+    var tog = tab === 'rec' ? '<div class="rq-tallies" style="margin-top:-4px"><button class="rq-tally' + (!f.cancelled ? ' on' : '') + '" onclick="WO.ui.cancelled=false;rqRender(S.view)">Received</button><button class="rq-tally' + (f.cancelled ? ' on' : '') + '" onclick="WO.ui.cancelled=true;rqRender(S.view)">Cancelled <b>' + canc.length + '</b></button></div>' : '';
+    body = tog + '<div class="card"><div class="card-h" style="flex-wrap:wrap"><h3>' + (tab === 'ord' ? 'Ordered, waiting' : f.cancelled ? 'Cancelled' : 'Received') + ' <span class="rq-count">' + wl.length + '</span></h3>' + bar + '</div>'
+      + (wl.length ? '<div class="scroller"><table class="rq-t"><thead><tr><th>Work order</th><th>Date</th><th>Party</th><th>Items</th><th class="num">Amount</th><th>' + (tab === 'ord' ? 'Deliver by' : f.cancelled ? 'Cancelled' : 'Received') + '</th><th>Status</th><th></th></tr></thead><tbody>'
+        + wl.map(function(w){ var ls = woLinesOf(w.id), t = woTotal(ls), late = tab === 'ord' && w.deliver_by && w.deliver_by < todayStr();
+          return '<tr onclick="woView(\'' + w.id + '\')"><td><span class="rq-job">' + rqEsc(w.wo_no) + '</span><div class="sub2">' + rqEsc(w.made_by_name || '') + '</div></td><td>' + rqDateTxt(w.wo_date) + '</td><td><b>' + rqEsc(w.party_name) + '</b></td>'
+            + '<td>' + ls.slice(0, 3).map(function(l){ return rqEsc(l.item) + ' <span class="sub2">' + rqEsc(l.ref_no || '') + '</span>'; }).join('<br>') + (ls.length > 3 ? '<div class="sub2">+' + (ls.length - 3) + ' more</div>' : '') + '</td>'
+            + '<td class="num">' + (t.p ? accFmt(t.p) + (t.all ? '' : '*') : '&mdash;') + '</td>'
+            + '<td>' + (tab === 'ord' ? (w.deliver_by ? '<span class="' + (late ? 'acc-owe' : '') + '">' + rqDateTxt(w.deliver_by) + (late ? ' &middot; late' : '') + '</span>' : '&mdash;') : f.cancelled ? rqDateTxt(rqLocalDate(w.cancelled_at)) : rqDateTxt(w.received_on)) + '</td>'
+            + '<td>' + woStatusTxt(w) + '</td><td onclick="event.stopPropagation()" style="white-space:nowrap"><button class="btn sm" onclick="woPrint(\'' + w.id + '\')">&#x1F5A8;</button>' + (tab === 'ord' && can ? ' <button class="btn sm pri" onclick="woReceive(\'' + w.id + '\')">Received&hellip;</button>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>'
+        : '<div class="empty"><h4>Nothing here</h4>' + (tab === 'ord' ? 'No work order is waiting for delivery.' : 'None yet.') + '</div>') + '</div>';
+  }
+  rqSetHead(def.crumb, def.title, def.sub + (can ? '' : ' &middot; view only'), acts);
+  $('content').innerHTML = tabs + body;
+  woSelCount();
+}
+// candidates grouped by where they came from (one requisition = one tick)
+function woGroups(cands) {
+  var by = {}, out = [];
+  cands.forEach(function(c){ var k = c.group || c.ref_id; if (!by[k]) { by[k] = Object.assign({ key: k, lines: [] }, c.head || {}); out.push(by[k]); } by[k].lines.push(c); });
+  return out;
+}
+function woSelCount() { var n = Object.keys(WO.ui.sel).filter(function(k){ return WO.ui.sel[k] && document.querySelector('.wo-cb[data-k="' + k + '"]'); }).length, b = $('wo-mk'); if (b) { b.textContent = n ? 'Make work order (' + n + ')' : 'Make work order'; b.disabled = !n; } }
+function woSelAll(on) { document.querySelectorAll('.wo-cb').forEach(function(c){ c.checked = on; WO.ui.sel[c.dataset.k] = on; }); woSelCount(); }
+function woMakeSel(source) {
+  var def = WO.src[source], gs = woGroups(def.candidates()).filter(function(g){ return WO.ui.sel[g.key]; });
+  if (!gs.length) { toast('Tick the items to put on the work order', 'err'); return; }
+  woForm(source, gs.reduce(function(a, g){ return a.concat(g.lines); }, []));
+}
+function woPrintList(source) {
+  var def = WO.src[source], gs = woGroups(def.candidates()).filter(function(g){ return !WO.ui.dp || g.dept === WO.ui.dp; });
+  var body = accDocHead(rqEsc(def.title) + ': to buy', '<b>' + gs.length + ' to buy</b><br>As at ' + rqDateTxt(todayStr()))
+    + '<table><thead><tr><th>SN</th><th>' + rqEsc(def.refHead) + '</th><th>Department</th><th>Item(s)</th><th class="num">Qty</th><th class="num">Approved</th><th>Waiting</th></tr></thead><tbody>'
+    + gs.map(function(g, i){ return '<tr><td>' + (i + 1) + '</td><td>' + rqEsc(g.ref_no) + '</td><td>' + rqEsc(g.deptName || '') + '</td><td>' + g.lines.map(function(l){ return rqEsc(l.item) + (l.spec ? ' <small>' + rqEsc(l.spec) + '</small>' : ''); }).join('<br>') + '</td><td class="num">' + g.lines.map(function(l){ return woQtyTxt(l.qty, l.unit); }).join('<br>') + '</td><td class="num">' + (g.approved != null ? rqMoneyTxt(g.approved) : '') + '</td><td>' + (g.since ? rqDaysBetween(g.since, todayStr()) + ' days' : '') + '</td></tr>'; }).join('') + '</tbody></table>';
+  var html = '<!doctype html><html><head><meta charset="utf-8"><title>To buy ' + todayStr() + '</title><style>' + accDocCss() + lowInkCss() + '</style></head><body><div class="sheet">' + body
+    + '<div class="ft"><span>Printed ' + rqEsc(rqDateTime(new Date().toISOString())) + ' &middot; ' + rqEsc(S.user.name) + ' &middot; Shahana One</span><span>To buy</span></div></div></body></html>';
+  openReportPreview('To buy ' + todayStr(), html);
+}
+
+// ─── B. SOURCE: REQUISITIONS MANAGEMENT BUYS ITSELF ───
+function woRqCanEdit() { return !!S.user && ['management', 'admin'].indexOf(S.user.role) !== -1; }
+function woRqCanView() { return !!S.user && ['management', 'admin', 'audit'].indexOf(S.user.role) !== -1; }
+// approved, Management buys it, not on a live work order yet
+function woRqOpen(r) { return !!r && r.mgmt_buy === true && r.mgmt_status === 'approved' && (r.status === 'wip' || r.status === 'hold'); }
+function woRqLinesOf(id) { return woActiveLines('rq').filter(function(l){ return l.ref_id === id; }); }
+function woRqItems(r) {
+  var d = rqDept(r.dept) || {}, head = { ref_id: r.id, ref_no: r.job_no, dept: r.dept, deptName: d.n || r.dept, approved: r.approved_cost, since: r.mgmt_at ? rqLocalDate(r.mgmt_at) : null, extra: [r.work_type, r.location].join(' ') };
+  var its = Array.isArray(r.items) ? r.items.filter(function(i){ return i && i.item; }) : [];
+  var base = function(o){ return Object.assign({ ref_id: r.id, ref_no: r.job_no, dept: r.dept, group: r.id, head: head }, o); };
+  if (its.length) return its.map(function(i){ return base({ item: i.item, spec: i.spec || '', qty: i.qty == null || Number(i.qty) <= 0 ? 1 : Number(i.qty), unit: i.unit || 'pc', price_p: i.rate == null || i.rate === '' ? null : accP(i.rate) }); });
+  return [base({ item: r.work_type || 'Item', spec: [r.location, r.location_detail].filter(Boolean).join(', '), qty: 1, unit: 'job', price_p: r.approved_cost == null ? null : accP(r.approved_cost) })];
+}
+async function woRqEvents(rows) { if (!rows.length) return; var r = await db.from('rq_events').insert(rows.map(function(x){ return Object.assign({ by_id: S.user.id, by_name: S.user.name, pct: null, amount: null, note: null }, x); })); if (r.error) console.error('requisition history:', r.error); }
+woSource({
+  key: 'rq', view: 'rq:buy', crumb: 'Requisitions', title: 'Management purchases', sub: 'Requisitions Management buys itself: no payment approval, not sent to Accounts.',
+  label: 'Requisitions', refHead: 'Requisition', refName: 'Requisition', openRef: 'rqOpen',
+  canEdit: woRqCanEdit, canView: woRqCanView,
+  depts: function(){ return RQ_DEPTS; },
+  candidates: function(){ var on = {}; woRqLinesOfAll().forEach(function(l){ on[l.ref_id] = 1; }); return RQ.rows.filter(function(r){ return woRqOpen(r) && !on[r.id]; }).sort(function(a, b){ return String(a.mgmt_at || '').localeCompare(String(b.mgmt_at || '')); }).reduce(function(a, r){ return a.concat(woRqItems(r)); }, []); },
+  deliverTo: function(lines){ var ds = Array.from(new Set(lines.map(function(l){ return l.dept; }))).map(function(k){ return ((rqDept(k) || {}).n || k) + ' Department'; }); var cs = Array.from(new Set(lines.map(function(l){ var r = RQ.rows.find(function(x){ return x.id === l.ref_id; }); return r ? rqCompany(r.company).n : ''; }).filter(Boolean))); return ds.join(', ') + (cs.length ? ', ' + cs.join(' / ') : ''); },
+  afterSave: async function(w, lines, kind, dropped){
+    var ids = Array.from(new Set(lines.map(function(l){ return l.ref_id; }).filter(Boolean)));
+    var ev = kind === 'new' ? ids.map(function(id){ return { req_id: id, kind: 'wo_ordered', note: w.wo_no + ' \u00b7 ' + w.party_name }; })
+      : kind === 'cancelled' ? ids.map(function(id){ return { req_id: id, kind: 'wo_cancelled', note: w.wo_no + (w.cancel_reason ? ': ' + w.cancel_reason : '') + ' \u2014 back to the list to buy' }; })
+      : (dropped || []).filter(function(l){ return l.ref_id && ids.indexOf(l.ref_id) === -1; }).map(function(l){ return { req_id: l.ref_id, kind: 'wo_cancelled', note: 'Taken off ' + w.wo_no + ' \u2014 back to the list to buy' }; });
+    await woRqEvents(ev);
+  },
+  // a requisition whose lines are all in closes on its own (completed, final cost = price paid, or the approved amount)
+  onReceived: async function(w, got, day){
+    var ids = Array.from(new Set(got.map(function(l){ return l.ref_id; }).filter(Boolean)));
+    var ev = [], close = [];
+    for (var i = 0; i < ids.length; i++) {
+      var ls = woRqLinesOf(ids[i]); if (!ls.length || !ls.every(woLineDone)) continue;
+      var r = RQ.rows.find(function(x){ return x.id === ids[i]; }); if (!r) continue;
+      var t = woTotal(ls, true), cost = t.all && t.p ? t.p / 100 : (r.approved_cost != null ? Number(r.approved_cost) : (t.p / 100));
+      var wos = Array.from(new Set(ls.map(function(l){ var x = woById(l.wo_id); return x ? x.wo_no + ' (' + x.party_name + ')' : ''; }).filter(Boolean))).join(', ');
+      ev.push({ req_id: r.id, kind: 'wo_received', note: wos + ' received ' + rqDateTxt(day), amount: cost });
+      close.push([r.id, cost, 'Bought by Management on ' + wos + '; received ' + rqDateTxt(day)]);
+    }
+    await woRqEvents(ev);
+    for (var j = 0; j < close.length; j++) { var x = await rqCompleteCore(close[j][0], close[j][1], close[j][2], day, ['wip', 'hold']); if (x.error) throw x.error; }
+  }
+});
+function woRqLinesOfAll() { return woActiveLines('rq'); }
+function woToBuyN() { return woOn() && woRqCanView() ? woGroups(WO.src.rq.candidates()).length : 0; }
+// ─── on the requisition ───
+// the tick in Management's approval box
+function woBuyTickHtml() { return woOn() ? '<label class="rq-mine wo-buytick"><input type="checkbox" id="rq-m-buy"> Management will buy this <span class="sub2">(no payment approval, not sent to Accounts)</span></label>' : ''; }
+function woBuyTicked() { var e = $('rq-m-buy'); return !!(woOn() && e && e.checked); }
+// small chip in the lists
+function woReqChip(r) {
+  if (!r || !r.mgmt_buy || !woOn()) return '';
+  var ls = woRqLinesOf(r.id), w = ls.length ? woById(ls[0].wo_id) : null;
+  return '<div class="sub2 wo-chip">&#x1F6D2; Mgmt buys' + (w ? ' &middot; ' + rqEsc(w.wo_no) + (ls.every(woLineDone) ? ' received' : '') : '') + '</div>';
+}
+// the box in the requisition: who buys it, its work order, the switch
+function woReqBoxHtml(r) {
+  if (!woOn() || !r || r.mgmt_status !== 'approved' || ['wip', 'hold', 'done'].indexOf(r.status) === -1) return '';
+  var can = woRqCanEdit() && r.status !== 'done';
+  var all = WO.lines.filter(function(l){ return l.ref_id === r.id; }), live = woRqLinesOf(r.id);
+  if (!r.mgmt_buy) {
+    if (!can || accPaysOf(r.id).length) return '';
+    return '<div class="rq-sec wo-reqbox"><div class="rq-sec-h">Who buys it</div><div class="sub2">Accounts pays this one. <button class="btn sm" onclick="woSetBuy(\'' + r.id + '\',true)">&#x1F6D2; Management will buy it instead</button></div></div>';
+  }
+  var h = '<div class="rq-sec wo-reqbox"><div class="rq-sec-h">&#x1F6D2; Bought by Management</div>';
+  if (!live.length) h += '<div>Not ordered yet: it is on Management&rsquo;s list to buy.</div>';
+  else {
+    var ws = Array.from(new Set(live.map(function(l){ return l.wo_id; }))).map(woById).filter(Boolean);
+    h += ws.map(function(w){ var ls = live.filter(function(l){ return l.wo_id === w.id; }), d = ls.every(woLineDone);
+      return '<div>' + (woRqCanView() ? '<a href="#" class="rq-job" onclick="event.preventDefault();closeModal(\'ov-rq\');woView(\'' + w.id + '\')">' + rqEsc(w.wo_no) + '</a>' : '<b>' + rqEsc(w.wo_no) + '</b>') + ' &middot; ' + rqEsc(w.party_name) + ' &middot; ordered ' + rqDateTxt(w.wo_date)
+        + (d ? ' &middot; <b class="wo-ok">received ' + rqDateTxt(ls.map(function(l){ return l.recv_on; }).sort().slice(-1)[0]) + '</b>' : w.deliver_by ? ' &middot; deliver by ' + rqDateTxt(w.deliver_by) : '') + '</div>'; }).join('');
+  }
+  var cancelled = all.filter(function(l){ var w = woById(l.wo_id); return w && w.status === 'cancelled'; }).length;
+  if (cancelled) h += '<div class="sub2">Earlier work order cancelled.</div>';
+  if (can && !live.length) h += '<div class="rq-btns"><button class="btn sm" onclick="woSetBuy(\'' + r.id + '\',false)">Accounts will pay instead</button></div>';
+  return h + '</div>';
+}
+// switch who buys it (Management / Admin), only while nothing is paid / ordered
+async function woSetBuy(id, on) {
+  if (!woRqCanEdit() || !woOn()) return;
+  var r = await rqRefreshOne(id);
+  if (!r || r.mgmt_status !== 'approved' || (r.status !== 'wip' && r.status !== 'hold')) return rqStaleMsg(id);
+  if (on) {
+    var p = await db.from('acc_payments').select('id').eq('req_id', id).limit(1);
+    var a = apOn() ? await db.from('acc_pay_approvals').select('id,withdrawn_at').eq('req_id', id) : { data: [] };
+    if ((p.data && p.data.length) || (a.data || []).some(function(x){ return !x.withdrawn_at; })) { toast('Accounts has already paid or Management approved a payment for ' + r.job_no + ', so it stays with Accounts', 'err'); return; }
+  } else {
+    await woLoad(true);
+    if (woRqLinesOf(id).length) { toast(r.job_no + ' is on a work order. Cancel the work order first.', 'err'); return; }
+  }
+  if (!(await appConfirm(on ? 'Management will buy ' + r.job_no + ' itself. It leaves Accounts (no payment approval) and goes on the list to buy.' : 'Accounts will pay for ' + r.job_no + ' again. It leaves Management\u2019s list to buy.', { title: on ? 'Management will buy it' : 'Accounts will pay', okText: on ? 'Management will buy' : 'Accounts will pay' }))) return;
+  var res = await db.from('rq_requisitions').update({ mgmt_buy: on ? true : false, updated_at: new Date().toISOString(), updated_by: S.user.name }).eq('id', id).in('status', ['wip', 'hold']).select();
+  if (res.error) { showSaveError('Could not save', res.error); return; }
+  if (!res.data || !res.data.length) return rqStaleMsg(id);
+  await rqEvent(id, on ? 'mgmt_buy' : 'mgmt_buy_off', { note: on ? 'Management will buy it (no payment approval)' : 'Accounts will pay it' });
+  r = rqPut(res.data[0]);
+  toast(r.job_no + (on ? ': Management will buy it' : ': Accounts will pay it'), 'ok-t');
+  renderRail(); rqRender(S.view); await rqLoadEvents(id); rqRenderDetail(id, true);
 }
 </script>
 </body>
